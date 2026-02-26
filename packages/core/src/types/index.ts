@@ -23,6 +23,7 @@ export interface Genome {
 export interface GenomeConfig {
     enableSandbox: boolean;
     mutationRate: 'slow' | 'balanced' | 'aggressive';
+    epsilonExplore?: number;
     enableAutoML?: boolean;
     enableMultiModel?: boolean;
 }
@@ -32,6 +33,12 @@ export interface GeneAllele {
     variant: string;
     content: string;
     fitness: number;
+    sampleCount?: number;
+    parentVariant?: string;
+    generation?: number;
+    sandboxTested?: boolean;
+    sandboxScore?: number;
+    recentScores?: number[];
     status: 'active' | 'retired';
     createdAt: Date;
 }
@@ -77,15 +84,20 @@ export interface UserTraits {
 export interface MutationLog {
     id?: string;
     genomeId: string;
+    layer?: number;
     gene: string;
     variant: string;
-    mutationType: 'targeted' | 'exploratory' | 'user_feedback';
-    parentVariant: string;
+    mutationType: 'targeted' | 'exploratory' | 'user_feedback' | 'rollback';
+    parentVariant: string | null;
+    triggerReason?: string;
+    fitnessDelta?: number;
     sandboxScore?: number;
     deployed: boolean;
+    details?: Record<string, unknown>;
     fitnessImprovement?: number;
     reason?: string;
     createdAt: Date;
+    timestamp?: Date;
 }
 
 export interface MutationProposal {

@@ -1,0 +1,428 @@
+/**
+ * PostgreSQL Storage Adapter for PGA
+ * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
+ *
+ * Implements StorageAdapter interface for PostgreSQL
+ */
+
+import { Pool, PoolConfig } from 'pg';
+import type {
+    StorageAdapter,
+    Genome,
+    UserDNA,
+    Interaction,
+    MutationLog,
+    FeedbackSignal,
+} from '@pga/core';
+import { readFileSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+export interface PostgresAdapterConfig {
+    /**
+     * PostgreSQL connection string
+     * Example: "postgresql://user:pass@localhost:5432/dbname"
+     */
+    connectionString: string;
+
+    /**
+     * Maximum number of clients in the pool
+     */
+    maxConnections?: number;
+
+    /**
+     * Initialize database schema on first connection
+     */
+    autoInitialize?: boolean;
+}
+
+/**
+ * PostgreSQL Storage Adapter
+ *
+ * @example
+ * ```typescript
+ * import { PostgresAdapter } from '@pga/adapters-storage-postgres';
+ *
+ * const adapter = new PostgresAdapter({
+ *   connectionString: process.env.DATABASE_URL,
+ *   autoInitialize: true,
+ * });
+ *
+ * await adapter.initialize();
+ * ```
+ */
+export class PostgresAdapter implements StorageAdapter {
+    private pool: Pool;
+    private config: Required<PostgresAdapterConfig>;
+
+    constructor(config: PostgresAdapterConfig) {
+        this.config = {
+            connectionString: config.connectionString,
+            maxConnections: config.maxConnections ?? 20,
+            autoInitialize: config.autoInitialize ?? true,
+        };
+
+        const poolConfig: PoolConfig = {
+            connectionString: this.config.connectionString,
+            max: this.config.maxConnections,
+        };
+
+        this.pool = new Pool(poolConfig);
+    }
+
+    /**
+     * Initialize database schema
+     */
+    async initialize(): Promise<void> {
+        if (!this.config.autoInitialize) {
+            return;
+        }
+
+        try {
+            const schemaPath = join(__dirname, '../sql/schema.sql');
+            const schema = readFileSync(schemaPath, 'utf-8');
+
+            await this.pool.query(schema);
+            console.log('[PGA] PostgreSQL schema initialized');
+        } catch (error) {
+            throw new Error(
+                `Failed to initialize PostgreSQL schema: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
+        }
+    }
+
+    /**
+     * Save genome to database
+     */
+    async saveGenome(genome: Genome): Promise<void> {
+        const client = await this.pool.connect();
+
+        try {
+            await client.query('BEGIN');
+
+            // Upsert genome
+            await client.query(
+                `INSERT INTO pga_genomes (id, name, config, created_at, updated_at)
+                 VALUES ($1, $2, $3, $4, $5)
+                 ON CONFLICT (id) DO UPDATE SET
+                    name = $2,
+                    config = $3,
+                    updated_at = $5`,
+                [
+                    genome.id,
+                    genome.name,
+                    JSON.stringify(genome.config),
+                    genome.createdAt,
+                    genome.updatedAt,
+                ],
+            );
+
+            // Delete existing alleles for this genome
+            await client.query('DELETE FROM pga_alleles WHERE genome_id = $1', [genome.id]);
+
+            // Insert all alleles
+            for (const layer of [0, 1, 2] as const) {
+                const layerKey = `layer${layer}` as 'layer0' | 'layer1' | 'layer2';
+                const alleles = genome.layers[layerKey];
+
+                for (const allele of alleles) {
+                    await client.query(
+                        `INSERT INTO pga_alleles (
+                            genome_id, layer, gene, variant, content, fitness,
+                            sample_count, parent_variant, generation, status,
+                            sandbox_tested, sandbox_score, recent_scores,
+                            created_at, updated_at
+                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
+                        [
+                            genome.id,
+                            layer,
+                            allele.gene,
+                            allele.variant,
+                            allele.content,
+                            allele.fitness,
+                            allele.sampleCount || 0,
+                            allele.parentVariant,
+                            allele.generation || 0,
+                            allele.status,
+                            allele.sandboxTested || false,
+                            allele.sandboxScore,
+                            JSON.stringify(allele.recentScores || []),
+                            allele.createdAt,
+                            new Date(),
+                        ],
+                    );
+                }
+            }
+
+            await client.query('COMMIT');
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
+
+    /**
+     * Load genome from database
+     */
+    async loadGenome(genomeId: string): Promise<Genome | null> {
+        const result = await this.pool.query(
+            'SELECT * FROM pga_genomes WHERE id = $1',
+            [genomeId],
+        );
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        const row = result.rows[0];
+
+        // Load alleles
+        const allelesResult = await this.pool.query(
+            'SELECT * FROM pga_alleles WHERE genome_id = $1 ORDER BY layer, gene, fitness DESC',
+            [genomeId],
+        );
+
+        const layer0 = [];
+        const layer1 = [];
+        const layer2 = [];
+
+        for (const alleleRow of allelesResult.rows) {
+            const allele = {
+                gene: alleleRow.gene,
+                variant: alleleRow.variant,
+                content: alleleRow.content,
+                fitness: parseFloat(alleleRow.fitness),
+                sampleCount: alleleRow.sample_count,
+                parentVariant: alleleRow.parent_variant,
+                generation: alleleRow.generation,
+                status: alleleRow.status as 'active' | 'retired',
+                sandboxTested: alleleRow.sandbox_tested,
+                sandboxScore: alleleRow.sandbox_score ? parseFloat(alleleRow.sandbox_score) : undefined,
+                recentScores: alleleRow.recent_scores || [],
+                createdAt: alleleRow.created_at,
+            };
+
+            if (alleleRow.layer === 0) layer0.push(allele);
+            else if (alleleRow.layer === 1) layer1.push(allele);
+            else if (alleleRow.layer === 2) layer2.push(allele);
+        }
+
+        return {
+            id: row.id,
+            name: row.name,
+            config: row.config,
+            layers: {
+                layer0,
+                layer1,
+                layer2,
+            },
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
+        };
+    }
+
+    /**
+     * List all genomes
+     */
+    async listGenomes(): Promise<Genome[]> {
+        const result = await this.pool.query(
+            'SELECT id FROM pga_genomes ORDER BY created_at DESC',
+        );
+
+        const genomes: Genome[] = [];
+        for (const row of result.rows) {
+            const genome = await this.loadGenome(row.id);
+            if (genome) {
+                genomes.push(genome);
+            }
+        }
+
+        return genomes;
+    }
+
+    /**
+     * Delete genome
+     */
+    async deleteGenome(genomeId: string): Promise<void> {
+        await this.pool.query('DELETE FROM pga_genomes WHERE id = $1', [genomeId]);
+    }
+
+    /**
+     * Save user DNA profile
+     */
+    async saveDNA(userId: string, genomeId: string, dna: UserDNA): Promise<void> {
+        await this.pool.query(
+            `INSERT INTO pga_user_dna (
+                user_id, genome_id, traits, confidence, generation, last_evolved, updated_at
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7)
+            ON CONFLICT (user_id, genome_id) DO UPDATE SET
+                traits = $3,
+                confidence = $4,
+                generation = $5,
+                last_evolved = $6,
+                updated_at = $7`,
+            [
+                userId,
+                genomeId,
+                JSON.stringify(dna.traits),
+                JSON.stringify(dna.confidence),
+                dna.generation,
+                dna.lastEvolved,
+                new Date(),
+            ],
+        );
+    }
+
+    /**
+     * Load user DNA profile
+     */
+    async loadDNA(userId: string, genomeId: string): Promise<UserDNA | null> {
+        const result = await this.pool.query(
+            'SELECT * FROM pga_user_dna WHERE user_id = $1 AND genome_id = $2',
+            [userId, genomeId],
+        );
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        const row = result.rows[0];
+
+        return {
+            userId: row.user_id,
+            traits: row.traits,
+            confidence: row.confidence,
+            generation: row.generation,
+            lastEvolved: row.last_evolved,
+        };
+    }
+
+    /**
+     * Record interaction
+     */
+    async recordInteraction(interaction: Interaction): Promise<void> {
+        await this.pool.query(
+            `INSERT INTO pga_interactions (
+                genome_id, user_id, user_message, assistant_response,
+                tool_calls, score, task_type, timestamp
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [
+                interaction.genomeId,
+                interaction.userId,
+                interaction.userMessage,
+                interaction.assistantResponse,
+                JSON.stringify(interaction.toolCalls),
+                interaction.score,
+                interaction.taskType,
+                interaction.timestamp,
+            ],
+        );
+    }
+
+    /**
+     * Log mutation
+     */
+    async logMutation(mutation: MutationLog): Promise<void> {
+        await this.pool.query(
+            `INSERT INTO pga_mutations (
+                genome_id, layer, gene, variant, mutation_type,
+                parent_variant, trigger_reason, fitness_delta,
+                deployed, details, timestamp
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+            [
+                mutation.genomeId,
+                mutation.layer,
+                mutation.gene,
+                mutation.variant,
+                mutation.mutationType,
+                mutation.parentVariant,
+                mutation.triggerReason,
+                mutation.fitnessDelta,
+                mutation.deployed,
+                JSON.stringify(mutation.details || {}),
+                mutation.timestamp,
+            ],
+        );
+    }
+
+    /**
+     * Record user feedback
+     */
+    async recordFeedback(feedback: FeedbackSignal): Promise<void> {
+        await this.pool.query(
+            `INSERT INTO pga_feedback (
+                genome_id, user_id, gene, sentiment, timestamp
+            ) VALUES ($1, $2, $3, $4, $5)`,
+            [
+                feedback.genomeId,
+                feedback.userId,
+                feedback.gene,
+                feedback.sentiment,
+                feedback.timestamp,
+            ],
+        );
+    }
+
+    /**
+     * Get analytics for genome
+     */
+    async getAnalytics(genomeId: string): Promise<Record<string, unknown>> {
+        const [
+            interactionsResult,
+            mutationsResult,
+            feedbackResult,
+            dnaResult,
+        ] = await Promise.all([
+            this.pool.query(
+                'SELECT COUNT(*) as count, AVG(score) as avg_score FROM pga_interactions WHERE genome_id = $1',
+                [genomeId],
+            ),
+            this.pool.query(
+                'SELECT COUNT(*) as count FROM pga_mutations WHERE genome_id = $1 AND deployed = true',
+                [genomeId],
+            ),
+            this.pool.query(
+                `SELECT
+                    COUNT(*) FILTER (WHERE sentiment = 'positive') as positive,
+                    COUNT(*) FILTER (WHERE sentiment = 'negative') as negative,
+                    COUNT(*) FILTER (WHERE sentiment = 'neutral') as neutral
+                 FROM pga_feedback WHERE genome_id = $1`,
+                [genomeId],
+            ),
+            this.pool.query(
+                'SELECT COUNT(DISTINCT user_id) as unique_users FROM pga_user_dna WHERE genome_id = $1',
+                [genomeId],
+            ),
+        ]);
+
+        return {
+            interactions: {
+                total: parseInt(interactionsResult.rows[0].count),
+                avgScore: parseFloat(interactionsResult.rows[0].avg_score) || 0,
+            },
+            mutations: {
+                deployed: parseInt(mutationsResult.rows[0].count),
+            },
+            feedback: {
+                positive: parseInt(feedbackResult.rows[0].positive || '0'),
+                negative: parseInt(feedbackResult.rows[0].negative || '0'),
+                neutral: parseInt(feedbackResult.rows[0].neutral || '0'),
+            },
+            users: {
+                unique: parseInt(dnaResult.rows[0].unique_users),
+            },
+        };
+    }
+
+    /**
+     * Close database connection
+     */
+    async close(): Promise<void> {
+        await this.pool.end();
+    }
+}

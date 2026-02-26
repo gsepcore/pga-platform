@@ -43,54 +43,110 @@ PGA creates **living, evolving prompts**:
 
 ## 🚀 Quick Start
 
+### Prerequisites
+
+- **Node.js** 18+ or 20+
+- **PostgreSQL** 14+ (or any supported database)
+- **Anthropic API Key** (or any supported LLM)
+
 ### Installation
 
 ```bash
-npm install @pga/core
+# Install core and adapters
+npm install @pga/core @pga/adapters-llm-anthropic @pga/adapters-storage-postgres
+
+# Or using yarn
+yarn add @pga/core @pga/adapters-llm-anthropic @pga/adapters-storage-postgres
+
+# Or using pnpm
+pnpm add @pga/core @pga/adapters-llm-anthropic @pga/adapters-storage-postgres
+```
+
+### Database Setup
+
+```bash
+# 1. Create a PostgreSQL database
+createdb pga_development
+
+# 2. Set your connection string
+export DATABASE_URL="postgresql://user:password@localhost:5432/pga_development"
+
+# 3. Initialize the schema (automatic on first run)
+# The schema will be created automatically when you call pga.initialize()
+```
+
+### Environment Variables
+
+Create a `.env` file in your project root:
+
+```bash
+# Anthropic API Key
+ANTHROPIC_API_KEY=sk-ant-xxxxxxxxxxxxx
+
+# Database Connection
+DATABASE_URL=postgresql://user:password@localhost:5432/pga_development
 ```
 
 ### Basic Usage
 
 ```typescript
 import { PGA } from '@pga/core';
-import { ClaudeAdapter } from '@pga/adapters-llm/anthropic';
-import { PostgresAdapter } from '@pga/adapters-storage/postgres';
+import { ClaudeAdapter } from '@pga/adapters-llm-anthropic';
+import { PostgresAdapter } from '@pga/adapters-storage-postgres';
 
 // Initialize PGA
 const pga = new PGA({
   llm: new ClaudeAdapter({
-    apiKey: process.env.ANTHROPIC_KEY
+    apiKey: process.env.ANTHROPIC_API_KEY!,
+    model: 'claude-sonnet-4-20250514', // or claude-opus-4-20250514
   }),
   storage: new PostgresAdapter({
-    connectionString: process.env.DATABASE_URL
+    connectionString: process.env.DATABASE_URL!,
   }),
+  config: {
+    enableSandbox: true,
+    mutationRate: 'balanced',
+    epsilonExplore: 0.1,
+  },
 });
+
+// Initialize database (creates tables if needed)
+await pga.initialize();
 
 // Create genome for your agent
 const genome = await pga.createGenome({
   name: 'my-assistant',
 });
 
-// Use in your agent loop
-async function chat(userId: string, message: string) {
-  // 1. Get optimized prompt
-  const prompt = await genome.assemblePrompt({ userId });
+// Add initial prompts (Layer 0 - Immutable)
+await genome.addAllele({
+  layer: 0,
+  gene: 'core-identity',
+  variant: 'default',
+  content: 'You are a helpful AI assistant.',
+});
 
-  // 2. Call your LLM
-  const response = await llm.chat(prompt, message);
+// Use in your agent
+const response = await genome.chat({
+  userId: 'user-123',
+  message: 'Hello, how can you help me?',
+});
 
-  // 3. PGA learns automatically
-  await genome.recordInteraction({
-    userId,
-    userMessage: message,
-    response,
-  });
+console.log(response.content);
 
-  return response;
-}
+// Record feedback to enable evolution
+await genome.recordFeedback({
+  userId: 'user-123',
+  score: 0.9,
+  sentiment: 'positive',
+});
 ```
 
 **That's it!** Your agent now evolves automatically.
+
+### Complete Example
+
+See [examples/basic-usage.ts](./examples/basic-usage.ts) for a complete working example with all features.
 
 ---
 
@@ -316,14 +372,53 @@ const genome = await pga.createGenome();
 
 PGA Core is open source (MIT). Contributions welcome!
 
+### Development Setup
+
 ```bash
+# 1. Clone the repository
 git clone https://github.com/pga-ai/pga-platform
 cd pga-platform
+
+# 2. Install dependencies
 npm install
+
+# 3. Build all packages
+npm run build
+
+# 4. Run tests
+npm test
+
+# 5. Start development mode (watch for changes)
 npm run dev
 ```
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md)
+### Project Structure
+
+```
+pga-platform/
+├── packages/
+│   ├── core/                    # Core PGA engine (MIT)
+│   ├── adapters-llm/
+│   │   └── anthropic/          # Claude adapter
+│   └── adapters-storage/
+│       └── postgres/           # PostgreSQL adapter
+├── examples/                    # Usage examples
+├── docs/                        # Documentation
+└── scripts/                     # Build scripts
+```
+
+### Running Examples
+
+```bash
+# Set up environment variables first
+cp .env.example .env
+# Edit .env with your API keys
+
+# Run the basic example
+npx tsx examples/basic-usage.ts
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
 
 ---
 

@@ -114,7 +114,6 @@ export class PGA {
 export class GenomeInstance {
     private assembler: PromptAssembler;
     private dnaProfile: DNAProfile;
-    private fitnessTracker: FitnessTracker;
 
     constructor(
         private genome: Genome,
@@ -123,7 +122,8 @@ export class GenomeInstance {
     ) {
         this.assembler = new PromptAssembler(storage, genome);
         this.dnaProfile = new DNAProfile(storage);
-        this.fitnessTracker = new FitnessTracker(storage, genome);
+        // FitnessTracker will be used in future for performance tracking
+        new FitnessTracker(storage, genome);
     }
 
     /**

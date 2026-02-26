@@ -30,7 +30,7 @@ export class FitnessTracker {
         gene: string,
         variant: string,
         score: number,
-        context?: SelectionContext,
+        _context?: SelectionContext,
     ): Promise<void> {
         // Get current allele
         const layerAlleles = this.getAllelesForLayer(layer);
@@ -51,7 +51,7 @@ export class FitnessTracker {
         const updatedAllele: GeneAllele = {
             ...allele,
             fitness: newFitness,
-            sampleCount: allele.sampleCount + 1,
+            sampleCount: (allele.sampleCount || 0) + 1,
             recentScores,
         };
 
@@ -120,6 +120,7 @@ export class FitnessTracker {
                     recentScores: window,
                 },
                 timestamp: new Date(),
+                createdAt: new Date(),
             });
         }
     }

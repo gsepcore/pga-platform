@@ -7,11 +7,11 @@
  */
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
-import type { Genome, SelectionContext, Layer } from '../types/index.js';
+import type { Genome, SelectionContext } from '../types/index.js';
 
 export class PromptAssembler {
     constructor(
-        private storage: StorageAdapter,
+        _storage: StorageAdapter,
         private genome: Genome,
     ) {}
 
@@ -44,7 +44,7 @@ export class PromptAssembler {
      */
     private async selectBestFromLayer(
         layer: 1 | 2,
-        context?: SelectionContext,
+        _context?: SelectionContext,
     ): Promise<string[]> {
         const alleles = layer === 1 ? this.genome.layers.layer1 : this.genome.layers.layer2;
         const active = alleles.filter(a => a.status === 'active');
@@ -62,10 +62,10 @@ export class PromptAssembler {
 
         // Select best variant for each gene
         const selected: string[] = [];
-        for (const [gene, variants] of byGene) {
+        for (const [_gene, variants] of byGene) {
             const best = this.selectByEpsilonGreedy(
                 variants,
-                this.genome.config.epsilonExplore,
+                this.genome.config.epsilonExplore || 0.1,
             );
             selected.push(best.content);
         }

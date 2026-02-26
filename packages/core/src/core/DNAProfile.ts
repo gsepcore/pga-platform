@@ -23,7 +23,7 @@ export class DNAProfile {
         const dna = await this.storage.loadDNA(userId, genomeId);
 
         if (!dna) {
-            return this.createDefaultDNA(userId);
+            return this.createDefaultDNA(userId, genomeId);
         }
 
         return dna;
@@ -44,6 +44,7 @@ export class DNAProfile {
 
         const updatedDNA: UserDNA = {
             userId,
+            genomeId,
             traits: updatedTraits,
             confidence: updatedConfidence,
             generation: currentDNA.generation + 1,
@@ -66,9 +67,10 @@ export class DNAProfile {
 
     // ─── Private Methods ────────────────────────────────────
 
-    private createDefaultDNA(userId: string): UserDNA {
+    private createDefaultDNA(userId: string, genomeId?: string): UserDNA {
         return {
             userId,
+            genomeId: genomeId || 'default',
             traits: {
                 communicationStyle: 'formal',
                 verbosity: 'balanced',
@@ -128,8 +130,8 @@ export class DNAProfile {
         }
 
         // Update peak productivity hours
-        const hour = interaction.timestamp.getHours();
-        if (interaction.score >= 0.8) {
+        if (interaction.score !== undefined && interaction.score >= 0.8) {
+            const hour = interaction.timestamp.getHours();
             newTraits.peakProductivityHours = this.updatePeakHours(
                 currentDNA.traits.peakProductivityHours,
                 hour,
