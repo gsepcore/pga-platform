@@ -140,6 +140,11 @@ await genome.recordFeedback({
   score: 0.9,
   sentiment: 'positive',
 });
+
+// 🎯 Agent announces its new PGA capabilities
+const announcement = genome.getWelcomeMessage('detailed');
+console.log(announcement);
+// Or: await speak(announcement) for voice
 ```
 
 **That's it!** Your agent now evolves automatically.
@@ -190,6 +195,32 @@ PGA optimizes for three metrics:
 ---
 
 ## 🌟 Key Features
+
+### 🎙️ Welcome Message Announcement
+
+Your agent can announce its new PGA capabilities to users:
+
+```typescript
+const genome = await pga.createGenome({ name: 'my-agent' });
+
+// Agent introduces its new capabilities
+const message = genome.getWelcomeMessage('detailed');
+console.log(message);
+
+// Choose from 4 styles:
+// 'short'     → Quick announcement (~50 words)
+// 'detailed'  → Full explanation (~150 words) — DEFAULT
+// 'technical' → Developer-oriented (~200 words)
+// 'casual'    → Friendly conversation (~120 words)
+
+// Perfect for:
+// ✓ Onboarding flows
+// ✓ Voice assistants (TTS)
+// ✓ Chatbot first messages
+// ✓ Installation confirmations
+```
+
+See [examples/welcome-messages.ts](./examples/welcome-messages.ts) for all styles.
 
 ### 🎯 User DNA Profiling
 

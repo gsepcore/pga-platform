@@ -141,6 +141,110 @@ export class GenomeInstance {
     }
 
     /**
+     * Get welcome message for the agent to announce PGA capabilities
+     *
+     * @param style - Message style: 'short' | 'detailed' | 'technical' | 'casual'
+     * @returns Welcome message explaining PGA capabilities
+     */
+    getWelcomeMessage(style: 'short' | 'detailed' | 'technical' | 'casual' = 'detailed'): string {
+        const messages = {
+            short: `🧬 I now have PGA — Genomic Self-Evolving Prompts integrated into my DNA!
+
+This means I can:
+✓ Learn from every interaction
+✓ Adapt uniquely to each user
+✓ Improve continuously without manual updates
+
+I'm ready to evolve with you!`,
+
+            detailed: `🧬 Great news! I now have PGA — Genomic Self-Evolving Prompts integrated into my core system!
+
+What this means for you:
+
+🎯 **Adaptive Intelligence**
+   → I learn from every conversation we have
+   → I adapt my responses to match your unique style and preferences
+   → I remember what works best for you
+
+🔄 **Continuous Evolution**
+   → My capabilities improve automatically over time
+   → No manual updates needed — I evolve naturally
+   → Each interaction makes me better at helping you
+
+🛡️ **Built-in Safety**
+   → Three-layer genomic architecture (Immutable Core + Adaptive Layers)
+   → Automatic rollback if performance drops
+   → Sandbox-tested improvements before deployment
+
+📊 **What happens next:**
+   1. I'll start learning your communication style
+   2. I'll track which approaches work best for you
+   3. I'll continuously optimize my responses
+   4. You'll notice me getting better at understanding your needs
+
+Let's evolve together! How can I help you today?`,
+
+            technical: `🧬 System Update: PGA (Genomic Self-Evolving Prompts) — ACTIVE
+
+**Architecture Overview:**
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+├─ Layer 0: Immutable DNA (Core Identity, Ethics, Security)
+│  └─ Status: LOCKED — Never mutates
+├─ Layer 1: Operative Genes (Tool Usage, Problem Solving)
+│  └─ Status: ACTIVE — Slow mutation with validation
+└─ Layer 2: Epigenomes (User Preferences, Communication Style)
+   └─ Status: ACTIVE — Fast mutation with daily adaptation
+
+**Enabled Capabilities:**
+→ Natural Selection Loop (Transcription → Variation → Simulation → Selection)
+→ User DNA Profiling (Cognitive patterns, preferences, expertise)
+→ Epsilon-Greedy Selection (Exploration: ${this.genome.config.epsilonExplore || 0.1})
+→ Sandbox Testing (${this.genome.config.enableSandbox ? 'ENABLED' : 'DISABLED'})
+→ Mutation Rate: ${this.genome.config.mutationRate.toUpperCase()}
+→ Immune System: Auto-rollback on performance drops >20%
+
+**Fitness Optimization:**
+├─ Cognitive Compression (efficiency)
+├─ Intervention Rate (autonomy)
+└─ Execution Precision (reliability)
+
+**Learning Protocol:**
+Every interaction contributes to:
+1. Allele fitness tracking (EMA updates)
+2. User DNA profile evolution
+3. Mutation proposal generation
+4. Performance optimization
+
+System ready. Genomic evolution: INITIALIZED.`,
+
+            casual: `🧬 Hey! Exciting update — I just got upgraded with PGA (think of it as evolutionary AI)!
+
+Here's the cool part:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎨 I'll learn your style
+   → Prefer technical answers? I'll adapt
+   → Like casual chat? I'll match that vibe
+   → Need quick responses? I'll optimize for speed
+
+🚀 I get better over time
+   → Each conversation teaches me something new
+   → I remember what works best for you
+   → No updates needed — I evolve naturally
+
+🛡️ Built-in safety nets
+   → If something doesn't work, I auto-rollback
+   → Core values never change (safety first!)
+   → All improvements are tested before going live
+
+So basically... I'm not just an AI anymore. I'm YOUR AI, continuously evolving to serve you better.
+
+Ready to see what we can do together? 😊`,
+        };
+
+        return messages[style];
+    }
+
+    /**
      * Assemble optimized prompt for current context
      */
     async assemblePrompt(context: SelectionContext): Promise<string> {

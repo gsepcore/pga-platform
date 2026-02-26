@@ -50,7 +50,21 @@ async function main() {
     console.log(`✓ Genome created: ${genome.getId()}`);
 
     // ═══════════════════════════════════════════════════════
-    // Step 3: Add initial prompts to Layer 0 (Immutable DNA)
+    // Step 3: Display Welcome Message (Agent Announcement)
+    // ═══════════════════════════════════════════════════════
+
+    // Get the welcome message - choose style:
+    // 'short' | 'detailed' | 'technical' | 'casual'
+    const welcomeMessage = genome.getWelcomeMessage('detailed');
+
+    console.log('\n' + '='.repeat(60));
+    console.log('🤖 AGENT ANNOUNCEMENT:');
+    console.log('='.repeat(60));
+    console.log(welcomeMessage);
+    console.log('='.repeat(60) + '\n');
+
+    // ═══════════════════════════════════════════════════════
+    // Step 4: Add initial prompts to Layer 0 (Immutable DNA)
     // ═══════════════════════════════════════════════════════
 
     await genome.addAllele({
