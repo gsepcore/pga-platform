@@ -1,0 +1,61 @@
+{
+  "name": "@pga/core",
+  "version": "0.1.0",
+  "description": "PGA Core - Genomic Self-Evolving Prompts Engine",
+  "author": "Luis Alfredo Velasquez Duran <contact@pga.ai>",
+  "license": "MIT",
+  "homepage": "https://pga.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pga-ai/pga-platform",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "pga",
+    "prompt-evolution",
+    "genomic-prompts",
+    "ai",
+    "llm",
+    "agents",
+    "prompt-engineering"
+  ],
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "typescript": "^5.4.5",
+    "vitest": "^1.5.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

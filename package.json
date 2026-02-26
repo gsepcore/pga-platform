@@ -1,0 +1,48 @@
+{
+  "name": "pga-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PGA - Genomic Self-Evolving Prompts | World's First Auto-Evolving AI System",
+  "author": "Luis Alfredo Velasquez Duran <contact@pga.ai>",
+  "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://pga.ai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pga-ai/pga-platform"
+  },
+  "keywords": [
+    "pga",
+    "prompt-evolution",
+    "genomic-prompts",
+    "ai-agents",
+    "llm",
+    "claude",
+    "gpt",
+    "prompt-engineering",
+    "auto-optimization"
+  ],
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.3",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
+  "packageManager": "npm@10.5.0"
+}

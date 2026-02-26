@@ -1,0 +1,59 @@
+/**
+ * @pga/core — Genomic Self-Evolving Prompts
+ *
+ * World's first autonomous prompt evolution system for AI agents
+ *
+ * @author Luis Alfredo Velasquez Duran
+ * @since 2025
+ * @license MIT
+ *
+ * @example
+ * ```typescript
+ * import { PGA } from '@pga/core';
+ * import { ClaudeAdapter } from '@pga/adapters-llm/anthropic';
+ * import { PostgresAdapter } from '@pga/adapters-storage/postgres';
+ *
+ * const pga = new PGA({
+ *   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_KEY }),
+ *   storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL }),
+ * });
+ *
+ * const genome = await pga.createGenome({ name: 'my-assistant' });
+ * const response = await genome.chat('Hello!', { userId: 'user123' });
+ * ```
+ */
+
+// ─── Main Exports ───────────────────────────────────────
+
+export { PGA, GenomeInstance } from './PGA.js';
+export type { PGAConfig } from './PGA.js';
+
+// ─── Interfaces ─────────────────────────────────────────
+
+export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
+export type { StorageAdapter } from './interfaces/StorageAdapter.js';
+
+// ─── Types ──────────────────────────────────────────────
+
+export type {
+    Genome,
+    GenomeConfig,
+    GeneAllele,
+    UserDNA,
+    UserTraits,
+    MutationLog,
+    MutationProposal,
+    Interaction,
+    ToolCall,
+    FitnessMetrics,
+    SelectionContext,
+    Layer,
+    MutationRate,
+    Sentiment,
+} from './types/index.js';
+
+// ─── Version ────────────────────────────────────────────
+
+export const VERSION = '0.1.0';
+export const AUTHOR = 'Luis Alfredo Velasquez Duran';
+export const YEAR = 2025;
