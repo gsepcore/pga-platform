@@ -11,6 +11,9 @@ import type { LLMAdapter } from './interfaces/LLMAdapter.js';
 import type { StorageAdapter } from './interfaces/StorageAdapter.js';
 import type { Genome, GenomeConfig, SelectionContext, Interaction } from './types/index.js';
 import { GenomeManager } from './core/GenomeManager.js';
+import { PromptAssembler } from './core/PromptAssembler.js';
+import { DNAProfile } from './core/DNAProfile.js';
+import { FitnessTracker } from './core/FitnessTracker.js';
 
 export interface PGAConfig {
     /**
@@ -109,11 +112,19 @@ export class PGA {
  * Represents a single genome that can be used with your agent
  */
 export class GenomeInstance {
+    private assembler: PromptAssembler;
+    private dnaProfile: DNAProfile;
+    private fitnessTracker: FitnessTracker;
+
     constructor(
         private genome: Genome,
         private llm: LLMAdapter,
         private storage: StorageAdapter,
-    ) {}
+    ) {
+        this.assembler = new PromptAssembler(storage, genome);
+        this.dnaProfile = new DNAProfile(storage);
+        this.fitnessTracker = new FitnessTracker(storage, genome);
+    }
 
     /**
      * Get genome ID
@@ -133,13 +144,7 @@ export class GenomeInstance {
      * Assemble optimized prompt for current context
      */
     async assemblePrompt(context: SelectionContext): Promise<string> {
-        // TODO: Implement prompt assembly from layers
-        // This will select the best alleles for each gene based on context
-        const layer0Prompt = await this.assembleLayer(0, context);
-        const layer1Prompt = await this.assembleLayer(1, context);
-        const layer2Prompt = await this.assembleLayer(2, context);
-
-        return `${layer0Prompt}\n\n${layer1Prompt}\n\n${layer2Prompt}`;
+        return this.assembler.assemblePrompt(context);
     }
 
     /**
@@ -162,17 +167,26 @@ export class GenomeInstance {
      * Record interaction (enables auto-learning)
      */
     async recordInteraction(interaction: Omit<Interaction, 'genomeId'>): Promise<void> {
-        await this.storage.recordInteraction({
+        const fullInteraction = {
             ...interaction,
             genomeId: this.genome.id,
-        });
+        };
+
+        // Record to storage
+        await this.storage.recordInteraction(fullInteraction);
+
+        // Update user DNA profile
+        await this.dnaProfile.updateDNA(interaction.userId, this.genome.id, fullInteraction);
+
+        // Record fitness for each layer (if we know which alleles were used)
+        // TODO: Track which alleles were selected during assemblePrompt and record their fitness here
     }
 
     /**
      * Get user DNA profile
      */
     async getDNA(userId: string) {
-        return this.storage.loadDNA(userId, this.genome.id);
+        return this.dnaProfile.getDNA(userId, this.genome.id);
     }
 
     /**
@@ -216,19 +230,5 @@ export class GenomeInstance {
      */
     async export(): Promise<Genome> {
         return this.genome;
-    }
-
-    // ─── Private Methods ────────────────────────────────
-
-    private async assembleLayer(layer: 0 | 1 | 2, context: SelectionContext): Promise<string> {
-        // TODO: Implement layer assembly with epsilon-greedy selection
-        const layerKey = `layer${layer}` as 'layer0' | 'layer1' | 'layer2';
-        const alleles = this.genome.layers[layerKey];
-
-        // For now, just concatenate all active alleles
-        return alleles
-            .filter(a => a.status === 'active')
-            .map(a => a.content)
-            .join('\n\n');
     }
 }
