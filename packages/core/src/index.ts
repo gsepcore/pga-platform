@@ -70,6 +70,27 @@ export type {
     AuthConfig,
 } from './enterprise/AuthManager.js';
 
+// ─── Real-Time ──────────────────────────────────────────
+
+export { PGAEventEmitter, globalEvents } from './realtime/EventEmitter.js';
+export type {
+    PGAEventType,
+    PGAEvent,
+    GenomeCreatedEvent,
+    GenomeEvolvedEvent,
+    MutationAppliedEvent,
+    ChatMessageEvent,
+    MetricsUpdatedEvent,
+    AlertTriggeredEvent,
+    EventHandler,
+} from './realtime/EventEmitter.js';
+
+export { StreamingManager, globalStreaming } from './realtime/StreamingManager.js';
+export type {
+    StreamChunk,
+    StreamOptions,
+} from './realtime/StreamingManager.js';
+
 // ─── Interfaces ─────────────────────────────────────────
 
 export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
