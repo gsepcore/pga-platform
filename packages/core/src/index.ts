@@ -111,6 +111,20 @@ export type {
     MetaLearning,
 } from './advanced-ai/ThinkingEngine.js';
 
+// ─── Resilience ─────────────────────────────────────────
+
+export { CircuitBreaker } from './resilience/CircuitBreaker.js';
+export type {
+    CircuitState,
+    CircuitBreakerConfig,
+    CircuitBreakerStats,
+} from './resilience/CircuitBreaker.js';
+
+export { RetryManager } from './resilience/RetryManager.js';
+export type {
+    RetryConfig,
+} from './resilience/RetryManager.js';
+
 // ─── Interfaces ─────────────────────────────────────────
 
 export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
