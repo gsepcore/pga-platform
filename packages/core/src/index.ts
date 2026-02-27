@@ -101,6 +101,16 @@ export type {
     PluginConfig,
 } from './plugins/PluginManager.js';
 
+// ─── Advanced AI ────────────────────────────────────────
+
+export { ThinkingEngine } from './advanced-ai/ThinkingEngine.js';
+export type {
+    ThinkingStep,
+    ThinkingResult,
+    SelfReflection,
+    MetaLearning,
+} from './advanced-ai/ThinkingEngine.js';
+
 // ─── Interfaces ─────────────────────────────────────────
 
 export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
