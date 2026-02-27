@@ -28,6 +28,16 @@
 export { PGA, GenomeInstance } from './PGA.js';
 export type { PGAConfig } from './PGA.js';
 
+// ─── Evaluation ─────────────────────────────────────────
+
+export { Evaluator, STANDARD_TASKS } from './evaluation/Evaluator.js';
+export type {
+    EvaluationTask,
+    EvaluationResult,
+    BenchmarkResult,
+    ComparisonResult,
+} from './evaluation/Evaluator.js';
+
 // ─── Interfaces ─────────────────────────────────────────
 
 export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
