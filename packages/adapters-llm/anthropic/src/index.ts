@@ -97,19 +97,18 @@ export class ClaudeAdapter implements LLMAdapter {
                 system: systemPrompt || undefined,
                 max_tokens: options?.maxTokens || 4096,
                 temperature: options?.temperature ?? 0.7,
-                top_p: options?.topP,
-                stop_sequences: options?.stopSequences,
             });
 
             // Convert to standard format
             return {
                 content: response.content[0].type === 'text' ? response.content[0].text : '',
-                role: 'assistant',
-                model: response.model,
-                stopReason: response.stop_reason || undefined,
                 usage: {
                     inputTokens: response.usage.input_tokens,
                     outputTokens: response.usage.output_tokens,
+                },
+                metadata: {
+                    model: response.model,
+                    stopReason: response.stop_reason || undefined,
                 },
             };
         } catch (error) {
@@ -143,8 +142,6 @@ export class ClaudeAdapter implements LLMAdapter {
                 system: systemPrompt || undefined,
                 max_tokens: options?.maxTokens || 4096,
                 temperature: options?.temperature ?? 0.7,
-                top_p: options?.topP,
-                stop_sequences: options?.stopSequences,
                 stream: true,
             });
 
@@ -153,9 +150,14 @@ export class ClaudeAdapter implements LLMAdapter {
                     if (event.delta.type === 'text_delta') {
                         yield {
                             delta: event.delta.text,
-                            role: 'assistant',
+                            done: false,
                         };
                     }
+                } else if (event.type === 'message_stop') {
+                    yield {
+                        delta: '',
+                        done: true,
+                    };
                 }
             }
         } catch (error) {

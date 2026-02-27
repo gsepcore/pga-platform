@@ -23,6 +23,8 @@
   ],
   "workspaces": [
     "packages/*",
+    "packages/adapters-llm/*",
+    "packages/adapters-storage/*",
     "apps/*"
   ],
   "scripts": {
