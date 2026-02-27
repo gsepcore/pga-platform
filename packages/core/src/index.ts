@@ -38,6 +38,19 @@ export type {
     ComparisonResult,
 } from './evaluation/Evaluator.js';
 
+// ─── Monitoring ─────────────────────────────────────────
+
+export { MetricsCollector } from './monitoring/MetricsCollector.js';
+export type {
+    PerformanceMetrics,
+    CostMetrics,
+    HealthStatus,
+    ComponentHealth,
+    AuditLog,
+    Alert,
+    MetricsCollectorConfig,
+} from './monitoring/MetricsCollector.js';
+
 // ─── Interfaces ─────────────────────────────────────────
 
 export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
