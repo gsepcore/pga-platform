@@ -19,6 +19,8 @@ import { ContextMemory } from './core/ContextMemory.js';
 import { ProactiveSuggestions } from './core/ProactiveSuggestions.js';
 import { EvolutionGuardrailsManager } from './evaluation/EvolutionGuardrails.js';
 import { ModelRouter, type ModelRouterConfig } from './advanced-ai/ModelRouter.js';
+import { MetricsCollector, type MetricsCollectorConfig } from './monitoring/MetricsCollector.js';
+import { MonitoringDashboard, type DashboardConfig } from './monitoring/MonitoringDashboard.js';
 
 export interface PGAConfig {
     /**
@@ -40,6 +42,16 @@ export interface PGAConfig {
      * Optional model router configuration
      */
     modelRouter?: ModelRouterConfig;
+
+    /**
+     * Optional monitoring/metrics configuration
+     */
+    monitoring?: MetricsCollectorConfig;
+
+    /**
+     * Optional dashboard configuration
+     */
+    dashboard?: DashboardConfig & { enabled?: boolean };
 }
 
 /**
@@ -58,10 +70,24 @@ export interface PGAConfig {
 export class PGA {
     private genomeManager: GenomeManager;
     private llm: LLMAdapter;
+    private metricsCollector: MetricsCollector;
+    private dashboard?: MonitoringDashboard;
 
     constructor(private pgaConfig: PGAConfig) {
         this.llm = pgaConfig.llm;
         this.genomeManager = new GenomeManager(pgaConfig.storage);
+
+        // Initialize monitoring
+        this.metricsCollector = new MetricsCollector(pgaConfig.monitoring || {
+            enabled: true,
+            enableCostTracking: true,
+            enableAuditLogs: true,
+        });
+
+        // Initialize dashboard if enabled
+        if (pgaConfig.dashboard?.enabled) {
+            this.dashboard = new MonitoringDashboard(this.metricsCollector, pgaConfig.dashboard);
+        }
     }
 
     /**
@@ -69,6 +95,70 @@ export class PGA {
      */
     async initialize(): Promise<void> {
         await this.pgaConfig.storage.initialize();
+
+        // Start dashboard if configured
+        if (this.dashboard && this.pgaConfig.dashboard?.enabled) {
+            this.dashboard.start();
+        }
+
+        // Log initialization
+        this.metricsCollector.logAudit({
+            level: 'info',
+            component: 'pga',
+            operation: 'initialize',
+            message: 'PGA system initialized successfully',
+        });
+    }
+
+    /**
+     * Get metrics collector
+     */
+    getMetrics(): MetricsCollector {
+        return this.metricsCollector;
+    }
+
+    /**
+     * Get monitoring dashboard
+     */
+    getDashboard(): MonitoringDashboard | undefined {
+        return this.dashboard;
+    }
+
+    /**
+     * Export current metrics
+     */
+    exportMetrics() {
+        return this.metricsCollector.exportMetrics();
+    }
+
+    /**
+     * Get active alerts
+     */
+    getAlerts() {
+        return this.metricsCollector.getAlerts();
+    }
+
+    /**
+     * Get health status
+     */
+    getHealthStatus() {
+        return this.metricsCollector.getHealthStatus();
+    }
+
+    /**
+     * Shutdown PGA gracefully
+     */
+    shutdown(): void {
+        if (this.dashboard) {
+            this.dashboard.stop();
+        }
+
+        this.metricsCollector.logAudit({
+            level: 'info',
+            component: 'pga',
+            operation: 'shutdown',
+            message: 'PGA system shutdown',
+        });
     }
 
     /**
@@ -104,6 +194,7 @@ export class PGA {
             genome,
             this.llm,
             this.pgaConfig.storage,
+            this.metricsCollector,
             this.pgaConfig.modelRouter,
         );
     }
@@ -119,6 +210,7 @@ export class PGA {
             genome,
             this.llm,
             this.pgaConfig.storage,
+            this.metricsCollector,
             this.pgaConfig.modelRouter,
         );
     }
@@ -151,11 +243,13 @@ export class GenomeInstance {
     private proactiveSuggestions: ProactiveSuggestions;
     private guardrailsManager: EvolutionGuardrailsManager;
     private modelRouter: ModelRouter;
+    private metrics: MetricsCollector;
 
     constructor(
         private genome: Genome,
         private llm: LLMAdapter,
         private storage: StorageAdapter,
+        metrics: MetricsCollector,
         modelRouterConfig?: ModelRouterConfig,
     ) {
         this.assembler = new PromptAssembler(storage, genome);
@@ -168,6 +262,7 @@ export class GenomeInstance {
             genome.config.evolutionGuardrails,
         );
         this.modelRouter = new ModelRouter(storage, modelRouterConfig);
+        this.metrics = metrics;
         // FitnessTracker will be used in future for performance tracking
         new FitnessTracker(storage, genome);
     }
@@ -298,49 +393,115 @@ Ready to see what we can do together? 😊`,
     }
 
     /**
-     * Chat with PGA optimization + Intelligence Boost
+     * Chat with PGA optimization + Intelligence Boost + Auto Monitoring
      */
     async chat(userMessage: string, context: SelectionContext): Promise<string> {
-        // Assemble prompt with intelligence boost (memory + proactive suggestions)
-        const prompt = await this.assemblePrompt(context, userMessage);
+        const requestId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const startTime = Date.now();
+        let error: string | undefined;
 
-        const response = await this.llm.chat(
-            [
-                { role: 'system', content: prompt },
-                { role: 'user', content: userMessage },
-            ],
-        );
+        try {
+            // Assemble prompt with intelligence boost (memory + proactive suggestions)
+            const prompt = await this.assemblePrompt(context, userMessage);
 
-        // If userId provided, enable intelligence features
-        if (context.userId) {
-            // Get previous DNA for learning detection
-            const previousDNA = await this.dnaProfile.getDNA(context.userId, this.genome.id);
+            const response = await this.llm.chat(
+                [
+                    { role: 'system', content: prompt },
+                    { role: 'user', content: userMessage },
+                ],
+            );
 
-            // Update DNA and detect learning
-            await this.recordInteraction({
-                userId: context.userId,
-                userMessage,
-                assistantResponse: response.content,
-                toolCalls: [],
-                timestamp: new Date(),
+            // Calculate tokens (rough estimate)
+            const inputTokens = Math.ceil((prompt.length + userMessage.length) / 4);
+            const outputTokens = Math.ceil(response.content.length / 4);
+
+            // Record metrics
+            this.metrics.recordRequest({
+                requestId,
+                duration: Date.now() - startTime,
+                success: true,
+                model: 'pga-genome', // Could be enhanced with actual model info
+                inputTokens,
+                outputTokens,
             });
 
-            // Get updated DNA
-            const updatedDNA = await this.dnaProfile.getDNA(context.userId, this.genome.id);
+            // Log audit
+            this.metrics.logAudit({
+                level: 'info',
+                component: 'genome',
+                operation: 'chat',
+                message: 'Chat completed successfully',
+                userId: context.userId,
+                genomeId: this.genome.id,
+                duration: Date.now() - startTime,
+                metadata: {
+                    inputTokens,
+                    outputTokens,
+                },
+            });
 
-            // Detect learning events
-            const learningEvents = this.learningAnnouncer.detectLearning(previousDNA, updatedDNA);
+            // If userId provided, enable intelligence features
+            if (context.userId) {
+                // Get previous DNA for learning detection
+                const previousDNA = await this.dnaProfile.getDNA(context.userId, this.genome.id);
 
-            // If significant learning happened, announce it
-            if (learningEvents.length > 0 && learningEvents[0].confidence > 0.7) {
-                const announcement = this.learningAnnouncer.formatLearningAnnouncement(learningEvents);
-                if (announcement) {
-                    return response.content + '\n\n' + announcement;
+                // Update DNA and detect learning
+                await this.recordInteraction({
+                    userId: context.userId,
+                    userMessage,
+                    assistantResponse: response.content,
+                    toolCalls: [],
+                    timestamp: new Date(),
+                });
+
+                // Get updated DNA
+                const updatedDNA = await this.dnaProfile.getDNA(context.userId, this.genome.id);
+
+                // Detect learning events
+                const learningEvents = this.learningAnnouncer.detectLearning(previousDNA, updatedDNA);
+
+                // If significant learning happened, announce it
+                if (learningEvents.length > 0 && learningEvents[0].confidence > 0.7) {
+                    const announcement = this.learningAnnouncer.formatLearningAnnouncement(learningEvents);
+                    if (announcement) {
+                        return response.content + '\n\n' + announcement;
+                    }
                 }
             }
-        }
 
-        return response.content;
+            return response.content;
+        } catch (err) {
+            error = err instanceof Error ? err.message : String(err);
+
+            // Record failed request
+            this.metrics.recordRequest({
+                requestId,
+                duration: Date.now() - startTime,
+                success: false,
+                model: 'pga-genome',
+                inputTokens: 0,
+                outputTokens: 0,
+                error,
+            });
+
+            // Log error
+            this.metrics.logAudit({
+                level: 'error',
+                component: 'genome',
+                operation: 'chat',
+                message: `Chat failed: ${error}`,
+                userId: context.userId,
+                genomeId: this.genome.id,
+                duration: Date.now() - startTime,
+                error: {
+                    name: err instanceof Error ? err.name : 'Error',
+                    message: error,
+                    stack: err instanceof Error ? err.stack : undefined,
+                },
+            });
+
+            throw err;
+        }
     }
 
     /**
@@ -424,7 +585,7 @@ Ready to see what we can do together? 😊`,
     }
 
     /**
-     * Trigger advanced mutation cycle with operators
+     * Trigger advanced mutation cycle with operators + Auto Monitoring
      *
      * Living OS v1.0 Must-Have: Multi-gate promotion with economic validation
      */
@@ -446,6 +607,7 @@ Ready to see what we can do together? 😊`,
             stability: { passed: boolean; score: number };
         };
     }> {
+        const startTime = Date.now();
         const opts = {
             operators: options?.operators || ['compress_instructions', 'reorder_constraints'],
             candidates: options?.candidates || 3,
@@ -454,6 +616,8 @@ Ready to see what we can do together? 😊`,
             layer: options?.layer ?? 2, // Default to Layer 2 (fast mutation)
             gene: options?.gene || 'system_instructions',
         };
+
+        try {
 
         // ═══════════════════════════════════════════════════════
         // MUTATION PIPELINE WITH MULTI-GATE VALIDATION
@@ -493,11 +657,8 @@ Ready to see what we can do together? 😊`,
             this.genome.id,
         );
 
-        // Step 4: Make promotion decision
-        if (gateResult.finalDecision === 'promote') {
-            // Full promotion: Deploy to production
-            // TODO: Actually apply the mutation to genome
-            return {
+            // Step 4: Make promotion decision
+            const result = gateResult.finalDecision === 'promote' ? {
                 applied: true,
                 reason: gateResult.reason,
                 improvement: mutationCandidate.fitness - currentAllele.fitness,
@@ -507,11 +668,7 @@ Ready to see what we can do together? 😊`,
                     economic: gateResult.gates.economic,
                     stability: gateResult.gates.stability,
                 },
-            };
-        } else if (gateResult.finalDecision === 'canary') {
-            // Canary deployment: 5% traffic
-            // TODO: Implement canary deployment system
-            return {
+            } : gateResult.finalDecision === 'canary' ? {
                 applied: false,
                 reason: `${gateResult.reason} - Canary deployment not yet implemented`,
                 gateResults: {
@@ -520,10 +677,7 @@ Ready to see what we can do together? 😊`,
                     economic: gateResult.gates.economic,
                     stability: gateResult.gates.stability,
                 },
-            };
-        } else {
-            // Reject: Did not pass gates
-            return {
+            } : {
                 applied: false,
                 reason: gateResult.reason,
                 gateResults: {
@@ -533,6 +687,46 @@ Ready to see what we can do together? 😊`,
                     stability: gateResult.gates.stability,
                 },
             };
+
+            // Log mutation attempt
+            this.metrics.logAudit({
+                level: result.applied ? 'info' : 'warning',
+                component: 'genome',
+                operation: 'mutate',
+                message: result.applied ? 'Mutation applied successfully' : `Mutation rejected: ${result.reason}`,
+                genomeId: this.genome.id,
+                duration: Date.now() - startTime,
+                metadata: {
+                    layer: opts.layer,
+                    gene: opts.gene,
+                    operators: opts.operators,
+                    decision: gateResult.finalDecision,
+                    improvement: result.improvement,
+                    gatesPassed: Object.values(gateResult.gates).filter(g => g.passed).length,
+                    totalGates: Object.keys(gateResult.gates).length,
+                },
+            });
+
+            return result;
+        } catch (err) {
+            const error = err instanceof Error ? err.message : String(err);
+
+            // Log mutation error
+            this.metrics.logAudit({
+                level: 'error',
+                component: 'genome',
+                operation: 'mutate',
+                message: `Mutation failed: ${error}`,
+                genomeId: this.genome.id,
+                duration: Date.now() - startTime,
+                error: {
+                    name: err instanceof Error ? err.name : 'Error',
+                    message: error,
+                    stack: err instanceof Error ? err.stack : undefined,
+                },
+            });
+
+            throw err;
         }
     }
 

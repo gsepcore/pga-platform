@@ -97,6 +97,11 @@ export type {
     MetricsCollectorConfig,
 } from './monitoring/MetricsCollector.js';
 
+export { MonitoringDashboard } from './monitoring/MonitoringDashboard.js';
+export type {
+    DashboardConfig,
+} from './monitoring/MonitoringDashboard.js';
+
 // ─── Enterprise ─────────────────────────────────────────
 
 export { RateLimiter } from './enterprise/RateLimiter.js';
