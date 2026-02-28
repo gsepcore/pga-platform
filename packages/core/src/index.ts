@@ -219,6 +219,14 @@ export type {
     PromotionCheck,
 } from './evolution/PromotionGate.js';
 
+export { CanaryDeploymentManager } from './evolution/CanaryDeployment.js';
+export type {
+    CanaryConfig,
+    CanaryDeployment,
+    DeploymentMetrics,
+    CanaryDecision,
+} from './evolution/CanaryDeployment.js';
+
 // ─── Interfaces ─────────────────────────────────────────
 
 export type { LLMAdapter, Message, ChatOptions, ChatResponse, ChatChunk } from './interfaces/LLMAdapter.js';
