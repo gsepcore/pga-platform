@@ -22,7 +22,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.32.1",
+    "@anthropic-ai/sdk": "^0.78.0",
     "@pga/core": "*"
   },
   "devDependencies": {
