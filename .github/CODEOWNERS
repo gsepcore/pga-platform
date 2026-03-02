@@ -1,27 +1,28 @@
-# PGA Platform Code Owners
-# 
-# Default owner for everything in the repo
-* @LuisvelMarketer
+# CODEOWNERS for PGA Platform
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-# Core packages
-/packages/core/ @LuisvelMarketer
-/packages/core/src/types/ @LuisvelMarketer
-/packages/core/src/evaluation/ @LuisvelMarketer
-/packages/core/src/evolution/ @LuisvelMarketer
+# Default owner for everything
+* @luisvelasquez
 
-# Adapters
-/packages/adapters-llm-anthropic/ @LuisvelMarketer
-/packages/adapters-llm-openai/ @LuisvelMarketer
-/packages/adapters-storage-postgres/ @LuisvelMarketer
+# Core package - requires review
+/packages/core/ @luisvelasquez
 
-# Infrastructure and CI/CD
-/.github/ @LuisvelMarketer
-/.github/workflows/ @LuisvelMarketer
-/SECURITY.md @LuisvelMarketer
-/turbo.json @LuisvelMarketer
+# Gene Bank system - critical component
+/packages/core/src/gene-bank/ @luisvelasquez
+
+# Infrastructure & CI/CD
+/.github/ @luisvelasquez
+/.github/workflows/ @luisvelasquez
 
 # Documentation
-/README.md @LuisvelMarketer
-/CONTRIBUTING.md @LuisvelMarketer
-/CHANGELOG.md @LuisvelMarketer
-/docs/ @LuisvelMarketer
+/docs/ @luisvelasquez
+*.md @luisvelasquez
+
+# Configuration files
+package.json @luisvelasquez
+tsconfig.json @luisvelasquez
+.gitignore @luisvelasquez
+
+# Security-sensitive files
+/SECURITY.md @luisvelasquez
+/.github/dependabot.yml @luisvelasquez
