@@ -1,22 +1,19 @@
 name: Feature Request
 description: Suggest a new feature or improvement
 title: "[Feature]: "
-labels: ["type/feature", "needs-triage"]
-assignees:
-  - LuisvelMarketer
-
+labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for suggesting a feature! Please fill out the form below.
+        Thanks for suggesting a feature! Please provide details below.
 
   - type: textarea
     id: problem
     attributes:
       label: Problem Statement
       description: What problem does this feature solve?
-      placeholder: I'm frustrated when... / It would be helpful if...
+      placeholder: I'm frustrated when...
     validations:
       required: true
 
@@ -25,7 +22,7 @@ body:
     attributes:
       label: Proposed Solution
       description: Describe your ideal solution
-      placeholder: I would like to be able to...
+      placeholder: I would like to see...
     validations:
       required: true
 
@@ -33,107 +30,44 @@ body:
     id: alternatives
     attributes:
       label: Alternatives Considered
-      description: Have you considered any alternative solutions or workarounds?
-      placeholder: I tried X but it doesn't work because...
+      description: What alternatives have you considered?
+      placeholder: I considered...
 
-  - type: dropdown
-    id: category
+  - type: textarea
+    id: examples
     attributes:
-      label: Feature Category
-      description: Which area does this feature relate to?
-      options:
-        - Core Evolution System
-        - LLM Adapters
-        - Storage Adapters
-        - Evaluation & Benchmarking
-        - Monitoring & Observability
-        - Enterprise Features
-        - Developer Experience
-        - Documentation
-        - Other
-    validations:
-      required: true
+      label: Code Examples
+      description: Show us what the API might look like
+      render: typescript
+      placeholder: |
+        const pga = new PGA({
+          // your proposed API
+        });
 
   - type: dropdown
     id: priority
     attributes:
       label: Priority
-      description: How important is this feature to you?
+      description: How important is this to you?
       options:
-        - Critical (blocking my use case)
-        - High (significantly improves my workflow)
+        - Critical (blocking my work)
+        - High (significant impact)
         - Medium (nice to have)
         - Low (minor improvement)
     validations:
       required: true
 
-  - type: textarea
-    id: use-case
+  - type: checkboxes
+    id: contribution
     attributes:
-      label: Use Case
-      description: Describe your specific use case for this feature
-      placeholder: |
-        I'm building a customer support bot and need...
-        This would help me...
-    validations:
-      required: true
-
-  - type: textarea
-    id: example
-    attributes:
-      label: Example Usage
-      description: Show how you'd like to use this feature (pseudocode is fine)
-      placeholder: |
-        ```typescript
-        const genome = await pga.createGenome({...});
-        await genome.newFeature({...});
-        ```
-      render: typescript
-
-  - type: textarea
-    id: benefits
-    attributes:
-      label: Expected Benefits
-      description: What benefits would this feature provide?
-      placeholder: |
-        - Reduces latency by 50%
-        - Simplifies configuration
-        - Enables new use cases like...
-
-  - type: dropdown
-    id: breaking
-    attributes:
-      label: Breaking Change?
-      description: Would this require breaking changes to the API?
+      label: Contribution
+      description: Would you be willing to contribute this feature?
       options:
-        - "No"
-        - "Yes"
-        - "Unsure"
-    validations:
-      required: true
+        - label: I'm willing to submit a PR
+          required: false
 
   - type: textarea
-    id: implementation
-    attributes:
-      label: Implementation Ideas
-      description: (Optional) Any ideas on how this could be implemented?
-      placeholder: This could be implemented by...
-
-  - type: textarea
-    id: context
+    id: additional
     attributes:
       label: Additional Context
-      description: Any other context, links, or references
-      placeholder: Similar to feature X in library Y...
-
-  - type: checkboxes
-    id: checks
-    attributes:
-      label: Pre-submission Checklist
-      options:
-        - label: I have searched existing issues to ensure this is not a duplicate
-          required: true
-        - label: This feature aligns with the project's goals (genomic prompt evolution)
-          required: true
-        - label: I am willing to help implement this feature
-          required: false
+      description: Any other information or screenshots

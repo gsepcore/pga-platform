@@ -1,11 +1,11 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
-  - name: 🔒 Security Vulnerability
-    url: https://github.com/LuisvelMarketer/pga-platform/security/advisories/new
-    about: Report security vulnerabilities privately through GitHub Security Advisories (see SECURITY.md)
   - name: 💬 Discussions
-    url: https://github.com/LuisvelMarketer/pga-platform/discussions
-    about: Ask questions, share ideas, and discuss with the community
+    url: https://github.com/pga-ai/pga-platform/discussions
+    about: Ask questions and discuss ideas with the community
   - name: 📚 Documentation
-    url: https://github.com/LuisvelMarketer/pga-platform#readme
-    about: Read the documentation and examples
+    url: https://pga.ai/docs
+    about: Read the documentation
+  - name: 🔒 Security Issue
+    url: https://github.com/pga-ai/pga-platform/security/advisories/new
+    about: Report a security vulnerability privately

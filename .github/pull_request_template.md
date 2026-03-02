@@ -1,47 +1,60 @@
-## Summary
+## Description
+<!-- Provide a clear description of your changes -->
 
-<!-- Describe clearly what this PR changes and why -->
-
-## Type of change
-
-- [ ] Bug fix (non-breaking change which fixes an issue)
-- [ ] New feature (non-breaking change which adds functionality)
-- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
-- [ ] Documentation update
-- [ ] Refactoring (no functional changes)
-- [ ] Performance improvement
-- [ ] Chore (dependencies, tooling, CI/CD)
+## Type of Change
+<!-- Check all that apply -->
+- [ ] 🐛 Bug fix (non-breaking change fixing an issue)
+- [ ] ✨ New feature (non-breaking change adding functionality)
+- [ ] 💥 Breaking change (fix or feature causing existing functionality to break)
+- [ ] 📝 Documentation update
+- [ ] 🎨 Code style/refactoring (no functional changes)
+- [ ] ⚡ Performance improvement
+- [ ] ✅ Test addition/update
+- [ ] 🔧 Configuration change
 
 ## Related Issues
+<!-- Link related issues: Fixes #123, Relates to #456 -->
+Fixes #
 
-<!-- Link to related issues: Fixes #123, Closes #456 -->
+## Changes Made
+<!-- List the specific changes -->
+- 
+- 
+- 
 
 ## Testing
+<!-- Describe how you tested your changes -->
+- [ ] Tests pass locally (`npm test`)
+- [ ] TypeScript compiles (`npm run typecheck`)
+- [ ] Linter passes (`npm run lint`)
+- [ ] Build succeeds (`npm run build`)
+- [ ] Added new tests for new functionality
+- [ ] Updated existing tests
+- [ ] Manually tested in:
+  - [ ] Development environment
+  - [ ] Staging environment
+  - [ ] Production-like environment
 
-<!-- Describe the tests you ran and their results -->
-
-- [ ] All existing tests pass
-- [ ] New tests added for new functionality
-- [ ] Manual testing completed
+## Screenshots/Examples
+<!-- If applicable, add screenshots or code examples -->
 
 ## Checklist
-
-- [ ] Code follows the project's style guidelines
-- [ ] Self-review completed
-- [ ] Comments added for complex logic
-- [ ] Documentation updated (if applicable)
-- [ ] No new warnings introduced
-- [ ] Tests added/updated and passing
-- [ ] Ready for review
+<!-- Check all that apply -->
+- [ ] My code follows the project's style guidelines
+- [ ] I have performed a self-review of my code
+- [ ] I have commented my code, particularly in hard-to-understand areas
+- [ ] I have made corresponding changes to the documentation
+- [ ] My changes generate no new warnings
+- [ ] I have added tests that prove my fix is effective or that my feature works
+- [ ] New and existing unit tests pass locally with my changes
+- [ ] Any dependent changes have been merged and published
 
 ## Breaking Changes
-
-<!-- If applicable, describe what breaks and migration path -->
-
-## Screenshots
-
-<!-- If applicable, add screenshots to demonstrate changes -->
+<!-- If this is a breaking change, describe the migration path -->
 
 ## Additional Notes
+<!-- Any other information that reviewers should know -->
 
-<!-- Any additional context, concerns, or questions -->
+---
+
+**By submitting this pull request, I confirm that my contribution is made under the terms of the MIT license.**

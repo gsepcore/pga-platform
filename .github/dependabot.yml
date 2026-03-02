@@ -1,42 +1,51 @@
+# Dependabot configuration for automated dependency updates
+# https://docs.github.com/en/code-security/dependabot
+
 version: 2
 updates:
-  # Enable npm dependency updates
-  - package-ecosystem: npm
-    directory: "/"
+  # npm dependencies for core package
+  - package-ecosystem: "npm"
+    directory: "/packages/core"
     schedule:
-      interval: weekly
-      day: monday
+      interval: "weekly"
+      day: "monday"
       time: "09:00"
-      timezone: "Europe/Berlin"
+      timezone: "America/Los_Angeles"
     open-pull-requests-limit: 5
     reviewers:
-      - LuisvelMarketer
+      - "luisvelasquez"
     labels:
-      - dependencies
-      - automated
+      - "dependencies"
+      - "automated"
     commit-message:
       prefix: "chore(deps)"
       include: "scope"
-    # Group minor and patch updates
+    versioning-strategy: increase
+    # Group minor and patch updates together
     groups:
+      production-dependencies:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
       development-dependencies:
         patterns:
-          - "@types/*"
-          - "eslint*"
-          - "prettier"
-          - "vitest"
-          - "typescript"
-        update-types:
-          - minor
-          - patch
-      
-  # Enable GitHub Actions updates
-  - package-ecosystem: github-actions
+          - "*"
+        dependency-type: "development"
+
+  # GitHub Actions workflow dependencies
+  - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: monthly
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "luisvelasquez"
     labels:
-      - dependencies
-      - github-actions
+      - "dependencies"
+      - "ci"
+      - "automated"
     commit-message:
       prefix: "chore(ci)"

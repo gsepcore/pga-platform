@@ -1,22 +1,19 @@
 name: Bug Report
-description: Report a reproducible bug or unexpected behavior
+description: Report a bug or unexpected behavior
 title: "[Bug]: "
-labels: ["type/bug", "needs-triage"]
-assignees:
-  - LuisvelMarketer
-
+labels: ["bug", "needs-triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug! Please fill out the form below.
+        Thanks for reporting a bug! Please fill out the information below to help us investigate.
 
   - type: textarea
     id: description
     attributes:
-      label: Bug Description
-      description: A clear and concise description of what the bug is
-      placeholder: When I do X, Y happens instead of Z
+      label: Description
+      description: A clear description of the bug
+      placeholder: Describe what happened and what you expected to happen
     validations:
       required: true
 
@@ -26,13 +23,9 @@ body:
       label: Steps to Reproduce
       description: Detailed steps to reproduce the behavior
       placeholder: |
-        1. Initialize PGA with '...'
-        2. Call method '...'
-        3. See error
-      value: |
-        1.
-        2.
-        3.
+        1. Initialize PGA with...
+        2. Call method...
+        3. Observe error...
     validations:
       required: true
 
@@ -41,7 +34,6 @@ body:
     attributes:
       label: Expected Behavior
       description: What did you expect to happen?
-      placeholder: I expected the genome to evolve successfully
     validations:
       required: true
 
@@ -49,100 +41,48 @@ body:
     id: actual
     attributes:
       label: Actual Behavior
-      description: What actually happened? Include error messages if applicable
-      placeholder: |
-        Error: Mutation failed with...
-        Stack trace:
-        ...
+      description: What actually happened?
     validations:
       required: true
 
   - type: textarea
-    id: code
+    id: logs
     attributes:
-      label: Code Sample
-      description: Minimal code sample that reproduces the issue
-      placeholder: |
-        ```typescript
-        const pga = new PGA({...});
-        await pga.createGenome({...});
-        ```
-      render: typescript
+      label: Error Logs
+      description: Paste any relevant error messages or logs
+      render: shell
 
-  - type: dropdown
+  - type: input
     id: version
     attributes:
       label: PGA Version
       description: Which version are you using?
-      options:
-        - 0.2.0 (latest)
-        - 0.1.x
-        - main branch
-        - Other (specify in additional context)
+      placeholder: "0.4.0"
     validations:
       required: true
 
   - type: dropdown
-    id: adapter
+    id: environment
     attributes:
-      label: LLM Adapter
-      description: Which LLM adapter are you using?
+      label: Environment
+      description: Where is this happening?
       options:
-        - Claude (Anthropic)
-        - OpenAI (GPT)
-        - Other (specify in additional context)
-
-  - type: dropdown
-    id: storage
-    attributes:
-      label: Storage Adapter
-      description: Which storage adapter are you using?
-      options:
-        - PostgreSQL
-        - MongoDB
-        - Redis
-        - In-Memory
-        - Other (specify in additional context)
+        - Node.js
+        - Browser
+        - Edge Runtime (Vercel, Cloudflare)
+        - Other
+    validations:
+      required: true
 
   - type: input
     id: node-version
     attributes:
       label: Node.js Version
-      description: Output of `node --version`
-      placeholder: v20.11.0
-    validations:
-      required: true
-
-  - type: input
-    id: os
-    attributes:
-      label: Operating System
-      description: Which OS are you using?
-      placeholder: macOS 14.2, Ubuntu 22.04, Windows 11
+      description: If applicable, what Node.js version?
+      placeholder: "20.x"
 
   - type: textarea
-    id: logs
-    attributes:
-      label: Relevant Logs
-      description: Any relevant logs, stack traces, or error messages
-      placeholder: Paste logs here
-      render: shell
-
-  - type: textarea
-    id: context
+    id: additional
     attributes:
       label: Additional Context
-      description: Any other context, screenshots, or information about the problem
-      placeholder: This started happening after upgrading from...
-
-  - type: checkboxes
-    id: checks
-    attributes:
-      label: Pre-submission Checklist
-      options:
-        - label: I have searched existing issues to ensure this is not a duplicate
-          required: true
-        - label: I have provided a minimal reproducible code sample
-          required: false
-        - label: I have included relevant logs and error messages
-          required: false
+      description: Any other information that might be helpful

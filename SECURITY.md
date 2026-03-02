@@ -2,211 +2,105 @@
 
 ## Supported Versions
 
-We actively maintain and provide security updates for the following versions:
+We actively support and provide security updates for the following versions:
 
-| Version | Supported          | Status |
-| ------- | ------------------ | ------ |
-| 0.2.x   | :white_check_mark: | Active development |
-| 0.1.x   | :x:                | Deprecated |
-| < 0.1   | :x:                | Not supported |
+| Version | Supported          |
+| ------- | ------------------ |
+| 0.4.x   | :white_check_mark: |
+| 0.3.x   | :x:                |
+| < 0.3   | :x:                |
 
 ## Reporting a Vulnerability
 
-**⚠️ DO NOT open a public issue for security vulnerabilities.**
+**Please do not report security vulnerabilities through public GitHub issues.**
 
-We take security seriously. If you discover a security vulnerability, please report it responsibly:
+Instead, please report them to our security team:
 
-### Preferred Method: GitHub Security Advisories
-1. Go to https://github.com/LuisvelMarketer/pga-platform/security/advisories/new
-2. Click "Report a vulnerability"
-3. Fill out the form with details
-4. Submit
+### Email
+Send an email to: **security@pga.ai**
 
-### Alternative: Email
-Send details to: **security@pga-platform.dev** (or your contact email)
+### What to Include
+Please include as much information as possible:
 
-### What to Include in Your Report
+- Type of vulnerability
+- Full description of the vulnerability
+- Steps to reproduce
+- Potential impact
+- Suggested fix (if you have one)
+- Your contact information
 
-1. **Description**: Clear explanation of the vulnerability
-2. **Steps to Reproduce**: Detailed reproduction steps
-3. **Impact**: Potential consequences if exploited
-4. **Affected Versions**: Which versions are vulnerable
-5. **Suggested Fix**: If you have one (optional but appreciated)
-6. **CVE**: If already assigned (optional)
+### Response Timeline
 
-### Example Report Structure
+- **Initial Response:** Within 48 hours
+- **Status Update:** Within 7 days
+- **Fix Timeline:** Depends on severity
+  - **Critical:** 1-7 days
+  - **High:** 7-30 days
+  - **Medium:** 30-90 days
+  - **Low:** Best effort
 
-```markdown
-## Vulnerability: [Title]
+## Security Update Process
 
-**Severity**: Critical/High/Medium/Low
-**Affected Versions**: 0.2.0 - 0.2.3
-**Component**: @pga/core
+1. **Triage:** We evaluate the report and determine severity
+2. **Fix:** We develop and test a fix in a private repository
+3. **Disclosure:** We coordinate disclosure with the reporter
+4. **Release:** We publish a security advisory and release a patch
+5. **Notification:** We notify affected users via GitHub Security Advisories
 
-### Description
-[Clear description of the vulnerability]
+## Security Best Practices
 
-### Steps to Reproduce
-1. Step 1
-2. Step 2
-3. Step 3
+When using PGA Platform:
 
-### Impact
-[What can an attacker do? What data is at risk?]
+### For Developers
+- Always use the latest stable version
+- Enable Dependabot alerts
+- Review dependency updates regularly
+- Never commit secrets or API keys
+- Use environment variables for sensitive data
+- Enable branch protection rules
+- Require code reviews before merging
 
-### Suggested Fix
-[If you have a recommendation]
-```
+### For Production
+- Use secure credential management (e.g., AWS Secrets Manager, HashiCorp Vault)
+- Enable audit logging
+- Implement rate limiting
+- Use TLS/SSL for all connections
+- Keep dependencies up to date
+- Monitor security advisories
 
-## Response Timeline
+## Known Security Considerations
 
-We are committed to responding promptly:
+### LLM API Keys
+- **Risk:** Exposed API keys can lead to unauthorized usage
+- **Mitigation:** Use environment variables, never commit keys to repositories
+- **Best Practice:** Rotate keys regularly, use key management services
 
-| Stage | Timeline |
-|-------|----------|
-| **Initial Response** | 48 hours |
-| **Vulnerability Confirmation** | 7 days |
-| **Status Update** | Weekly |
-| **Fix Development** | Depends on severity |
-| **Patch Release** | ASAP for critical, 30 days for others |
+### Prompt Injection
+- **Risk:** Malicious input in prompts could affect agent behavior
+- **Mitigation:** Validate and sanitize all user inputs
+- **Best Practice:** Implement input filtering and output validation
 
-### Severity Classifications
+### Data Privacy
+- **Risk:** Sensitive data in prompts sent to external LLM APIs
+- **Mitigation:** Sanitize data before sending to LLMs
+- **Best Practice:** Use on-premises models for sensitive data
 
-- **Critical**: Immediate fix, release within 24-48 hours
-- **High**: Fix within 1 week
-- **Medium**: Fix within 30 days
-- **Low**: Fix in next regular release
+## Security Tools
 
-## Security Best Practices for Users
+We use the following tools to maintain security:
 
-When using PGA Platform, follow these guidelines:
-
-### 1. API Keys and Secrets
-```typescript
-// ❌ DON'T: Hardcode secrets
-const pga = new PGA({
-  llm: new ClaudeAdapter({ apiKey: 'sk-ant-...' })
-});
-
-// ✅ DO: Use environment variables
-const pga = new PGA({
-  llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY })
-});
-```
-
-### 2. Input Validation
-```typescript
-// ✅ Always validate user input before processing
-function createGenome(userInput: unknown) {
-  if (typeof userInput !== 'string' || userInput.length > 1000) {
-    throw new Error('Invalid input');
-  }
-  // Process safely
-}
-```
-
-### 3. Database Security
-```typescript
-// ✅ Use parameterized queries (our adapters do this by default)
-// ✅ Enable SSL/TLS for database connections
-// ✅ Use least-privilege database users
-const storage = new PostgresAdapter({
-  connectionString: process.env.DATABASE_URL,
-  ssl: true,
-});
-```
-
-### 4. Dependency Management
-- ✅ Keep dependencies updated (Dependabot enabled)
-- ✅ Review security advisories weekly
-- ✅ Use `npm audit` before production deployments
-- ✅ Pin critical dependencies to specific versions
-
-### 5. Evolution Guardrails
-```typescript
-// ✅ Use strict guardrails in production
-const genome = await pga.createGenome({
-  name: 'prod-agent',
-  config: {
-    evolutionGuardrails: {
-      minQualityScore: 0.80,      // High quality bar
-      minSandboxScore: 0.90,       // Strong sandbox validation
-      maxCostPerTask: 0.05,        // Cost control
-      gateMode: 'AND',             // All gates must pass
-    },
-  },
-});
-```
-
-## Automated Security Measures
-
-This repository includes:
-
-- ✅ **Dependabot**: Automatic dependency updates
-- ✅ **npm audit**: Weekly scans for known vulnerabilities
-- ✅ **Trivy**: Container and filesystem security scanning
-- ✅ **CodeQL**: Static analysis (planned)
-- ✅ **Secret Scanning**: GitHub secret detection (enabled)
-
-## Disclosure Policy
-
-We follow **coordinated disclosure**:
-
-1. **Reporter** notifies us privately
-2. **We confirm** the vulnerability
-3. **We develop and test** a fix
-4. **We release** the patched version
-5. **Public disclosure** (after users have time to update)
-6. **CVE assignment** (if applicable)
-
-### Disclosure Timeline
-- **Critical**: 7 days after patch release
-- **High**: 30 days after patch release
-- **Medium/Low**: 90 days after patch release
-
-## Security Features in PGA
-
-### Evolution Guardrails
-- Multi-gate validation (Quality, Sandbox, Economic, Stability)
-- Prevents malicious mutations from being deployed
-- Economic gates prevent cost-based attacks
-
-### Sandbox Validation
-- All mutations tested in sandbox before production
-- Semantic validation via LLM judge
-- Safety constraints cannot be weakened
-
-### Canary Deployment
-- Gradual rollout (5% → 100%)
-- Automatic rollback on degradation
-- Limits blast radius of bad mutations
-
-### Audit Trail
-- All mutations logged with lineage tracking
-- Rollback capability with full history
-- Transparent decision-making
+- **Dependabot:** Automated dependency updates
+- **npm audit:** Vulnerability scanning
+- **CodeQL:** Static code analysis (planned)
+- **OSSF Scorecard:** Security health metrics (planned)
 
 ## Hall of Fame
 
-We recognize security researchers who help us:
+We recognize and thank security researchers who responsibly disclose vulnerabilities:
 
-<!-- Security researchers will be listed here -->
-
-*No security issues reported yet*
-
-## Contact
-
-- **Security Email**: security@pga-platform.dev
-- **GitHub Security**: https://github.com/LuisvelMarketer/pga-platform/security
-- **General Contact**: Luis Alfredo Velasquez Duran
-
-## Additional Resources
-
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [npm Security Best Practices](https://docs.npmjs.com/security-best-practices)
-- [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
+<!-- List will be updated as reports are received -->
 
 ---
 
-**Last Updated**: 2026-02-27  
-**Version**: 1.0
+**Last Updated:** 2026-03-02  
+**Version:** 1.0
