@@ -164,6 +164,7 @@ Created with [PGA Platform](https://pga.ai) — Genomic Self-Evolving Prompts
 - **LLM Provider**: ${config.llmProvider}
 - **Storage**: ${config.storage}
 - **Evolution Boost**: ${config.evolutionBoost ? 'Enabled (10x faster!)' : 'Disabled'}
+- **Living Agent**: ${config.livingAgent ? 'Enabled (10 cognitive layers)' : 'Disabled'}
 - **Template**: ${config.template}
 
 ## 📚 Documentation
@@ -222,12 +223,28 @@ function generateIndexFile(config: ProjectConfig): string {
     imports += `\nimport { setupAgent } from './agent.js';\n\n`;
 
     const llmSetup = config.llmProvider === 'anthropic'
-        ? `const llm = new ClaudeAdapter({\n  apiKey: process.env.ANTHROPIC_API_KEY!,\n  model: 'claude-sonnet-4-20250514',\n});\n`
-        : `const llm = new OpenAIAdapter({\n  apiKey: process.env.OPENAI_API_KEY!,\n  model: 'gpt-4-turbo-preview',\n});\n`;
+        ? `const llm = new ClaudeAdapter({\n    apiKey: process.env.ANTHROPIC_API_KEY!,\n    model: 'claude-sonnet-4-5-20250929',\n  });\n`
+        : `const llm = new OpenAIAdapter({\n    apiKey: process.env.OPENAI_API_KEY!,\n    model: 'gpt-4-turbo-preview',\n  });\n`;
 
     const storageSetup = config.storage === 'postgres'
-        ? `const storage = new PostgresAdapter({\n  connectionString: process.env.DATABASE_URL!,\n});\n`
+        ? `const storage = new PostgresAdapter({\n    connectionString: process.env.DATABASE_URL!,\n  });\n`
         : `const storage = new InMemoryStorage();\n`;
+
+    // Living Agent demo lines
+    const livingAgentDemo = config.livingAgent
+        ? `
+  // --- Living Agent capabilities demo ---
+  const emotion = genome.inferEmotion(message);
+  if (emotion) {
+    console.log(\`  Emotion detected: \${emotion.primary} (intensity: \${emotion.intensity.toFixed(2)})\\n\`);
+  }
+
+  const narrative = genome.getNarrativeSummary();
+  if (narrative) {
+    console.log(\`  Relationship: \${narrative.relationshipStage} (\${narrative.interactionCount} interactions)\\n\`);
+  }
+`
+        : '';
 
     return `${imports}async function main() {
   console.log('🧬 Starting PGA Agent...\\n');
@@ -240,9 +257,6 @@ function generateIndexFile(config: ProjectConfig): string {
   const pga = new PGA({
     llm,
     storage,
-    config: {
-      evolutionMode: process.env.EVOLUTION_MODE || 'balanced',
-    },
   });
 
   await pga.initialize();
@@ -256,11 +270,11 @@ function generateIndexFile(config: ProjectConfig): string {
   const message = 'Hello! What can you do?';
 
   console.log(\`User: \${message}\\n\`);
-  const response = await genome.chat(message, { userId });
-  console.log(\`Agent: \${response.content}\\n\`);
-
+  const response = await genome.chat(message, { userId, taskType: 'general' });
+  console.log(\`Agent: \${response}\\n\`);
+${livingAgentDemo}
   console.log('✨ Your PGA-powered agent is working!');
-  console.log('Next: Customize the genome in agent.ts\\n');
+  console.log('Next: Customize the genome in src/agent.ts\\n');
 }
 
 main().catch(console.error);
@@ -295,44 +309,48 @@ function generateAgentFile(config: ProjectConfig): string {
             capabilities = 'You can help with various tasks and adapt to user needs.';
     }
 
-    return `import type { PGA, Genome } from '@pga-ai/core';
+    // Build autonomous config block
+    const autonomousConfig = config.livingAgent
+        ? `
+      autonomous: {
+        // --- Evolution (v0.5.0) ---
+        continuousEvolution: true,   // Auto-evolve every N interactions
+        evolveEveryN: 10,            // Evolve every 10 interactions
+        autoMutateOnDrift: true,     // Auto-fix when performance drifts
+        autoCompressOnPressure: true, // Auto-compress when tokens overflow
+        enableSelfModel: true,       // Agent knows its strengths/weaknesses
+        enablePatternMemory: true,   // Tracks behavioral patterns
+        maxPatterns: 50,
+
+        // --- Living Agent (v0.6.0) ---
+        enableMetacognition: true,       // Pre/post response confidence analysis
+        enableEmotionalModel: true,      // Detects user emotions, adapts tone
+        enableCalibratedAutonomy: true,  // Learns when to act vs ask permission
+        enablePersonalNarrative: true,   // Tracks relationship history
+        enableAnalyticMemory: true,      // Knowledge graph with inference
+      },`
+        : `
+      autonomous: {
+        continuousEvolution: true,
+        evolveEveryN: 10,
+        autoMutateOnDrift: true,
+      },`;
+
+    return `import type { PGA, GenomeInstance } from '@pga-ai/core';
 
 /**
  * Setup the agent genome with initial configuration
  */
-export async function setupAgent(pga: PGA): Promise<Genome> {
+export async function setupAgent(pga: PGA): Promise<GenomeInstance> {
   console.log('🧬 Creating agent genome...\\n');
 
-  // Create a new genome for this agent
   const genome = await pga.createGenome({
     name: 'my-agent',
-    description: 'A PGA-powered agent with self-evolution capabilities',
+    config: {${autonomousConfig}
+    },
   });
 
-  // Layer 0 (C0): Core immutable identity
-  await genome.addAllele({
-    layer: 0,
-    gene: 'core-identity',
-    variant: 'default',
-    content: \`${coreIdentity}\`,
-  });
-
-  // Layer 1 (C1): Operative instructions
-  await genome.addAllele({
-    layer: 1,
-    gene: 'capabilities',
-    variant: 'default',
-    content: \`${capabilities}\`,
-  });
-
-  await genome.addAllele({
-    layer: 1,
-    gene: 'response-style',
-    variant: 'default',
-    content: 'Be clear, concise, and helpful in your responses.',
-  });
-
-  console.log('✅ Genome configured with initial alleles\\n');
+  console.log('✅ Genome created with ${config.livingAgent ? '10 cognitive layers' : 'evolution enabled'}\\n');
 
   return genome;
 }

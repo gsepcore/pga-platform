@@ -56,6 +56,7 @@ program
     .option('--llm <provider>', 'LLM provider (anthropic|openai|both)')
     .option('--storage <type>', 'Storage type (postgres|memory)')
     .option('--boost', 'Enable Evolution Boost 2.0')
+    .option('--living-agent', 'Enable Living Agent v0.6.0 (10 cognitive layers)')
     .option('--skip-install', 'Skip dependency installation')
     .action(async (projectName, options) => {
         try {
@@ -120,6 +121,7 @@ function displaySuccessMessage(projectName: string, config: any) {
             chalk.gray(`  • LLM: ${config.llmProvider}\n`) +
             chalk.gray(`  • Storage: ${config.storage}\n`) +
             chalk.gray(`  • Evolution Boost: ${config.evolutionBoost ? 'Yes (10x faster!)' : 'No'}\n`) +
+            chalk.gray(`  • Living Agent: ${config.livingAgent ? 'Yes (10 cognitive layers!)' : 'No'}\n`) +
             chalk.gray(`  • Template: ${config.template}\n\n`) +
             chalk.white('Documentation: ') + chalk.cyan('https://pga.ai/docs\n') +
             chalk.white('Discord: ') + chalk.cyan('https://discord.gg/pga'),
