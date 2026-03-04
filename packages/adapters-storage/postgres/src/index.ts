@@ -58,6 +58,9 @@ export class PostgresAdapter implements StorageAdapter {
     private pool: Pool;
     private config: Required<PostgresAdapterConfig>;
 
+    /** Number of columns in a single pga_alleles INSERT row */
+    private static readonly ALLELE_COLUMN_COUNT = 15;
+
     constructor(config: PostgresAdapterConfig) {
         this.config = {
             connectionString: config.connectionString,
@@ -123,38 +126,51 @@ export class PostgresAdapter implements StorageAdapter {
             // Delete existing alleles for this genome
             await client.query('DELETE FROM pga_alleles WHERE genome_id = $1', [genome.id]);
 
-            // Insert all alleles
+            // Collect all alleles across layers for a single batch insert
+            const alleleRows: unknown[] = [];
+            const valuePlaceholders: string[] = [];
+            const COLS = PostgresAdapter.ALLELE_COLUMN_COUNT;
+            let rowIndex = 0;
+
             for (const layer of [0, 1, 2] as const) {
                 const layerKey = `layer${layer}` as 'layer0' | 'layer1' | 'layer2';
-                const alleles = genome.layers[layerKey];
-
-                for (const allele of alleles) {
-                    await client.query(
-                        `INSERT INTO pga_alleles (
-                            genome_id, layer, gene, variant, content, fitness,
-                            sample_count, parent_variant, generation, status,
-                            sandbox_tested, sandbox_score, recent_scores,
-                            created_at, updated_at
-                        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)`,
-                        [
-                            genome.id,
-                            layer,
-                            allele.gene,
-                            allele.variant,
-                            allele.content,
-                            allele.fitness,
-                            allele.sampleCount || 0,
-                            allele.parentVariant,
-                            allele.generation || 0,
-                            allele.status,
-                            allele.sandboxTested || false,
-                            allele.sandboxScore,
-                            JSON.stringify(allele.recentScores || []),
-                            allele.createdAt,
-                            new Date(),
-                        ],
+                for (const allele of genome.layers[layerKey]) {
+                    const base = rowIndex * COLS;
+                    valuePlaceholders.push(
+                        `(${Array.from({ length: COLS }, (_, i) => `$${base + i + 1}`).join(', ')})`,
                     );
+                    alleleRows.push(
+                        genome.id,
+                        layer,
+                        allele.gene,
+                        allele.variant,
+                        allele.content,
+                        allele.fitness,
+                        allele.sampleCount || 0,
+                        allele.parentVariant,
+                        allele.generation || 0,
+                        allele.status,
+                        allele.sandboxTested || false,
+                        allele.sandboxScore,
+                        JSON.stringify(allele.recentScores || []),
+                        allele.createdAt,
+                        new Date(),
+                    );
+                    rowIndex++;
                 }
+            }
+
+            // Insert all alleles in a single query
+            if (valuePlaceholders.length > 0) {
+                await client.query(
+                    `INSERT INTO pga_alleles (
+                        genome_id, layer, gene, variant, content, fitness,
+                        sample_count, parent_variant, generation, status,
+                        sandbox_tested, sandbox_score, recent_scores,
+                        created_at, updated_at
+                    ) VALUES ${valuePlaceholders.join(', ')}`,
+                    alleleRows,
+                );
             }
 
             await client.query('COMMIT');
@@ -231,18 +247,53 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async listGenomes(): Promise<Genome[]> {
         const result = await this.pool.query(
-            'SELECT id FROM pga_genomes ORDER BY created_at DESC',
+            `SELECT
+                g.id, g.name, g.config, g.created_at AS genome_created_at, g.updated_at AS genome_updated_at,
+                a.layer, a.gene, a.variant, a.content, a.fitness, a.sample_count, a.parent_variant,
+                a.generation, a.status, a.sandbox_tested, a.sandbox_score, a.recent_scores,
+                a.created_at AS allele_created_at
+             FROM pga_genomes g
+             LEFT JOIN pga_alleles a ON g.id = a.genome_id
+             ORDER BY g.created_at DESC, a.layer, a.gene, a.fitness DESC`,
         );
 
-        const genomes: Genome[] = [];
+        const genomesMap = new Map<string, Genome>();
+
         for (const row of result.rows) {
-            const genome = await this.loadGenome(row.id);
-            if (genome) {
-                genomes.push(genome);
+            if (!genomesMap.has(row.id)) {
+                genomesMap.set(row.id, {
+                    id: row.id,
+                    name: row.name,
+                    config: row.config,
+                    layers: { layer0: [], layer1: [], layer2: [] },
+                    createdAt: row.genome_created_at,
+                    updatedAt: row.genome_updated_at,
+                });
+            }
+
+            if (row.layer !== null) {
+                const genome = genomesMap.get(row.id)!;
+                const allele = {
+                    gene: row.gene,
+                    variant: row.variant,
+                    content: row.content,
+                    fitness: parseFloat(row.fitness),
+                    sampleCount: row.sample_count,
+                    parentVariant: row.parent_variant,
+                    generation: row.generation,
+                    status: row.status as 'active' | 'retired',
+                    sandboxTested: row.sandbox_tested,
+                    sandboxScore: row.sandbox_score ? parseFloat(row.sandbox_score) : undefined,
+                    recentScores: row.recent_scores || [],
+                    createdAt: row.allele_created_at,
+                };
+                if (row.layer === 0) genome.layers.layer0.push(allele);
+                else if (row.layer === 1) genome.layers.layer1.push(allele);
+                else if (row.layer === 2) genome.layers.layer2.push(allele);
             }
         }
 
-        return genomes;
+        return [...genomesMap.values()];
     }
 
     /**

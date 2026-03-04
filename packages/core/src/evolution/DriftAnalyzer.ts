@@ -431,11 +431,11 @@ export class DriftAnalyzer {
     private computeOverallSeverity(signals: DriftSignal[]): DriftSeverity {
         if (signals.length === 0) return 'minor';
 
-        const severities = signals.map((s) => s.severity);
+        const severitySet = new Set(signals.map((s) => s.severity));
 
-        if (severities.includes('critical')) return 'critical';
-        if (severities.includes('severe')) return 'severe';
-        if (severities.includes('moderate')) return 'moderate';
+        if (severitySet.has('critical')) return 'critical';
+        if (severitySet.has('severe')) return 'severe';
+        if (severitySet.has('moderate')) return 'moderate';
         return 'minor';
     }
 

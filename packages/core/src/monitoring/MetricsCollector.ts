@@ -416,8 +416,19 @@ export class MetricsCollector {
      * Get performance metrics
      */
     getPerformanceMetrics(): PerformanceMetrics {
-        const durations = this.requestMetrics.map(m => m.duration).sort((a, b) => a - b);
+        const durations: number[] = [];
+        let successfulRequests = 0;
+        let totalTokens = 0;
 
+        for (const m of this.requestMetrics) {
+            durations.push(m.duration);
+            if (m.success) successfulRequests++;
+            totalTokens += m.inputTokens + m.outputTokens;
+        }
+
+        durations.sort((a, b) => a - b);
+
+        const totalRequests = this.requestMetrics.length;
         const avgResponseTime =
             durations.length > 0
                 ? durations.reduce((sum, d) => sum + d, 0) / durations.length
@@ -426,29 +437,15 @@ export class MetricsCollector {
         const p95Index = Math.floor(durations.length * 0.95);
         const p99Index = Math.floor(durations.length * 0.99);
 
-        const successfulRequests = this.requestMetrics.filter(m => m.success).length;
-        const failedRequests = this.requestMetrics.length - successfulRequests;
-
-        const totalTokens = this.requestMetrics.reduce(
-            (sum, m) => sum + m.inputTokens + m.outputTokens,
-            0
-        );
-
         return {
             avgResponseTime,
             p95ResponseTime: durations[p95Index] || 0,
             p99ResponseTime: durations[p99Index] || 0,
-            totalRequests: this.requestMetrics.length,
+            totalRequests,
             successfulRequests,
-            failedRequests,
-            successRate:
-                this.requestMetrics.length > 0
-                    ? successfulRequests / this.requestMetrics.length
-                    : 1,
-            avgTokensPerRequest:
-                this.requestMetrics.length > 0
-                    ? totalTokens / this.requestMetrics.length
-                    : 0,
+            failedRequests: totalRequests - successfulRequests,
+            successRate: totalRequests > 0 ? successfulRequests / totalRequests : 1,
+            avgTokensPerRequest: totalRequests > 0 ? totalTokens / totalRequests : 0,
             totalTokens,
             timestamp: new Date(),
         };
@@ -458,33 +455,32 @@ export class MetricsCollector {
      * Get cost metrics
      */
     getCostMetrics(): CostMetrics {
-        const totalInputTokens = this.requestMetrics.reduce(
-            (sum, m) => sum + m.inputTokens,
-            0
-        );
-        const totalOutputTokens = this.requestMetrics.reduce(
-            (sum, m) => sum + m.outputTokens,
-            0
-        );
-        const totalCost = this.requestMetrics.reduce((sum, m) => sum + m.cost, 0);
-
+        let totalInputTokens = 0;
+        let totalOutputTokens = 0;
+        let totalCost = 0;
+        let inputTokensCost = 0;
+        let outputTokensCost = 0;
         const costByModel: Record<string, number> = {};
-        for (const metric of this.requestMetrics) {
-            costByModel[metric.model] = (costByModel[metric.model] || 0) + metric.cost;
+
+        for (const m of this.requestMetrics) {
+            totalInputTokens += m.inputTokens;
+            totalOutputTokens += m.outputTokens;
+            totalCost += m.cost;
+
+            const inputCostPerMillion =
+                this.config.costPerMillionInputTokens[m.model] || 3.0;
+            const outputCostPerMillion =
+                this.config.costPerMillionOutputTokens[m.model] || 15.0;
+            inputTokensCost += (m.inputTokens / 1_000_000) * inputCostPerMillion;
+            outputTokensCost += (m.outputTokens / 1_000_000) * outputCostPerMillion;
+
+            costByModel[m.model] = (costByModel[m.model] || 0) + m.cost;
         }
 
         return {
             totalCost,
-            inputTokensCost: this.requestMetrics.reduce((sum, m) => {
-                const costPerMillion =
-                    this.config.costPerMillionInputTokens[m.model] || 3.0;
-                return sum + (m.inputTokens / 1_000_000) * costPerMillion;
-            }, 0),
-            outputTokensCost: this.requestMetrics.reduce((sum, m) => {
-                const costPerMillion =
-                    this.config.costPerMillionOutputTokens[m.model] || 15.0;
-                return sum + (m.outputTokens / 1_000_000) * costPerMillion;
-            }, 0),
+            inputTokensCost,
+            outputTokensCost,
             avgCostPerRequest:
                 this.requestMetrics.length > 0
                     ? totalCost / this.requestMetrics.length
@@ -600,7 +596,7 @@ export class MetricsCollector {
      */
     private checkAlerts(): void {
         const perfMetrics = this.getPerformanceMetrics();
-        const healthStatus = this.getHealthStatus();
+        const memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024; // MB
         const thresholds = this.config.alertThresholds;
 
         // Check error rate
@@ -629,13 +625,13 @@ export class MetricsCollector {
 
         // Check memory usage
         const maxMemoryUsageMB = thresholds.maxMemoryUsageMB ?? 1000;
-        if (healthStatus.memoryUsage > maxMemoryUsageMB) {
+        if (memoryUsage > maxMemoryUsageMB) {
             this.createAlert({
                 severity: 'high',
                 type: 'health',
                 title: 'High Memory Usage',
-                description: `Memory usage is ${healthStatus.memoryUsage.toFixed(0)}MB, exceeding threshold of ${maxMemoryUsageMB}MB`,
-                metrics: { memoryUsage: healthStatus.memoryUsage },
+                description: `Memory usage is ${memoryUsage.toFixed(0)}MB, exceeding threshold of ${maxMemoryUsageMB}MB`,
+                metrics: { memoryUsage },
             });
         }
 

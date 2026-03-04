@@ -68,8 +68,9 @@ export class LearningAnnouncer {
         }
 
         // New tools detected
+        const previousToolsSet = new Set(previousDNA.traits.preferredTools);
         const newTools = currentDNA.traits.preferredTools.filter(
-            tool => !previousDNA.traits.preferredTools.includes(tool),
+            tool => !previousToolsSet.has(tool),
         );
 
         if (newTools.length > 0) {
