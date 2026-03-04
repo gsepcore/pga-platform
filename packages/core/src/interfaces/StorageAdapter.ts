@@ -7,7 +7,7 @@
  * @since 2025
  */
 
-import type { Genome, UserDNA, MutationLog } from '../types/index.js';
+import type { Genome, UserDNA, MutationLog, GeneRegistryEntry } from '../types/index.js';
 
 /**
  * Storage Adapter Interface
@@ -93,6 +93,17 @@ export interface StorageAdapter {
         sentiment: 'positive' | 'negative' | 'neutral';
         timestamp: Date;
     }): Promise<void>;
+
+
+    /**
+     * Save validated gene in shared family registry
+     */
+    saveGeneRegistryEntry(entry: GeneRegistryEntry): Promise<void>;
+
+    /**
+     * List validated genes for a family
+     */
+    listGeneRegistryEntries(familyId: string, gene?: string, limit?: number): Promise<GeneRegistryEntry[]>;
 
     /**
      * Get analytics for genome

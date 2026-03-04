@@ -7,9 +7,22 @@
  */
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
-import type { Genome, SelectionContext } from '../types/index.js';
+import type { Genome, SelectionContext, Layer } from '../types/index.js';
 import { ContextMemory } from './ContextMemory.js';
 import { ProactiveSuggestions } from './ProactiveSuggestions.js';
+
+
+
+export interface SelectedAlleleRef {
+    layer: Layer;
+    gene: string;
+    variant: string;
+}
+
+export interface AssembledPromptResult {
+    prompt: string;
+    selectedAlleles: SelectedAlleleRef[];
+}
 
 export class PromptAssembler {
     private contextMemory: ContextMemory;
@@ -27,34 +40,39 @@ export class PromptAssembler {
      * Assemble full prompt from all three layers + intelligence boost
      */
     async assemblePrompt(context?: SelectionContext, currentMessage?: string): Promise<string> {
+        const result = await this.assemblePromptWithSelection(context, currentMessage);
+        return result.prompt;
+    }
+
+    async assemblePromptWithSelection(
+        context?: SelectionContext,
+        currentMessage?: string,
+    ): Promise<AssembledPromptResult> {
         const sections: string[] = [];
+        const selectedAlleles: SelectedAlleleRef[] = [];
 
         // Layer 0: Immutable DNA (security, core identity, ethics)
         for (const allele of this.genome.layers.layer0) {
             if (allele.status === 'active') {
                 sections.push(allele.content);
+                selectedAlleles.push({ layer: 0, gene: allele.gene, variant: allele.variant });
             }
         }
 
-        // Layer 1: Operative Genes (tool usage, coding patterns, etc.)
-        const layer1Content = await this.selectBestFromLayer(1, context);
-        sections.push(...layer1Content);
+        // Layer 1: Operative Genes
+        const layer1 = await this.selectBestFromLayer(1, context);
+        sections.push(...layer1.contents);
+        selectedAlleles.push(...layer1.selectedAlleles);
 
-        // Layer 2: Epigenomes (user preferences, communication style, etc.)
-        const layer2Content = await this.selectBestFromLayer(2, context);
-        sections.push(...layer2Content);
+        // Layer 2: Epigenomes
+        const layer2 = await this.selectBestFromLayer(2, context);
+        sections.push(...layer2.contents);
+        selectedAlleles.push(...layer2.selectedAlleles);
 
-        // 🧠 INTELLIGENCE BOOST: Add context memory (if user provided)
         if (context?.userId) {
-            const memoryPrompt = await this.contextMemory.getMemoryPrompt(
-                context.userId,
-                this.genome.id,
-            );
-            if (memoryPrompt) {
-                sections.push(memoryPrompt);
-            }
+            const memoryPrompt = await this.contextMemory.getMemoryPrompt(context.userId, this.genome.id);
+            if (memoryPrompt) sections.push(memoryPrompt);
 
-            // 🚀 PROACTIVE SUGGESTIONS: Add intelligent suggestions
             if (currentMessage) {
                 const suggestions = await this.proactiveSuggestions.generateSuggestions(
                     context.userId,
@@ -63,14 +81,15 @@ export class PromptAssembler {
                 );
 
                 if (suggestions.length > 0) {
-                    const suggestionsPrompt =
-                        this.proactiveSuggestions.formatSuggestionsPrompt(suggestions);
-                    sections.push(suggestionsPrompt);
+                    sections.push(this.proactiveSuggestions.formatSuggestionsPrompt(suggestions));
                 }
             }
         }
 
-        return sections.join('\n\n---\n\n');
+        return {
+            prompt: sections.join('\n\n---\n\n'),
+            selectedAlleles,
+        };
     }
 
     /**
@@ -79,11 +98,11 @@ export class PromptAssembler {
     private async selectBestFromLayer(
         layer: 1 | 2,
         _context?: SelectionContext,
-    ): Promise<string[]> {
+    ): Promise<{ contents: string[]; selectedAlleles: SelectedAlleleRef[] }> {
         const alleles = layer === 1 ? this.genome.layers.layer1 : this.genome.layers.layer2;
         const active = alleles.filter(a => a.status === 'active');
 
-        if (active.length === 0) return [];
+        if (active.length === 0) return { contents: [], selectedAlleles: [] };
 
         // Group by gene
         const byGene = new Map<string, typeof active>();
@@ -96,15 +115,17 @@ export class PromptAssembler {
 
         // Select best variant for each gene
         const selected: string[] = [];
+        const selectedAlleles: SelectedAlleleRef[] = [];
         for (const [_gene, variants] of byGene) {
             const best = this.selectByEpsilonGreedy(
                 variants,
                 this.genome.config.epsilonExplore || 0.1,
             );
             selected.push(best.content);
+            selectedAlleles.push({ layer, gene: best.gene, variant: best.variant });
         }
 
-        return selected;
+        return { contents: selected, selectedAlleles };
     }
 
     /**

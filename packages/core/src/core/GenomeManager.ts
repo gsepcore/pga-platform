@@ -8,6 +8,7 @@
  */
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
+import { createHash } from 'crypto';
 import type { Genome, GenomeConfig } from '../types/index.js';
 
 export class GenomeManager {
@@ -15,14 +16,23 @@ export class GenomeManager {
 
     async createGenome(options: {
         name: string;
+        familyId?: string;
         config: GenomeConfig;
     }): Promise<Genome> {
+        const layer0 = this.getDefaultLayer0();
         const genome: Genome = {
             id: this.generateId(),
             name: options.name,
+            familyId: options.familyId || options.name,
+            version: 1,
+            lineage: {
+                parentVersion: null,
+                mutationOps: [],
+            },
+            c0IntegrityHash: this.computeC0IntegrityHash(layer0),
             config: options.config,
             layers: {
-                layer0: this.getDefaultLayer0(),
+                layer0,
                 layer1: this.getDefaultLayer1(),
                 layer2: this.getDefaultLayer2(),
             },
@@ -36,15 +46,49 @@ export class GenomeManager {
     }
 
     async loadGenome(genomeId: string): Promise<Genome | null> {
-        return this.storage.loadGenome(genomeId);
+        const genome = await this.storage.loadGenome(genomeId);
+        if (!genome) return null;
+
+        this.ensureC0Integrity(genome);
+        return genome;
     }
 
     async listGenomes(): Promise<Genome[]> {
-        return this.storage.listGenomes();
+        const genomes = await this.storage.listGenomes();
+        return genomes.filter(g => {
+            try {
+                this.ensureC0Integrity(g);
+                return true;
+            } catch {
+                return false;
+            }
+        });
     }
 
     async deleteGenome(genomeId: string): Promise<void> {
         await this.storage.deleteGenome(genomeId);
+    }
+
+
+    private computeC0IntegrityHash(layer0: Genome['layers']['layer0']): string {
+        const canonical = layer0
+            .map(a => `${a.gene}:${a.variant}:${a.content}`)
+            .sort()
+            .join('\n');
+        return `sha256:${createHash('sha256').update(canonical).digest('hex')}`;
+    }
+
+    private ensureC0Integrity(genome: Genome): void {
+        const expectedHash = this.computeC0IntegrityHash(genome.layers.layer0);
+
+        if (!genome.c0IntegrityHash) {
+            genome.c0IntegrityHash = expectedHash;
+            return;
+        }
+
+        if (genome.c0IntegrityHash !== expectedHash) {
+            throw new Error(`SecurityGate violation: Layer 0 integrity mismatch for genome ${genome.id}`);
+        }
     }
 
     // ─── Default Layers ─────────────────────────────────

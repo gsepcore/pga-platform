@@ -61,6 +61,12 @@ export interface LLMAdapter {
     stream?(messages: Message[], options?: ChatOptions): AsyncIterableIterator<ChatChunk>;
 
     /**
+     * Backward-compatible alias used by some adapters/examples.
+     * Prefer `stream` for new integrations.
+     */
+    chatStream?(messages: Message[], options?: ChatOptions): AsyncGenerator<ChatChunk, void, unknown>;
+
+    /**
      * Estimate token cost for messages (optional - return 0 if not supported)
      */
     estimateCost?(messages: Message[]): Promise<number>;

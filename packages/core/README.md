@@ -29,15 +29,15 @@ npm install @pga/core
 You'll also need adapters for your LLM and database:
 
 ```bash
-npm install @pga/adapters-llm @pga/adapters-storage
+npm install @pga/adapters-llm-anthropic @pga/adapters-storage-postgres
 ```
 
 ## Quick Start
 
 ```typescript
 import { PGA } from '@pga/core';
-import { ClaudeAdapter } from '@pga/adapters-llm/anthropic';
-import { PostgresAdapter } from '@pga/adapters-storage/postgres';
+import { ClaudeAdapter } from '@pga/adapters-llm-anthropic';
+import { PostgresAdapter } from '@pga/adapters-storage-postgres';
 
 // 1. Initialize PGA
 const pga = new PGA({

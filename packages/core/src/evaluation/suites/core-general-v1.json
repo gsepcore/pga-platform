@@ -1,0 +1,57 @@
+[
+  {
+    "id": "debug-1",
+    "name": "Debug TypeError",
+    "description": "Help user debug a common TypeError",
+    "userMessage": "I'm getting 'Cannot read property of undefined' error. How do I fix it?",
+    "expectedOutcome": {
+      "keywords": ["undefined", "check", "null"],
+      "minLength": 100
+    },
+    "difficulty": "easy"
+  },
+  {
+    "id": "implement-1",
+    "name": "Implement Authentication",
+    "description": "Guide user to implement basic authentication",
+    "userMessage": "How do I add user authentication to my React app?",
+    "expectedOutcome": {
+      "keywords": ["auth", "login", "token"],
+      "minLength": 200
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "optimize-1",
+    "name": "Optimize Performance",
+    "description": "Provide performance optimization advice",
+    "userMessage": "My React app is slow. How can I optimize it?",
+    "expectedOutcome": {
+      "keywords": ["performance", "optimize", "memo"],
+      "minLength": 150
+    },
+    "difficulty": "medium"
+  },
+  {
+    "id": "architecture-1",
+    "name": "Design System Architecture",
+    "description": "Help design scalable architecture",
+    "userMessage": "How should I architect a microservices system with 10M users?",
+    "expectedOutcome": {
+      "keywords": ["scalable", "microservices", "database"],
+      "minLength": 300
+    },
+    "difficulty": "hard"
+  },
+  {
+    "id": "code-review-1",
+    "name": "Code Review",
+    "description": "Review code for best practices",
+    "userMessage": "Can you review this code: function getData() { return fetch(\"/api\").then(r => r.json()) }",
+    "expectedOutcome": {
+      "keywords": ["error", "async", "await"],
+      "minLength": 100
+    },
+    "difficulty": "easy"
+  }
+]

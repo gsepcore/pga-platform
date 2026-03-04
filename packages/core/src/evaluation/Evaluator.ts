@@ -12,7 +12,8 @@
  * - User Satisfaction (feedback scores)
  */
 
-import type { GenomeInstance } from '../PGA.js';
+import type { ChatResponse } from '../interfaces/LLMAdapter.js';
+import type { BenchmarkSuite } from './BenchmarkSuites.js';
 
 export interface EvaluationTask {
     id: string;
@@ -62,12 +63,18 @@ export interface ComparisonResult {
     verdict: 'PGA_WINS' | 'BASELINE_WINS' | 'TIE';
 }
 
+
+export interface EvaluatableGenome {
+    chatWithMetrics(userMessage: string, options?: { userId?: string }): Promise<ChatResponse>;
+}
+
+
 export class Evaluator {
     /**
      * Run evaluation suite on a genome
      */
     async evaluate(
-        genome: GenomeInstance,
+        genome: EvaluatableGenome,
         tasks: EvaluationTask[],
         userId: string,
     ): Promise<BenchmarkResult> {
@@ -100,7 +107,7 @@ export class Evaluator {
      * Evaluate a single task
      */
     private async evaluateTask(
-        genome: GenomeInstance,
+        genome: EvaluatableGenome,
         task: EvaluationTask,
         userId: string,
     ): Promise<EvaluationResult> {
@@ -108,25 +115,29 @@ export class Evaluator {
 
         try {
             // Execute task
-            const response = await genome.chat(task.userMessage, { userId });
+            const response = await genome.chatWithMetrics(task.userMessage, { userId });
 
             const endTime = Date.now();
             const responseTime = endTime - startTime;
 
-            // Estimate tokens (rough approximation: 4 chars = 1 token)
-            const tokensUsed = Math.ceil((task.userMessage.length + response.length) / 4);
+            const usageTokens = response.usage
+                ? response.usage.inputTokens + response.usage.outputTokens
+                : undefined;
+
+            // Estimate tokens when provider usage is unavailable
+            const tokensUsed = usageTokens ?? Math.ceil((task.userMessage.length + response.content.length) / 4);
 
             // Evaluate success
-            const { success, failureReason } = this.checkSuccess(response, task.expectedOutcome);
+            const { success, failureReason } = this.checkSuccess(response.content, task.expectedOutcome);
 
             // Calculate quality score
-            const qualityScore = this.calculateQuality(response, task);
+            const qualityScore = this.calculateQuality(response.content, task);
 
             return {
                 taskId: task.id,
                 taskName: task.name,
                 success,
-                response,
+                response: response.content,
                 tokensUsed,
                 responseTime,
                 qualityScore,
@@ -228,11 +239,23 @@ export class Evaluator {
     }
 
     /**
+     * Compare PGA vs baseline using a named/versioned benchmark suite
+     */
+    async compareWithSuite(
+        genomeWithPGA: EvaluatableGenome,
+        genomeBaseline: EvaluatableGenome,
+        suite: BenchmarkSuite,
+        userId: string,
+    ): Promise<ComparisonResult> {
+        return this.compare(genomeWithPGA, genomeBaseline, suite.tasks, userId);
+    }
+
+    /**
      * Compare PGA vs baseline (no PGA)
      */
     async compare(
-        genomeWithPGA: GenomeInstance,
-        genomeBaseline: GenomeInstance,
+        genomeWithPGA: EvaluatableGenome,
+        genomeBaseline: EvaluatableGenome,
         tasks: EvaluationTask[],
         userId: string,
     ): Promise<ComparisonResult> {
@@ -247,15 +270,13 @@ export class Evaluator {
 
         // Calculate improvements
         const successRateImprovement = withPGA.successRate - withoutPGA.successRate;
-        const tokenEfficiency =
-            ((withoutPGA.avgTokensPerTask - withPGA.avgTokensPerTask) / withoutPGA.avgTokensPerTask) *
-            100;
-        const responseTimeImprovement =
-            ((withoutPGA.avgResponseTime - withPGA.avgResponseTime) / withoutPGA.avgResponseTime) *
-            100;
-        const qualityImprovement =
-            ((withPGA.avgQualityScore - withoutPGA.avgQualityScore) / withoutPGA.avgQualityScore) *
-            100;
+        const tokenEfficiency = this.safePercentDelta(withoutPGA.avgTokensPerTask, withPGA.avgTokensPerTask, {
+            invert: true,
+        });
+        const responseTimeImprovement = this.safePercentDelta(withoutPGA.avgResponseTime, withPGA.avgResponseTime, {
+            invert: true,
+        });
+        const qualityImprovement = this.safePercentDelta(withoutPGA.avgQualityScore, withPGA.avgQualityScore);
 
         // Determine verdict
         let verdict: ComparisonResult['verdict'] = 'TIE';
@@ -279,6 +300,20 @@ export class Evaluator {
             },
             verdict,
         };
+    }
+
+    private safePercentDelta(
+        baseline: number,
+        candidate: number,
+        options?: { invert?: boolean },
+    ): number {
+        if (baseline === 0) {
+            if (candidate === 0) return 0;
+            return options?.invert ? -100 : 100;
+        }
+
+        const raw = ((candidate - baseline) / Math.abs(baseline)) * 100;
+        return options?.invert ? -raw : raw;
     }
 
     /**

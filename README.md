@@ -127,19 +127,14 @@ await genome.addAllele({
 });
 
 // Use in your agent
-const response = await genome.chat({
+const response = await genome.chat('Hello, how can you help me?', {
   userId: 'user-123',
-  message: 'Hello, how can you help me?',
 });
 
-console.log(response.content);
+console.log(response);
 
 // Record feedback to enable evolution
-await genome.recordFeedback({
-  userId: 'user-123',
-  score: 0.9,
-  sentiment: 'positive',
-});
+await genome.recordFeedback('user-123', 'communication-style', 'positive');
 
 // 🎯 Agent announces its new PGA capabilities
 const announcement = genome.getWelcomeMessage('detailed');
@@ -333,7 +328,11 @@ Automatic rollback on performance drops:
 // Performance monitoring
 if (recentFitness < historicalFitness - 0.15) {
   // Immune system triggered
-  await genome.rollback();
+  await genome.rollback({
+    layer: 2,
+    gene: 'communication-style',
+    variant: 'mutant-v2',
+  });
   console.log('❌ Mutation reverted (15% drop)');
 }
 ```
@@ -395,13 +394,19 @@ const autogpt = new AutoGPT({
 
 ```typescript
 // Works with any LLM
-const genome = await pga.createGenome();
+const genome = await pga.createGenome({ name: "custom-agent" });
 
 // Your custom agent loop
 while (true) {
   const prompt = await genome.assemblePrompt({ userId });
   const response = await yourLLM.generate(prompt, message);
-  await genome.recordInteraction({ userId, response });
+  await genome.recordInteraction({
+    userId,
+    userMessage: message,
+    assistantResponse: response,
+    toolCalls: [],
+    timestamp: new Date(),
+  });
 }
 ```
 
@@ -445,7 +450,7 @@ const pga = new PGACloud({
 });
 
 // Everything else stays the same
-const genome = await pga.createGenome();
+const genome = await pga.createGenome({ name: "custom-agent" });
 ```
 
 **Pricing**: Free tier available | [View plans](https://pga.ai/pricing)

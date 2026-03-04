@@ -36,7 +36,10 @@ export type {
     EvaluationResult,
     BenchmarkResult,
     ComparisonResult,
+    EvaluatableGenome,
 } from './evaluation/Evaluator.js';
+export { BENCHMARK_SUITES, getBenchmarkSuite } from './evaluation/BenchmarkSuites.js';
+export type { BenchmarkSuite } from './evaluation/BenchmarkSuites.js';
 
 // ─── Interfaces ─────────────────────────────────────────
 
@@ -48,6 +51,8 @@ export type { StorageAdapter } from './interfaces/StorageAdapter.js';
 export type {
     Genome,
     GenomeConfig,
+    EvolutionGuardrails,
+    GenomeLineage,
     GeneAllele,
     UserDNA,
     UserTraits,
@@ -56,6 +61,7 @@ export type {
     Interaction,
     ToolCall,
     FitnessMetrics,
+    GeneRegistryEntry,
     SelectionContext,
     Layer,
     MutationRate,

@@ -10,6 +10,10 @@
 export interface Genome {
     id: string;
     name: string;
+    familyId: string;
+    version: number;
+    lineage: GenomeLineage;
+    c0IntegrityHash: string;
     config: GenomeConfig;
     layers: {
         layer0: GeneAllele[]; // Immutable
@@ -20,12 +24,27 @@ export interface Genome {
     updatedAt: Date;
 }
 
+
+
+export interface GenomeLineage {
+    parentVersion: number | null;
+    mutationOps: string[];
+    promotedBy?: string;
+}
+
+export interface EvolutionGuardrails {
+    minCompressionScore?: number;
+    minSandboxScore?: number;
+    minQualityDelta?: number;
+}
+
 export interface GenomeConfig {
     enableSandbox: boolean;
     mutationRate: 'slow' | 'balanced' | 'aggressive';
     epsilonExplore?: number;
     enableAutoML?: boolean;
     enableMultiModel?: boolean;
+    evolutionGuardrails?: EvolutionGuardrails;
 }
 
 export interface GeneAllele {
@@ -137,6 +156,20 @@ export interface FitnessMetrics {
     interventionRate: number;       // Autonomy
     executionPrecision: number;     // Reliability
     overall: number;                // Weighted average
+}
+
+
+
+export interface GeneRegistryEntry {
+    id?: string;
+    familyId: string;
+    sourceGenomeId: string;
+    layer: Layer;
+    gene: string;
+    variant: string;
+    content: string;
+    fitness: number;
+    createdAt: Date;
 }
 
 // ─── Selection Context ──────────────────────────────────

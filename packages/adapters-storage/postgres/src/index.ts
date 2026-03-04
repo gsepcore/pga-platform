@@ -12,11 +12,12 @@ import type {
     UserDNA,
     Interaction,
     MutationLog,
-    FeedbackSignal,
+    GeneRegistryEntry,
 } from '@pga/core';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { createHash } from 'crypto';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -103,17 +104,33 @@ export class PostgresAdapter implements StorageAdapter {
         try {
             await client.query('BEGIN');
 
+            // SecurityGate: verify C0 integrity before persisting
+            const expectedC0Hash = this.computeC0Hash(genome.layers.layer0);
+            if (genome.c0IntegrityHash !== expectedC0Hash) {
+                throw new Error(
+                    `SecurityGate violation: c0IntegrityHash mismatch for genome ${genome.id}`
+                );
+            }
+
             // Upsert genome
             await client.query(
-                `INSERT INTO pga_genomes (id, name, config, created_at, updated_at)
-                 VALUES ($1, $2, $3, $4, $5)
+                `INSERT INTO pga_genomes (id, name, family_id, version, lineage, c0_hash, config, created_at, updated_at)
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                  ON CONFLICT (id) DO UPDATE SET
                     name = $2,
-                    config = $3,
-                    updated_at = $5`,
+                    family_id = $3,
+                    version = $4,
+                    lineage = $5,
+                    c0_hash = $6,
+                    config = $7,
+                    updated_at = $9`,
                 [
                     genome.id,
                     genome.name,
+                    genome.familyId,
+                    genome.version,
+                    JSON.stringify(genome.lineage),
+                    genome.c0IntegrityHash,
                     JSON.stringify(genome.config),
                     genome.createdAt,
                     genome.updatedAt,
@@ -215,6 +232,10 @@ export class PostgresAdapter implements StorageAdapter {
         return {
             id: row.id,
             name: row.name,
+            familyId: row.family_id || row.name,
+            version: row.version || 1,
+            lineage: row.lineage || { parentVersion: null, mutationOps: [] },
+            c0IntegrityHash: row.c0_hash || '',
             config: row.config,
             layers: {
                 layer0,
@@ -295,6 +316,7 @@ export class PostgresAdapter implements StorageAdapter {
 
         return {
             userId: row.user_id,
+            genomeId: row.genome_id,
             traits: row.traits,
             confidence: row.confidence,
             generation: row.generation,
@@ -322,6 +344,81 @@ export class PostgresAdapter implements StorageAdapter {
                 interaction.timestamp,
             ],
         );
+    }
+
+
+    /**
+     * Get mutation history for a genome
+     */
+    async getMutationHistory(genomeId: string, limit = 100): Promise<MutationLog[]> {
+        const result = await this.pool.query(
+            `SELECT * FROM pga_mutations WHERE genome_id = $1 ORDER BY timestamp DESC LIMIT $2`,
+            [genomeId, limit],
+        );
+
+        return result.rows.map(row => ({
+            id: row.id?.toString(),
+            genomeId: row.genome_id,
+            layer: row.layer,
+            gene: row.gene,
+            variant: row.variant,
+            mutationType: row.mutation_type,
+            parentVariant: row.parent_variant,
+            triggerReason: row.trigger_reason,
+            fitnessDelta: row.fitness_delta !== null ? parseFloat(row.fitness_delta) : undefined,
+            deployed: row.deployed,
+            details: row.details,
+            timestamp: row.timestamp,
+            createdAt: row.timestamp,
+        }));
+    }
+
+    /**
+     * Get mutation history for a specific gene
+     */
+    async getGeneMutationHistory(genomeId: string, gene: string, limit = 100): Promise<MutationLog[]> {
+        const result = await this.pool.query(
+            `SELECT * FROM pga_mutations WHERE genome_id = $1 AND gene = $2 ORDER BY timestamp DESC LIMIT $3`,
+            [genomeId, gene, limit],
+        );
+
+        return result.rows.map(row => ({
+            id: row.id?.toString(),
+            genomeId: row.genome_id,
+            layer: row.layer,
+            gene: row.gene,
+            variant: row.variant,
+            mutationType: row.mutation_type,
+            parentVariant: row.parent_variant,
+            triggerReason: row.trigger_reason,
+            fitnessDelta: row.fitness_delta !== null ? parseFloat(row.fitness_delta) : undefined,
+            deployed: row.deployed,
+            details: row.details,
+            timestamp: row.timestamp,
+            createdAt: row.timestamp,
+        }));
+    }
+
+    /**
+     * Get recent interactions
+     */
+    async getRecentInteractions(genomeId: string, userId: string, limit = 50): Promise<unknown[]> {
+        const result = await this.pool.query(
+            `SELECT * FROM pga_interactions WHERE genome_id = $1 AND user_id = $2 ORDER BY timestamp DESC LIMIT $3`,
+            [genomeId, userId, limit],
+        );
+
+        return result.rows.map(row => ({
+            id: row.id,
+            genomeId: row.genome_id,
+            userId: row.user_id,
+            userMessage: row.user_message,
+            assistantResponse: row.assistant_response,
+            toolCalls: row.tool_calls || [],
+            score: row.score !== null ? parseFloat(row.score) : undefined,
+            taskType: row.task_type,
+            timestamp: row.timestamp,
+        }));
     }
 
     /**
@@ -353,7 +450,13 @@ export class PostgresAdapter implements StorageAdapter {
     /**
      * Record user feedback
      */
-    async recordFeedback(feedback: FeedbackSignal): Promise<void> {
+    async recordFeedback(feedback: {
+        genomeId: string;
+        userId: string;
+        gene: string;
+        sentiment: 'positive' | 'negative' | 'neutral';
+        timestamp: Date;
+    }): Promise<void> {
         await this.pool.query(
             `INSERT INTO pga_feedback (
                 genome_id, user_id, gene, sentiment, timestamp
@@ -368,15 +471,68 @@ export class PostgresAdapter implements StorageAdapter {
         );
     }
 
+
+    async saveGeneRegistryEntry(entry: GeneRegistryEntry): Promise<void> {
+        await this.pool.query(
+            `INSERT INTO pga_gene_registry (
+                family_id, source_genome_id, layer, gene, variant, content, fitness, created_at
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+            [
+                entry.familyId,
+                entry.sourceGenomeId,
+                entry.layer,
+                entry.gene,
+                entry.variant,
+                entry.content,
+                entry.fitness,
+                entry.createdAt,
+            ],
+        );
+    }
+
+    async listGeneRegistryEntries(
+        familyId: string,
+        gene?: string,
+        limit = 50,
+    ): Promise<GeneRegistryEntry[]> {
+        const result = gene
+            ? await this.pool.query(
+                  `SELECT * FROM pga_gene_registry WHERE family_id = $1 AND gene = $2 ORDER BY created_at DESC LIMIT $3`,
+                  [familyId, gene, limit],
+              )
+            : await this.pool.query(
+                  `SELECT * FROM pga_gene_registry WHERE family_id = $1 ORDER BY created_at DESC LIMIT $2`,
+                  [familyId, limit],
+              );
+
+        return result.rows.map(row => ({
+            id: row.id?.toString(),
+            familyId: row.family_id,
+            sourceGenomeId: row.source_genome_id,
+            layer: row.layer,
+            gene: row.gene,
+            variant: row.variant,
+            content: row.content,
+            fitness: parseFloat(row.fitness),
+            createdAt: row.created_at,
+        }));
+    }
+
     /**
      * Get analytics for genome
      */
-    async getAnalytics(genomeId: string): Promise<Record<string, unknown>> {
+    async getAnalytics(genomeId: string): Promise<{
+        totalMutations: number;
+        totalInteractions: number;
+        avgFitnessImprovement: number;
+        userSatisfaction: number;
+        topGenes: Array<{ gene: string; fitness: number }>;
+    }> {
         const [
             interactionsResult,
             mutationsResult,
             feedbackResult,
-            dnaResult,
+            topGenesResult,
         ] = await Promise.all([
             this.pool.query(
                 'SELECT COUNT(*) as count, AVG(score) as avg_score FROM pga_interactions WHERE genome_id = $1',
@@ -395,28 +551,43 @@ export class PostgresAdapter implements StorageAdapter {
                 [genomeId],
             ),
             this.pool.query(
-                'SELECT COUNT(DISTINCT user_id) as unique_users FROM pga_user_dna WHERE genome_id = $1',
+                `SELECT gene, MAX(fitness) as fitness
+                 FROM pga_alleles
+                 WHERE genome_id = $1 AND status = 'active'
+                 GROUP BY gene
+                 ORDER BY MAX(fitness) DESC
+                 LIMIT 5`,
                 [genomeId],
             ),
         ]);
 
+        const totalInteractions = parseInt(interactionsResult.rows[0].count);
+        const avgFitnessImprovement = parseFloat(interactionsResult.rows[0].avg_score) || 0;
+        const totalMutations = parseInt(mutationsResult.rows[0].count);
+        const positive = parseInt(feedbackResult.rows[0].positive || '0');
+        const negative = parseInt(feedbackResult.rows[0].negative || '0');
+        const totalFeedback = positive + negative + parseInt(feedbackResult.rows[0].neutral || '0');
+        const userSatisfaction = totalFeedback > 0 ? positive / totalFeedback : 0;
+
         return {
-            interactions: {
-                total: parseInt(interactionsResult.rows[0].count),
-                avgScore: parseFloat(interactionsResult.rows[0].avg_score) || 0,
-            },
-            mutations: {
-                deployed: parseInt(mutationsResult.rows[0].count),
-            },
-            feedback: {
-                positive: parseInt(feedbackResult.rows[0].positive || '0'),
-                negative: parseInt(feedbackResult.rows[0].negative || '0'),
-                neutral: parseInt(feedbackResult.rows[0].neutral || '0'),
-            },
-            users: {
-                unique: parseInt(dnaResult.rows[0].unique_users),
-            },
+            totalMutations,
+            totalInteractions,
+            avgFitnessImprovement,
+            userSatisfaction,
+            topGenes: topGenesResult.rows.map((row: { gene: string; fitness: string | number }) => ({
+                gene: row.gene,
+                fitness: typeof row.fitness === 'number' ? row.fitness : parseFloat(row.fitness),
+            })),
         };
+    }
+
+
+    private computeC0Hash(layer0: Genome['layers']['layer0']): string {
+        const canonical = layer0
+            .map(a => `${a.gene}:${a.variant}:${a.content}`)
+            .sort()
+            .join('\n');
+        return `sha256:${createHash('sha256').update(canonical).digest('hex')}`;
     }
 
     /**

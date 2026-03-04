@@ -8,10 +8,19 @@
 CREATE TABLE IF NOT EXISTS pga_genomes (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
+    family_id TEXT NOT NULL DEFAULT 'default',
+    version INTEGER NOT NULL DEFAULT 1,
+    lineage JSONB NOT NULL DEFAULT '{"parentVersion":null,"mutationOps":[]}',
+    c0_hash TEXT NOT NULL DEFAULT '',
     config JSONB NOT NULL DEFAULT '{}',
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+ALTER TABLE pga_genomes ADD COLUMN IF NOT EXISTS family_id TEXT NOT NULL DEFAULT 'default';
+ALTER TABLE pga_genomes ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE pga_genomes ADD COLUMN IF NOT EXISTS lineage JSONB NOT NULL DEFAULT '{"parentVersion":null,"mutationOps":[]}';
+ALTER TABLE pga_genomes ADD COLUMN IF NOT EXISTS c0_hash TEXT NOT NULL DEFAULT '';
 
 CREATE INDEX IF NOT EXISTS idx_genomes_name ON pga_genomes(name);
 
@@ -73,7 +82,7 @@ CREATE TABLE IF NOT EXISTS pga_interactions (
     user_message TEXT NOT NULL,
     assistant_response TEXT NOT NULL,
     tool_calls JSONB DEFAULT '[]',
-    score NUMERIC(5,4) NOT NULL,
+    score NUMERIC(5,4),
     task_type TEXT,
     timestamp TIMESTAMPTZ DEFAULT NOW()
 );
@@ -133,3 +142,22 @@ CREATE TABLE IF NOT EXISTS pga_analytics (
 );
 
 CREATE INDEX IF NOT EXISTS idx_analytics_genome ON pga_analytics(genome_id, snapshot_at DESC);
+
+
+-- ═══════════════════════════════════════════════════════════
+-- GENE REGISTRY (Cross-genome inheritance)
+-- ═══════════════════════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS pga_gene_registry (
+    id BIGSERIAL PRIMARY KEY,
+    family_id TEXT NOT NULL,
+    source_genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    layer INTEGER NOT NULL CHECK (layer IN (0, 1, 2)),
+    gene TEXT NOT NULL,
+    variant TEXT NOT NULL,
+    content TEXT NOT NULL,
+    fitness NUMERIC(5,4) DEFAULT 0.5000,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_gene_registry_family ON pga_gene_registry(family_id, gene, created_at DESC);
