@@ -9,6 +9,7 @@ export interface ProjectConfig {
     llmProvider: 'anthropic' | 'openai' | 'both';
     storage: 'postgres' | 'memory';
     evolutionBoost: boolean;
+    livingAgent: boolean;
     template: 'chatbot' | 'code-assistant' | 'customer-support' | 'data-analysis' | 'custom';
 }
 
@@ -69,6 +70,16 @@ export async function promptUser(cliOptions: any): Promise<ProjectConfig> {
         });
     }
 
+    // Living Agent (v0.6.0)
+    if (!cliOptions.livingAgent) {
+        questions.push({
+            type: 'confirm',
+            name: 'livingAgent',
+            message: 'Enable Living Agent v0.6.0? ' + chalk.gray('(10 cognitive layers: metacognition, empathy, autonomy, memory graph, narrative)'),
+            default: true,
+        });
+    }
+
     // Template
     if (!cliOptions.template) {
         questions.push({
@@ -107,6 +118,7 @@ export async function promptUser(cliOptions: any): Promise<ProjectConfig> {
         llmProvider: cliOptions.llm || answers.llmProvider,
         storage: cliOptions.storage || answers.storage,
         evolutionBoost: cliOptions.boost || answers.evolutionBoost,
+        livingAgent: cliOptions.livingAgent || answers.livingAgent || false,
         template: cliOptions.template || answers.template,
     };
 }
