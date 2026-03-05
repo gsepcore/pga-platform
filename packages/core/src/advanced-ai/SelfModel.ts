@@ -34,8 +34,8 @@ const IMPROVEMENT_SUGGESTIONS: Record<string, string> = {
 
 export class SelfModel {
     constructor(
-        private genome: Genome,
-        private driftAnalyzer: DriftAnalyzer,
+        protected genome: Genome,
+        protected driftAnalyzer: DriftAnalyzer,
     ) {}
 
     /**

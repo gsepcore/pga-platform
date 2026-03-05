@@ -174,6 +174,18 @@ export interface AutonomousConfig {
 
     /** Enable Analytic Memory — knowledge graph (default: false) */
     enableAnalyticMemory?: boolean;
+
+    /** Enable Enhanced Self-Model — purpose + capability + trajectory (default: false) */
+    enableEnhancedSelfModel?: boolean;
+
+    /** Enable Purpose-Driven Survival — threat detection + mode switching (default: false) */
+    enablePurposeSurvival?: boolean;
+
+    /** Enable Strategic Autonomy — goal-based decisions (default: false) */
+    enableStrategicAutonomy?: boolean;
+
+    /** Agent purpose statement — falls back to C0 identity if not set */
+    agentPurpose?: string;
 }
 
 // ─── User DNA Types ─────────────────────────────────────

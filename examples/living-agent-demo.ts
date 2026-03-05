@@ -296,6 +296,93 @@ async function main() {
     }
     console.log();
 
+    // ─── Step 8: Agent Vitals (v0.7.0) ────────────────────
+
+    console.log('--- Step 8: Living Agent Vitals (v0.7.0) ---\n');
+
+    // Create agent Gamma with all 3 new living systems
+    const gamma = await pga.createGenome({
+        name: 'agent-gamma',
+        config: {
+            mutationRate: 'balanced',
+            enableSandbox: true,
+            autonomous: {
+                continuousEvolution: true,
+                evolveEveryN: 5,
+                enableSelfModel: true,
+                enablePatternMemory: true,
+                enableEnhancedSelfModel: true,
+                enablePurposeSurvival: true,
+                enableStrategicAutonomy: true,
+                agentPurpose: 'Expert coding assistant specializing in TypeScript',
+            },
+        },
+    });
+
+    // Add genes
+    await gamma.addAllele(1, 'coding-patterns', 'v1',
+        'Always use TypeScript strict mode. Prefer const. Handle all errors.');
+    await gamma.addAllele(1, 'tool-usage', 'v1',
+        'Use dedicated tools over shell commands. Prefer grep over bash.');
+
+    const integratedHealth = gamma.getIntegratedHealth();
+    const operatingMode = gamma.getOperatingMode();
+    const strategy = gamma.getSurvivalStrategy();
+
+    console.log(`  Agent: ${gamma.name}`);
+    console.log(`  Purpose: Expert coding assistant specializing in TypeScript`);
+    if (integratedHealth) {
+        console.log(`  Health: ${integratedHealth.label} (${(integratedHealth.score * 100).toFixed(0)}%)`);
+        console.log(`    Fitness:    ${(integratedHealth.fitnessComponent * 100).toFixed(0)}%`);
+        console.log(`    Drift:      ${(integratedHealth.driftComponent * 100).toFixed(0)}%`);
+        console.log(`    Purpose:    ${(integratedHealth.purposeComponent * 100).toFixed(0)}%`);
+        console.log(`    Trajectory: ${(integratedHealth.trajectoryComponent * 100).toFixed(0)}%`);
+    }
+    if (operatingMode) {
+        console.log(`  Operating Mode: ${operatingMode.toUpperCase()}`);
+    }
+    if (strategy) {
+        console.log(`  Mutation Policy: ${strategy.mutationPolicy}`);
+        console.log(`  Token Conservation: ${strategy.tokenConservation ? 'ON' : 'OFF'}`);
+    }
+    console.log();
+
+    // ─── Step 9: Evolution Priorities ────────────────────
+
+    console.log('--- Step 9: Evolution Priorities ---\n');
+
+    const priorities = gamma.getEvolutionPriorities();
+    if (priorities.length > 0) {
+        for (const p of priorities) {
+            console.log(`  [${p.urgency}] ${p.gene} (L${p.layer}): ${p.reason}`);
+        }
+    } else {
+        console.log('  No evolution priorities (all genes healthy)');
+    }
+
+    const capabilities = gamma.getCapabilities();
+    console.log(`  Tracked capabilities: ${capabilities.length}`);
+    const trajectories = gamma.getTrajectories();
+    console.log(`  Evolution trajectories: ${trajectories.length}`);
+    console.log();
+
+    // ─── Step 10: Agent Vitals Summary ───────────────────
+
+    console.log('--- Step 10: Full Agent Vitals ---\n');
+
+    const vitals = gamma.getAgentVitals();
+    if (vitals) {
+        console.log(`  Mode:     ${vitals.mode.toUpperCase()}`);
+        console.log(`  Health:   ${vitals.health.label} (${(vitals.health.score * 100).toFixed(0)}%)`);
+        console.log(`  Purpose:  ${vitals.purpose}`);
+        console.log(`  Strategy: ${vitals.strategy.mutationPolicy}`);
+        console.log(`  Threats:  ${vitals.threats.length}`);
+        console.log(`  Updated:  ${vitals.lastUpdated.toISOString()}`);
+    } else {
+        console.log('  (vitals not available without all 3 systems enabled)');
+    }
+    console.log();
+
     // ─── Summary ────────────────────────────────────────────
 
     console.log('========================================');
@@ -309,6 +396,9 @@ async function main() {
     console.log('  5. Agent Beta inherited coding-patterns from Alpha');
     console.log(`  6. Total mutations logged: ${storage.getMutationCount()}`);
     console.log(`  7. Registry genes available: ${storage.getRegistrySize()}`);
+    console.log('  8. Agent Gamma: Integrated health + operating mode');
+    console.log('  9. Evolution priorities from strategic autonomy');
+    console.log(' 10. Full agent vitals with purpose alignment');
     console.log();
     console.log('The agents are ALIVE:');
     console.log('  - They measure their own performance (fitness)');
@@ -317,6 +407,9 @@ async function main() {
     console.log('  - They validate before deploying (4-gate system)');
     console.log('  - They share knowledge across the family (gene registry)');
     console.log('  - They inherit successful strategies (inheritance)');
+    console.log('  - They understand their PURPOSE (enhanced self-model)');
+    console.log('  - They SURVIVE threats (purpose survival)');
+    console.log('  - They make STRATEGIC decisions (strategic autonomy)');
     console.log();
 }
 

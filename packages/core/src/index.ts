@@ -529,12 +529,42 @@ export type {
     TemporalPattern,
 } from './memory/AnalyticMemoryEngine.js';
 
+// ─── Living Agent v0.7.0 ────────────────────────────────
+
+export { EnhancedSelfModel } from './advanced-ai/EnhancedSelfModel.js';
+export type {
+    PurposeAlignment,
+    CapabilityEntry,
+    HardLimit,
+    EvolutionTrajectory,
+    IntegratedHealth,
+} from './advanced-ai/EnhancedSelfModel.js';
+
+export { PurposeSurvival } from './evolution/PurposeSurvival.js';
+export type {
+    OperatingMode,
+    ThreatClassification,
+    GenomeSnapshot as SurvivalSnapshot,
+    SurvivalStrategy,
+    ModeTransition,
+} from './evolution/PurposeSurvival.js';
+
+export { StrategicAutonomy } from './advanced-ai/StrategicAutonomy.js';
+export type {
+    StrategicDecision,
+    EvolutionPriority,
+    RefusalRecord,
+} from './advanced-ai/StrategicAutonomy.js';
+
+export { computeAgentVitals } from './advanced-ai/AgentVitals.js';
+export type { AgentVitals } from './advanced-ai/AgentVitals.js';
+
 // ─── Token Utilities ────────────────────────────────────
 
 export { estimateTokenCount, tokenEfficiency, compressionRatio } from './utils/tokens.js';
 
 // ─── Version ────────────────────────────────────────────
 
-export const VERSION = '0.6.0';
+export const VERSION = '0.7.0';
 export const AUTHOR = 'Luis Alfredo Velasquez Duran';
 export const YEAR = 2025;
