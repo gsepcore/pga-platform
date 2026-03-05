@@ -94,11 +94,11 @@ SOFTWARE.
 - **Luis Alfredo Velasquez Duran** (current copyright holder)
 
 **Contact**: For commercial licensing inquiries:
-- Email: licensing@pga.ai
-- Website: https://pga.ai/enterprise
+- Email: licensing@pgacore.com
+- Website: https://pgacore.com/enterprise
 
 **Pricing**:
-- **PGA Cloud SaaS**: See https://pga.ai/pricing
+- **PGA Cloud SaaS**: See https://pgacore.com/pricing
 - **Enterprise On-Premise**: Custom contract ($50K - $250K/year)
 - **White Label**: Contact sales
 
@@ -160,10 +160,10 @@ Certain algorithms, parameters, and operational data are maintained as **trade s
 
 ## 📞 Contact & Questions
 
-**General Inquiries**: contact@pga.ai
-**Licensing Questions**: licensing@pga.ai
-**Security Issues**: security@pga.ai
-**Patent Questions**: patents@pga.ai
+**General Inquiries**: contact@pgacore.com
+**Licensing Questions**: licensing@pgacore.com
+**Security Issues**: security@pgacore.com
+**Patent Questions**: patents@pgacore.com
 
 **Creator**: Luis Alfredo Velasquez Duran
 **Location**: Germany

@@ -2,9 +2,9 @@
   "name": "@pga-ai/core",
   "version": "0.4.0",
   "description": "PGA Core - Genomic Self-Evolving Prompts with Gene Bank, THK, Layered Memory, RAG, and Advanced Reasoning",
-  "author": "Luis Alfredo Velasquez Duran <contact@pga.ai>",
+  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
   "license": "MIT",
-  "homepage": "https://pga.ai",
+  "homepage": "https://pgacore.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/pga-ai/pga-platform",

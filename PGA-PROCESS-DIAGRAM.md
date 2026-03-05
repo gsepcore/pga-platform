@@ -383,9 +383,9 @@ npm install @pga-ai/core
 ## 📞 CONTACTO & RECURSOS
 
 - **GitHub:** github.com/pga-ai/pga-platform
-- **Docs:** docs.pga.ai
-- **Demo:** demo.pga.ai
-- **Email:** hello@pga.ai
+- **Docs:** docs.pgacore.com
+- **Demo:** demo.pgacore.com
+- **Email:** hello@pgacore.com
 
 ---
 

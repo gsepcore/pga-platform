@@ -258,8 +258,8 @@ node --version  # Should be v18 or higher
 
 ## Learn More
 
-- **Documentation:** [https://pga.ai/docs](https://pga.ai/docs)
-- **API Reference:** [https://pga.ai/api](https://pga.ai/api)
+- **Documentation:** [https://pgacore.com/docs](https://pgacore.com/docs)
+- **API Reference:** [https://pgacore.com/api](https://pgacore.com/api)
 - **Discord Community:** [https://discord.gg/pga](https://discord.gg/pga)
 - **GitHub:** [https://github.com/pga-platform](https://github.com/pga-platform)
 
