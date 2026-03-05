@@ -40,9 +40,12 @@ YOUR AGENT (before)                YOUR AGENT (after PGA)
 ### Step 1: Install
 
 ```bash
-npm install @pga-ai/core @pga-ai/adapters-llm-anthropic
-# or with OpenAI:
-npm install @pga-ai/core @pga-ai/adapters-llm-openai
+# Pick your LLM provider:
+npm install @pga-ai/core @pga-ai/adapters-llm-anthropic  # Claude
+npm install @pga-ai/core @pga-ai/adapters-llm-openai      # GPT-4
+npm install @pga-ai/core @pga-ai/adapters-llm-google       # Gemini
+npm install @pga-ai/core @pga-ai/adapters-llm-ollama       # Local models (Llama, Mistral, etc.)
+npm install @pga-ai/core @pga-ai/adapters-llm-perplexity   # Perplexity (web search)
 ```
 
 ### Step 2: Initialize PGA (once, at startup)
@@ -302,10 +305,41 @@ while (true) {
 | Package | Description |
 |---------|-------------|
 | [`@pga-ai/core`](./packages/core) | Core engine — evolution, memory, self-model (MIT) |
-| [`@pga-ai/adapters-llm-anthropic`](./packages/adapters-llm/anthropic) | Claude adapter |
-| [`@pga-ai/adapters-llm-openai`](./packages/adapters-llm/openai) | OpenAI adapter |
+| [`@pga-ai/adapters-llm-anthropic`](./packages/adapters-llm/anthropic) | Anthropic Claude |
+| [`@pga-ai/adapters-llm-openai`](./packages/adapters-llm/openai) | OpenAI GPT-4 |
+| [`@pga-ai/adapters-llm-google`](./packages/adapters-llm/google) | Google Gemini |
+| [`@pga-ai/adapters-llm-ollama`](./packages/adapters-llm/ollama) | Ollama (local models) |
+| [`@pga-ai/adapters-llm-perplexity`](./packages/adapters-llm/perplexity) | Perplexity (web search) |
 | [`@pga-ai/adapters-storage-postgres`](./packages/adapters-storage/postgres) | PostgreSQL persistence |
-| [`create-pga-ai`](./packages/create-pga-ai) | Project scaffolder (optional) |
+
+---
+
+## 🔧 Bring Your Own LLM
+
+PGA works with **any LLM**. If your provider isn't listed above, implement the `LLMAdapter` interface:
+
+```typescript
+import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '@pga-ai/core';
+
+class MyLLMAdapter implements LLMAdapter {
+  readonly name = 'my-provider';
+  readonly model = 'my-model';
+
+  async chat(messages: Message[], options?: ChatOptions): Promise<ChatResponse> {
+    // Call your LLM here
+    const result = await myLLMClient.generate(messages);
+    return {
+      content: result.text,
+      usage: { inputTokens: result.promptTokens, outputTokens: result.completionTokens },
+    };
+  }
+}
+
+// Use it with PGA:
+const pga = new PGA({ llm: new MyLLMAdapter() });
+```
+
+Only `chat()` is required. `stream()` and `estimateCost()` are optional.
 
 ---
 
