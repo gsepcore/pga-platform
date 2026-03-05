@@ -11,7 +11,7 @@
 
 Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 
-[Documentation](https://docs.pga.ai) • [Examples](./examples) • [Marketplace](https://marketplace.pga.ai) • [Discord](https://discord.gg/pga)
+[Documentation](https://docs.pgacore.com) • [Examples](./examples) • [Marketplace](https://marketplace.pgacore.com) • [Discord](https://discord.gg/pga)
 
 </div>
 
@@ -742,17 +742,17 @@ pga install sql-optimizer-pro --genome my-assistant
 pga publish coding-patterns-v5 --price 9.99
 ```
 
-Browse genes at [marketplace.pga.ai](https://marketplace.pga.ai)
+Browse genes at [marketplace.pgacore.com](https://marketplace.pgacore.com)
 
 ---
 
 ## 📖 Documentation
 
-- [Getting Started](https://docs.pga.ai/getting-started)
-- [Core Concepts](https://docs.pga.ai/concepts)
-- [API Reference](https://docs.pga.ai/api)
+- [Getting Started](https://docs.pgacore.com/getting-started)
+- [Core Concepts](https://docs.pgacore.com/concepts)
+- [API Reference](https://docs.pgacore.com/api)
 - [Examples](./examples)
-- [Guides](https://docs.pga.ai/guides)
+- [Guides](https://docs.pgacore.com/guides)
 
 ---
 
@@ -771,7 +771,7 @@ const pga = new PGACloud({
 const genome = await pga.createGenome();
 ```
 
-**Pricing**: Free tier available | [View plans](https://pga.ai/pricing)
+**Pricing**: Free tier available | [View plans](https://pgacore.com/pricing)
 
 ---
 
@@ -865,8 +865,8 @@ PGA is the world's first implementation of genomic evolution principles applied 
 
 ## 📬 Contact
 
-- **Website**: [pga.ai](https://pga.ai)
-- **Email**: contact@pga.ai
+- **Website**: [pgacore.com](https://pgacore.com)
+- **Email**: contact@pgacore.com
 - **Discord**: [Join Community](https://discord.gg/pga)
 - **Twitter**: [@PGA_AI](https://twitter.com/PGA_AI)
 

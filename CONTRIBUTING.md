@@ -240,10 +240,10 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## Getting Help
 
-- 📚 **Documentation**: https://pga.ai/docs
+- 📚 **Documentation**: https://pgacore.com/docs
 - 💬 **Discussions**: GitHub Discussions
 - 🐛 **Issues**: GitHub Issues
-- 📧 **Email**: contact@pga.ai
+- 📧 **Email**: contact@pgacore.com
 
 ## Recognition
 

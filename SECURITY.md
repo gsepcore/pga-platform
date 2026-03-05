@@ -17,7 +17,7 @@ We actively support and provide security updates for the following versions:
 Instead, please report them to our security team:
 
 ### Email
-Send an email to: **security@pga.ai**
+Send an email to: **security@pgacore.com**
 
 ### What to Include
 Please include as much information as possible:

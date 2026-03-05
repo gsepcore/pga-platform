@@ -179,9 +179,9 @@ I'm ready to learn and evolve with you!
 
 ## 📖 More Resources
 
-- [PGA Documentation](https://docs.pga.ai)
-- [API Reference](https://docs.pga.ai/api)
-- [Best Practices](https://docs.pga.ai/guides/best-practices)
+- [PGA Documentation](https://docs.pgacore.com)
+- [API Reference](https://docs.pgacore.com/api)
+- [Best Practices](https://docs.pgacore.com/guides/best-practices)
 
 ---
 
