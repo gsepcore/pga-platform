@@ -40,6 +40,10 @@ import type { GeneBank } from './gene-bank/GeneBank.js';
 import type { DriftSignal } from './evolution/DriftAnalyzer.js';
 import { CanaryDeploymentManager } from './evolution/CanaryDeployment.js';
 import type { CanaryDeployment } from './evolution/CanaryDeployment.js';
+import { EnhancedSelfModel, type IntegratedHealth, type CapabilityEntry, type EvolutionTrajectory } from './advanced-ai/EnhancedSelfModel.js';
+import { PurposeSurvival, type OperatingMode, type SurvivalStrategy, type GenomeSnapshot } from './evolution/PurposeSurvival.js';
+import { StrategicAutonomy, type EvolutionPriority } from './advanced-ai/StrategicAutonomy.js';
+import { computeAgentVitals, type AgentVitals } from './advanced-ai/AgentVitals.js';
 
 export interface PGAConfig {
     /**
@@ -317,6 +321,9 @@ export class GenomeInstance {
     private personalNarrative?: PersonalNarrative;
     private analyticMemory?: AnalyticMemoryEngine;
     private canaryManager: CanaryDeploymentManager;
+    private enhancedSelfModel?: EnhancedSelfModel;
+    private purposeSurvival?: PurposeSurvival;
+    private strategicAutonomy?: StrategicAutonomy;
     private interactionCount: number = 0;
 
     constructor(
@@ -412,6 +419,37 @@ export class GenomeInstance {
         if (genome.config.autonomous?.enableAnalyticMemory) {
             this.analyticMemory = new AnalyticMemoryEngine();
             this.assembler.setAnalyticMemory(this.analyticMemory);
+        }
+
+        // Living Agent: EnhancedSelfModel (purpose + capability + trajectory)
+        const agentPurpose = genome.config.autonomous?.agentPurpose
+            || genome.layers.layer0[0]?.content
+            || 'AI Assistant';
+
+        if (genome.config.autonomous?.enableEnhancedSelfModel) {
+            this.enhancedSelfModel = new EnhancedSelfModel(genome, this.driftAnalyzer, agentPurpose);
+            this.assembler.setSelfModel(this.enhancedSelfModel);
+        }
+
+        // Living Agent: PurposeSurvival (threat detection + mode switching)
+        if (genome.config.autonomous?.enablePurposeSurvival) {
+            this.purposeSurvival = new PurposeSurvival(
+                agentPurpose,
+                this.driftAnalyzer,
+                () => this.enhancedSelfModel?.assessFull()
+                    ?? { score: 0.5, fitnessComponent: 0.5, driftComponent: 1.0,
+                         purposeComponent: 0.5, trajectoryComponent: 0.5, label: 'stable' as const },
+            );
+        }
+
+        // Living Agent: StrategicAutonomy (goal-based decisions)
+        if (genome.config.autonomous?.enableStrategicAutonomy) {
+            this.strategicAutonomy = new StrategicAutonomy(
+                agentPurpose,
+                () => this.enhancedSelfModel?.assessFull() ?? null,
+                () => this.purposeSurvival?.getMode() ?? 'stable',
+            );
+            this.assembler.setCalibratedAutonomy(this.strategicAutonomy);
         }
     }
 
@@ -653,6 +691,18 @@ Ready to see what we can do together? 😊`,
             const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
             this.driftAnalyzer.recordFitness(fitnessVector);
 
+            // Enhanced Self-Model: record capability per task×gene
+            if (this.enhancedSelfModel && context.taskType) {
+                for (const allele of this.genome.layers.layer1.filter(a => a.status === 'active')) {
+                    this.enhancedSelfModel.recordCapability(context.taskType, allele.gene, 0.7);
+                }
+            }
+
+            // Purpose Survival: evaluate threats after each interaction
+            if (this.purposeSurvival) {
+                this.purposeSurvival.evaluateThreats();
+            }
+
             // Continuous Evolution Loop
             this.interactionCount++;
             const autoConfig = this.genome.config.autonomous;
@@ -794,6 +844,11 @@ Ready to see what we can do together? 😊`,
         // Calibrated Autonomy: record success
         if (this.calibratedAutonomy && interaction.taskType && interaction.assistantResponse) {
             this.calibratedAutonomy.recordSuccess(interaction.taskType);
+        }
+
+        // Enhanced Self-Model: periodic fitness snapshot for trajectory
+        if (this.enhancedSelfModel && this.interactionCount % 10 === 0) {
+            this.enhancedSelfModel.recordFitnessSnapshot();
         }
 
         // Swarm: auto-publish high-fitness genes
@@ -1538,6 +1593,65 @@ Ready to see what we can do together? 😊`,
     }
 
     // ═══════════════════════════════════════════════════════
+    // LIVING AGENT: PUBLIC APIs
+    // ═══════════════════════════════════════════════════════
+
+    /**
+     * Get integrated agent health (requires Enhanced Self-Model)
+     */
+    getIntegratedHealth(): IntegratedHealth | null {
+        return this.enhancedSelfModel?.assessFull() ?? null;
+    }
+
+    /**
+     * Get current operating mode (requires Purpose Survival)
+     */
+    getOperatingMode(): OperatingMode | null {
+        return this.purposeSurvival?.getMode() ?? null;
+    }
+
+    /**
+     * Get survival strategy (requires Purpose Survival)
+     */
+    getSurvivalStrategy(): SurvivalStrategy | null {
+        return this.purposeSurvival?.getStrategy() ?? null;
+    }
+
+    /**
+     * Get capability matrix (requires Enhanced Self-Model)
+     */
+    getCapabilities(): CapabilityEntry[] {
+        return this.enhancedSelfModel?.getCapabilities() ?? [];
+    }
+
+    /**
+     * Get evolution trajectories (requires Enhanced Self-Model)
+     */
+    getTrajectories(): EvolutionTrajectory[] {
+        return this.enhancedSelfModel?.getTrajectories() ?? [];
+    }
+
+    /**
+     * Get strategic evolution priorities (requires Strategic Autonomy)
+     */
+    getEvolutionPriorities(): EvolutionPriority[] {
+        if (!this.strategicAutonomy) return [];
+        const drift = this.driftAnalyzer.analyzeDrift();
+        const health = this.enhancedSelfModel?.assessFull()
+            ?? { score: 0.5, fitnessComponent: 0.5, driftComponent: 1.0,
+                 purposeComponent: 0.5, trajectoryComponent: 0.5, label: 'stable' as const };
+        return this.strategicAutonomy.prioritizeEvolution(drift.signals, health);
+    }
+
+    /**
+     * Get agent vitals snapshot
+     */
+    getAgentVitals(): AgentVitals | null {
+        if (!this.purposeSurvival || !this.enhancedSelfModel) return null;
+        return computeAgentVitals(this.purposeSurvival, this.enhancedSelfModel);
+    }
+
+    // ═══════════════════════════════════════════════════════
     // AUTONOMOUS AGENT: PRIVATE METHODS
     // ═══════════════════════════════════════════════════════
 
@@ -1549,16 +1663,67 @@ Ready to see what we can do together? 😊`,
         const autoConfig = this.genome.config.autonomous;
         const drift = this.driftAnalyzer.analyzeDrift();
 
-        // 1. Auto-mutate on drift
+        // 0. Purpose Survival: evaluate threats and determine strategy
+        if (this.purposeSurvival) {
+            const evaluation = this.purposeSurvival.evaluateThreats();
+
+            // CRITICAL mode: attempt rollback and return early
+            if (evaluation.mode === 'critical') {
+                const snapshot = this.purposeSurvival.getLastKnownGood();
+                if (snapshot) {
+                    this.restoreFromSnapshot(snapshot);
+                    return;
+                }
+            }
+
+            // STRESSED/SURVIVAL: snapshot before mutations
+            if (evaluation.mode === 'stressed' || evaluation.mode === 'survival') {
+                this.purposeSurvival.snapshotLastKnownGood(this.genome);
+            }
+        }
+
+        // 1. Auto-mutate on drift (with strategic prioritization if available)
         if (autoConfig?.autoMutateOnDrift !== false && drift.isDrifting) {
-            for (const signal of drift.signals) {
-                if (signal.severity === 'minor') continue;
-                const target = this.driftToMutationTarget(signal);
-                await this.mutate({
-                    layer: target.layer,
-                    gene: target.gene,
-                    taskType: `auto-evolve:${signal.type}`,
-                });
+            if (this.strategicAutonomy && this.enhancedSelfModel) {
+                // Strategic: prioritize evolution targets
+                const health = this.enhancedSelfModel.assessFull();
+                const priorities = this.strategicAutonomy.prioritizeEvolution(drift.signals, health);
+
+                for (const priority of priorities.filter(p => p.urgency === 'immediate')) {
+                    // Purpose fidelity check before mutation
+                    if (this.purposeSurvival) {
+                        const currentAllele = this.genome.layers[`layer${priority.layer}` as 'layer0' | 'layer1' | 'layer2']
+                            ?.find((a: { gene: string; status: string }) => a.gene === priority.gene && a.status === 'active');
+                        if (currentAllele) {
+                            const check = this.purposeSurvival.purposeFidelityCheck({
+                                gene: priority.gene,
+                                content: currentAllele.content,
+                            });
+                            if (!check.approved) continue;
+                        }
+                    }
+
+                    const target = this.driftToMutationTarget({
+                        type: priority.gene, severity: 'moderate',
+                        baselineValue: 0.7, currentValue: 0.5,
+                    } as DriftSignal);
+                    await this.mutate({
+                        layer: target.layer,
+                        gene: target.gene,
+                        taskType: `strategic-evolve:${priority.reason}`,
+                    });
+                }
+            } else {
+                // Fallback: original drift-based mutation
+                for (const signal of drift.signals) {
+                    if (signal.severity === 'minor') continue;
+                    const target = this.driftToMutationTarget(signal);
+                    await this.mutate({
+                        layer: target.layer,
+                        gene: target.gene,
+                        taskType: `auto-evolve:${signal.type}`,
+                    });
+                }
             }
         }
 
@@ -2095,5 +2260,29 @@ Ready to see what we can do together? 😊`,
             score: s.score,
             reason: s.reason,
         }));
+    }
+
+    /**
+     * Restore genome alleles from a snapshot (emergency rollback).
+     */
+    private restoreFromSnapshot(snapshot: GenomeSnapshot): void {
+        for (const saved of snapshot.alleles) {
+            const layerKey = `layer${saved.layer}` as 'layer0' | 'layer1' | 'layer2';
+            const allele = this.genome.layers[layerKey].find(
+                (a: { gene: string; status: string }) => a.gene === saved.gene && a.status === 'active',
+            );
+            if (allele) {
+                allele.content = saved.content;
+                allele.fitness = saved.fitness;
+            }
+        }
+        this.storage.saveGenome(this.genome).catch(() => {});
+        this.metrics.logAudit({
+            level: 'warning',
+            component: 'genome',
+            operation: 'emergency-rollback',
+            message: `Restored from snapshot taken at ${snapshot.timestamp.toISOString()}`,
+            genomeId: this.genome.id,
+        });
     }
 }
