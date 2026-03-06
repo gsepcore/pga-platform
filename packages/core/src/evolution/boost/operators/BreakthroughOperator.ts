@@ -1,20 +1,21 @@
 /**
- * Breakthrough Operator - RADICAL INNOVATION
+ * Breakthrough Operator — Emergency Gene Redesign
  *
- * Generates radical mutations that can produce breakthrough improvements.
- * Expected improvement: 60-80% (highest risk, highest reward!)
+ * Complete gene rewrite for critical situations: severe drift,
+ * purpose misalignment, or health collapse.
  *
- * Strategy:
- * - Analyzes current genome comprehensively
- * - Identifies fundamental limitations
- * - Uses LLM self-reflection to propose radical redesign
- * - Creates completely new approaches to solving problems
+ * Uses ALL available intelligence data to generate an entirely new
+ * gene from scratch. This is the "last resort" operator — it only
+ * activates when other operators have failed to address the problem.
  *
- * This is the "hail mary" mutation - high risk but can produce 10x improvements!
+ * Activation gating:
+ * - estimateImprovement() returns near-zero in normal conditions
+ * - Only returns high estimates when drift is severe/critical OR health < 0.4
+ * - This ensures MutationEngine only selects this operator when truly needed
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-27
- * @version 2.0.0 - Evolution Boost
+ * @version 3.0.0 — Intelligence-Fed Evolution
  */
 
 import type {
@@ -22,6 +23,8 @@ import type {
     OperativeGene,
     MutationType,
     MutationRecord,
+    GeneCategory,
+    FitnessVector,
 } from '../../../types/GenomeV2.js';
 
 import type {
@@ -31,44 +34,122 @@ import type {
 } from '../../MutationOperator.js';
 
 import type { LLMAdapter } from '../../../interfaces/LLMAdapter.js';
-import type { GeneCategory, FitnessVector } from '../../../types/GenomeV2.js';
 import { generateText } from '../utils/llmHelper.js';
+import { estimateTokenCount } from '../../../utils/tokens.js';
+
+// ─── Evidence types ─────────────────────────────────────────
+
+interface DriftSignalEvidence {
+    type: string;
+    severity: string;
+    currentValue?: number;
+    baselineValue?: number;
+}
+
+interface HealthEvidence {
+    score: number;
+    label: string;
+    fitnessComponent: number;
+    driftComponent: number;
+    purposeComponent: number;
+    trajectoryComponent: number;
+}
+
+interface CapabilityEvidence {
+    taskType: string;
+    gene: string;
+    performanceScore: number;
+    trend: string;
+}
+
+interface PatternEvidence {
+    type: string;
+    description: string;
+    confidence: number;
+    prediction?: string;
+}
+
+interface TrajectoryEvidence {
+    gene: string;
+    trend: string;
+    projectedFitness: number;
+}
 
 /**
  * Breakthrough Operator
  *
- * MOST AGGRESSIVE mutation that uses deep LLM reflection to propose
- * radical redesigns that can produce breakthrough improvements.
- *
- * Use sparingly - this is high-risk, high-reward!
+ * Emergency gene redesign that only activates in critical situations.
+ * Uses comprehensive intelligence data for maximum-impact gene rewriting.
  */
 export class BreakthroughOperator implements IMutationOperator {
     name: MutationType = 'breakthrough';
-    description = 'Radical redesign using deep LLM reflection';
+    description = 'Emergency gene redesign using comprehensive intelligence data';
     targetChromosome: 'c1' = 'c1';
 
     constructor(private llm: LLMAdapter) {}
 
     async mutate(context: MutationContext): Promise<MutationResult> {
-        // Perform deep analysis of current genome
-        const analysis = await this.analyzeGenome(context);
-
-        // Generate radical redesign
-        const redesign = await this.generateBreakthrough(context, analysis);
-
-        // Create mutant with redesigned genes
         const mutant = this.deepClone(context.genome);
-        mutant.chromosomes.c1.operations = redesign.genes;
 
-        // Create mutation record
+        // Target specific gene if provided, otherwise first C1 gene
+        const targetGene = context.targetGene
+            ?? mutant.chromosomes.c1.operations[0];
+
+        if (!targetGene) {
+            return this.createFailure(context, 'No target gene for breakthrough');
+        }
+
+        const geneIndex = mutant.chromosomes.c1.operations.findIndex(
+            g => g.id === targetGene.id || g.category === targetGene.category,
+        );
+
+        if (geneIndex === -1) {
+            return this.createFailure(context, `Gene ${targetGene.category} not found`);
+        }
+
+        // Phase 1: Deep analysis
+        const analysis = await this.analyzeWithIntelligence(targetGene, context);
+
+        // Phase 2: Generate breakthrough redesign
+        const redesignedContent = await this.generateBreakthroughContent(targetGene, analysis, context);
+
+        // Update gene
+        const defaultFitness: FitnessVector = {
+            quality: 0.5, successRate: 0.5, tokenEfficiency: 0.5,
+            latency: 1000, costPerSuccess: 0.01, interventionRate: 0.1,
+            composite: 0.5, sampleSize: 0, lastUpdated: new Date(), confidence: 0,
+        };
+
+        mutant.chromosomes.c1.operations[geneIndex] = {
+            id: targetGene.id,
+            category: targetGene.category as GeneCategory,
+            content: redesignedContent,
+            fitness: targetGene.fitness ?? defaultFitness,
+            origin: 'mutation',
+            usageCount: targetGene.usageCount ?? 0,
+            lastUsed: new Date(),
+            successRate: targetGene.successRate ?? 0.5,
+            tokenCount: estimateTokenCount(redesignedContent),
+            version: (targetGene.version ?? 0) + 1,
+            lastModified: new Date(),
+            mutationHistory: [
+                ...(targetGene.mutationHistory || []),
+                {
+                    operation: this.name,
+                    timestamp: new Date(),
+                    reason: `Breakthrough redesign: ${analysis.summary}`,
+                },
+            ],
+        };
+
         const mutation: MutationRecord = {
             id: this.generateId(),
             timestamp: new Date(),
             chromosome: 'c1',
             operation: this.name,
-            before: JSON.stringify(context.genome.chromosomes.c1),
-            after: JSON.stringify(mutant.chromosomes.c1),
-            diff: redesign.summary,
+            before: targetGene.content,
+            after: redesignedContent,
+            diff: `Breakthrough: ${analysis.summary}`,
             trigger: 'drift-detected',
             reason: context.reason,
             sandboxTested: false,
@@ -80,283 +161,218 @@ export class BreakthroughOperator implements IMutationOperator {
             success: true,
             mutant,
             mutation,
-            description: redesign.summary,
-            expectedImprovement: redesign.expectedImprovement,
+            description: `Breakthrough redesign of ${targetGene.category}: ${analysis.summary}`,
+            expectedImprovement: this.estimateImprovement(context),
         };
     }
 
+    /**
+     * Activation gating: only returns high estimates in critical situations.
+     * In normal conditions, returns 0.02 so MutationEngine never selects this.
+     */
     estimateImprovement(context: MutationContext): number {
-        // Breakthrough is most valuable when:
-        // 1. Current fitness is low (lots of room for improvement)
-        // 2. Recent mutations haven't helped much
+        const evidence = context.evidence ?? {};
 
-        const fitness = context.genome.fitness;
-        const currentFitness = fitness.composite;
+        // Check for severe/critical drift
+        const driftSignals = (evidence.driftSignals ?? []) as DriftSignalEvidence[];
+        const hasCriticalDrift = driftSignals.some(
+            s => s.severity === 'critical' || s.severity === 'severe',
+        );
 
-        // If fitness is low, breakthrough can help a lot
-        if (currentFitness < 0.5) {
-            return 0.80; // 80% improvement possible!
-        } else if (currentFitness < 0.7) {
-            return 0.60; // 60% improvement
-        } else {
-            return 0.40; // Still 40% even with decent fitness
+        // Check for low health
+        const health = evidence.health as HealthEvidence | undefined;
+        const hasLowHealth = health ? health.score < 0.4 : false;
+
+        // Check for very low genome fitness
+        const hasLowFitness = context.genome.fitness.composite < 0.35;
+
+        // ACTIVATION GATE: only high estimate when truly needed
+        if (!hasCriticalDrift && !hasLowHealth && !hasLowFitness) {
+            return 0.02; // Near-zero: never selected in normal conditions
         }
+
+        // Scale with severity
+        let estimate = 0.30; // Base when activated
+
+        if (hasCriticalDrift) {
+            const criticalCount = driftSignals.filter(s => s.severity === 'critical').length;
+            estimate += criticalCount * 0.10;
+        }
+
+        if (hasLowHealth && health) {
+            estimate += (0.4 - health.score) * 0.5;
+        }
+
+        if (hasLowFitness) {
+            estimate += (0.35 - context.genome.fitness.composite) * 0.3;
+        }
+
+        return Math.min(0.60, estimate);
     }
 
     /**
-     * Deep analysis of current genome
+     * Deep analysis using ALL available intelligence data
      */
-    private async analyzeGenome(context: MutationContext): Promise<{
-        strengths: string[];
-        weaknesses: string[];
-        rootCauses: string[];
-        opportunities: string[];
-    }> {
-        const analysisPrompt = this.buildAnalysisPrompt(context);
-
-        const response = await generateText(this.llm, {
-            prompt: analysisPrompt,
-            temperature: 0.3, // Lower temp for analysis
-            maxTokens: 1500,
-        });
-
-        return this.parseAnalysis(response.content);
-    }
-
-    /**
-     * Build deep analysis prompt
-     */
-    private buildAnalysisPrompt(context: MutationContext): string {
-        const genes = context.genome.chromosomes.c1.operations
-            .map((g, i) => `${i + 1}. ${g.category}:\n${g.content}`)
-            .join('\n\n');
-
-        return `You are an expert AI agent architect. Perform a DEEP analysis of this agent's genome.
-
-CURRENT GENOME:
-${genes}
-
-PERFORMANCE METRICS:
-- Quality: ${(context.genome.fitness.quality * 100).toFixed(1)}%
-- Success Rate: ${(context.genome.fitness.successRate * 100).toFixed(1)}%
-- Token Efficiency: ${(context.genome.fitness.tokenEfficiency * 100).toFixed(1)}%
-- Latency: ${context.genome.fitness.latency}ms
-- Intervention Rate: ${(context.genome.fitness.interventionRate * 100).toFixed(1)}%
-- Cost Per Success: $${context.genome.fitness.costPerSuccess.toFixed(4)}
-
-CONTEXT: ${context.reason}
-
-TASK: Analyze this genome comprehensively:
-
-1. STRENGTHS: What's working well?
-2. WEAKNESSES: What's limiting performance?
-3. ROOT CAUSES: Why are these weaknesses happening?
-4. OPPORTUNITIES: What radical changes could 10x performance?
-
-Format your response as:
-STRENGTHS:
-- [strength 1]
-- [strength 2]
-
-WEAKNESSES:
-- [weakness 1]
-- [weakness 2]
-
-ROOT_CAUSES:
-- [root cause 1]
-- [root cause 2]
-
-OPPORTUNITIES:
-- [opportunity 1]
-- [opportunity 2]`;
-    }
-
-    /**
-     * Parse analysis response
-     */
-    private parseAnalysis(response: string): {
-        strengths: string[];
-        weaknesses: string[];
-        rootCauses: string[];
-        opportunities: string[];
-    } {
-        const sections = {
-            strengths: this.extractSection(response, 'STRENGTHS'),
-            weaknesses: this.extractSection(response, 'WEAKNESSES'),
-            rootCauses: this.extractSection(response, 'ROOT_CAUSES'),
-            opportunities: this.extractSection(response, 'OPPORTUNITIES'),
-        };
-
-        return sections;
-    }
-
-    /**
-     * Extract bulleted section from response
-     */
-    private extractSection(response: string, sectionName: string): string[] {
-        const regex = new RegExp(`${sectionName}:([\\s\\S]*?)(?=\\n[A-Z_]+:|$)`, 'i');
-        const match = response.match(regex);
-
-        if (!match) return [];
-
-        const content = match[1];
-        const items = content
-            .split('\n')
-            .map(line => line.trim())
-            .filter(line => line.startsWith('-'))
-            .map(line => line.substring(1).trim());
-
-        return items;
-    }
-
-    /**
-     * Generate breakthrough redesign
-     */
-    private async generateBreakthrough(
+    private async analyzeWithIntelligence(
+        _gene: OperativeGene,
         context: MutationContext,
-        analysis: {
-            strengths: string[];
-            weaknesses: string[];
-            rootCauses: string[];
-            opportunities: string[];
+    ): Promise<{ summary: string; analysisText: string }> {
+        const evidence = context.evidence ?? {};
+        const sections: string[] = [];
+
+        // Drift signals
+        const driftSignals = (evidence.driftSignals ?? []) as DriftSignalEvidence[];
+        if (driftSignals.length > 0) {
+            sections.push('ACTIVE DRIFT SIGNALS:');
+            for (const s of driftSignals) {
+                sections.push(`  - ${s.type}: ${s.severity} (${s.baselineValue?.toFixed(2) ?? '?'} → ${s.currentValue?.toFixed(2) ?? '?'})`);
+            }
         }
-    ): Promise<{
-        genes: OperativeGene[];
-        summary: string;
-        expectedImprovement: number;
-    }> {
-        const breakthroughPrompt = this.buildBreakthroughPrompt(context, analysis);
 
-        const response = await generateText(this.llm, {
-            prompt: breakthroughPrompt,
-            temperature: 0.8, // Higher temp for creativity!
-            maxTokens: 2500,
-        });
+        // Health
+        const health = evidence.health as HealthEvidence | undefined;
+        if (health) {
+            sections.push(`AGENT HEALTH: ${(health.score * 100).toFixed(0)}% (${health.label})`);
+            sections.push(`  fitness: ${(health.fitnessComponent * 100).toFixed(0)}%, drift: ${(health.driftComponent * 100).toFixed(0)}%, purpose: ${(health.purposeComponent * 100).toFixed(0)}%, trajectory: ${(health.trajectoryComponent * 100).toFixed(0)}%`);
+        }
 
-        return this.parseBreakthrough(response.content, context);
+        // Capabilities
+        const capabilities = (evidence.capabilities ?? []) as CapabilityEvidence[];
+        if (capabilities.length > 0) {
+            sections.push('DECLINING CAPABILITIES:');
+            for (const c of capabilities.slice(0, 5)) {
+                sections.push(`  - ${c.taskType} × ${c.gene}: ${(c.performanceScore * 100).toFixed(0)}% (${c.trend})`);
+            }
+        }
+
+        // Trajectories
+        const trajectories = (evidence.trajectories ?? []) as TrajectoryEvidence[];
+        if (trajectories.length > 0) {
+            sections.push('DECLINING TRAJECTORIES:');
+            for (const t of trajectories.slice(0, 3)) {
+                sections.push(`  - ${t.gene}: projected → ${(t.projectedFitness * 100).toFixed(0)}%`);
+            }
+        }
+
+        // Patterns
+        const patterns = (evidence.patterns ?? []) as PatternEvidence[];
+        if (patterns.length > 0) {
+            sections.push('LEARNED PATTERNS:');
+            for (const p of patterns.slice(0, 5)) {
+                sections.push(`  - [${p.type}] ${p.description} (${(p.confidence * 100).toFixed(0)}% conf)`);
+            }
+        }
+
+        // Purpose
+        const purpose = evidence.purpose as string | undefined;
+        if (purpose) {
+            sections.push(`AGENT PURPOSE: ${purpose}`);
+        }
+
+        const analysisText = sections.join('\n');
+        const summary = this.buildSummary(driftSignals, health, capabilities);
+
+        return { summary, analysisText };
     }
 
     /**
-     * Build breakthrough redesign prompt
+     * Generate breakthrough content using comprehensive intelligence
      */
-    private buildBreakthroughPrompt(
+    private async generateBreakthroughContent(
+        gene: OperativeGene,
+        analysis: { summary: string; analysisText: string },
         context: MutationContext,
-        analysis: {
-            strengths: string[];
-            weaknesses: string[];
-            rootCauses: string[];
-            opportunities: string[];
-        }
-    ): string {
-        const currentGenes = context.genome.chromosomes.c1.operations;
+    ): Promise<string> {
+        const prompt = `You are a visionary AI agent architect. This agent is in CRITICAL condition and needs an EMERGENCY REDESIGN of one of its core genes.
 
-        return `You are a visionary AI agent architect. Design a BREAKTHROUGH redesign.
+CURRENT GENE (category: ${gene.category}):
+\`\`\`
+${gene.content}
+\`\`\`
 
 CURRENT PERFORMANCE:
 - Quality: ${(context.genome.fitness.quality * 100).toFixed(1)}%
 - Success Rate: ${(context.genome.fitness.successRate * 100).toFixed(1)}%
 - Token Efficiency: ${(context.genome.fitness.tokenEfficiency * 100).toFixed(1)}%
+- Intervention Rate: ${(context.genome.fitness.interventionRate * 100).toFixed(1)}%
 
-ANALYSIS:
-Strengths: ${analysis.strengths.join(', ')}
-Weaknesses: ${analysis.weaknesses.join(', ')}
-Root Causes: ${analysis.rootCauses.join(', ')}
-Opportunities: ${analysis.opportunities.join(', ')}
+COMPREHENSIVE INTELLIGENCE DATA:
+${analysis.analysisText}
 
-TASK: Design a RADICAL redesign that addresses root causes and seizes opportunities.
+CRISIS SUMMARY: ${analysis.summary}
 
-GUIDELINES:
-1. Think BIG - aim for 2-10x improvement
-2. Don't be conservative - this is breakthrough time
-3. Leverage the opportunities identified
-4. Address root causes fundamentally
-5. Keep what works (strengths)
-6. Be bold and innovative
+TASK: Completely redesign this gene from scratch. This is NOT an incremental improvement — this is an emergency redesign to save the agent from further decline.
 
-CATEGORIES TO REDESIGN:
-${currentGenes.map(g => `- ${g.category}`).join('\n')}
+BREAKTHROUGH GUIDELINES:
+1. Think fundamentally about what this gene should do given the intelligence data
+2. Address ALL identified issues (drift, declining capabilities, health problems)
+3. Incorporate learned patterns into the new design
+4. Align with the agent's declared purpose
+5. Be bold and innovative — conventional approaches haven't worked
+6. Optimize for LLM comprehension with clear, specific, actionable instructions
+7. Include concrete strategies, not vague guidelines
+8. Keep focused on category: ${gene.category}
 
-Return redesigned genes in this format:
----GENE:tool-usage---
-[Radically improved content]
----END---
+Return ONLY the redesigned gene content. No explanations, no headers.
 
----GENE:reasoning---
-[Radically improved content]
----END---
+BREAKTHROUGH REDESIGN:`;
 
-(Continue for all categories)
-
-After all genes, add:
----SUMMARY---
-[Brief summary of breakthrough changes and expected improvement]
----END---`;
+        try {
+            const response = await generateText(this.llm, {
+                prompt,
+                temperature: 0.7, // Maximum creativity for breakthrough
+                maxTokens: 2000,
+            });
+            return response.content.trim();
+        } catch {
+            return gene.content;
+        }
     }
 
-    /**
-     * Parse breakthrough redesign
-     */
-    private parseBreakthrough(
-        response: string,
-        context: MutationContext
-    ): {
-        genes: OperativeGene[];
-        summary: string;
-        expectedImprovement: number;
-    } {
-        const genes: OperativeGene[] = [];
-        const geneMatches = response.matchAll(/---GENE:(\S+)---([\s\S]*?)---END---/g);
+    private buildSummary(
+        driftSignals: DriftSignalEvidence[],
+        health: HealthEvidence | undefined,
+        capabilities: CapabilityEvidence[],
+    ): string {
+        const parts: string[] = [];
 
-        for (const match of geneMatches) {
-            const category = match[1];
-            const content = match[2].trim();
-
-            // Find original gene to preserve metadata
-            const original = context.genome.chromosomes.c1.operations.find(
-                g => g.category === category
-            );
-
-            const defaultFitness: FitnessVector = {
-                quality: 0.5, successRate: 0.5, tokenEfficiency: 0.5,
-                latency: 1000, costPerSuccess: 0.01, interventionRate: 0.1,
-                composite: 0.5, sampleSize: 0, lastUpdated: new Date(), confidence: 0,
-            };
-
-            genes.push({
-                id: original?.id || `gene_${category}_${Date.now()}`,
-                category: category as GeneCategory,
-                content,
-                fitness: original?.fitness || defaultFitness,
-                origin: 'mutation',
-                usageCount: original?.usageCount || 0,
-                lastUsed: new Date(),
-                successRate: original?.successRate || 0.5,
-                version: (original?.version ?? 0) + 1,
-                lastModified: new Date(),
-                mutationHistory: [
-                    ...(original?.mutationHistory || []),
-                    {
-                        operation: this.name,
-                        timestamp: new Date(),
-                        reason: 'Breakthrough redesign',
-                    },
-                ],
-            });
+        if (driftSignals.length > 0) {
+            const worst = driftSignals.sort((a, b) => {
+                const rank = (s: string) => s === 'critical' ? 3 : s === 'severe' ? 2 : s === 'moderate' ? 1 : 0;
+                return rank(b.severity) - rank(a.severity);
+            })[0];
+            parts.push(`${worst.type} (${worst.severity})`);
         }
 
-        // Extract summary
-        const summaryMatch = response.match(/---SUMMARY---([\s\S]*?)---END---/);
-        const summary = summaryMatch ? summaryMatch[1].trim() : 'Radical breakthrough redesign';
+        if (health && health.score < 0.4) {
+            parts.push(`health ${(health.score * 100).toFixed(0)}%`);
+        }
 
-        // Estimate improvement based on current fitness gap
-        const currentFitness = context.genome.fitness.composite;
-        const gap = 1 - currentFitness;
-        const expectedImprovement = 0.60 + (gap * 0.20); // 60-80%
+        if (capabilities.length > 0) {
+            parts.push(`${capabilities.length} declining capabilities`);
+        }
 
+        return parts.length > 0 ? parts.join(', ') : 'emergency redesign triggered';
+    }
+
+    private createFailure(context: MutationContext, reason: string): MutationResult {
         return {
-            genes: genes.length > 0 ? genes : context.genome.chromosomes.c1.operations,
-            summary,
-            expectedImprovement,
+            success: false,
+            mutant: context.genome,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: '', after: '', diff: '',
+                trigger: 'drift-detected',
+                reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: reason,
+            expectedImprovement: 0,
         };
     }
 

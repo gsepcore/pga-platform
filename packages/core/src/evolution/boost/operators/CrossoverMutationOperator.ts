@@ -1,20 +1,17 @@
 /**
- * Crossover Mutation Operator - GENETIC RECOMBINATION
+ * Crossover Mutation Operator — Intra-Genome Gene Fusion
  *
- * Combines successful genes from multiple high-fitness genomes.
- * Expected improvement: 35% (sexual reproduction for AI!)
+ * Takes high-fitness genes from the SAME genome and fuses their
+ * successful techniques into a struggling target gene using LLM.
  *
- * Strategy:
- * - Takes 2+ high-fitness parent genomes
- * - Identifies best-performing genes from each
- * - Intelligently combines them into offspring
- * - Creates hybrid superior to either parent
- *
- * This mimics sexual reproduction in biology!
+ * Unlike biological crossover which requires two parents, this
+ * operator does intra-genome crossover: it identifies what makes
+ * other genes in the same agent successful, then transfers those
+ * techniques to the gene that's underperforming.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-27
- * @version 2.0.0 - Evolution Boost
+ * @version 3.0.0 — Intelligence-Fed Evolution
  */
 
 import type {
@@ -30,65 +27,94 @@ import type {
     MutationResult,
 } from '../../MutationOperator.js';
 
-export interface CrossoverParent {
-    genome: GenomeV2;
-    fitness: number;
+import type { LLMAdapter } from '../../../interfaces/LLMAdapter.js';
+import { generateText } from '../utils/llmHelper.js';
+import { estimateTokenCount } from '../../../utils/tokens.js';
+
+// ─── Evidence types ─────────────────────────────────────────
+
+interface CapabilityEvidence {
+    taskType: string;
+    gene: string;
+    performanceScore: number;
+    trend: string;
 }
 
 /**
  * Crossover Mutation Operator
  *
- * AGGRESSIVE mutation that combines genes from multiple high-fitness parents
- * to create superior offspring (like sexual reproduction in biology).
+ * Intra-genome crossover: fuses successful techniques from high-fitness
+ * genes into struggling genes, guided by LLM intelligence.
  */
 export class CrossoverMutationOperator implements IMutationOperator {
     name: MutationType = 'crossover_mutation';
-    description = 'Genetic recombination from multiple high-fitness parents';
+    description = 'Intra-genome crossover: fuse successful gene techniques into struggling genes';
     targetChromosome: 'c1' = 'c1';
 
-    // Store population of genomes for crossover
-    private population: CrossoverParent[] = [];
-
-    /**
-     * Add a genome to the crossover population
-     */
-    addToPopulation(genome: GenomeV2, fitness: number): void {
-        this.population.push({ genome, fitness });
-
-        // Keep only top 10 genomes
-        this.population.sort((a, b) => b.fitness - a.fitness);
-        if (this.population.length > 10) {
-            this.population = this.population.slice(0, 10);
-        }
-    }
+    constructor(private llm?: LLMAdapter) {}
 
     async mutate(context: MutationContext): Promise<MutationResult> {
-        // Need at least 2 parents for crossover
-        if (this.population.length < 2) {
-            return {
-                success: false,
-                mutant: context.genome,
-                mutation: this.createEmptyMutation(),
-                description: 'Not enough parents for crossover (need at least 2)',
-                expectedImprovement: 0,
-            };
+        const mutant = this.deepClone(context.genome);
+        const allGenes = mutant.chromosomes.c1.operations;
+
+        // Target specific gene if provided, otherwise find weakest gene
+        const targetGene = context.targetGene
+            ?? this.findWeakestGene(allGenes);
+
+        if (!targetGene) {
+            return this.createFailure(context, 'No target gene for crossover');
         }
 
-        // Select parents (top 2-3 fitness)
-        const parents = this.selectParents();
+        const geneIndex = allGenes.findIndex(
+            g => g.id === targetGene.id || g.category === targetGene.category,
+        );
 
-        // Create offspring by combining genes
-        const offspring = this.createOffspring(parents, context);
+        if (geneIndex === -1) {
+            return this.createFailure(context, `Gene ${targetGene.category} not found`);
+        }
 
-        // Create mutation record
+        // Find donor genes (higher fitness than target)
+        const donors = this.findDonorGenes(allGenes, targetGene);
+
+        if (donors.length === 0) {
+            return this.createFailure(context, 'No higher-fitness donor genes available for crossover');
+        }
+
+        // Fuse donor techniques into target
+        let fusedContent: string;
+
+        if (this.llm) {
+            fusedContent = await this.llmFusion(targetGene, donors, context);
+        } else {
+            fusedContent = this.mechanicalFusion(targetGene, donors);
+        }
+
+        // Update gene
+        mutant.chromosomes.c1.operations[geneIndex] = {
+            ...targetGene,
+            content: fusedContent,
+            tokenCount: estimateTokenCount(fusedContent),
+            version: (targetGene.version ?? 0) + 1,
+            lastModified: new Date(),
+            origin: 'mutation',
+            mutationHistory: [
+                ...(targetGene.mutationHistory || []),
+                {
+                    operation: this.name,
+                    timestamp: new Date(),
+                    reason: `Crossover from ${donors.length} donor genes: ${donors.map(d => d.category).join(', ')}`,
+                },
+            ],
+        };
+
         const mutation: MutationRecord = {
             id: this.generateId(),
             timestamp: new Date(),
             chromosome: 'c1',
             operation: this.name,
-            before: JSON.stringify(context.genome.chromosomes.c1),
-            after: JSON.stringify(offspring.chromosomes.c1),
-            diff: `Crossover from ${parents.length} parents`,
+            before: targetGene.content,
+            after: fusedContent,
+            diff: `Crossover: fused ${donors.length} donors into ${targetGene.category}`,
             trigger: 'drift-detected',
             reason: context.reason,
             sandboxTested: false,
@@ -98,154 +124,174 @@ export class CrossoverMutationOperator implements IMutationOperator {
 
         return {
             success: true,
-            mutant: offspring,
+            mutant,
             mutation,
-            description: `Genetic recombination from ${parents.length} high-fitness parents`,
-            expectedImprovement: 0.35, // 35% improvement expected! 🚀
+            description: `Fused techniques from ${donors.length} high-fitness genes into ${targetGene.category}`,
+            expectedImprovement: this.estimateImprovement(context),
         };
     }
 
     estimateImprovement(context: MutationContext): number {
-        // Crossover is more effective when:
-        // 1. We have diverse, high-fitness parents
-        // 2. Current genome has room for improvement
+        const allGenes = context.genome.chromosomes.c1.operations;
+        const target = context.targetGene ?? this.findWeakestGene(allGenes);
 
-        if (this.population.length < 2) {
-            return 0; // Can't do crossover
-        }
+        if (!target || allGenes.length < 2) return 0.02;
 
-        const avgParentFitness = this.population.slice(0, 3)
-            .reduce((sum, p) => sum + p.fitness, 0) / Math.min(3, this.population.length);
+        const donors = this.findDonorGenes(allGenes, target);
+        if (donors.length === 0) return 0.02;
 
-        const currentFitness = context.genome.fitness.composite;
-        const fitnessGap = avgParentFitness - currentFitness;
+        // Estimate based on fitness gap between target and donors
+        const targetFitness = target.fitness?.quality ?? target.successRate ?? 0.5;
+        const avgDonorFitness = donors.reduce(
+            (sum, d) => sum + (d.fitness?.quality ?? d.successRate ?? 0.5), 0,
+        ) / donors.length;
 
-        // Base: 35%, bonus if parents are much better
-        return 0.35 + Math.max(0, fitnessGap * 0.5);
+        const gap = avgDonorFitness - targetFitness;
+        return Math.min(0.35, Math.max(0.05, gap * 0.5));
     }
 
     /**
-     * Select best parents for crossover
+     * Find the weakest gene by composite fitness
      */
-    private selectParents(): CrossoverParent[] {
-        // Select top 2-3 parents
-        const numParents = Math.min(3, this.population.length);
-        return this.population.slice(0, numParents);
+    private findWeakestGene(genes: OperativeGene[]): OperativeGene | undefined {
+        if (genes.length === 0) return undefined;
+
+        return genes.reduce((weakest, gene) => {
+            const weakestFitness = weakest.fitness?.quality ?? weakest.successRate ?? 0.5;
+            const geneFitness = gene.fitness?.quality ?? gene.successRate ?? 0.5;
+            return geneFitness < weakestFitness ? gene : weakest;
+        });
     }
 
     /**
-     * Create offspring by combining parent genes
+     * Find donor genes with higher fitness than target
      */
-    private createOffspring(
-        parents: CrossoverParent[],
-        context: MutationContext
-    ): GenomeV2 {
-        const offspring = this.deepClone(context.genome);
+    private findDonorGenes(allGenes: OperativeGene[], target: OperativeGene): OperativeGene[] {
+        const targetFitness = target.fitness?.quality ?? target.successRate ?? 0.5;
 
-        // Get all operative genes from all parents
-        const allGenesByCategory = new Map<string, OperativeGene[]>();
-
-        // Collect genes from all parents
-        for (const parent of parents) {
-            for (const gene of parent.genome.chromosomes.c1.operations) {
-                if (!allGenesByCategory.has(gene.category)) {
-                    allGenesByCategory.set(gene.category, []);
-                }
-                allGenesByCategory.get(gene.category)!.push({
-                    ...gene,
-                    // Track which parent this came from
-                    parentFitness: parent.fitness,
-                } as OperativeGene & { parentFitness: number });
-            }
-        }
-
-        // For each category, select the best gene
-        const offspringGenes: OperativeGene[] = [];
-
-        for (const [_category, genes] of allGenesByCategory) {
-            // Select gene from highest-fitness parent
-            const sortedGenes = genes.sort((a, b) => {
-                const fitnessA = (a as any).parentFitness || 0;
-                const fitnessB = (b as any).parentFitness || 0;
+        return allGenes
+            .filter(g => g.id !== target.id && g.category !== target.category)
+            .filter(g => {
+                const fitness = g.fitness?.quality ?? g.successRate ?? 0.5;
+                return fitness > targetFitness;
+            })
+            .sort((a, b) => {
+                const fitnessA = a.fitness?.quality ?? a.successRate ?? 0.5;
+                const fitnessB = b.fitness?.quality ?? b.successRate ?? 0.5;
                 return fitnessB - fitnessA;
+            })
+            .slice(0, 3); // Top 3 donors
+    }
+
+    /**
+     * LLM-powered intelligent fusion
+     */
+    private async llmFusion(
+        target: OperativeGene,
+        donors: OperativeGene[],
+        context: MutationContext,
+    ): Promise<string> {
+        const donorsText = donors.map((d, i) => {
+            const fitness = d.fitness?.quality ?? d.successRate ?? 0.5;
+            return `Donor ${i + 1} (${d.category}, fitness: ${(fitness * 100).toFixed(0)}%):
+\`\`\`
+${d.content}
+\`\`\``;
+        }).join('\n\n');
+
+        const targetFitness = target.fitness?.quality ?? target.successRate ?? 0.5;
+
+        // Include capability data if available
+        const capabilities = (context.evidence?.capabilities ?? []) as CapabilityEvidence[];
+        const capText = capabilities.length > 0
+            ? `\nDECLINING CAPABILITIES:\n${capabilities.slice(0, 5).map(c => `- ${c.taskType} × ${c.gene}: ${(c.performanceScore * 100).toFixed(0)}%`).join('\n')}`
+            : '';
+
+        const prompt = `You are an expert AI agent prompt engineer performing GENETIC CROSSOVER.
+
+TARGET GENE (struggling, needs improvement):
+Category: ${target.category}
+Fitness: ${(targetFitness * 100).toFixed(0)}%
+\`\`\`
+${target.content}
+\`\`\`
+
+HIGH-PERFORMING DONOR GENES (from the same agent):
+${donorsText}
+${capText}
+
+TASK: Cross-pollinate the target gene with successful techniques from the donors.
+
+GUIDELINES:
+1. IDENTIFY what makes each donor gene successful (clarity, structure, specificity, etc.)
+2. TRANSFER those successful techniques to the target gene
+3. ADAPT the techniques to fit the target gene's category (${target.category})
+4. PRESERVE the target gene's core purpose
+5. Don't copy donor content verbatim — extract and adapt the underlying patterns
+
+Return ONLY the improved gene content. No explanations.
+
+IMPROVED ${target.category.toUpperCase()} GENE:`;
+
+        try {
+            const response = await generateText(this.llm!, {
+                prompt,
+                temperature: 0.6, // Creative synthesis
+                maxTokens: 1500,
             });
-
-            const bestGene = sortedGenes[0];
-
-            // Possibly combine with second-best if available
-            if (sortedGenes.length > 1) {
-                const combinedGene = this.combineGenes(sortedGenes[0], sortedGenes[1]);
-                offspringGenes.push(combinedGene);
-            } else {
-                offspringGenes.push(bestGene);
-            }
+            return response.content.trim();
+        } catch {
+            return this.mechanicalFusion(target, donors);
         }
-
-        offspring.chromosomes.c1.operations = offspringGenes;
-
-        return offspring;
     }
 
     /**
-     * Combine two genes intelligently
+     * Fallback: mechanical fusion without LLM
      */
-    private combineGenes(gene1: OperativeGene, gene2: OperativeGene): OperativeGene {
-        // Simple combination: take best parts from both
-        // In a more sophisticated version, we'd use LLM for intelligent merging
+    private mechanicalFusion(target: OperativeGene, donors: OperativeGene[]): string {
+        const targetSentences = target.content.split(/[.!?]\s+/).filter(s => s.length > 10);
+        const donorSentences: string[] = [];
 
-        const combined: OperativeGene = {
-            ...gene1,
-            content: this.mergeContent(gene1.content, gene2.content),
-            version: Math.max(gene1.version ?? 0, gene2.version ?? 0) + 1,
-            lastModified: new Date(),
-            successRate: Math.max(gene1.successRate, gene2.successRate),
-            mutationHistory: [
-                ...(gene1.mutationHistory || []),
-                {
-                    operation: this.name,
-                    timestamp: new Date(),
-                    reason: 'Crossover recombination',
-                },
-            ],
+        for (const donor of donors) {
+            const sentences = donor.content.split(/[.!?]\s+/).filter(s => s.length > 10);
+            for (const s of sentences) {
+                const isDuplicate = targetSentences.some(ts => this.jaccard(ts, s) > 0.6);
+                if (!isDuplicate && donorSentences.length < 3) {
+                    donorSentences.push(s);
+                }
+            }
+        }
+
+        return [...targetSentences, ...donorSentences].join('. ') + '.';
+    }
+
+    private jaccard(s1: string, s2: string): number {
+        const w1 = new Set(s1.toLowerCase().split(/\s+/));
+        const w2 = new Set(s2.toLowerCase().split(/\s+/));
+        const intersection = new Set([...w1].filter(w => w2.has(w)));
+        const union = new Set([...w1, ...w2]);
+        return union.size > 0 ? intersection.size / union.size : 0;
+    }
+
+    private createFailure(context: MutationContext, reason: string): MutationResult {
+        return {
+            success: false,
+            mutant: context.genome,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: '', after: '', diff: '',
+                trigger: 'drift-detected',
+                reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: reason,
+            expectedImprovement: 0,
         };
-
-        return combined;
-    }
-
-    /**
-     * Merge content from two genes
-     */
-    private mergeContent(content1: string, content2: string): string {
-        // Simple merge strategy: combine unique sentences
-        const sentences1 = content1.split(/[.!?]\s+/).filter(s => s.length > 10);
-        const sentences2 = content2.split(/[.!?]\s+/).filter(s => s.length > 10);
-
-        // Combine unique sentences, prioritizing content1
-        const allSentences = [...sentences1];
-        for (const s2 of sentences2) {
-            // Add if not similar to any in content1
-            const isSimilar = sentences1.some(s1 =>
-                this.similarity(s1, s2) > 0.7
-            );
-            if (!isSimilar) {
-                allSentences.push(s2);
-            }
-        }
-
-        return allSentences.join('. ') + '.';
-    }
-
-    /**
-     * Simple string similarity (Jaccard)
-     */
-    private similarity(s1: string, s2: string): number {
-        const words1 = new Set(s1.toLowerCase().split(/\s+/));
-        const words2 = new Set(s2.toLowerCase().split(/\s+/));
-
-        const intersection = new Set([...words1].filter(w => words2.has(w)));
-        const union = new Set([...words1, ...words2]);
-
-        return intersection.size / union.size;
     }
 
     private deepClone(genome: GenomeV2): GenomeV2 {
@@ -254,36 +300,5 @@ export class CrossoverMutationOperator implements IMutationOperator {
 
     private generateId(): string {
         return `mut_crossover_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-    }
-
-    private createEmptyMutation(): MutationRecord {
-        return {
-            id: this.generateId(),
-            timestamp: new Date(),
-            chromosome: 'c1',
-            operation: this.name,
-            before: '',
-            after: '',
-            diff: '',
-            trigger: 'drift-detected',
-            reason: 'Insufficient population for crossover',
-            sandboxTested: false,
-            promoted: false,
-            proposer: 'system',
-        };
-    }
-
-    /**
-     * Get current population size
-     */
-    getPopulationSize(): number {
-        return this.population.length;
-    }
-
-    /**
-     * Clear population (for testing)
-     */
-    clearPopulation(): void {
-        this.population = [];
     }
 }

@@ -199,13 +199,13 @@ export class EvolutionBoostEngine {
             );
         }
 
-        if (this.config.geneBank && this.config.llm) {
+        if (this.config.llm) {
             this.baseEngine.registerOperator(
-                new PatternExtractionOperator(this.config.geneBank, this.config.llm)
+                new PatternExtractionOperator(this.config.llm, this.config.geneBank)
             );
         }
 
-        this.baseEngine.registerOperator(new CrossoverMutationOperator());
+        this.baseEngine.registerOperator(new CrossoverMutationOperator(this.config.llm));
     }
 
     /**
