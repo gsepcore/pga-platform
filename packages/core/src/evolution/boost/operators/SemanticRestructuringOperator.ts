@@ -1,18 +1,16 @@
 /**
- * Semantic Restructuring Operator - AGGRESSIVE EVOLUTION
+ * Semantic Restructuring Operator — Intelligence-Driven Gene Rewriting
  *
- * Uses LLM to completely restructure prompts for better semantic clarity.
- * Expected improvement: 40% (vs 8-15% from conservative operators)
+ * Uses LLM + intelligence data (capabilities, trajectories, drift signals,
+ * behavioral patterns) to intelligently rewrite gene content for better
+ * performance in areas where the agent is struggling.
  *
- * Strategy:
- * - Analyzes current prompt semantics
- * - Identifies ambiguities and inefficiencies
- * - Completely rewrites sections using LLM
- * - Preserves core meaning while improving structure
+ * This is NOT a mechanical transformation — it generates genuinely NEW
+ * content informed by what the agent has learned about its own performance.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-27
- * @version 2.0.0 - Evolution Boost
+ * @version 3.0.0 — Intelligence-Fed Evolution
  */
 
 import type {
@@ -30,16 +28,48 @@ import type {
 
 import type { LLMAdapter } from '../../../interfaces/LLMAdapter.js';
 import { generateText } from '../utils/llmHelper.js';
+import { estimateTokenCount } from '../../../utils/tokens.js';
+
+// ─── Evidence types (from MutationContext.evidence) ─────────
+
+interface DriftSignalEvidence {
+    type: string;
+    severity: string;
+    currentValue?: number;
+    baselineValue?: number;
+}
+
+interface CapabilityEvidence {
+    taskType: string;
+    gene: string;
+    performanceScore: number;
+    trend: string;
+}
+
+interface TrajectoryEvidence {
+    gene: string;
+    trend: string;
+    projectedFitness: number;
+}
+
+interface HealthEvidence {
+    score: number;
+    label: string;
+    fitnessComponent: number;
+    driftComponent: number;
+    purposeComponent: number;
+    trajectoryComponent: number;
+}
 
 /**
  * Semantic Restructuring Operator
  *
- * AGGRESSIVE mutation that uses LLM to completely restructure prompts
- * for maximum semantic clarity and effectiveness.
+ * Intelligence-driven gene rewriting that uses LLM to generate NEW content
+ * based on performance data, capability gaps, and behavioral patterns.
  */
 export class SemanticRestructuringOperator implements IMutationOperator {
     name: MutationType = 'semantic_restructuring';
-    description = 'Complete semantic restructuring using LLM analysis';
+    description = 'Intelligence-driven gene rewriting using LLM + performance data';
     targetChromosome: 'c1' = 'c1';
 
     constructor(private llm: LLMAdapter) {}
@@ -47,28 +77,65 @@ export class SemanticRestructuringOperator implements IMutationOperator {
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
 
-        // Restructure each operative gene
-        const restructuredGenes: OperativeGene[] = [];
+        // Target specific gene if provided, otherwise first C1 gene
+        const targetGene = context.targetGene
+            ?? mutant.chromosomes.c1.operations[0];
 
-        for (const gene of mutant.chromosomes.c1.operations) {
-            const restructured = await this.restructureGene(gene, context);
-            restructuredGenes.push(restructured);
+        if (!targetGene) {
+            return this.createFailure(context, 'No target gene found for restructuring');
         }
 
-        mutant.chromosomes.c1.operations = restructuredGenes;
+        // Find the gene in the mutant to modify
+        const geneIndex = mutant.chromosomes.c1.operations.findIndex(
+            g => g.id === targetGene.id || g.category === targetGene.category,
+        );
 
-        // Create mutation record
+        if (geneIndex === -1) {
+            return this.createFailure(context, `Gene ${targetGene.category} not found in genome`);
+        }
+
+        // Build intelligence-enriched prompt
+        const prompt = this.buildIntelligentPrompt(targetGene, context);
+
+        let restructuredContent: string;
+        try {
+            const response = await generateText(this.llm, {
+                prompt,
+                temperature: 0.5, // Balanced: creative enough for new content, controlled enough for quality
+                maxTokens: 1500,
+            });
+            restructuredContent = response.content.trim();
+        } catch {
+            // Fallback to simple heuristic restructuring
+            restructuredContent = this.performSimpleRestructuring(targetGene.content);
+        }
+
+        // Update the specific gene
+        mutant.chromosomes.c1.operations[geneIndex] = {
+            ...targetGene,
+            content: restructuredContent,
+            tokenCount: estimateTokenCount(restructuredContent),
+            version: (targetGene.version ?? 0) + 1,
+            lastModified: new Date(),
+            origin: 'mutation',
+            mutationHistory: [
+                ...(targetGene.mutationHistory || []),
+                {
+                    operation: this.name,
+                    timestamp: new Date(),
+                    reason: `Intelligence-driven restructuring: ${context.reason}`,
+                },
+            ],
+        };
+
         const mutation: MutationRecord = {
             id: this.generateId(),
             timestamp: new Date(),
             chromosome: 'c1',
             operation: this.name,
-            before: JSON.stringify(context.genome.chromosomes.c1),
-            after: JSON.stringify(mutant.chromosomes.c1),
-            diff: this.computeDiff(
-                context.genome.chromosomes.c1,
-                mutant.chromosomes.c1
-            ),
+            before: targetGene.content,
+            after: restructuredContent,
+            diff: `Restructured ${targetGene.category}: ${targetGene.content.length} → ${restructuredContent.length} chars`,
             trigger: 'drift-detected',
             reason: context.reason,
             sandboxTested: false,
@@ -80,109 +147,153 @@ export class SemanticRestructuringOperator implements IMutationOperator {
             success: true,
             mutant,
             mutation,
-            description: 'Completely restructured prompt semantics for clarity and effectiveness',
-            expectedImprovement: 0.40, // 40% improvement expected! 🚀
+            description: `Intelligence-driven restructuring of ${targetGene.category}`,
+            expectedImprovement: this.estimateImprovement(context),
         };
     }
 
     estimateImprovement(context: MutationContext): number {
-        // Higher improvement if current quality is low or token efficiency is poor
-        const currentQuality = context.genome.fitness.quality;
-        const currentEfficiency = context.genome.fitness.tokenEfficiency;
+        const evidence = context.evidence ?? {};
 
-        // If quality/efficiency are low, restructuring can help a lot
-        const qualityGap = 1 - currentQuality;
-        const efficiencyGap = 1 - currentEfficiency;
+        // Base: low estimate that scales with need
+        let estimate = 0.08;
 
-        // Base improvement: 40%, can go up to 60% if there's big room for improvement
-        return 0.40 + (qualityGap * 0.1) + (efficiencyGap * 0.1);
-    }
-
-    /**
-     * Restructure a single gene using LLM
-     */
-    private async restructureGene(
-        gene: OperativeGene,
-        context: MutationContext
-    ): Promise<OperativeGene> {
-        // Build restructuring prompt
-        const restructuringPrompt = this.buildRestructuringPrompt(gene, context);
-
-        // Use LLM for intelligent restructuring
-        let restructuredContent: string;
-        try {
-            const response = await generateText(this.llm, {
-                prompt: restructuringPrompt,
-                temperature: 0.4,
-                maxTokens: 1500,
-            });
-            restructuredContent = response.content.trim();
-        } catch {
-            // Fallback to simple heuristic restructuring
-            restructuredContent = this.performSimpleRestructuring(gene.content);
+        // Boost based on drift severity
+        const driftSignals = (evidence.driftSignals ?? []) as DriftSignalEvidence[];
+        for (const signal of driftSignals) {
+            if (signal.severity === 'critical') estimate += 0.20;
+            else if (signal.severity === 'severe') estimate += 0.15;
+            else if (signal.severity === 'moderate') estimate += 0.08;
+            else estimate += 0.03;
         }
 
-        return {
-            ...gene,
-            id: `${gene.id}-restructured-${Date.now()}`,
-            content: restructuredContent,
-            lastUsed: new Date(),
-            origin: 'mutation',
-        };
+        // Boost based on health score (worse health = more room for improvement)
+        const health = evidence.health as HealthEvidence | undefined;
+        if (health) {
+            estimate += (1 - health.score) * 0.15;
+        }
+
+        // Boost based on declining capabilities for target gene
+        const capabilities = (evidence.capabilities ?? []) as CapabilityEvidence[];
+        const targetCategory = context.targetGene?.category;
+        if (targetCategory) {
+            const declining = capabilities.filter(
+                c => c.gene === targetCategory && c.trend === 'declining',
+            );
+            estimate += declining.length * 0.05;
+        }
+
+        return Math.min(0.50, estimate); // Cap at 50%
     }
 
     /**
-     * Build prompt for LLM to restructure gene content
+     * Build LLM prompt enriched with intelligence data
      */
-    private buildRestructuringPrompt(gene: OperativeGene, context: MutationContext): string {
-        return `You are an expert prompt engineer specializing in semantic clarity and effectiveness.
+    private buildIntelligentPrompt(gene: OperativeGene, context: MutationContext): string {
+        const evidence = context.evidence ?? {};
+        const sections: string[] = [];
 
-TASK: Restructure the following AI agent instruction to be maximally clear, effective, and efficient.
+        // Core instruction
+        sections.push(`You are an expert AI agent prompt engineer. Your task is to REWRITE this agent instruction to be more effective based on real performance data.
 
-CURRENT INSTRUCTION:
+CURRENT INSTRUCTION (category: ${gene.category}):
 \`\`\`
 ${gene.content}
-\`\`\`
+\`\`\``);
 
-CATEGORY: ${gene.category}
-CURRENT PERFORMANCE:
+        // Current performance metrics
+        sections.push(`CURRENT PERFORMANCE:
 - Quality: ${(context.genome.fitness.quality * 100).toFixed(1)}%
 - Success Rate: ${(context.genome.fitness.successRate * 100).toFixed(1)}%
 - Token Efficiency: ${(context.genome.fitness.tokenEfficiency * 100).toFixed(1)}%
+- Intervention Rate: ${(context.genome.fitness.interventionRate * 100).toFixed(1)}%`);
 
-CONTEXT: ${context.reason}
+        // Drift signals
+        const driftSignals = (evidence.driftSignals ?? []) as DriftSignalEvidence[];
+        if (driftSignals.length > 0) {
+            const driftText = driftSignals.map(s =>
+                `- ${s.type} (${s.severity}): ${s.baselineValue?.toFixed(2) ?? '?'} → ${s.currentValue?.toFixed(2) ?? '?'}`,
+            ).join('\n');
+            sections.push(`ACTIVE DRIFT SIGNALS (performance declining in these areas):
+${driftText}`);
+        }
 
-OBJECTIVES:
-1. Make instructions CRYSTAL CLEAR - no ambiguity
-2. Optimize for LLM comprehension and execution
-3. Remove redundancy and verbosity
-4. Strengthen action-oriented language
-5. Ensure examples are concrete and helpful
+        // Declining capabilities
+        const capabilities = (evidence.capabilities ?? []) as CapabilityEvidence[];
+        if (capabilities.length > 0) {
+            const capText = capabilities.slice(0, 5).map(c =>
+                `- ${c.taskType} × ${c.gene}: score ${(c.performanceScore * 100).toFixed(0)}% (${c.trend})`,
+            ).join('\n');
+            sections.push(`DECLINING CAPABILITIES (task×gene combinations struggling):
+${capText}`);
+        }
 
-RESTRUCTURE THE INSTRUCTION:
-Return ONLY the improved instruction content, no explanations.
+        // Fitness trajectories
+        const trajectories = (evidence.trajectories ?? []) as TrajectoryEvidence[];
+        if (trajectories.length > 0) {
+            const trajText = trajectories.slice(0, 3).map(t =>
+                `- ${t.gene}: ${t.trend}, projected fitness → ${(t.projectedFitness * 100).toFixed(0)}%`,
+            ).join('\n');
+            sections.push(`FITNESS TRAJECTORIES (genes getting worse):
+${trajText}`);
+        }
 
-IMPROVED INSTRUCTION:`;
+        // Purpose
+        const purpose = evidence.purpose as string | undefined;
+        if (purpose) {
+            sections.push(`AGENT PURPOSE: ${purpose}`);
+        }
+
+        // Mutation rate guidance
+        const mutationRate = evidence.mutationRate as string | undefined;
+        if (mutationRate === 'aggressive') {
+            sections.push('GUIDANCE: Be bold — significant changes are encouraged. The agent needs substantial improvement.');
+        } else if (mutationRate === 'conservative') {
+            sections.push('GUIDANCE: Be careful — make targeted improvements without disrupting what works.');
+        }
+
+        // Instructions
+        sections.push(`REWRITE OBJECTIVES:
+1. Address the specific performance issues identified above
+2. Make the instruction CRYSTAL CLEAR with no ambiguity
+3. Add specific strategies for the declining areas
+4. Optimize for LLM comprehension and reliable execution
+5. Keep the instruction focused on its category (${gene.category})
+6. Preserve any existing strengths
+
+Return ONLY the rewritten instruction content. No explanations, no markdown headers.
+
+REWRITTEN INSTRUCTION:`);
+
+        return sections.join('\n\n');
     }
 
-    /**
-     * Extract restructured content from LLM response
-     */
-    /**
-     * Perform simple restructuring without LLM
-     * This is a placeholder until LLMAdapter interface is extended
-     */
     private performSimpleRestructuring(content: string): string {
-        // Simple heuristic-based restructuring
         let restructured = content.trim();
-
-        // Remove excessive whitespace
         restructured = restructured.replace(/\s+/g, ' ');
-
-        // Capitalize first letter of sentences
         restructured = restructured.replace(/(^|[.!?]\s+)([a-z])/g, (_, p1, p2) => p1 + p2.toUpperCase());
-
         return restructured;
+    }
+
+    private createFailure(context: MutationContext, reason: string): MutationResult {
+        return {
+            success: false,
+            mutant: context.genome,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: '', after: '', diff: '',
+                trigger: 'drift-detected',
+                reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: reason,
+            expectedImprovement: 0,
+        };
     }
 
     private deepClone(genome: GenomeV2): GenomeV2 {
@@ -191,12 +302,5 @@ IMPROVED INSTRUCTION:`;
 
     private generateId(): string {
         return `mut_semantic_${Date.now()}_${Math.random().toString(36).substring(7)}`;
-    }
-
-    private computeDiff(before: unknown, after: unknown): string {
-        const beforeLen = JSON.stringify(before).length;
-        const afterLen = JSON.stringify(after).length;
-        const change = ((afterLen - beforeLen) / beforeLen * 100).toFixed(1);
-        return `Semantic restructuring: ${beforeLen} → ${afterLen} chars (${change}% change)`;
     }
 }

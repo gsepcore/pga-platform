@@ -24,6 +24,10 @@ import { MonitoringDashboard, type DashboardConfig } from './monitoring/Monitori
 import { RAGEngine, type RAGConfig } from './rag/RAGEngine.js';
 import { ReasoningEngine, type ReasoningConfig } from './reasoning/ReasoningEngine.js';
 import { MutationEngine, TokenCompressionOperator, type MutationContext } from './evolution/MutationOperator.js';
+import { SemanticRestructuringOperator } from './evolution/boost/operators/SemanticRestructuringOperator.js';
+import { PatternExtractionOperator } from './evolution/boost/operators/PatternExtractionOperator.js';
+import { CrossoverMutationOperator } from './evolution/boost/operators/CrossoverMutationOperator.js';
+import { BreakthroughOperator } from './evolution/boost/operators/BreakthroughOperator.js';
 import { estimateTokenCount } from './utils/tokens.js';
 import { DriftAnalyzer } from './evolution/DriftAnalyzer.js';
 import { FitnessCalculator, type InteractionData } from './evolution/FitnessCalculator.js';
@@ -373,8 +377,12 @@ export class GenomeInstance {
             initialTrafficPercent: 10,
             minSampleSize: 5,
         });
-        // Register LLM-powered token compression operator
+        // Register LLM-powered mutation operators
         this.mutationEngine.registerOperator(new TokenCompressionOperator(llm));
+        this.mutationEngine.registerOperator(new SemanticRestructuringOperator(llm));
+        this.mutationEngine.registerOperator(new PatternExtractionOperator(llm, this.geneBank));
+        this.mutationEngine.registerOperator(new CrossoverMutationOperator(llm));
+        this.mutationEngine.registerOperator(new BreakthroughOperator(llm));
         this.driftAnalyzer = new DriftAnalyzer();
 
         // Autonomous Agent: SelfModel (metacognition)
@@ -982,15 +990,12 @@ Ready to see what we can do together? 😊`,
 
         // Step 2: Generate real mutation candidates using MutationEngine
         // Include drift signals as evidence for intelligent strategy selection
-        const driftAnalysis = this.driftAnalyzer.analyzeDrift();
         const mutationContext: MutationContext = {
             genome: this.toGenomeV2(),
             targetChromosome: opts.layer <= 1 ? 'c1' : 'c2',
             targetGene: this.toOperativeGene(currentAllele),
             reason: `Mutation for ${opts.taskType}: gene ${opts.gene}`,
-            evidence: driftAnalysis.isDrifting
-                ? { driftSignals: driftAnalysis.signals.map(s => ({ type: s.type, severity: s.severity })) }
-                : undefined,
+            evidence: this.buildEvolutionEvidence(),
         };
 
         let mutatedContent = currentAllele.content;
@@ -1872,6 +1877,60 @@ Ready to see what we can do together? 😊`,
         if (/sorry.*can't|i don't know|as an ai|i cannot/i.test(response)) score -= 0.15;
 
         return Math.max(0, Math.min(1, score));
+    }
+
+    /**
+     * Build comprehensive evolution evidence from all intelligence subsystems.
+     *
+     * Collects data from DriftAnalyzer, EnhancedSelfModel, PatternMemory,
+     * StrategicAutonomy, and PurposeSurvival to feed intelligent mutation operators.
+     */
+    private buildEvolutionEvidence(): Record<string, unknown> {
+        const evidence: Record<string, unknown> = {};
+
+        // Drift signals
+        const drift = this.driftAnalyzer.analyzeDrift();
+        if (drift.isDrifting) {
+            evidence.driftSignals = drift.signals.map(s => ({
+                type: s.type,
+                severity: s.severity,
+                currentValue: s.currentValue,
+                baselineValue: s.baselineValue,
+            }));
+        }
+
+        // Health + capabilities + trajectories from EnhancedSelfModel
+        if (this.enhancedSelfModel) {
+            evidence.health = this.enhancedSelfModel.assessFull();
+            evidence.capabilities = this.enhancedSelfModel.getCapabilities()
+                .filter((c: { trend: string; performanceScore: number }) => c.trend === 'declining' || c.performanceScore < 0.5)
+                .slice(0, 10);
+            evidence.trajectories = this.enhancedSelfModel.getTrajectories()
+                .filter((t: { trend: string }) => t.trend === 'declining')
+                .slice(0, 5);
+        }
+
+        // Behavioral patterns from PatternMemory
+        if (this.patternMemory) {
+            evidence.patterns = this.patternMemory.getPatterns()
+                .filter((p: BehavioralPattern) => p.confidence >= 0.6)
+                .slice(0, 8);
+            evidence.predictions = this.patternMemory.getPredictions().slice(0, 3);
+        }
+
+        // Strategic guidance
+        if (this.strategicAutonomy) {
+            const mode: OperatingMode = this.purposeSurvival?.getMode?.() ?? 'stable';
+            const health = this.enhancedSelfModel?.assessFull() ?? null;
+            evidence.mutationRate = this.strategicAutonomy.recommendMutationRate(mode, health);
+        }
+
+        // Agent purpose
+        if (this.genome.config.autonomous?.agentPurpose) {
+            evidence.purpose = this.genome.config.autonomous.agentPurpose;
+        }
+
+        return evidence;
     }
 
     /**

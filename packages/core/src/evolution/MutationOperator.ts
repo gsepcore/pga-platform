@@ -711,12 +711,12 @@ export class MutationEngine {
             : severity === 'moderate' ? 0.1
             : 0.05;
 
-        // Map drift types to preferred operators
+        // Map drift types to preferred operators (base + intelligent)
         const mapping: Record<string, string[]> = {
-            'efficiency-decline': ['compress_instructions'],
+            'efficiency-decline': ['compress_instructions', 'semantic_restructuring'],
             'cost-increase': ['compress_instructions'],
-            'quality-decline': ['safety_reinforcement', 'reorder_constraints'],
-            'intervention-increase': ['safety_reinforcement', 'tool_selection_bias'],
+            'quality-decline': ['semantic_restructuring', 'pattern_extraction', 'safety_reinforcement', 'reorder_constraints'],
+            'intervention-increase': ['safety_reinforcement', 'tool_selection_bias', 'pattern_extraction'],
             'latency-increase': ['compress_instructions', 'reorder_constraints'],
         };
 

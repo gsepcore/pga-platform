@@ -20,6 +20,8 @@ import { ParetoOptimizer, type ParetoSolution } from '../ParetoOptimizer.js';
 import { MetaEvolutionEngine } from '../MetaEvolutionEngine.js';
 import { CrossoverMutationOperator } from '../operators/CrossoverMutationOperator.js';
 import { SemanticRestructuringOperator } from '../operators/SemanticRestructuringOperator.js';
+import { PatternExtractionOperator } from '../operators/PatternExtractionOperator.js';
+import { BreakthroughOperator } from '../operators/BreakthroughOperator.js';
 import { EvolutionBoostEngine } from '../EvolutionBoostEngine.js';
 import type { LLMAdapter } from '../../../interfaces/LLMAdapter.js';
 
@@ -368,7 +370,7 @@ describe('MutationEngine', () => {
     });
 
     it('should register custom operators', () => {
-        const crossover = new CrossoverMutationOperator();
+        const crossover = new CrossoverMutationOperator(); // No LLM (optional)
         engine.registerOperator(crossover);
 
         const operators = engine.listOperators();
@@ -388,74 +390,110 @@ describe('MutationEngine', () => {
     });
 });
 
-// ─── CrossoverMutationOperator Tests ─────────────────────────
+// ─── CrossoverMutationOperator Tests (v3.0 — Intra-Genome) ──
 
 describe('CrossoverMutationOperator', () => {
-    let operator: CrossoverMutationOperator;
+    it('should perform intra-genome crossover without external population', async () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new CrossoverMutationOperator(mockLLM);
 
-    beforeEach(() => {
-        operator = new CrossoverMutationOperator();
-    });
+        // Genome where gene-1 (tool-usage) has lower fitness than gene-2 (reasoning)
+        const genome = createTestGenome();
+        genome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.3 });
+        genome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.8 });
 
-    it('should fail with insufficient population', async () => {
-        const context = createMutationContext();
-        const result = await operator.mutate(context);
-
-        expect(result.success).toBe(false);
-        expect(result.expectedImprovement).toBe(0);
-    });
-
-    it('should succeed with 2+ parents in population', async () => {
-        const parent1 = createTestGenome({ id: 'parent-1' });
-        const parent2 = createTestGenome({ id: 'parent-2' });
-
-        // Differentiate parent genes
-        parent2.chromosomes.c1.operations[0].content = 'Always verify search results before presenting them.';
-
-        operator.addToPopulation(parent1, 0.8);
-        operator.addToPopulation(parent2, 0.7);
-
-        expect(operator.getPopulationSize()).toBe(2);
-
-        const context = createMutationContext();
+        const context = createMutationContext({ genome });
         const result = await operator.mutate(context);
 
         expect(result.success).toBe(true);
-        expect(result.expectedImprovement).toBeGreaterThan(0);
+        expect(result.description).toContain('Fused');
+        expect(result.expectedImprovement).toBeGreaterThan(0.02);
     });
 
-    it('should keep only top 10 in population', () => {
-        for (let i = 0; i < 15; i++) {
-            operator.addToPopulation(createTestGenome({ id: `genome-${i}` }), Math.random());
-        }
+    it('should fail when no donor genes have higher fitness', async () => {
+        const operator = new CrossoverMutationOperator();
 
-        expect(operator.getPopulationSize()).toBe(10);
+        // Both genes have equal fitness → no donors
+        const genome = createTestGenome();
+        genome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.5 });
+        genome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.5 });
+
+        const context = createMutationContext({ genome });
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(false);
+        expect(result.description).toContain('No higher-fitness donor');
     });
 
-    it('should clear population', () => {
-        operator.addToPopulation(createTestGenome(), 0.8);
-        operator.addToPopulation(createTestGenome(), 0.7);
-        expect(operator.getPopulationSize()).toBe(2);
+    it('should work without LLM using mechanical fusion', async () => {
+        const operator = new CrossoverMutationOperator(); // No LLM
 
-        operator.clearPopulation();
-        expect(operator.getPopulationSize()).toBe(0);
+        const genome = createTestGenome();
+        genome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.3 });
+        genome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.9 });
+
+        const context = createMutationContext({ genome });
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(true);
+        // Mechanical fusion produces different content
+        const original = genome.chromosomes.c1.operations[0].content;
+        expect(result.mutant.chromosomes.c1.operations[0].content).not.toBe(original);
     });
 
-    it('should estimate improvement based on population', () => {
-        const context = createMutationContext();
+    it('should target weakest gene by default', async () => {
+        const operator = new CrossoverMutationOperator();
 
-        // No parents → 0 improvement
-        expect(operator.estimateImprovement(context)).toBe(0);
+        const genome = createTestGenome();
+        genome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.2 }); // weakest
+        genome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.9 });
 
-        // Add parents
-        operator.addToPopulation(createTestGenome(), 0.8);
-        operator.addToPopulation(createTestGenome(), 0.7);
+        const context = createMutationContext({ genome });
+        const result = await operator.mutate(context);
 
-        expect(operator.estimateImprovement(context)).toBeGreaterThan(0);
+        expect(result.success).toBe(true);
+        // Weakest gene (index 0) should be modified
+        expect(result.mutant.chromosomes.c1.operations[0].content).not.toBe(
+            genome.chromosomes.c1.operations[0].content,
+        );
+    });
+
+    it('should estimate improvement based on fitness gap', () => {
+        const operator = new CrossoverMutationOperator();
+
+        // Large gap → higher estimate
+        const largeGapGenome = createTestGenome();
+        largeGapGenome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.2 });
+        largeGapGenome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.9 });
+
+        const largeEstimate = operator.estimateImprovement(
+            createMutationContext({ genome: largeGapGenome }),
+        );
+
+        // Small gap → lower estimate
+        const smallGapGenome = createTestGenome();
+        smallGapGenome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.6 });
+        smallGapGenome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.7 });
+
+        const smallEstimate = operator.estimateImprovement(
+            createMutationContext({ genome: smallGapGenome }),
+        );
+
+        expect(largeEstimate).toBeGreaterThan(smallEstimate);
+    });
+
+    it('should return near-zero estimate when only one gene exists', () => {
+        const operator = new CrossoverMutationOperator();
+
+        const genome = createTestGenome();
+        genome.chromosomes.c1.operations = [genome.chromosomes.c1.operations[0]];
+
+        const estimate = operator.estimateImprovement(createMutationContext({ genome }));
+        expect(estimate).toBe(0.02);
     });
 });
 
-// ─── SemanticRestructuringOperator Tests ─────────────────────
+// ─── SemanticRestructuringOperator Tests (v3.0 — Intelligence-Fed) ──
 
 describe('SemanticRestructuringOperator', () => {
     it('should restructure genes using LLM', async () => {
@@ -466,9 +504,8 @@ describe('SemanticRestructuringOperator', () => {
         const result = await operator.mutate(context);
 
         expect(result.success).toBe(true);
-        expect(result.expectedImprovement).toBeGreaterThanOrEqual(0.40);
         expect(result.mutant.chromosomes.c1.operations.length).toBe(
-            context.genome.chromosomes.c1.operations.length
+            context.genome.chromosomes.c1.operations.length,
         );
 
         // Content should be restructured (different from original)
@@ -477,25 +514,72 @@ describe('SemanticRestructuringOperator', () => {
         expect(restructuredContent).not.toBe(originalContent);
     });
 
-    it('should estimate higher improvement for lower-quality genomes', () => {
+    it('should have higher estimate with drift evidence than without', () => {
         const mockLLM = new MockLLMAdapter();
         const operator = new SemanticRestructuringOperator(mockLLM);
 
-        const lowQualityContext = createMutationContext({
-            genome: createTestGenome({
-                fitness: createDefaultFitness({ quality: 0.3, tokenEfficiency: 0.3 }),
-            }),
-        });
-        const highQualityContext = createMutationContext({
-            genome: createTestGenome({
-                fitness: createDefaultFitness({ quality: 0.9, tokenEfficiency: 0.9 }),
-            }),
+        const withDrift = createMutationContext({
+            evidence: {
+                driftSignals: [
+                    { type: 'quality-decline', severity: 'critical', currentValue: 0.3, baselineValue: 0.8 },
+                    { type: 'efficiency-decline', severity: 'severe', currentValue: 0.4, baselineValue: 0.7 },
+                ],
+                health: { score: 0.35, label: 'critical', fitnessComponent: 0.3, driftComponent: 0.2, purposeComponent: 0.5, trajectoryComponent: 0.4 },
+            },
         });
 
-        const lowEstimate = operator.estimateImprovement(lowQualityContext);
-        const highEstimate = operator.estimateImprovement(highQualityContext);
+        const withoutDrift = createMutationContext();
+
+        const driftEstimate = operator.estimateImprovement(withDrift);
+        const normalEstimate = operator.estimateImprovement(withoutDrift);
+
+        expect(driftEstimate).toBeGreaterThan(normalEstimate);
+    });
+
+    it('should scale estimate with health score (worse health = higher estimate)', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new SemanticRestructuringOperator(mockLLM);
+
+        const lowHealth = createMutationContext({
+            evidence: {
+                health: { score: 0.2, label: 'critical', fitnessComponent: 0.2, driftComponent: 0.1, purposeComponent: 0.3, trajectoryComponent: 0.2 },
+            },
+        });
+
+        const highHealth = createMutationContext({
+            evidence: {
+                health: { score: 0.9, label: 'thriving', fitnessComponent: 0.9, driftComponent: 0.9, purposeComponent: 0.9, trajectoryComponent: 0.9 },
+            },
+        });
+
+        const lowEstimate = operator.estimateImprovement(lowHealth);
+        const highEstimate = operator.estimateImprovement(highHealth);
 
         expect(lowEstimate).toBeGreaterThan(highEstimate);
+    });
+
+    it('should cap estimate at 0.50', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new SemanticRestructuringOperator(mockLLM);
+
+        const extremeContext = createMutationContext({
+            evidence: {
+                driftSignals: [
+                    { type: 'quality-decline', severity: 'critical' },
+                    { type: 'efficiency-decline', severity: 'critical' },
+                    { type: 'cost-increase', severity: 'critical' },
+                ],
+                health: { score: 0.1, label: 'failing', fitnessComponent: 0.05, driftComponent: 0.05, purposeComponent: 0.1, trajectoryComponent: 0.1 },
+                capabilities: [
+                    { taskType: 'search', gene: 'tool-usage', performanceScore: 0.2, trend: 'declining' },
+                    { taskType: 'code', gene: 'reasoning', performanceScore: 0.1, trend: 'declining' },
+                ],
+            },
+            targetGene: createTestGenome().chromosomes.c1.operations[0],
+        });
+
+        const estimate = operator.estimateImprovement(extremeContext);
+        expect(estimate).toBeLessThanOrEqual(0.50);
     });
 
     it('should fallback to simple restructuring if LLM fails', async () => {
@@ -511,6 +595,327 @@ describe('SemanticRestructuringOperator', () => {
 
         // Should still succeed with fallback
         expect(result.success).toBe(true);
+    });
+});
+
+// ─── PatternExtractionOperator Tests (v3.0 — PatternMemory-Primary) ──
+
+describe('PatternExtractionOperator', () => {
+    const mockPatterns = [
+        { id: 'p1', type: 'task-sequence', description: 'Users ask for explanation then code', frequency: 15, confidence: 0.85, prediction: 'Will ask for tests next' },
+        { id: 'p2', type: 'error-recovery', description: 'Retries with simpler terms after confusion', frequency: 8, confidence: 0.72 },
+        { id: 'p3', type: 'tool-preference', description: 'Prefers search before code generation', frequency: 12, confidence: 0.90 },
+    ];
+
+    it('should succeed with PatternMemory data (no GeneBank needed)', async () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new PatternExtractionOperator(mockLLM); // No GeneBank
+
+        const context = createMutationContext({
+            evidence: { patterns: mockPatterns, predictions: [] },
+        });
+
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(true);
+        expect(result.description).toContain('Crystallized');
+        expect(result.description).toContain('3');
+    });
+
+    it('should fail when no patterns AND no GeneBank', async () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new PatternExtractionOperator(mockLLM); // No GeneBank
+
+        const context = createMutationContext(); // No evidence
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(false);
+        expect(result.description).toContain('No behavioral patterns');
+    });
+
+    it('should scale estimate with pattern count', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new PatternExtractionOperator(mockLLM);
+
+        const manyPatterns = createMutationContext({
+            evidence: { patterns: mockPatterns },
+        });
+
+        const fewPatterns = createMutationContext({
+            evidence: { patterns: [mockPatterns[0]] },
+        });
+
+        const noPatterns = createMutationContext();
+
+        const manyEstimate = operator.estimateImprovement(manyPatterns);
+        const fewEstimate = operator.estimateImprovement(fewPatterns);
+        const noEstimate = operator.estimateImprovement(noPatterns);
+
+        expect(manyEstimate).toBeGreaterThan(fewEstimate);
+        expect(fewEstimate).toBeGreaterThan(noEstimate);
+    });
+
+    it('should scale estimate with pattern confidence', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new PatternExtractionOperator(mockLLM);
+
+        const highConf = createMutationContext({
+            evidence: {
+                patterns: [{ id: 'p1', type: 'task-sequence', description: 'Test', frequency: 10, confidence: 0.95 }],
+            },
+        });
+
+        const lowConf = createMutationContext({
+            evidence: {
+                patterns: [{ id: 'p1', type: 'task-sequence', description: 'Test', frequency: 10, confidence: 0.30 }],
+            },
+        });
+
+        expect(operator.estimateImprovement(highConf)).toBeGreaterThan(
+            operator.estimateImprovement(lowConf),
+        );
+    });
+
+    it('should cap estimate at 0.40', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new PatternExtractionOperator(mockLLM);
+
+        // Many high-confidence patterns
+        const extremePatterns = Array.from({ length: 10 }, (_, i) => ({
+            id: `p${i}`, type: 'task-sequence', description: `Pattern ${i}`, frequency: 20, confidence: 0.99,
+        }));
+
+        const estimate = operator.estimateImprovement(
+            createMutationContext({ evidence: { patterns: extremePatterns } }),
+        );
+
+        expect(estimate).toBeLessThanOrEqual(0.40);
+    });
+
+    it('should return original content if LLM fails', async () => {
+        const failingLLM: LLMAdapter = {
+            async chat() { throw new Error('LLM down'); },
+        };
+        const operator = new PatternExtractionOperator(failingLLM);
+
+        const context = createMutationContext({
+            evidence: { patterns: mockPatterns },
+        });
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(true);
+        // Falls back to original content
+        expect(result.mutant.chromosomes.c1.operations[0].content).toBe(
+            context.genome.chromosomes.c1.operations[0].content,
+        );
+    });
+});
+
+// ─── BreakthroughOperator Tests (v3.0 — Activation-Gated) ──
+
+describe('BreakthroughOperator', () => {
+    it('should return near-zero estimate in normal conditions (activation gating)', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const normalContext = createMutationContext(); // No drift, no low health
+        const estimate = operator.estimateImprovement(normalContext);
+
+        expect(estimate).toBeLessThanOrEqual(0.05);
+    });
+
+    it('should activate with critical drift signals', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const criticalContext = createMutationContext({
+            evidence: {
+                driftSignals: [
+                    { type: 'quality-decline', severity: 'critical', currentValue: 0.2, baselineValue: 0.8 },
+                ],
+            },
+        });
+
+        const estimate = operator.estimateImprovement(criticalContext);
+        expect(estimate).toBeGreaterThanOrEqual(0.30);
+    });
+
+    it('should activate with severe drift signals', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const severeContext = createMutationContext({
+            evidence: {
+                driftSignals: [
+                    { type: 'efficiency-decline', severity: 'severe', currentValue: 0.3, baselineValue: 0.7 },
+                ],
+            },
+        });
+
+        const estimate = operator.estimateImprovement(severeContext);
+        expect(estimate).toBeGreaterThanOrEqual(0.30);
+    });
+
+    it('should activate with low health score', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const lowHealthContext = createMutationContext({
+            evidence: {
+                health: { score: 0.25, label: 'critical', fitnessComponent: 0.2, driftComponent: 0.1, purposeComponent: 0.3, trajectoryComponent: 0.2 },
+            },
+        });
+
+        const estimate = operator.estimateImprovement(lowHealthContext);
+        expect(estimate).toBeGreaterThanOrEqual(0.30);
+    });
+
+    it('should activate with very low genome fitness', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const lowFitnessContext = createMutationContext({
+            genome: createTestGenome({
+                fitness: createDefaultFitness({ composite: 0.20 }),
+            }),
+        });
+
+        const estimate = operator.estimateImprovement(lowFitnessContext);
+        expect(estimate).toBeGreaterThanOrEqual(0.30);
+    });
+
+    it('should NOT activate with moderate drift', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const moderateContext = createMutationContext({
+            evidence: {
+                driftSignals: [
+                    { type: 'quality-decline', severity: 'moderate', currentValue: 0.6, baselineValue: 0.75 },
+                ],
+            },
+        });
+
+        const estimate = operator.estimateImprovement(moderateContext);
+        expect(estimate).toBeLessThanOrEqual(0.05);
+    });
+
+    it('should cap estimate at 0.60', () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const extremeContext = createMutationContext({
+            genome: createTestGenome({ fitness: createDefaultFitness({ composite: 0.10 }) }),
+            evidence: {
+                driftSignals: [
+                    { type: 'quality-decline', severity: 'critical' },
+                    { type: 'efficiency-decline', severity: 'critical' },
+                    { type: 'cost-increase', severity: 'critical' },
+                ],
+                health: { score: 0.1, label: 'failing', fitnessComponent: 0.05, driftComponent: 0.05, purposeComponent: 0.1, trajectoryComponent: 0.1 },
+            },
+        });
+
+        const estimate = operator.estimateImprovement(extremeContext);
+        expect(estimate).toBeLessThanOrEqual(0.60);
+    });
+
+    it('should perform breakthrough mutation with intelligence data', async () => {
+        const mockLLM = new MockLLMAdapter();
+        const operator = new BreakthroughOperator(mockLLM);
+
+        const context = createMutationContext({
+            evidence: {
+                driftSignals: [{ type: 'quality-decline', severity: 'critical', currentValue: 0.2, baselineValue: 0.8 }],
+                health: { score: 0.3, label: 'critical', fitnessComponent: 0.2, driftComponent: 0.1, purposeComponent: 0.4, trajectoryComponent: 0.3 },
+                capabilities: [{ taskType: 'search', gene: 'tool-usage', performanceScore: 0.25, trend: 'declining' }],
+                patterns: [{ type: 'error-recovery', description: 'Retries with simpler terms', confidence: 0.8 }],
+                purpose: 'Code review assistant',
+            },
+        });
+
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(true);
+        expect(result.description).toContain('Breakthrough redesign');
+
+        // Content should be different from original
+        const originalContent = context.genome.chromosomes.c1.operations[0].content;
+        expect(result.mutant.chromosomes.c1.operations[0].content).not.toBe(originalContent);
+    });
+
+    it('should return original content if LLM fails', async () => {
+        const failingLLM: LLMAdapter = {
+            async chat() { throw new Error('LLM down'); },
+        };
+        const operator = new BreakthroughOperator(failingLLM);
+
+        const context = createMutationContext();
+        const result = await operator.mutate(context);
+
+        expect(result.success).toBe(true);
+        // Falls back to original content
+        expect(result.mutant.chromosomes.c1.operations[0].content).toBe(
+            context.genome.chromosomes.c1.operations[0].content,
+        );
+    });
+});
+
+// ─── Integration: Intelligent Operators in MutationEngine ──
+
+describe('Integration: Intelligent Operators Registration', () => {
+    it('should register all 4 intelligent operators in MutationEngine', () => {
+        const mockLLM = new MockLLMAdapter();
+        const engine = new MutationEngine();
+
+        engine.registerOperator(new SemanticRestructuringOperator(mockLLM));
+        engine.registerOperator(new PatternExtractionOperator(mockLLM));
+        engine.registerOperator(new CrossoverMutationOperator(mockLLM));
+        engine.registerOperator(new BreakthroughOperator(mockLLM));
+
+        const names = engine.listOperators().map(op => op.name);
+
+        expect(names).toContain('semantic_restructuring');
+        expect(names).toContain('pattern_extraction');
+        expect(names).toContain('crossover_mutation');
+        expect(names).toContain('breakthrough');
+    });
+
+    it('should rank intelligent operators higher when evidence signals problems', async () => {
+        const mockLLM = new MockLLMAdapter();
+        const engine = new MutationEngine();
+
+        engine.registerOperator(new SemanticRestructuringOperator(mockLLM));
+        engine.registerOperator(new PatternExtractionOperator(mockLLM));
+        engine.registerOperator(new CrossoverMutationOperator(mockLLM));
+        engine.registerOperator(new BreakthroughOperator(mockLLM));
+
+        // Create context with drift evidence + patterns
+        const genome = createTestGenome();
+        genome.chromosomes.c1.operations[0].fitness = createDefaultFitness({ quality: 0.3 });
+        genome.chromosomes.c1.operations[1].fitness = createDefaultFitness({ quality: 0.8 });
+
+        const context: MutationContext = {
+            genome,
+            targetChromosome: 'c1',
+            reason: 'Quality decline detected',
+            evidence: {
+                driftSignals: [{ type: 'quality-decline', severity: 'moderate', currentValue: 0.4, baselineValue: 0.7 }],
+                health: { score: 0.5, label: 'warning', fitnessComponent: 0.4, driftComponent: 0.3, purposeComponent: 0.6, trajectoryComponent: 0.5 },
+                patterns: [
+                    { id: 'p1', type: 'task-sequence', description: 'Users ask for explanation then code', frequency: 15, confidence: 0.85 },
+                ],
+            },
+        };
+
+        const results = await engine.generateMutants(context, 4);
+
+        expect(results.length).toBeGreaterThan(0);
+        // All results should be valid mutations
+        for (const result of results) {
+            expect(result.mutant).toBeDefined();
+            expect(result.mutation).toBeDefined();
+        }
     });
 });
 
