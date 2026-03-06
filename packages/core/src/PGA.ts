@@ -657,12 +657,15 @@ Ready to see what we can do together? 😊`,
                 },
             });
 
+            // Estimate response quality for fitness tracking
+            const quality = this.estimateQuality(userMessage, response.content);
+
             // Record canary metrics if active
             if (activeCanaryId) {
                 this.canaryManager.recordRequest(activeCanaryId, 'canary', {
                     success: true,
                     latencyMs: Date.now() - startTime,
-                    fitness: 0.7,
+                    fitness: quality,
                 });
             } else {
                 // Record to stable metrics for any active canaries
@@ -671,7 +674,7 @@ Ready to see what we can do together? 😊`,
                         this.canaryManager.recordRequest(canary.id, 'stable', {
                             success: true,
                             latencyMs: Date.now() - startTime,
-                            fitness: 0.7,
+                            fitness: quality,
                         });
                     }
                 }
@@ -680,11 +683,11 @@ Ready to see what we can do together? 😊`,
             // Record fitness for drift detection using FitnessCalculator
             const interactionData: InteractionData = {
                 success: true,
-                quality: 0.7,
+                quality,
                 inputTokens,
                 outputTokens,
                 latency: Date.now() - startTime,
-                model: 'unknown',
+                model: this.llm.model ?? 'unknown',
                 interventionNeeded: false,
                 timestamp: new Date(),
             };
@@ -694,7 +697,7 @@ Ready to see what we can do together? 😊`,
             // Enhanced Self-Model: record capability per task×gene
             if (this.enhancedSelfModel && context.taskType) {
                 for (const allele of this.genome.layers.layer1.filter(a => a.status === 'active')) {
-                    this.enhancedSelfModel.recordCapability(context.taskType, allele.gene, 0.7);
+                    this.enhancedSelfModel.recordCapability(context.taskType, allele.gene, quality);
                 }
             }
 
@@ -1842,6 +1845,33 @@ Ready to see what we can do together? 😊`,
 
         // If stable content not found in prompt, append canary as override
         return prompt + `\n\n## Gene Override (${canary.gene})\n${canaryAlleleContent}`;
+    }
+
+    /**
+     * Estimate response quality using fast heuristics (no extra LLM call).
+     *
+     * Evaluates structural quality, relevance to the question, and error indicators
+     * to produce a 0-1 quality score for fitness tracking.
+     */
+    private estimateQuality(userMessage: string, response: string): number {
+        let score = 0.5;
+
+        // 1. Length appropriateness
+        const len = response.length;
+        if (len > 50 && len < 5000) score += 0.15;
+        else if (len < 20) score -= 0.2;
+
+        // 2. Code blocks when user asks for code
+        const asksForCode = /write|code|function|implement|create.*class|fix.*bug/i.test(userMessage);
+        if (asksForCode && /```/.test(response)) score += 0.15;
+
+        // 3. Structured response (headers, lists, code blocks)
+        if (/^#{1,3}\s|^[-*]\s|```/m.test(response)) score += 0.1;
+
+        // 4. Error/refusal indicators
+        if (/sorry.*can't|i don't know|as an ai|i cannot/i.test(response)) score -= 0.15;
+
+        return Math.max(0, Math.min(1, score));
     }
 
     /**

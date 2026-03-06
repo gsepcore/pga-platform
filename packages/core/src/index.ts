@@ -46,12 +46,21 @@ export {
     CORE_GENERAL_V1,
     CORE_CODING_V1,
     PGA_SPECIFIC_V1,
+    PROOF_OF_VALUE_V1,
 } from './evaluation/BenchmarkSuites.js';
 export type {
     BenchmarkSuite,
     BenchmarkSuiteMetadata,
     BenchmarkSuiteId,
 } from './evaluation/BenchmarkSuites.js';
+
+export { ProofOfValueRunner } from './evaluation/ProofOfValueRunner.js';
+export type {
+    ProofOfValueConfig,
+    ProofOfValueResult,
+    CycleResult,
+    FitnessCurvePoint,
+} from './evaluation/ProofOfValueRunner.js';
 
 export {
     getSandboxSuite,
