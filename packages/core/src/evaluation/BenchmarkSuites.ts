@@ -16,6 +16,7 @@ import type { EvaluationTask } from './Evaluator.js';
 // Import JSON fixtures (Living OS v1.0 Week 5)
 import coreGeneralV1Fixture from './fixtures/core-general-v1.json';
 import coreCodingV1Fixture from './fixtures/core-coding-v1.json';
+import proofOfValueV1Fixture from './fixtures/proof-of-value-v1.json';
 
 // ─── Suite Metadata ─────────────────────────────────────────
 
@@ -93,12 +94,18 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
     ],
 };
 
+// ─── Proof of Value Suite v1 ────────────────────────────────
+// 15 tasks: 5 easy, 5 medium, 5 hard — for measuring evolution over cycles
+
+export const PROOF_OF_VALUE_V1: BenchmarkSuite = proofOfValueV1Fixture as BenchmarkSuite;
+
 // ─── Suite Registry ─────────────────────────────────────────
 
 export const BENCHMARK_SUITES = {
     'core-general-v1': CORE_GENERAL_V1,
     'core-coding-v1': CORE_CODING_V1,
     'pga-specific-v1': PGA_SPECIFIC_V1,
+    'proof-of-value-v1': PROOF_OF_VALUE_V1,
 } as const;
 
 export type BenchmarkSuiteId = keyof typeof BENCHMARK_SUITES;

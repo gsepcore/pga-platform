@@ -1,0 +1,178 @@
+{
+  "metadata": {
+    "id": "proof-of-value-v1",
+    "version": "1.0.0",
+    "owner": "Luis Alfredo Velasquez Duran",
+    "createdAt": "2026-03-05",
+    "changedAt": "2026-03-05",
+    "changelog": ["Initial release - Proof of Value evaluation tasks"],
+    "frozen": true
+  },
+  "tasks": [
+    {
+      "id": "pov-explain-variables",
+      "name": "Explain Variables",
+      "description": "Test ability to explain programming fundamentals",
+      "userMessage": "Explain the difference between let, const, and var in JavaScript",
+      "expectedOutcome": {
+        "keywords": ["let", "const", "var", "scope", "block"],
+        "minLength": 100
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": "pov-explain-async",
+      "name": "Explain Async/Await",
+      "description": "Test ability to explain async programming",
+      "userMessage": "How does async/await work in JavaScript? Give a simple example",
+      "expectedOutcome": {
+        "keywords": ["async", "await", "promise", "function"],
+        "minLength": 100
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": "pov-explain-types",
+      "name": "Explain TypeScript Types",
+      "description": "Test ability to explain type systems",
+      "userMessage": "What are the benefits of using TypeScript over plain JavaScript?",
+      "expectedOutcome": {
+        "keywords": ["type", "safety", "compile", "error"],
+        "minLength": 80
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": "pov-explain-git",
+      "name": "Explain Git Branching",
+      "description": "Test ability to explain version control",
+      "userMessage": "Explain how Git branching works and when to use feature branches",
+      "expectedOutcome": {
+        "keywords": ["branch", "merge", "main", "feature"],
+        "minLength": 100
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": "pov-explain-rest",
+      "name": "Explain REST APIs",
+      "description": "Test ability to explain web concepts",
+      "userMessage": "What is a REST API? Explain the main HTTP methods",
+      "expectedOutcome": {
+        "keywords": ["GET", "POST", "PUT", "DELETE", "HTTP"],
+        "minLength": 100
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": "pov-implement-prime",
+      "name": "Implement isPrime",
+      "description": "Test function implementation ability",
+      "userMessage": "Write a TypeScript function called isPrime that checks if a number is prime. Include edge cases.",
+      "expectedOutcome": {
+        "keywords": ["function", "isPrime", "return", "boolean"],
+        "minLength": 100
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": "pov-implement-debounce",
+      "name": "Implement Debounce",
+      "description": "Test utility function implementation",
+      "userMessage": "Implement a debounce function in TypeScript with proper typing",
+      "expectedOutcome": {
+        "keywords": ["function", "debounce", "setTimeout", "clearTimeout"],
+        "minLength": 100
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": "pov-implement-fetch",
+      "name": "Implement Fetch Wrapper",
+      "description": "Test API integration ability",
+      "userMessage": "Write a TypeScript fetch wrapper with retry logic, timeout, and error handling",
+      "expectedOutcome": {
+        "keywords": ["fetch", "retry", "async", "error", "timeout"],
+        "minLength": 150
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": "pov-implement-stack",
+      "name": "Implement Stack",
+      "description": "Test data structure implementation",
+      "userMessage": "Implement a generic Stack<T> class in TypeScript with push, pop, peek, and isEmpty methods",
+      "expectedOutcome": {
+        "keywords": ["class", "Stack", "push", "pop", "peek"],
+        "minLength": 100
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": "pov-implement-validate",
+      "name": "Implement Email Validator",
+      "description": "Test validation logic implementation",
+      "userMessage": "Write a TypeScript function that validates email addresses using regex and returns detailed error messages",
+      "expectedOutcome": {
+        "keywords": ["function", "email", "regex", "valid"],
+        "minLength": 100
+      },
+      "difficulty": "medium"
+    },
+    {
+      "id": "pov-arch-patterns",
+      "name": "Architecture: Design Patterns",
+      "description": "Test architectural knowledge",
+      "userMessage": "Compare the Repository pattern vs Active Record pattern for database access. When should you use each?",
+      "expectedOutcome": {
+        "keywords": ["repository", "active record", "pattern", "database"],
+        "minLength": 200
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "pov-arch-caching",
+      "name": "Architecture: Caching Strategy",
+      "description": "Test caching architecture knowledge",
+      "userMessage": "Design a multi-level caching strategy for a high-traffic API. Include cache invalidation approaches.",
+      "expectedOutcome": {
+        "keywords": ["cache", "invalidation", "TTL", "memory"],
+        "minLength": 200
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "pov-arch-microservices",
+      "name": "Architecture: Microservices",
+      "description": "Test microservices knowledge",
+      "userMessage": "How would you decompose a monolithic e-commerce application into microservices? What communication patterns would you use?",
+      "expectedOutcome": {
+        "keywords": ["service", "API", "event", "message"],
+        "minLength": 200
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "pov-arch-security",
+      "name": "Architecture: API Security",
+      "description": "Test security architecture knowledge",
+      "userMessage": "Design a comprehensive API security layer including authentication, authorization, rate limiting, and input validation",
+      "expectedOutcome": {
+        "keywords": ["authentication", "authorization", "rate limit", "JWT"],
+        "minLength": 200
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "pov-arch-scaling",
+      "name": "Architecture: Database Scaling",
+      "description": "Test database scaling knowledge",
+      "userMessage": "Explain horizontal vs vertical scaling for PostgreSQL. When would you use read replicas, sharding, or partitioning?",
+      "expectedOutcome": {
+        "keywords": ["horizontal", "vertical", "replica", "shard"],
+        "minLength": 200
+      },
+      "difficulty": "hard"
+    }
+  ]
+}

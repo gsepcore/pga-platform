@@ -185,7 +185,7 @@ const genome = await pga.createGenome({
 });
 ```
 
-### Full Living Agent (10 cognitive layers)
+### Full Living Agent
 
 ```typescript
 const genome = await pga.createGenome({
@@ -207,6 +207,12 @@ const genome = await pga.createGenome({
       enableCalibratedAutonomy: true,  // Learns when to act vs ask
       enablePersonalNarrative: true,   // Tracks relationship history
       enableAnalyticMemory: true,      // Knowledge graph
+
+      // Living Agent v0.7.0 — Three Pillars of Life
+      enableEnhancedSelfModel: true,   // Purpose-aware self-model
+      enablePurposeSurvival: true,     // Threat detection + mode switching
+      enableStrategicAutonomy: true,   // Goal-based strategic decisions
+      agentPurpose: 'Expert coding assistant',
     },
   },
 });
@@ -362,6 +368,49 @@ Multiple agents share successful prompt patterns — when one agent learns somet
 
 ### Living Agent (v0.6.0)
 10 cognitive layers including emotional detection, calibrated autonomy, personal narrative tracking, and analytic memory.
+
+### Three Pillars of Life (v0.7.0)
+
+- **Enhanced Self-Model** — Purpose-aware self-awareness with capability tracking, evolution trajectory, and integrated health scoring
+- **Purpose Survival** — State machine (THRIVING > STABLE > STRESSED > SURVIVAL > CRITICAL) with threat detection, genome snapshots, and purpose fidelity gates
+- **Strategic Autonomy** — Goal-based decisions, evolution prioritization, adaptive mutation rates, and task refusal for dangerous operations
+
+### Proof of Value Runner (v0.7.0)
+
+Measure PGA's impact objectively. Runs multiple evolution cycles and reports the fitness curve:
+
+```bash
+npx tsx examples/proof-of-value.ts
+```
+
+```
+VERDICT: [OK] IMPROVEMENT PROVEN (+16.0% quality)
+
+  Cycle      Quality    Success    Tokens
+  Base       0.50       0.0%       52
+  Cycle 1    0.51       0.0%       81
+  Cycle 2    0.58       0.0%       107
+  Cycle 3    0.58       0.0%       107
+  Cycle 4    0.58       0.0%       107
+```
+
+Use programmatically:
+
+```typescript
+import { ProofOfValueRunner, PROOF_OF_VALUE_V1 } from '@pga-ai/core';
+
+const runner = new ProofOfValueRunner();
+const result = await runner.run(genome, {
+  name: 'My Experiment',
+  cycles: 5,
+  interactionsPerCycle: 10,
+  dataset: PROOF_OF_VALUE_V1.tasks,
+  userId: 'test-user',
+});
+
+console.log(runner.formatConsoleReport(result));   // ASCII table + curve
+console.log(runner.formatMarkdownReport(result));  // Markdown report
+```
 
 ---
 
