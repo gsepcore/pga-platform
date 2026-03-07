@@ -113,21 +113,25 @@ const response = await genome.chat(userMessage, {
 
 ## 🧬 How It Works
 
-PGA adds a **three-layer chromosome** around your agent's prompts:
+PGA adds a **four-layer chromosome** around your agent's prompts:
 
 ```
 ┌─────────────────────────────────────────┐
-│  Layer 0: Immutable DNA                 │
+│  C0: Immutable DNA                      │
 │  (Security, Ethics, Core Identity)      │
 │  🔒 NEVER mutates — SHA-256 protected  │
 ├─────────────────────────────────────────┤
-│  Layer 1: Operative Genes               │
+│  C1: Operative Genes                    │
 │  (Tool Usage, Coding Patterns)          │
 │  🐢 SLOW mutation (sandbox-tested)     │
 ├─────────────────────────────────────────┤
-│  Layer 2: Epigenomes                    │
+│  C2: Epigenomes                         │
 │  (User Preferences, Style)              │
 │  ⚡ FAST mutation (adapts daily)       │
+├─────────────────────────────────────────┤
+│  C3: Content Firewall                   │
+│  (Prompt Injection Defense)             │
+│  🛡️ 53 patterns — SHA-256 core        │
 └─────────────────────────────────────────┘
 ```
 
@@ -214,6 +218,9 @@ const genome = await pga.createGenome({
       enableStrategicAutonomy: true,   // Goal-based strategic decisions
       agentPurpose: 'Expert coding assistant',
     },
+
+    // Content Firewall v0.8.0 (enabled by default)
+    // firewall: { enabled: false },  // Uncomment to disable
   },
 });
 ```
@@ -374,6 +381,18 @@ Multiple agents share successful prompt patterns — when one agent learns somet
 - **Enhanced Self-Model** — Purpose-aware self-awareness with capability tracking, evolution trajectory, and integrated health scoring
 - **Purpose Survival** — State machine (THRIVING > STABLE > STRESSED > SURVIVAL > CRITICAL) with threat detection, genome snapshots, and purpose fidelity gates
 - **Strategic Autonomy** — Goal-based decisions, evolution prioritization, adaptive mutation rates, and task refusal for dangerous operations
+
+### Content Firewall — C3 (v0.8.0)
+
+Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 is the 4th chromosome layer — it scans **all** external content before it enters the system prompt.
+
+- **53 detection patterns** across 7 threat categories (prompt injection, role hijacking, data exfiltration, encoding evasion, privilege escalation, instruction override, content smuggling)
+- **Trust Registry** — 4 trust levels (system, validated, external, untrusted) with per-source scan policies
+- **Content Tagging** — Spotlighting-inspired trust delimiters (`<<<TRUSTED:C0>>>` / `<<<UNTRUSTED:PLUGIN>>>`) teach the LLM to treat external content as data, not instructions
+- **SHA-256 integrity** — Core patterns are cryptographically immutable, like C0
+- **Multi-language** — Detects injections in English, Spanish, German, French, and Chinese
+- **Zero dependencies** — Uses only Node.js `crypto`
+- Enabled by default, opt-out with `firewall: { enabled: false }`
 
 ### Proof of Value Runner (v0.7.0)
 
