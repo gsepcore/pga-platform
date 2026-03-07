@@ -50,6 +50,7 @@ import { EnhancedSelfModel, type IntegratedHealth, type CapabilityEntry, type Ev
 import { PurposeSurvival, type OperatingMode, type SurvivalStrategy, type GenomeSnapshot } from './evolution/PurposeSurvival.js';
 import { StrategicAutonomy, type EvolutionPriority } from './advanced-ai/StrategicAutonomy.js';
 import { computeAgentVitals, type AgentVitals } from './advanced-ai/AgentVitals.js';
+import { ContentFirewall } from './firewall/ContentFirewall.js';
 
 export interface PGAConfig {
     /**
@@ -530,6 +531,12 @@ export class GenomeInstance {
                 () => this.purposeSurvival?.getMode() ?? 'stable',
             );
             this.assembler.setCalibratedAutonomy(this.strategicAutonomy);
+        }
+
+        // C3 Content Firewall — enabled by default
+        if (genome.config.firewall?.enabled !== false) {
+            const firewall = new ContentFirewall();
+            this.assembler.setFirewall(firewall);
         }
     }
 
