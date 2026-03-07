@@ -467,6 +467,7 @@ export type {
     Chromosome0,
     Chromosome1,
     Chromosome2,
+    Chromosome3,
     OperativeGene,
     GeneCategory,
     GeneOrigin,
@@ -490,6 +491,17 @@ export type {
     GenomeDiff,
     GenomeChange,
     GenomeFamily,
+    // C3 Content Firewall types
+    FirewallPattern,
+    ThreatCategory,
+    TrustLevel,
+    TrustPolicy,
+    ContentSource,
+    SanitizationRule,
+    ContentTaggingConfig,
+    FirewallResult,
+    FirewallDetection,
+    FirewallAnalytics,
 } from './types/GenomeV2.js';
 
 // ─── Autonomous Agent (v0.5.0) ─────────────────────────
@@ -576,12 +588,24 @@ export type {
 export { computeAgentVitals } from './advanced-ai/AgentVitals.js';
 export type { AgentVitals } from './advanced-ai/AgentVitals.js';
 
+// ─── C3 Content Firewall (v0.8.0) ──────────────────────
+
+export { ContentFirewall } from './firewall/ContentFirewall.js';
+export {
+    CORE_PATTERNS,
+    ALL_DEFAULT_PATTERNS,
+    DEFAULT_TRUST_POLICIES,
+    DEFAULT_SANITIZATION_RULES,
+    DEFAULT_CONTENT_TAGGING,
+    CONTENT_TRUST_PREAMBLE,
+} from './firewall/DefaultPatterns.js';
+
 // ─── Token Utilities ────────────────────────────────────
 
 export { estimateTokenCount, tokenEfficiency, compressionRatio } from './utils/tokens.js';
 
 // ─── Version ────────────────────────────────────────────
 
-export const VERSION = '0.7.0';
+export const VERSION = '0.8.0';
 export const AUTHOR = 'Luis Alfredo Velasquez Duran';
 export const YEAR = 2025;

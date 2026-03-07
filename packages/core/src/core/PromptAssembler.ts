@@ -8,6 +8,7 @@
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 import type { Genome, SelectionContext } from '../types/index.js';
+import type { ContentSource } from '../types/GenomeV2.js';
 import { ContextMemory } from './ContextMemory.js';
 import { ProactiveSuggestions } from './ProactiveSuggestions.js';
 import { estimateTokenCount, tokenEfficiency } from '../utils/tokens.js';
@@ -18,6 +19,7 @@ import type { EmotionalModel } from '../advanced-ai/EmotionalModel.js';
 import type { CalibratedAutonomy } from '../advanced-ai/CalibratedAutonomy.js';
 import type { PersonalNarrative } from '../memory/PersonalNarrative.js';
 import type { AnalyticMemoryEngine } from '../memory/AnalyticMemoryEngine.js';
+import type { ContentFirewall } from '../firewall/ContentFirewall.js';
 
 const DEFAULT_C1_TOKEN_BUDGET = 2000;
 const getC1Budget = (genome: Genome): number =>
@@ -33,6 +35,7 @@ export class PromptAssembler {
     private calibratedAutonomy?: CalibratedAutonomy;
     private personalNarrative?: PersonalNarrative;
     private analyticMemory?: AnalyticMemoryEngine;
+    private firewall?: ContentFirewall;
 
     constructor(
         storage: StorageAdapter,
@@ -40,6 +43,13 @@ export class PromptAssembler {
     ) {
         this.contextMemory = new ContextMemory(storage);
         this.proactiveSuggestions = new ProactiveSuggestions(storage);
+    }
+
+    /**
+     * Set C3 Content Firewall for prompt injection protection.
+     */
+    setFirewall(firewall: ContentFirewall): void {
+        this.firewall = firewall;
     }
 
     /**
@@ -97,20 +107,28 @@ export class PromptAssembler {
     async assemblePrompt(context?: SelectionContext, currentMessage?: string): Promise<string> {
         const sections: string[] = [];
 
+        // C3 Content Trust Preamble (if firewall enabled)
+        if (this.firewall) {
+            const preamble = this.firewall.getContentTrustPreamble();
+            if (preamble) {
+                sections.push(preamble);
+            }
+        }
+
         // Layer 0: Immutable DNA (security, core identity, ethics)
         for (const allele of this.genome.layers.layer0) {
             if (allele.status === 'active') {
-                sections.push(allele.content);
+                sections.push(this.processContent(allele.content, 'layer0'));
             }
         }
 
         // Layer 1: Operative Genes (tool usage, coding patterns, etc.)
         const layer1Content = await this.selectBestFromLayer(1, context);
-        sections.push(...layer1Content);
+        sections.push(...layer1Content.map(c => this.processContent(c, 'layer1')));
 
         // Layer 2: Epigenomes (user preferences, communication style, etc.)
         const layer2Content = await this.selectBestFromLayer(2, context);
-        sections.push(...layer2Content);
+        sections.push(...layer2Content.map(c => this.processContent(c, 'layer2')));
 
         // 🧠 INTELLIGENCE BOOST: Add context memory (if user provided)
         if (context?.userId) {
@@ -119,7 +137,7 @@ export class PromptAssembler {
                 this.genome.id,
             );
             if (memoryPrompt) {
-                sections.push(memoryPrompt);
+                sections.push(this.processContent(memoryPrompt, 'context-memory'));
             }
 
             // 🚀 PROACTIVE SUGGESTIONS: Add intelligent suggestions
@@ -133,7 +151,7 @@ export class PromptAssembler {
                 if (suggestions.length > 0) {
                     const suggestionsPrompt =
                         this.proactiveSuggestions.formatSuggestionsPrompt(suggestions);
-                    sections.push(suggestionsPrompt);
+                    sections.push(this.processContent(suggestionsPrompt, 'proactive-suggestions'));
                 }
             }
         }
@@ -142,7 +160,7 @@ export class PromptAssembler {
         if (this.selfModel) {
             const selfSection = this.selfModel.toPromptSection();
             if (selfSection) {
-                sections.push(selfSection);
+                sections.push(this.processContent(selfSection, 'self-model'));
             }
         }
 
@@ -150,7 +168,7 @@ export class PromptAssembler {
         if (this.patternMemory) {
             const patternSection = this.patternMemory.toPromptSection();
             if (patternSection) {
-                sections.push(patternSection);
+                sections.push(this.processContent(patternSection, 'pattern-memory'));
             }
         }
 
@@ -159,7 +177,7 @@ export class PromptAssembler {
             const preAnalysis = this.metacognition.analyzePreResponse(currentMessage);
             const metaSection = this.metacognition.toPromptSection(preAnalysis);
             if (metaSection) {
-                sections.push(metaSection);
+                sections.push(this.processContent(metaSection, 'metacognition'));
             }
         }
 
@@ -168,7 +186,7 @@ export class PromptAssembler {
             const emotionalState = this.emotionalModel.inferEmotion(currentMessage);
             const emotionSection = this.emotionalModel.toPromptSection(emotionalState);
             if (emotionSection) {
-                sections.push(emotionSection);
+                sections.push(this.processContent(emotionSection, 'emotional-model'));
             }
         }
 
@@ -178,7 +196,7 @@ export class PromptAssembler {
             if (taskType) {
                 const autonomySection = this.calibratedAutonomy.toPromptSection(taskType);
                 if (autonomySection) {
-                    sections.push(autonomySection);
+                    sections.push(this.processContent(autonomySection, 'calibrated-autonomy'));
                 }
             }
         }
@@ -187,7 +205,7 @@ export class PromptAssembler {
         if (this.personalNarrative) {
             const narrativeSection = this.personalNarrative.toPromptSection();
             if (narrativeSection) {
-                sections.push(narrativeSection);
+                sections.push(this.processContent(narrativeSection, 'personal-narrative'));
             }
         }
 
@@ -196,11 +214,29 @@ export class PromptAssembler {
             const currentTopic = context?.taskType;
             const knowledgeSection = this.analyticMemory.toPromptSection(currentTopic);
             if (knowledgeSection) {
-                sections.push(knowledgeSection);
+                sections.push(this.processContent(knowledgeSection, 'analytic-memory'));
             }
         }
 
-        return sections.join('\n\n---\n\n');
+        // Filter out empty sections (blocked by firewall)
+        return sections.filter(s => s.length > 0).join('\n\n---\n\n');
+    }
+
+    /**
+     * Process content through C3 Content Firewall.
+     * If no firewall is set, content passes through unchanged (backward compatible).
+     */
+    private processContent(content: string, source: ContentSource): string {
+        if (!this.firewall) return content;
+
+        const result = this.firewall.scan(content, source);
+
+        if (!result.allowed) {
+            // Content blocked — return empty (filtered out in assemblePrompt)
+            return '';
+        }
+
+        return result.taggedContent;
     }
 
     /**

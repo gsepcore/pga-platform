@@ -462,6 +462,154 @@ export interface GenomeFamily {
     createdAt: Date;
 }
 
+// ─── C3: Content Firewall ──────────────────────────────────
+
+/**
+ * Chromosome 3 (C3) - Content Firewall
+ *
+ * Security policy layer that validates ALL external content
+ * before it enters the system prompt.
+ *
+ * Two zones:
+ * - Immutable: Core detection patterns (SHA-256 protected, like C0)
+ * - Evolvable: Learned attack patterns (evolves like C1)
+ *
+ * @since v0.8.0
+ */
+export interface Chromosome3 {
+    /** Immutable detection patterns — NEVER mutate, SHA-256 protected */
+    corePatterns: FirewallPattern[];
+
+    /** Evolvable detection patterns — learn new attack signatures */
+    learnedPatterns: FirewallPattern[];
+
+    /** Trust policy per content source */
+    trustPolicy: TrustPolicy[];
+
+    /** Sanitization rules for content cleaning */
+    sanitizationRules: SanitizationRule[];
+
+    /** Content tagging configuration */
+    contentTagging: ContentTaggingConfig;
+
+    /** Integrity protection (like C0) */
+    integrity: {
+        corePatternsHash: string;
+        lastVerified: Date;
+        violations: number;
+    };
+
+    metadata: {
+        version: string;
+        lastUpdated: Date;
+        totalBlocked: number;
+        totalScanned: number;
+        falsePositiveRate: number;
+    };
+}
+
+/**
+ * FirewallPattern — A single detection rule in C3
+ */
+export interface FirewallPattern {
+    id: string;
+    name: string;
+    /** Regex pattern string */
+    pattern: string;
+    category: ThreatCategory;
+    severity: 'critical' | 'high' | 'medium' | 'low';
+    action: 'block' | 'sanitize' | 'tag' | 'log';
+    description: string;
+    /** true = in corePatterns (immutable, can't evolve away) */
+    immutable: boolean;
+}
+
+export type ThreatCategory =
+    | 'prompt-injection'
+    | 'role-hijacking'
+    | 'instruction-override'
+    | 'data-exfiltration'
+    | 'encoding-evasion'
+    | 'privilege-escalation'
+    | 'content-smuggling';
+
+export type TrustLevel = 'system' | 'validated' | 'external' | 'untrusted';
+
+export interface TrustPolicy {
+    source: ContentSource;
+    trustLevel: TrustLevel;
+    scanLevel: 'none' | 'structural' | 'full' | 'full+semantic';
+    tagContent: boolean;
+    quarantineOnDetection: boolean;
+}
+
+export type ContentSource =
+    | 'layer0' | 'layer1' | 'layer2'
+    | 'context-memory' | 'proactive-suggestions'
+    | 'self-model' | 'pattern-memory' | 'metacognition'
+    | 'emotional-model' | 'calibrated-autonomy'
+    | 'personal-narrative' | 'analytic-memory'
+    | 'rag-engine' | 'plugin' | 'gene-bank';
+
+export interface SanitizationRule {
+    id: string;
+    name: string;
+    /** Regex pattern to match */
+    match: string;
+    /** Replacement text (empty string to remove) */
+    replacement: string;
+    /** Which trust levels this rule applies to */
+    applyTo: TrustLevel[];
+}
+
+export interface ContentTaggingConfig {
+    enabled: boolean;
+    delimiterPrefix: string;
+    delimiterSuffix: string;
+    /** Add C0 instruction about untrusted content */
+    includeInstructionPreamble: boolean;
+}
+
+/**
+ * FirewallResult — Outcome of scanning content through C3
+ */
+export interface FirewallResult {
+    allowed: boolean;
+    sanitizedContent: string;
+    taggedContent: string;
+    detections: FirewallDetection[];
+    trustLevel: TrustLevel;
+    scanDurationMs: number;
+}
+
+/**
+ * FirewallDetection — A single threat detected by the firewall
+ */
+export interface FirewallDetection {
+    patternId: string;
+    patternName: string;
+    category: ThreatCategory;
+    severity: 'critical' | 'high' | 'medium' | 'low';
+    matchedText: string;
+    position: number;
+    action: 'block' | 'sanitize' | 'tag' | 'log';
+    timestamp: Date;
+}
+
+/**
+ * FirewallAnalytics — Aggregate metrics from the firewall
+ */
+export interface FirewallAnalytics {
+    totalScanned: number;
+    totalBlocked: number;
+    totalSanitized: number;
+    blockRate: number;
+    falsePositiveRate: number;
+    topThreats: Array<{ category: ThreatCategory; count: number }>;
+    threatsBySource: Map<ContentSource, number>;
+    patternEffectiveness: Array<{ patternId: string; detections: number; falsePositives: number }>;
+}
+
 // ─── Export All ─────────────────────────────────────────────
 
 export type {

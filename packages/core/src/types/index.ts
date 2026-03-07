@@ -63,6 +63,12 @@ export interface GenomeConfig {
 
     // Autonomous Agent (v0.5.0) — Living Agent capabilities
     autonomous?: AutonomousConfig;
+
+    // C3 Content Firewall (v0.8.0) — Prompt injection protection
+    firewall?: {
+        /** Enable/disable the C3 Content Firewall (default: true) */
+        enabled?: boolean;
+    };
 }
 
 /**
