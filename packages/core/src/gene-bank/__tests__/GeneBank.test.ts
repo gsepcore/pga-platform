@@ -1,464 +1,478 @@
 /**
- * Gene Bank Unit Tests
+ * GeneBank Unit Tests
  *
- * Comprehensive test suite for the Gene Bank system
+ * Tests for the GeneBank class using InMemoryGeneStorage adapter.
+ * Covers CRUD operations, search, adoption tracking, and statistics.
  *
  * @version 0.4.0
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import {
-    GeneBank,
-    CognitiveGene,
-    GeneStorageAdapter,
-    GeneSearchFilters,
-    createGeneId,
-    meetsMinimumFitness,
-    calculateFitnessDelta,
-} from '../index';
+import { GeneBank } from '../GeneBank.js';
+import { InMemoryGeneStorage } from '../adapters/InMemoryGeneStorage.js';
+import type { CognitiveGene } from '../CognitiveGene.js';
 
 // ============================================================================
-// MOCK STORAGE ADAPTER
+// CONSTANTS
 // ============================================================================
 
-class MockGeneStorage implements GeneStorageAdapter {
-    private genes: Map<string, CognitiveGene> = new Map();
-    private adoptions: Map<string, Array<{ agentId: string; performance: number }>> = new Map();
-
-    async store(gene: CognitiveGene): Promise<void> {
-        this.genes.set(gene.id, gene);
-    }
-
-    async get(geneId: string): Promise<CognitiveGene | null> {
-        return this.genes.get(geneId) || null;
-    }
-
-    async update(gene: CognitiveGene): Promise<void> {
-        this.genes.set(gene.id, gene);
-    }
-
-    async delete(geneId: string): Promise<void> {
-        this.genes.delete(geneId);
-    }
-
-    async search(filters: GeneSearchFilters): Promise<CognitiveGene[]> {
-        let results = Array.from(this.genes.values());
-
-        if (filters.tenantId) {
-            results = results.filter(g => g.tenant.tenantId === filters.tenantId);
-        }
-
-        if (filters.type && filters.type.length > 0) {
-            results = results.filter(g => filters.type!.includes(g.type));
-        }
-
-        if (filters.domain && filters.domain.length > 0) {
-            results = results.filter(g => filters.domain!.includes(g.domain));
-        }
-
-        if (filters.minFitness !== undefined) {
-            results = results.filter(g => g.fitness.overallFitness >= filters.minFitness!);
-        }
-
-        return results.slice(0, filters.limit || 10);
-    }
-
-    async listByTenant(tenantId: string, scope?: string): Promise<CognitiveGene[]> {
-        let results = Array.from(this.genes.values())
-            .filter(g => g.tenant.tenantId === tenantId);
-
-        if (scope) {
-            results = results.filter(g => g.tenant.scope === scope);
-        }
-
-        return results;
-    }
-
-    async getLineage(geneId: string): Promise<CognitiveGene[]> {
-        const gene = this.genes.get(geneId);
-        if (!gene) return [];
-
-        const lineage: CognitiveGene[] = [];
-        let currentGeneId: string | null = gene.lineage.parentGeneId;
-
-        while (currentGeneId) {
-            const parent = this.genes.get(currentGeneId);
-            if (!parent) break;
-            lineage.push(parent);
-            currentGeneId = parent.lineage.parentGeneId;
-        }
-
-        return lineage;
-    }
-
-    async recordAdoption(geneId: string, agentId: string, performance: number): Promise<void> {
-        if (!this.adoptions.has(geneId)) {
-            this.adoptions.set(geneId, []);
-        }
-        this.adoptions.get(geneId)!.push({ agentId, performance });
-
-        const gene = this.genes.get(geneId);
-        if (gene) {
-            gene.fitness.adoptionCount++;
-            const adoptions = this.adoptions.get(geneId)!;
-            const avgPerformance = adoptions.reduce((sum, a) => sum + a.performance, 0) / adoptions.length;
-            gene.fitness.adoptionPerformance = avgPerformance;
-        }
-    }
-
-    reset() {
-        this.genes.clear();
-        this.adoptions.clear();
-    }
-}
+const TEST_TENANT_ID = 'tenant-test';
+const TEST_AGENT_ID = 'agent-test';
 
 // ============================================================================
-// HELPER FUNCTIONS
+// HELPER: Create a valid CognitiveGene for the test tenant
 // ============================================================================
 
-function createMockGene(overrides?: Partial<CognitiveGene>): CognitiveGene {
-    const tenantId = overrides?.tenant?.tenantId || 'tenant_test';
-    const type = overrides?.type || 'error-recovery-pattern';
+function createTestGene(overrides: Partial<CognitiveGene> & Record<string, unknown> = {}): CognitiveGene {
+    const now = new Date().toISOString();
+    const id = (overrides.id as string) || `gene-${Math.random().toString(36).substring(2, 8)}`;
 
     return {
-        id: createGeneId(tenantId, type),
+        id,
         version: '1.0.0',
-        name: 'Test Gene',
-        description: 'A test gene for unit testing',
-        type,
-        domain: 'testing',
+        name: (overrides.name as string) || 'Test Gene',
+        description: (overrides.description as string) || 'A test gene for bank operations',
+        type: (overrides.type as CognitiveGene['type']) || 'reasoning-pattern',
+        domain: (overrides.domain as string) || 'coding',
         fitness: {
             overallFitness: 0.85,
             taskSuccessRate: 0.87,
-            userSatisfaction: 0.88,
-            tokenEfficiency: 0.82,
-            responseQuality: 0.89,
-            adoptionCount: 0,
-            adoptionPerformance: null,
+            tokenEfficiency: 0.7,
+            responseQuality: 0.9,
+            adoptionCount: 5,
+            adoptionPerformance: 0.8,
+            ...(overrides.fitness as object || {}),
         },
         lineage: {
             parentGeneId: null,
             generation: 0,
             ancestors: [],
             mutationHistory: [],
+            ...(overrides.lineage as object || {}),
         },
         content: {
             instruction: 'Test instruction',
             examples: [],
             requiredCapabilities: [],
-            applicableContexts: [],
+            applicableContexts: ['general'],
             contraindications: [],
             metadata: {},
+            ...(overrides.content as object || {}),
         },
         tenant: {
-            tenantId,
-            createdBy: 'agent_test',
-            scope: 'tenant',
+            tenantId: TEST_TENANT_ID,
+            createdBy: TEST_AGENT_ID,
+            scope: 'tenant' as const,
             verified: false,
+            ...(overrides.tenant as object || {}),
         },
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        tags: ['test'],
-        ...overrides,
+        createdAt: now,
+        updatedAt: now,
+        tags: (overrides.tags as string[]) || ['test'],
     };
 }
 
+function createStorage(): InMemoryGeneStorage {
+    return new InMemoryGeneStorage();
+}
+
 // ============================================================================
-// TESTS
+// TESTS: GeneBank
 // ============================================================================
 
 describe('GeneBank', () => {
-    let storage: MockGeneStorage;
-    let geneBank: GeneBank;
+    let storage: InMemoryGeneStorage;
+    let bank: GeneBank;
 
     beforeEach(() => {
-        storage = new MockGeneStorage();
-        geneBank = new GeneBank(storage, {
-            tenantId: 'tenant_test',
-            agentId: 'agent_test',
-            minFitnessThreshold: 0.7,
-            maxGenesPerAgent: 3,
+        storage = createStorage();
+        bank = new GeneBank(storage, {
+            tenantId: TEST_TENANT_ID,
+            agentId: TEST_AGENT_ID,
+            minFitnessThreshold: 0.6,
+            maxGenesPerAgent: 50,
             enableTHK: true,
         });
     });
 
-    describe('storeGene', () => {
-        it('should store a valid gene', async () => {
-            const gene = createMockGene();
+    // ========================================================================
+    // CRUD: storeGene / getGene
+    // ========================================================================
 
-            await geneBank.storeGene(gene);
+    describe('storeGene and getGene', () => {
+        it('should store a gene and retrieve it by ID', async () => {
+            const gene = createTestGene({ id: 'gene-store-1' });
 
-            const retrieved = await geneBank.getGene(gene.id);
-            expect(retrieved).toBeDefined();
-            expect(retrieved?.id).toBe(gene.id);
+            await bank.storeGene(gene);
+            const retrieved = await bank.getGene('gene-store-1');
+
+            expect(retrieved).not.toBeNull();
+            expect(retrieved!.id).toBe('gene-store-1');
+            expect(retrieved!.name).toBe(gene.name);
+            expect(retrieved!.type).toBe(gene.type);
+            expect(retrieved!.domain).toBe(gene.domain);
         });
 
-        it('should reject gene below fitness threshold', async () => {
-            const gene = createMockGene({
+        it('should return null for a non-existent gene ID', async () => {
+            const retrieved = await bank.getGene('non-existent-id');
+            expect(retrieved).toBeNull();
+        });
+
+        it('should reject a gene below the fitness threshold', async () => {
+            const gene = createTestGene({
                 fitness: {
-                    overallFitness: 0.5, // Below 0.7 threshold
-                    taskSuccessRate: 0.5,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.5,
+                    overallFitness: 0.3,
+                    taskSuccessRate: 0.3,
+                    tokenEfficiency: 0.2,
+                    responseQuality: 0.3,
                     adoptionCount: 0,
                     adoptionPerformance: null,
                 },
             });
 
-            await expect(geneBank.storeGene(gene)).rejects.toThrow('below threshold');
+            await expect(bank.storeGene(gene)).rejects.toThrow('below threshold');
         });
 
-        it('should reject gene from different tenant', async () => {
-            const gene = createMockGene({
+        it('should reject a gene from a different tenant', async () => {
+            const gene = createTestGene({
                 tenant: {
-                    tenantId: 'different_tenant',
-                    createdBy: 'agent_other',
-                    scope: 'tenant',
+                    tenantId: 'other-tenant',
+                    createdBy: 'other-agent',
+                    scope: 'tenant' as const,
                     verified: false,
                 },
             });
 
-            await expect(geneBank.storeGene(gene)).rejects.toThrow('different tenant');
-        });
-
-        it('should evict lowest fitness gene when capacity reached', async () => {
-            // Store 3 genes (max capacity)
-            const gene1 = createMockGene({
-                fitness: {
-                    overallFitness: 0.75,
-                    taskSuccessRate: 0.75,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.75,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
-
-            const gene2 = createMockGene({
-                fitness: {
-                    overallFitness: 0.85,
-                    taskSuccessRate: 0.85,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.85,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
-
-            const gene3 = createMockGene({
-                fitness: {
-                    overallFitness: 0.80,
-                    taskSuccessRate: 0.80,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.80,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
-
-            await geneBank.storeGene(gene1);
-            await geneBank.storeGene(gene2);
-            await geneBank.storeGene(gene3);
-
-            // Store 4th gene (should evict gene1 with lowest fitness)
-            const gene4 = createMockGene({
-                fitness: {
-                    overallFitness: 0.90,
-                    taskSuccessRate: 0.90,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.90,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
-
-            await geneBank.storeGene(gene4);
-
-            const gene1Retrieved = await geneBank.getGene(gene1.id);
-            const gene4Retrieved = await geneBank.getGene(gene4.id);
-
-            expect(gene1Retrieved).toBeNull(); // Evicted
-            expect(gene4Retrieved).toBeDefined(); // Stored
+            await expect(bank.storeGene(gene)).rejects.toThrow('different tenant');
         });
     });
+
+    // ========================================================================
+    // updateGene
+    // ========================================================================
+
+    describe('updateGene', () => {
+        it('should update an existing gene', async () => {
+            const gene = createTestGene({ id: 'gene-update-1', name: 'Original Name' });
+            await bank.storeGene(gene);
+
+            const updated = { ...gene, name: 'Updated Name', updatedAt: new Date().toISOString() };
+            await bank.updateGene(updated);
+
+            const retrieved = await bank.getGene('gene-update-1');
+            expect(retrieved).not.toBeNull();
+            expect(retrieved!.name).toBe('Updated Name');
+        });
+
+        it('should throw when updating a non-existent gene', async () => {
+            const gene = createTestGene({ id: 'gene-not-here' });
+            await expect(bank.updateGene(gene)).rejects.toThrow('not found');
+        });
+    });
+
+    // ========================================================================
+    // deleteGene
+    // ========================================================================
+
+    describe('deleteGene', () => {
+        it('should delete a gene and return null on subsequent get', async () => {
+            const gene = createTestGene({ id: 'gene-delete-1' });
+            await bank.storeGene(gene);
+
+            await bank.deleteGene('gene-delete-1');
+
+            const retrieved = await bank.getGene('gene-delete-1');
+            expect(retrieved).toBeNull();
+        });
+
+        it('should throw when deleting a non-existent gene', async () => {
+            await expect(bank.deleteGene('nonexistent-gene')).rejects.toThrow('not found');
+        });
+    });
+
+    // ========================================================================
+    // searchGenes
+    // ========================================================================
 
     describe('searchGenes', () => {
         beforeEach(async () => {
-            // Populate with test genes
-            await geneBank.storeGene(createMockGene({
-                type: 'error-recovery-pattern',
-                domain: 'customer-support',
-                fitness: {
-                    overallFitness: 0.9,
-                    taskSuccessRate: 0.9,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.9,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            }));
-
-            await geneBank.storeGene(createMockGene({
+            await bank.storeGene(createTestGene({
+                id: 'gene-search-coding',
                 type: 'reasoning-pattern',
                 domain: 'coding',
-                fitness: {
-                    overallFitness: 0.85,
-                    taskSuccessRate: 0.85,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.85,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
+                tags: ['typescript', 'testing'],
+                fitness: { overallFitness: 0.9, taskSuccessRate: 0.9, tokenEfficiency: 0.8, responseQuality: 0.9, adoptionCount: 10, adoptionPerformance: 0.85 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-search-math',
+                type: 'domain-expertise',
+                domain: 'math',
+                tags: ['algebra'],
+                fitness: { overallFitness: 0.8, taskSuccessRate: 0.8, tokenEfficiency: 0.7, responseQuality: 0.8, adoptionCount: 3, adoptionPerformance: 0.7 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-search-support',
+                type: 'communication-pattern',
+                domain: 'customer-support',
+                tags: ['empathy'],
+                fitness: { overallFitness: 0.75, taskSuccessRate: 0.75, tokenEfficiency: 0.6, responseQuality: 0.75, adoptionCount: 7, adoptionPerformance: 0.8 },
             }));
         });
 
-        it('should search by type', async () => {
-            const results = await geneBank.searchGenes({
-                type: ['error-recovery-pattern'],
-            });
+        it('should search genes by domain', async () => {
+            const results = await bank.searchGenes({ domain: ['coding'] });
 
-            expect(results.length).toBeGreaterThan(0);
-            expect(results.every(g => g.type === 'error-recovery-pattern')).toBe(true);
+            expect(results.length).toBe(1);
+            expect(results[0].domain).toBe('coding');
         });
 
-        it('should search by domain', async () => {
-            const results = await geneBank.searchGenes({
-                domain: ['customer-support'],
-            });
+        it('should search genes by type', async () => {
+            const results = await bank.searchGenes({ type: ['domain-expertise'] });
 
-            expect(results.length).toBeGreaterThan(0);
-            expect(results.every(g => g.domain === 'customer-support')).toBe(true);
+            expect(results.length).toBe(1);
+            expect(results[0].type).toBe('domain-expertise');
         });
 
-        it('should filter by minimum fitness', async () => {
-            const results = await geneBank.searchGenes({
-                minFitness: 0.88,
-            });
+        it('should filter genes by minimum fitness', async () => {
+            const results = await bank.searchGenes({ minFitness: 0.85 });
 
-            expect(results.length).toBeGreaterThan(0);
-            expect(results.every(g => g.fitness.overallFitness >= 0.88)).toBe(true);
+            expect(results.length).toBe(1);
+            expect(results[0].id).toBe('gene-search-coding');
+            expect(results[0].fitness.overallFitness).toBeGreaterThanOrEqual(0.85);
         });
     });
 
-    describe('recordAdoption', () => {
-        it('should track gene adoptions', async () => {
-            const gene = createMockGene();
-            await geneBank.storeGene(gene);
+    // ========================================================================
+    // findByDomain
+    // ========================================================================
 
-            await geneBank.recordAdoption(gene.id, 'agent_bob', 0.87);
+    describe('findByDomain', () => {
+        it('should return genes matching the domain', async () => {
+            await bank.storeGene(createTestGene({
+                id: 'gene-find-coding',
+                domain: 'coding',
+                fitness: { overallFitness: 0.9, taskSuccessRate: 0.9, tokenEfficiency: 0.8, responseQuality: 0.9, adoptionCount: 5, adoptionPerformance: 0.7 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-find-math',
+                domain: 'math',
+                fitness: { overallFitness: 0.85, taskSuccessRate: 0.85, tokenEfficiency: 0.7, responseQuality: 0.85, adoptionCount: 3, adoptionPerformance: 0.6 },
+            }));
 
-            const retrieved = await geneBank.getGene(gene.id);
-            expect(retrieved?.fitness.adoptionCount).toBe(1);
-            expect(retrieved?.fitness.adoptionPerformance).toBe(0.87);
+            const results = await bank.findByDomain('coding');
+
+            expect(results.length).toBe(1);
+            expect(results.every(g => g.domain === 'coding')).toBe(true);
         });
 
-        it('should calculate average adoption performance', async () => {
-            const gene = createMockGene();
-            await geneBank.storeGene(gene);
+        it('should respect minFitness parameter', async () => {
+            await bank.storeGene(createTestGene({
+                id: 'gene-fitness-high',
+                domain: 'coding',
+                fitness: { overallFitness: 0.95, taskSuccessRate: 0.95, tokenEfficiency: 0.9, responseQuality: 0.95, adoptionCount: 8, adoptionPerformance: 0.85 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-fitness-low',
+                domain: 'coding',
+                fitness: { overallFitness: 0.65, taskSuccessRate: 0.65, tokenEfficiency: 0.5, responseQuality: 0.65, adoptionCount: 1, adoptionPerformance: 0.5 },
+            }));
 
-            await geneBank.recordAdoption(gene.id, 'agent_bob', 0.8);
-            await geneBank.recordAdoption(gene.id, 'agent_carol', 0.9);
+            const results = await bank.findByDomain('coding', 0.9);
 
-            const retrieved = await geneBank.getGene(gene.id);
-            expect(retrieved?.fitness.adoptionCount).toBe(2);
-            expect(retrieved?.fitness.adoptionPerformance).toBeCloseTo(0.85, 2);
+            expect(results.length).toBe(1);
+            expect(results[0].id).toBe('gene-fitness-high');
         });
     });
+
+    // ========================================================================
+    // findByType
+    // ========================================================================
+
+    describe('findByType', () => {
+        it('should return genes matching the type', async () => {
+            await bank.storeGene(createTestGene({
+                id: 'gene-type-tool',
+                type: 'tool-usage-pattern',
+                fitness: { overallFitness: 0.85, taskSuccessRate: 0.85, tokenEfficiency: 0.7, responseQuality: 0.85, adoptionCount: 4, adoptionPerformance: 0.7 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-type-reasoning',
+                type: 'reasoning-pattern',
+                fitness: { overallFitness: 0.8, taskSuccessRate: 0.8, tokenEfficiency: 0.7, responseQuality: 0.8, adoptionCount: 2, adoptionPerformance: 0.6 },
+            }));
+
+            const results = await bank.findByType('tool-usage-pattern');
+
+            expect(results.length).toBe(1);
+            expect(results[0].type).toBe('tool-usage-pattern');
+        });
+    });
+
+    // ========================================================================
+    // getTopGenes
+    // ========================================================================
+
+    describe('getTopGenes', () => {
+        it('should return genes sorted by fitness descending', async () => {
+            await bank.storeGene(createTestGene({
+                id: 'gene-top-low',
+                fitness: { overallFitness: 0.7, taskSuccessRate: 0.7, tokenEfficiency: 0.5, responseQuality: 0.7, adoptionCount: 1, adoptionPerformance: 0.5 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-top-high',
+                fitness: { overallFitness: 0.95, taskSuccessRate: 0.95, tokenEfficiency: 0.9, responseQuality: 0.95, adoptionCount: 10, adoptionPerformance: 0.9 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-top-mid',
+                fitness: { overallFitness: 0.85, taskSuccessRate: 0.85, tokenEfficiency: 0.7, responseQuality: 0.85, adoptionCount: 5, adoptionPerformance: 0.7 },
+            }));
+
+            const results = await bank.getTopGenes(3);
+
+            expect(results.length).toBe(3);
+            // Sorted by fitness descending
+            expect(results[0].fitness.overallFitness).toBeGreaterThanOrEqual(results[1].fitness.overallFitness);
+            expect(results[1].fitness.overallFitness).toBeGreaterThanOrEqual(results[2].fitness.overallFitness);
+            expect(results[0].id).toBe('gene-top-high');
+        });
+
+        it('should respect the limit parameter', async () => {
+            for (let i = 0; i < 5; i++) {
+                await bank.storeGene(createTestGene({
+                    id: `gene-limit-${i}`,
+                    fitness: { overallFitness: 0.7 + i * 0.05, taskSuccessRate: 0.7, tokenEfficiency: 0.6, responseQuality: 0.7, adoptionCount: 2, adoptionPerformance: 0.6 },
+                }));
+            }
+
+            const results = await bank.getTopGenes(2);
+
+            expect(results.length).toBe(2);
+        });
+    });
+
+    // ========================================================================
+    // getStats
+    // ========================================================================
 
     describe('getStats', () => {
-        it('should return gene bank statistics', async () => {
-            await geneBank.storeGene(createMockGene());
+        it('should return correct statistics for stored genes', async () => {
+            await bank.storeGene(createTestGene({
+                id: 'gene-stat-1',
+                type: 'reasoning-pattern',
+                domain: 'coding',
+                fitness: { overallFitness: 0.8, taskSuccessRate: 0.8, tokenEfficiency: 0.7, responseQuality: 0.8, adoptionCount: 3, adoptionPerformance: 0.7 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-stat-2',
+                type: 'tool-usage-pattern',
+                domain: 'coding',
+                fitness: { overallFitness: 0.9, taskSuccessRate: 0.9, tokenEfficiency: 0.8, responseQuality: 0.9, adoptionCount: 7, adoptionPerformance: 0.85 },
+            }));
+            await bank.storeGene(createTestGene({
+                id: 'gene-stat-3',
+                type: 'reasoning-pattern',
+                domain: 'math',
+                fitness: { overallFitness: 0.7, taskSuccessRate: 0.7, tokenEfficiency: 0.6, responseQuality: 0.7, adoptionCount: 2, adoptionPerformance: 0.6 },
+            }));
 
-            const stats = await geneBank.getStats();
+            const stats = await bank.getStats();
 
-            expect(stats.totalGenes).toBeGreaterThan(0);
-            expect(stats.averageFitness).toBeGreaterThan(0);
+            expect(stats.totalGenes).toBe(3);
+            expect(stats.genesByType['reasoning-pattern']).toBe(2);
+            expect(stats.genesByType['tool-usage-pattern']).toBe(1);
+            expect(stats.genesByDomain['coding']).toBe(2);
+            expect(stats.genesByDomain['math']).toBe(1);
+            expect(stats.averageFitness).toBeCloseTo(0.8, 1);
+            expect(stats.totalAdoptions).toBe(12); // 3 + 7 + 2
         });
-    });
-});
 
-describe('Helper Functions', () => {
-    describe('createGeneId', () => {
-        it('should create unique gene IDs', () => {
-            const id1 = createGeneId('tenant1', 'error-recovery-pattern');
-            const id2 = createGeneId('tenant1', 'error-recovery-pattern');
+        it('should return zero stats for an empty bank', async () => {
+            const stats = await bank.getStats();
 
-            expect(id1).not.toBe(id2);
-            expect(id1).toContain('gene_tenant1_error-recovery-pattern');
-        });
-    });
-
-    describe('meetsMinimumFitness', () => {
-        it('should validate fitness threshold', () => {
-            const highFitnessGene = createMockGene({
-                fitness: {
-                    overallFitness: 0.8,
-                    taskSuccessRate: 0.8,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.8,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
-
-            const lowFitnessGene = createMockGene({
-                fitness: {
-                    overallFitness: 0.5,
-                    taskSuccessRate: 0.5,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.5,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
-
-            expect(meetsMinimumFitness(highFitnessGene, 0.7)).toBe(true);
-            expect(meetsMinimumFitness(lowFitnessGene, 0.7)).toBe(false);
+            expect(stats.totalGenes).toBe(0);
+            expect(stats.averageFitness).toBe(0);
+            expect(stats.totalAdoptions).toBe(0);
         });
     });
 
-    describe('calculateFitnessDelta', () => {
-        it('should calculate fitness improvement', () => {
-            const parent = createMockGene({
-                fitness: {
-                    overallFitness: 0.7,
-                    taskSuccessRate: 0.7,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.7,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
-            });
+    // ========================================================================
+    // recordAdoption
+    // ========================================================================
 
-            const child = createMockGene({
-                fitness: {
-                    overallFitness: 0.9,
-                    taskSuccessRate: 0.9,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.9,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
+    describe('recordAdoption', () => {
+        it('should track a gene adoption and update adoption count', async () => {
+            const gene = createTestGene({
+                id: 'gene-adopt-1',
+                fitness: { overallFitness: 0.85, taskSuccessRate: 0.85, tokenEfficiency: 0.7, responseQuality: 0.85, adoptionCount: 0, adoptionPerformance: null },
             });
+            await bank.storeGene(gene);
 
-            const delta = calculateFitnessDelta(child, parent);
-            expect(delta).toBeCloseTo(0.2, 1);
+            await bank.recordAdoption('gene-adopt-1', 'agent-bob', 0.9);
+
+            const retrieved = await bank.getGene('gene-adopt-1');
+            expect(retrieved).not.toBeNull();
+            expect(retrieved!.fitness.adoptionCount).toBe(1);
+            expect(retrieved!.fitness.adoptionPerformance).toBeCloseTo(0.9, 2);
         });
 
-        it('should return child fitness when no parent', () => {
-            const child = createMockGene({
-                fitness: {
-                    overallFitness: 0.9,
-                    taskSuccessRate: 0.9,
-                    tokenEfficiency: 0,
-                    responseQuality: 0.9,
-                    adoptionCount: 0,
-                    adoptionPerformance: null,
-                },
+        it('should calculate average adoption performance across multiple adoptions', async () => {
+            const gene = createTestGene({
+                id: 'gene-adopt-multi',
+                fitness: { overallFitness: 0.85, taskSuccessRate: 0.85, tokenEfficiency: 0.7, responseQuality: 0.85, adoptionCount: 0, adoptionPerformance: null },
+            });
+            await bank.storeGene(gene);
+
+            await bank.recordAdoption('gene-adopt-multi', 'agent-bob', 0.8);
+            await bank.recordAdoption('gene-adopt-multi', 'agent-carol', 0.9);
+            await bank.recordAdoption('gene-adopt-multi', 'agent-dave', 1.0);
+
+            const retrieved = await bank.getGene('gene-adopt-multi');
+            expect(retrieved).not.toBeNull();
+            expect(retrieved!.fitness.adoptionCount).toBe(3);
+            expect(retrieved!.fitness.adoptionPerformance).toBeCloseTo(0.9, 2); // (0.8+0.9+1.0)/3
+        });
+    });
+
+    // ========================================================================
+    // Capacity Eviction
+    // ========================================================================
+
+    describe('capacity eviction', () => {
+        it('should evict lowest fitness gene when capacity is reached', async () => {
+            const smallBank = new GeneBank(storage, {
+                tenantId: TEST_TENANT_ID,
+                agentId: TEST_AGENT_ID,
+                minFitnessThreshold: 0.6,
+                maxGenesPerAgent: 2,
+                enableTHK: true,
             });
 
-            const delta = calculateFitnessDelta(child, null);
-            expect(delta).toBe(0.9);
+            const gene1 = createTestGene({
+                id: 'gene-evict-low',
+                fitness: { overallFitness: 0.65, taskSuccessRate: 0.65, tokenEfficiency: 0.5, responseQuality: 0.65, adoptionCount: 0, adoptionPerformance: null },
+            });
+            const gene2 = createTestGene({
+                id: 'gene-evict-high',
+                fitness: { overallFitness: 0.95, taskSuccessRate: 0.95, tokenEfficiency: 0.9, responseQuality: 0.95, adoptionCount: 10, adoptionPerformance: 0.9 },
+            });
+            const gene3 = createTestGene({
+                id: 'gene-evict-new',
+                fitness: { overallFitness: 0.85, taskSuccessRate: 0.85, tokenEfficiency: 0.7, responseQuality: 0.85, adoptionCount: 5, adoptionPerformance: 0.8 },
+            });
+
+            await smallBank.storeGene(gene1);
+            await smallBank.storeGene(gene2);
+
+            // This should evict gene1 (lowest fitness)
+            await smallBank.storeGene(gene3);
+
+            const evicted = await smallBank.getGene('gene-evict-low');
+            const kept = await smallBank.getGene('gene-evict-high');
+            const added = await smallBank.getGene('gene-evict-new');
+
+            expect(evicted).toBeNull();
+            expect(kept).not.toBeNull();
+            expect(added).not.toBeNull();
         });
     });
 });

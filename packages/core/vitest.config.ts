@@ -14,11 +14,15 @@ export default defineConfig({
         '**/__tests__/**',
         '**/fixtures/**',
         '**/*.d.ts',
-        'src/index.ts', // Re-exports only
-
         // Type-only files (no runtime code to test)
         'src/types/**',
         'src/interfaces/**',
+        'src/wrap/WrapOptions.ts', // Type definitions only
+        '**/index.ts', // Barrel re-exports
+
+        // PostgreSQL-dependent modules (require real DB connection)
+        'src/gene-bank/adapters/PostgresGeneStorage.ts',
+        'src/gene-bank/PostgresIntegration.ts',
 
         // Modules without tests yet — remove as tests are added
         'src/plugins/**',
@@ -30,10 +34,10 @@ export default defineConfig({
         'src/core/PromptAssembler.ts',
       ],
       thresholds: {
-        lines: 40,
-        functions: 40,
-        branches: 50,
-        statements: 40,
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
       },
       all: true,
       clean: true,
