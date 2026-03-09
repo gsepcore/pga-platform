@@ -22,6 +22,7 @@ beforeAll(async () => {
     server = new PGAServer({
         storage: new InMemoryStorageAdapter(),
         adminApiKey: ADMIN_KEY,
+        logger: false, // Suppress logging in tests
         port: 0, // Don't actually bind a port
     });
 

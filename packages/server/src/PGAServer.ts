@@ -37,6 +37,10 @@ export interface PGAServerConfig {
     adminApiKey: string;
     /** Server port (default: 4444) */
     port?: number;
+    /** Server bind host (default: '127.0.0.1') */
+    host?: string;
+    /** Enable Fastify request logging (default: true) */
+    logger?: boolean;
     /** Rate limiting config */
     rateLimit?: { max: number; timeWindow: string };
 }
@@ -86,7 +90,7 @@ export class PGAServer {
         this.storage = config.storage ?? new InMemoryStorageAdapter();
         this.llm = config.llm ?? new NoopLLMAdapter();
 
-        this.app = Fastify({ logger: false });
+        this.app = Fastify({ logger: config.logger ?? true });
     }
 
     /**
@@ -118,7 +122,7 @@ export class PGAServer {
         registerPromptRoutes(this.app, this);
         registerReportRoutes(this.app, this);
 
-        await this.app.listen({ port: listenPort, host: '0.0.0.0' });
+        await this.app.listen({ port: listenPort, host: this.config.host ?? '127.0.0.1' });
         this.startTime = Date.now();
     }
 

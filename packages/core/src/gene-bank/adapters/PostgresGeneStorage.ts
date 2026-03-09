@@ -298,7 +298,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
 
         // Sorting
         const sortBy = filters.sortBy || 'fitness';
-        const sortOrder = filters.sortOrder || 'desc';
+        const sortOrder = filters.sortOrder?.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
         let orderBy = '';
 
         switch (sortBy) {

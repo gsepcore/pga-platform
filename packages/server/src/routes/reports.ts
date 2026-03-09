@@ -66,8 +66,8 @@ export function registerReportRoutes(app: FastifyInstance, server: PGAServer): v
                 feedback: body.feedback,
             });
         } catch (err) {
-            const message = err instanceof Error ? err.message : String(err);
-            return reply.status(500).send({ error: 'Failed to process metrics', detail: message });
+            request.log.error(err, 'Failed to process metrics');
+            return reply.status(500).send({ error: 'Failed to process metrics' });
         }
 
         return { recorded: true };

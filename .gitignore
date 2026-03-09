@@ -54,3 +54,6 @@ temp/
 # Intellectual Property (Patent Pending — attorney eyes only)
 ip-filings/
 ip-filings-de/
+
+# Claude Code local settings (may contain API keys)
+.claude/

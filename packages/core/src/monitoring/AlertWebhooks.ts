@@ -9,6 +9,11 @@
 
 import type { Alert } from './MetricsCollector.js';
 
+/** Escape HTML special characters to prevent XSS in email payloads */
+function escapeHtml(s: string): string {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 export interface WebhookConfig {
     /**
      * Webhook URL
@@ -273,13 +278,13 @@ ${alert.description}
 ${alert.metrics ? `Metrics: ${JSON.stringify(alert.metrics, null, 2)}` : ''}
             `.trim(),
             html: `
-<h2>${alert.title}</h2>
-<p><strong>Severity:</strong> ${alert.severity.toUpperCase()}</p>
-<p><strong>Type:</strong> ${alert.type}</p>
+<h2>${escapeHtml(alert.title)}</h2>
+<p><strong>Severity:</strong> ${escapeHtml(alert.severity.toUpperCase())}</p>
+<p><strong>Type:</strong> ${escapeHtml(alert.type)}</p>
 <p><strong>Time:</strong> ${alert.timestamp.toISOString()}</p>
 <h3>Description:</h3>
-<p>${alert.description}</p>
-${alert.metrics ? `<h3>Metrics:</h3><pre>${JSON.stringify(alert.metrics, null, 2)}</pre>` : ''}
+<p>${escapeHtml(alert.description)}</p>
+${alert.metrics ? `<h3>Metrics:</h3><pre>${escapeHtml(JSON.stringify(alert.metrics, null, 2))}</pre>` : ''}
             `.trim(),
         };
     }
