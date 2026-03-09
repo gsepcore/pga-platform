@@ -92,3 +92,5 @@ export {
     AdoptionRequest,
     AdoptedGeneStatus,
 } from './GeneAdopter';
+// Marketplace Client (global sharing)
+export { MarketplaceClient } from './MarketplaceClient';
