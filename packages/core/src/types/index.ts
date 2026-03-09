@@ -360,6 +360,139 @@ export interface GeneRegistryEntry {
     createdAt: Date;
 }
 
+// ─── Gene Registry Extended Types ────────────────────────
+// Maps to GeneRegistrySchema.sql tables
+
+export interface GeneFamily {
+    id: string;
+    name: string;
+    description?: string;
+    category?: string;
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy?: string;
+    memberCount: number;
+    geneCount: number;
+    totalUsage: number;
+}
+
+export interface ValidatedGene {
+    id: string;
+    name: string;
+    description?: string;
+    familyId: string;
+    category: string;
+    content: string;
+    version: number;
+    sourceGenomeId?: string;
+    sourceGeneId?: string;
+    creatorUserId?: string;
+    validationStatus: 'pending' | 'approved' | 'rejected';
+    validatedAt?: Date;
+    validatedBy?: string;
+    validationNotes?: string;
+    quality?: number;
+    successRate?: number;
+    tokenEfficiency?: number;
+    avgLatency?: number;
+    costPerSuccess?: number;
+    interventionRate?: number;
+    compositeFitness?: number;
+    usageCount: number;
+    inheritanceCount: number;
+    inheritanceSuccessRate: number;
+    avgFitnessGain: number;
+    ratingCount: number;
+    avgRating?: number;
+    createdAt: Date;
+    updatedAt: Date;
+    publishedAt?: Date;
+    priceUsd: number;
+    license: string;
+    deletedAt?: Date;
+}
+
+export interface GeneInheritance {
+    id: string;
+    geneId: string;
+    targetGenomeId: string;
+    targetGenomeFamilyId: string;
+    userId: string;
+    inheritedAt: Date;
+    fitnessBefore?: number;
+    fitnessAfter?: number;
+    fitnessGain?: number;
+    testDurationMs?: number;
+    testPassed: boolean;
+    testResults?: Record<string, unknown>;
+    active: boolean;
+    deactivatedAt?: Date;
+    deactivationReason?: string;
+    compatibilityScore?: number;
+    metadata?: Record<string, unknown>;
+}
+
+export interface GeneRating {
+    id: string;
+    geneId: string;
+    userId: string;
+    rating: number;
+    review?: string;
+    genomeId?: string;
+    useCase?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface GenomeRegistryRecord {
+    id: string;
+    name: string;
+    familyId: string;
+    ownerUserId: string;
+    visibility: 'private' | 'family' | 'public';
+    totalInteractions: number;
+    inheritedGenesCount: number;
+    contributedGenesCount: number;
+    currentFitness?: number;
+    fitnessHistory?: Record<string, unknown>[];
+    createdAt: Date;
+    lastActiveAt: Date;
+    metadata?: Record<string, unknown>;
+}
+
+export interface InheritancePolicy {
+    id: string;
+    name: string;
+    description?: string;
+    minCompatibilityScore: number;
+    minFitnessThreshold: number;
+    minSuccessRate: number;
+    maxCostPerSuccess: number;
+    allowedFamilies?: string[];
+    blockedFamilies?: string[];
+    autoApproveThreshold: number;
+    requireManualReview: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    createdBy?: string;
+}
+
+export interface GeneUsageAnalytics {
+    id: string;
+    geneId: string;
+    genomeId: string;
+    userId: string;
+    date: string;
+    hour?: number;
+    usageCount: number;
+    successCount: number;
+    failureCount: number;
+    totalTokens: number;
+    totalCost: number;
+    avgLatency?: number;
+    createdAt: Date;
+}
+
 // ─── Export All ─────────────────────────────────────────
 
 export type Layer = 0 | 1 | 2;

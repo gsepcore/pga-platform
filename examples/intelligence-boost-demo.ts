@@ -12,9 +12,9 @@
  * THE USER WILL FEEL THE 0% → 100% UPGRADE!
  */
 
-import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+import { PGA } from '../packages/core/src/index.js';
+import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
+import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
 async function main() {
     console.log('\n🧬 PGA INTELLIGENCE BOOST DEMO\n');

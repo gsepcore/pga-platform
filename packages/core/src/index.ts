@@ -452,6 +452,14 @@ export type {
     PromotionGateResult,
     CompressionConfig,
     AutonomousConfig,
+    // Gene Registry Extended Types (v0.9.0)
+    GeneFamily,
+    ValidatedGene,
+    GeneInheritance,
+    GeneRating,
+    GenomeRegistryRecord,
+    InheritancePolicy,
+    GeneUsageAnalytics,
 } from './types/index.js';
 
 // ─── Types v2 (Living OS) ───────────────────────────────

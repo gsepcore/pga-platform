@@ -15,6 +15,7 @@
  * @since 2026
  */
 
+import { timingSafeEqual } from 'node:crypto';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { PGA, GenomeInstance, GenomeBuilder, InMemoryStorageAdapter } from '@pga-ai/core';
 import type { LLMAdapter, StorageAdapter, WrapOptions } from '@pga-ai/core';
@@ -223,7 +224,10 @@ export class PGAServer {
      */
     verifyAdminKey(key: string | undefined): boolean {
         if (!key) return false;
-        return key === this.adminApiKey;
+        const a = Buffer.from(key);
+        const b = Buffer.from(this.adminApiKey);
+        if (a.length !== b.length) return false;
+        return timingSafeEqual(a, b);
     }
 
     /**
@@ -234,6 +238,9 @@ export class PGAServer {
         const token = bearer.startsWith('Bearer ') ? bearer.slice(7) : bearer;
         const entry = this.genomes.get(genomeId);
         if (!entry) return false;
-        return token === entry.secret;
+        const a = Buffer.from(token);
+        const b = Buffer.from(entry.secret);
+        if (a.length !== b.length) return false;
+        return timingSafeEqual(a, b);
     }
 }

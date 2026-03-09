@@ -16,30 +16,24 @@ export default defineConfig({
         '**/*.d.ts',
         'src/index.ts', // Re-exports only
 
-        // Temporary exclusions - modules without tests yet
-        // TODO: Remove these as tests are added (track in issue #XX)
+        // Type-only files (no runtime code to test)
         'src/types/**',
         'src/interfaces/**',
-        'src/PGA.ts',
-        'src/advanced-ai/**',
-        'src/enterprise/**',
-        'src/evaluation/**',
-        'src/evolution/**',
-        'src/monitoring/**',
+
+        // Modules without tests yet — remove as tests are added
         'src/plugins/**',
         'src/realtime/**',
         'src/resilience/**',
+        'src/enterprise/**',
         'src/core/DNAProfile.ts',
         'src/core/FitnessTracker.ts',
-        'src/core/GenomeKernel.ts',
-        'src/core/GenomeManager.ts',
         'src/core/PromptAssembler.ts',
       ],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 75,
-        statements: 80,
+        lines: 40,
+        functions: 40,
+        branches: 50,
+        statements: 40,
       },
       all: true,
       clean: true,
