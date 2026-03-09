@@ -80,6 +80,7 @@ CREATE TABLE IF NOT EXISTS pga_interactions (
     assistant_response TEXT NOT NULL,
     tool_calls JSONB DEFAULT '[]',
     score NUMERIC(5,4),
+    user_satisfied BOOLEAN,
     task_type TEXT,
     timestamp TIMESTAMPTZ DEFAULT NOW()
 );

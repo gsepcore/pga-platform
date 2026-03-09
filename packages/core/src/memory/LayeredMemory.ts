@@ -58,8 +58,10 @@ export interface SemanticFact {
     sourceTurn: number;
     sourceInteractionId?: string;
     extractedAt: Date;
-    expiry: Date | null; // null = no expira
-    verified: boolean; // Si fue verificado por el usuario
+    expiry: Date | null; // null = never expires
+    verified: boolean;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export interface UserProfile {
@@ -569,6 +571,8 @@ If no permanent facts found, return: {"facts": []}
                 extractedAt: now,
                 expiry,
                 verified: false,
+                createdAt: now,
+                updatedAt: now,
             }));
 
             // Save to storage (persistent)

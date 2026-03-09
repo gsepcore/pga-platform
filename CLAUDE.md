@@ -33,28 +33,28 @@
 
 ---
 
-## 📋 KNOWN CRITICAL ISSUES (FIX THESE FIRST)
+## 📋 KNOWN CRITICAL ISSUES — STATUS
 
-### 🚨 Priority 1 - Must Fix Before Launch:
+### ✅ RESOLVED (2026-03-09):
 
-1. **API Documentation vs Code Mismatch**
-   - README examples don't match actual function signatures
-   - Action: Read README examples, run them, fix mismatches
+1. **API Documentation vs Code Mismatch** — FIXED
+   - README Step 2 now imports `InMemoryStorageAdapter` and passes `storage` to PGA constructor
+   - All examples verified against actual function signatures
 
-2. **Postgres Schema Inconsistency**
-   - SQL: `score DECIMAL NOT NULL`
-   - TypeScript: treats score as optional
-   - Action: Align schema with types OR types with schema
+2. **Postgres Schema Inconsistency** — FIXED
+   - `SemanticFact` interface now includes `createdAt` and `updatedAt` (matches SQL NOT NULL columns)
+   - `pga_interactions` SQL now includes `user_satisfied` column (matches TS `userSatisfied` field)
+   - Duplicate `semantic_facts` migration aligned (FLOAT→NUMERIC, TIMESTAMP→TIMESTAMPTZ)
+   - Postgres adapter row mappers updated to include `createdAt`/`updatedAt`
 
-3. **Testing Tooling Conflict**
-   - Both Jest AND Vitest present in project
-   - Some tests use Jest, some use Vitest
-   - Action: Choose ONE, migrate all tests, remove the other
+3. **Testing Tooling Conflict** — FIXED (previously resolved)
+   - Jest fully removed from project. All 34 test files use Vitest
+   - Standardized on Vitest v3.2.4 across all packages
 
-4. **Living OS Documentation vs Implementation Gap**
-   - Living OS v2.0.0 is documented but not fully implemented
-   - GenomeV2, DriftAnalyzer exist but not integrated
-   - Action: Complete implementation OR document as "roadmap"
+4. **Living OS v2.0.0 — Partial (documented as roadmap)**
+   - IMPLEMENTED: GenomeKernel (C0 integrity), DriftAnalyzer (5 drift types), FitnessCalculator (6D), ContentFirewall (C3), EvolutionGuardrailsManager (4-gate), CanaryDeployment
+   - ROADMAP: GenomeV2 full integration (types exist, not wired to PGA.ts), 8-stage promotion gate, Gene Registry cross-genome inheritance
+   - Current flow uses old Genome interface; GenomeV2 migration is planned for v1.0.0
 
 ---
 

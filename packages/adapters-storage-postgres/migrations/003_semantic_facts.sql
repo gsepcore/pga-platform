@@ -14,18 +14,18 @@ CREATE TABLE IF NOT EXISTS semantic_facts (
     category TEXT NOT NULL CHECK (category IN ('profile', 'preference', 'constraint', 'knowledge')),
 
     -- Metadata
-    confidence FLOAT NOT NULL CHECK (confidence >= 0.0 AND confidence <= 1.0),
+    confidence NUMERIC(5,4) NOT NULL CHECK (confidence >= 0.0 AND confidence <= 1.0),
     source_turn INTEGER NOT NULL,
     source_interaction_id TEXT,
 
     -- Lifecycle
-    extracted_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    expiry TIMESTAMP,  -- NULL = never expires
+    extracted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expiry TIMESTAMPTZ,  -- NULL = never expires
     verified BOOLEAN NOT NULL DEFAULT FALSE,
 
     -- Timestamps
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- ─── Indexes for Performance ───────────────────────────────

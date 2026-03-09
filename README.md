@@ -52,7 +52,7 @@ npm install @pga-ai/core @pga-ai/adapters-llm-perplexity   # Perplexity (web sea
 
 ```typescript
 // pga-setup.ts — add this file to your project
-import { PGA } from '@pga-ai/core';
+import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
 
 const llm = new ClaudeAdapter({
@@ -60,7 +60,10 @@ const llm = new ClaudeAdapter({
   model: 'claude-sonnet-4-5-20250929',
 });
 
-const pga = new PGA({ llm });
+const pga = new PGA({
+  llm,
+  storage: new InMemoryStorageAdapter(),  // or PostgresAdapter for production
+});
 await pga.initialize();
 
 // Create the genome — this is your agent's evolving brain

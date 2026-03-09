@@ -572,6 +572,8 @@ export class PostgresAdapter implements StorageAdapter {
             extractedAt: row.extracted_at,
             expiry: row.expiry,
             verified: row.verified,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
         }));
     }
 
@@ -599,6 +601,8 @@ export class PostgresAdapter implements StorageAdapter {
             extractedAt: row.extracted_at,
             expiry: row.expiry,
             verified: row.verified,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
         };
     }
 
