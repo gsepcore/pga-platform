@@ -85,34 +85,39 @@ export class OpenAIAdapter implements LLMAdapter {
      * Chat with OpenAI
      */
     async chat(messages: Message[], options?: ChatOptions): Promise<ChatResponse> {
-        // Convert PGA messages to OpenAI format
         const openaiMessages = this.convertMessages(messages);
 
-        const response = await this.client.chat.completions.create({
-            model: this.model,
-            messages: openaiMessages,
-            temperature: options?.temperature ?? this.config.defaultTemperature ?? 1.0,
-            top_p: this.config.defaultTopP ?? 1.0,
-            max_tokens: options?.maxTokens ?? 4096,
-            stream: false,
-        });
-
-        const choice = response.choices[0];
-        if (!choice) {
-            throw new Error('No response from OpenAI');
-        }
-
-        return {
-            content: choice.message.content || '',
-            usage: {
-                inputTokens: response.usage?.prompt_tokens || 0,
-                outputTokens: response.usage?.completion_tokens || 0,
-            },
-            metadata: {
-                finishReason: choice.finish_reason || 'stop',
+        try {
+            const response = await this.client.chat.completions.create({
                 model: this.model,
-            },
-        };
+                messages: openaiMessages,
+                temperature: options?.temperature ?? this.config.defaultTemperature ?? 1.0,
+                top_p: this.config.defaultTopP ?? 1.0,
+                max_tokens: options?.maxTokens ?? 4096,
+                stream: false,
+            });
+
+            const choice = response.choices[0];
+            if (!choice) {
+                throw new Error('No response choices returned from OpenAI');
+            }
+
+            return {
+                content: choice.message.content || '',
+                usage: {
+                    inputTokens: response.usage?.prompt_tokens || 0,
+                    outputTokens: response.usage?.completion_tokens || 0,
+                },
+                metadata: {
+                    finishReason: choice.finish_reason || 'stop',
+                    model: this.model,
+                },
+            };
+        } catch (error) {
+            throw new Error(
+                `OpenAI API error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
+        }
     }
 
     /**
@@ -124,29 +129,34 @@ export class OpenAIAdapter implements LLMAdapter {
     ): AsyncGenerator<ChatChunk, void, unknown> {
         const openaiMessages = this.convertMessages(messages);
 
-        const stream = await this.client.chat.completions.create({
-            model: this.model,
-            messages: openaiMessages,
-            temperature: options?.temperature ?? this.config.defaultTemperature ?? 1.0,
-            top_p: this.config.defaultTopP ?? 1.0,
-            max_tokens: options?.maxTokens ?? 4096,
-            stream: true,
-        });
+        try {
+            const stream = await this.client.chat.completions.create({
+                model: this.model,
+                messages: openaiMessages,
+                temperature: options?.temperature ?? this.config.defaultTemperature ?? 1.0,
+                top_p: this.config.defaultTopP ?? 1.0,
+                max_tokens: options?.maxTokens ?? 4096,
+                stream: true,
+            });
 
-        for await (const chunk of stream) {
-            const delta = chunk.choices[0]?.delta;
-            if (!delta?.content) {
-                // Check if stream is done
-                if (chunk.choices[0]?.finish_reason) {
-                    yield { delta: '', done: true };
+            for await (const chunk of stream) {
+                const delta = chunk.choices[0]?.delta;
+                if (!delta?.content) {
+                    if (chunk.choices[0]?.finish_reason) {
+                        yield { delta: '', done: true };
+                    }
+                    continue;
                 }
-                continue;
-            }
 
-            yield {
-                delta: delta.content,
-                done: false,
-            };
+                yield {
+                    delta: delta.content,
+                    done: false,
+                };
+            }
+        } catch (error) {
+            throw new Error(
+                `OpenAI streaming error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+            );
         }
     }
 

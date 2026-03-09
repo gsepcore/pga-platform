@@ -29,9 +29,10 @@ The Evolution Engine consists of 4 interconnected components that form a complet
 │     FitnessCalculator computes multi-objective       │
 │     6-dimensional optimization                       │
 │                                                      │
-│  4. PROMOTION VALIDATION                             │
-│     PromotionGate validates mutation                 │
-│     8-stage checks before deployment                 │
+│  4. EVOLUTION GUARDRAILS                             │
+│     EvolutionGuardrailsManager validates mutation    │
+│     4-gate checks: Quality, Sandbox, Economic,      │
+│     Stability — with canary deployment fallback      │
 │                                                      │
 └─────────────────────────────────────────────────────┘
 ```
@@ -233,56 +234,127 @@ console.log(`Meets 5% threshold: ${meetsThreshold}`);
 
 ---
 
-### 4. PromotionGate
+### 4. EvolutionGuardrailsManager
 
 **Purpose**: Validates mutations before deployment - ensures only beneficial changes go live.
 
-**8-Stage Validation**:
-1. ✅ **C0 Integrity** [CRITICAL] - Immutability preserved
-2. ✅ **Sandbox Tested** [CRITICAL] - Tested in isolation
-3. ✅ **Fitness Improvement** [HIGH] - >5% improvement
-4. ✅ **Quality Regression** [HIGH] - <5% quality drop
-5. ✅ **Success Rate** [HIGH] - <3% success drop
-6. ✅ **Confidence** [MEDIUM] - >70% confidence
-7. ✅ **Latency** [MEDIUM] - <20% slower
-8. ✅ **Cost** [LOW] - <15% more expensive
+**4-Gate Validation**:
+1. ✅ **Quality Gate** - Fitness >= 60% threshold
+2. ✅ **Sandbox Gate** - Safety pass rate >= 70%
+3. ✅ **Economic Gate** - Cost <= $0.10/task, compression >= 65%
+4. ✅ **Stability Gate** - Min 10 samples, rollback rate <= 20%
 
 **Usage**:
 ```typescript
-import { PromotionGate } from '@pga-ai/core';
+import { EvolutionGuardrailsManager } from '@pga-ai/core';
 
-const gate = new PromotionGate({
-  minFitnessImprovement: 0.05,
-  maxQualityRegression: 0.05,
-  maxSuccessRateRegression: 0.03,
-  minConfidence: 0.70
+const manager = new EvolutionGuardrailsManager(storage, {
+  minQualityScore: 0.60,
+  minSandboxScore: 0.70,
+  maxCostPerTask: 0.10,
+  maxRollbackRate: 0.20,
+  gateMode: 'AND',
 });
 
-// Evaluate mutation
-const decision = await gate.evaluateMutation(
-  baseline,
-  mutant,
-  mutation
-);
+// Evaluate mutation candidate
+const result = await manager.evaluateCandidate(candidate, genomeId);
 
-console.log(`Approved: ${decision.approved}`);
-console.log(`Reason: ${decision.reason}`);
-console.log(`Confidence: ${decision.confidence}`);
-console.log(`Action: ${decision.recommendedAction}`);
-
-// Print detailed report
-console.log(gate.generateReport(decision));
+console.log(`Decision: ${result.finalDecision}`);  // promote | reject | canary
+console.log(`Reason: ${result.reason}`);
+console.log(`Quality: ${result.gates.quality.passed}`);
+console.log(`Sandbox: ${result.gates.sandbox.passed}`);
 ```
 
 **Decision Logic**:
-- ❌ **Critical failures** → `rollback` (immediate)
-- ❌ **2+ High failures** → `reject` (mutation bad)
-- ⚠️ **1 High failure** → `retest` (need more data)
-- ✅ **All passed** → `promote` (deploy to production)
+- ✅ **4/4 gates pass** → `promote` (deploy to production)
+- ⚠️ **3/4 gates pass** → `canary` (deploy to 5-10% traffic)
+- ❌ **<3 gates pass** → `reject` (mutation discarded)
 
 ---
 
-## 🔄 Complete Flow Example
+## 🔄 Actual Evolution Loop (as implemented in PGA.ts)
+
+The evolution loop is the real call chain that runs inside `GenomeInstance`. Here's the
+actual flow traced from PGA.ts source:
+
+```
+chat() [PGA.ts:671]
+  │
+  ├─ assemblePrompt() ─── builds prompt with C0/C1/C2 genes + intelligence layers
+  ├─ LLM call ─── generates response
+  ├─ estimateQuality() ─── scores response quality (0-1)
+  ├─ fitnessCalculator.computeFitness() ─── converts to 6D fitness vector
+  ├─ driftAnalyzer.recordFitness(fitnessVector) [PGA.ts:789]
+  ├─ canaryManager.recordRequest() ─── if canary active, record metrics
+  │
+  └─ interactionCount % N === 0 [PGA.ts:806] ─── TRIGGER (default N=10)
+       │
+       ▼
+       runEvolutionCycle() [PGA.ts:1862]
+         │
+         ├─ Step 0: SURVIVAL CHECK
+         │    ├─ driftAnalyzer.analyzeDrift() [PGA.ts:1864]
+         │    ├─ purposeSurvival.evaluateThreats()
+         │    ├─ if CRITICAL → restore snapshot, exit
+         │    └─ if STRESSED/SURVIVAL → snapshot current genome
+         │
+         ├─ Step 1: AUTO-MUTATE ON DRIFT
+         │    ├─ if strategicAutonomy available:
+         │    │    ├─ enhancedSelfModel.assessFull()
+         │    │    ├─ strategicAutonomy.prioritizeEvolution()
+         │    │    ├─ purposeSurvival.purposeFidelity() ← safety gate
+         │    │    └─ mutate() for each high-priority gene
+         │    └─ else (fallback):
+         │         └─ mutate() for each drift signal
+         │
+         ├─ Step 2: AUTO-COMPRESS (if token pressure)
+         │    └─ compressGenes() if active C1 tokens > 1600
+         │
+         ├─ Step 3: EVALUATE CANARIES
+         │    └─ for each active canary deployment:
+         │         ├─ canaryManager.evaluateCanary()
+         │         ├─ promote (winner) / rollback (loser) / rampUp (marginal)
+         │         └─ update active allele accordingly
+         │
+         ├─ Step 4: PUBLISH HIGH-FITNESS GENES
+         │    └─ for alleles with fitness >= 0.85:
+         │         └─ geneBank.storeGene() ← shared knowledge
+         │
+         ├─ Step 5: INHERIT FROM FAMILY REGISTRY
+         │    └─ if familyId present & drifting:
+         │         └─ storage.getBestRegistryGene() ← cross-genome learning
+         │
+         └─ Step 6: SWARM IMPORT
+              └─ if geneBank & drifting (severe):
+                   └─ geneBank.searchGenes() ← adopt proven genes
+```
+
+### mutate() Pipeline [PGA.ts:1134]
+
+Each mutation goes through a 4-step pipeline:
+
+```
+mutate(layer, gene, candidates)
+  │
+  ├─ 1. Find current active allele for target gene
+  │
+  ├─ 2. Generate mutation candidates
+  │    └─ mutationEngine.generateMutants(context, N)
+  │         └─ LLM-powered: 4 operators (compress, reorder, safety, tool-bias)
+  │
+  ├─ 3. Evaluate through EvolutionGuardrailsManager [PGA.ts:1226]
+  │    ├─ Quality Gate:   fitness >= 0.60
+  │    ├─ Sandbox Gate:   safety score >= 0.70
+  │    ├─ Economic Gate:  cost <= $0.10/task
+  │    └─ Stability Gate: rollback rate <= 20%, min 10 samples
+  │
+  └─ 4. Promotion decision
+       ├─ 4/4 gates → PROMOTE (apply immediately)
+       ├─ 3/4 gates → CANARY (deploy to 5-10% traffic)
+       └─ <3 gates  → REJECT (discard mutation)
+```
+
+### API Example
 
 ```typescript
 import {
@@ -290,66 +362,42 @@ import {
   DriftAnalyzer,
   MutationEngine,
   FitnessCalculator,
-  PromotionGate
+  EvolutionGuardrailsManager
 } from '@pga-ai/core';
 
-// ─── Setup ───────────────────────────────────────────────────
 const kernel = new GenomeKernel(genome);
 const analyzer = new DriftAnalyzer();
 const engine = new MutationEngine();
 const calc = new FitnessCalculator();
-const gate = new PromotionGate();
+const guardrails = new EvolutionGuardrailsManager(storage);
 
-// ─── Operational Loop ────────────────────────────────────────
-async function evolutionCycle() {
-  // 1. Verify integrity
-  kernel.verifyIntegrity();
+// Record fitness after each interaction
+const fitness = calc.computeFitness([interactionData]);
+analyzer.recordFitness(fitness);
 
-  // 2. Interact
-  const response = await genome.chat(message, { userId });
+// Check for drift
+const analysis = analyzer.analyzeDrift();
 
-  // 3. Record fitness
-  const fitness = calc.computeFitness([interactionData]);
-  analyzer.recordFitness(fitness);
+if (analysis.isDrifting) {
+  // Generate candidates & evaluate through guardrails
+  const mutants = await engine.generateMutants({
+    genome,
+    targetChromosome: 'c1',
+    reason: analysis.signals[0].recommendation
+  }, 3);
 
-  // 4. Check drift
-  const analysis = analyzer.analyzeDrift();
+  const best = mutants[0];
+  const result = await guardrails.evaluateCandidate({
+    layer: 1,
+    gene: best.mutation.operation,
+    variant: `v${Date.now()}`,
+    content: JSON.stringify(best.mutant.chromosomes.c1.operations),
+    fitness: best.expectedImprovement + currentFitness,
+    sandboxScore: 0.85,
+    sampleCount: 20,
+  }, genome.id);
 
-  if (analysis.isDrifting) {
-    // 5. Generate mutations
-    const mutants = await engine.generateMutants({
-      genome,
-      targetChromosome: 'c1',
-      reason: analysis.signals[0].recommendation
-    }, 3);
-
-    // 6. Test in sandbox
-    for (const mutant of mutants) {
-      const testResult = await sandbox.evaluate(mutant);
-      mutant.mutation.testResults = testResult;
-      mutant.mutation.sandboxTested = true;
-    }
-
-    // 7. Validate best mutant
-    const best = mutants.sort((a, b) =>
-      b.expectedImprovement - a.expectedImprovement
-    )[0];
-
-    const decision = await gate.evaluateMutation(
-      genome,
-      best.mutant,
-      best.mutation
-    );
-
-    // 8. Deploy if approved
-    if (decision.approved) {
-      kernel.createSnapshot('pre-promotion');
-      genome.promote(best.mutant);
-      console.log(`✅ Promoted: ${best.mutation.operation}`);
-    } else {
-      console.log(`❌ Rejected: ${decision.reason}`);
-    }
-  }
+  console.log(`Decision: ${result.finalDecision}`); // promote | canary | reject
 }
 ```
 
@@ -362,7 +410,7 @@ async function evolutionCycle() {
 | **DriftAnalyzer** | ~2ms | ~1KB per fitness point | Low |
 | **MutationEngine** | ~10ms | ~50KB per mutant | Medium |
 | **FitnessCalculator** | ~2ms | ~1KB | Low |
-| **PromotionGate** | ~5ms | ~10KB | Low |
+| **EvolutionGuardrailsManager** | ~5ms | ~10KB | Low |
 | **Total Overhead** | **~20ms** | **~70KB** | **Low** |
 
 **Conclusion**: <1% overhead for massive capability gain.

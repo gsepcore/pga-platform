@@ -192,6 +192,7 @@ export {
     SandboxConfigSchema,
     GeneAdopter,
     GeneAdoptionConfigSchema,
+    MarketplaceClient,
 } from './gene-bank/index.js';
 
 // Storage Adapters (included)
@@ -374,13 +375,6 @@ export type {
     InteractionData,
     FitnessCalculatorConfig,
 } from './evolution/FitnessCalculator.js';
-
-export { PromotionGate } from './evolution/PromotionGate.js';
-export type {
-    PromotionGateConfig,
-    PromotionDecision,
-    PromotionCheck,
-} from './evolution/PromotionGate.js';
 
 export { CanaryDeploymentManager } from './evolution/CanaryDeployment.js';
 export type {
