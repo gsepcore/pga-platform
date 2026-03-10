@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSEP — Genomic Self-Evolving Prompts | AI Agents That Evolve</title>
+    <meta name="description" content="Open-source evolution engine for AI agents + a marketplace to trade high-performance genes. Make any AI agent learn, adapt, and improve autonomously.">
+    <meta property="og:title" content="GSEP — AI Agents That Evolve">
+    <meta property="og:description" content="Open-source evolution engine + gene marketplace. Your AI agents learn, adapt, and improve autonomously.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://raw.githubusercontent.com/LuisvelMarketer/pga-platform/main/landing/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GSEP — AI Agents That Evolve">
+    <meta name="twitter:description" content="Open-source evolution engine + gene marketplace for AI agents.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dna: { 50: '#f0fdf4', 100: '#dcfce7', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' },
+                        genome: { 50: '#f5f3ff', 100: '#ede9fe', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 900: '#4c1d95' },
+                        market: { 50: '#fff7ed', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' },
+                    },
+                    fontFamily: {
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', system-ui, sans-serif; }
+        .gradient-text {
+            background: linear-gradient(135deg, #22c55e 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .gradient-text-market {
+            background: linear-gradient(135deg, #f97316 0%, #8b5cf6 50%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-glow {
+            background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 92, 246, 0.12), transparent),
+                        radial-gradient(ellipse 60% 40% at 30% 10%, rgba(34, 197, 94, 0.06), transparent),
+                        radial-gradient(ellipse 60% 40% at 70% 10%, rgba(6, 182, 212, 0.06), transparent);
+        }
+        .market-glow {
+            background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(249, 115, 22, 0.08), transparent);
+        }
+        .code-block {
+            background: #0d1117;
+            border: 1px solid #21262d;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .pulse-slow { animation: pulse-slow 3s ease-in-out infinite; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+        .float { animation: float 5s ease-in-out infinite; }
+        @keyframes glow-border {
+            0%, 100% { border-color: rgba(139, 92, 246, 0.3); }
+            50% { border-color: rgba(139, 92, 246, 0.6); }
+        }
+        .glow-border { animation: glow-border 4s ease-in-out infinite; }
+        .section-divider {
+            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            height: 1px;
+        }
+        .grid-bg {
+            background-image: radial-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100 overflow-x-hidden">
+
+    <!-- ════════════════════════════════════════════════════════
+         NAV
+         ════════════════════════════════════════════════════════ -->
+    <nav class="fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-xl border-b border-gray-800/50">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2.5 text-lg font-bold">
+                <span class="text-2xl">🧬</span>
+                <span class="gradient-text text-xl">GSEP</span>
+            </a>
+            <div class="hidden lg:flex items-center gap-8 text-sm text-gray-400">
+                <a href="#how-it-works" class="hover:text-white transition-colors duration-200">How it works</a>
+                <a href="#architecture" class="hover:text-white transition-colors duration-200">Architecture</a>
+                <a href="#marketplace" class="hover:text-white transition-colors duration-200">Gene Marketplace</a>
+                <a href="#pricing" class="hover:text-white transition-colors duration-200">Pricing</a>
+                <a href="#benchmarks" class="hover:text-white transition-colors duration-200">Benchmarks</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
+                   class="text-gray-400 hover:text-white transition-colors duration-200" aria-label="GitHub">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                </a>
+                <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
+                   class="hidden sm:inline-flex bg-genome-600 hover:bg-genome-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-200">
+                    Star on GitHub
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ════════════════════════════════════════════════════════
+         HERO
+         ════════════════════════════════════════════════════════ -->
+    <section class="hero-glow pt-32 pb-24 px-6">
+        <div class="max-w-5xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 bg-genome-900/40 border border-genome-700/30 rounded-full px-4 py-1.5 text-sm text-genome-300 mb-8">
+                <span class="w-2 h-2 bg-green-400 rounded-full pulse-slow"></span>
+                Patent Pending &middot; Genomic Self-Evolving Prompts &middot; v0.8.0
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
+                Your AI Agent,<br>
+                <span class="gradient-text">But Alive</span>
+            </h1>
+
+            <p class="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto mb-5 leading-relaxed">
+                The open-source evolution engine that makes any AI agent learn, adapt, and improve autonomously. No retraining. No fine-tuning. Just <span class="text-white font-medium">Genomic Self-Evolving Prompts</span>.
+            </p>
+
+            <p class="text-sm text-gray-500 max-w-2xl mx-auto mb-10">
+                Plus a <a href="#marketplace" class="text-market-400 hover:text-market-500 transition-colors duration-200 font-medium">Gene Marketplace</a>
+                where agents share and trade high-performance behaviors.
+            </p>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+                <a href="#try-it" class="bg-dna-600 hover:bg-dna-700 text-white font-semibold px-8 py-3.5 rounded-xl text-base transition-colors duration-200 shadow-lg shadow-dna-600/20">
+                    Get Started Free
+                </a>
+                <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
+                   class="bg-gray-800/80 hover:bg-gray-700 text-gray-200 font-medium px-8 py-3.5 rounded-xl text-base transition-colors duration-200 border border-gray-700/80">
+                    View on GitHub
+                </a>
+            </div>
+
+            <!-- Hero code block -->
+            <div class="code-block rounded-xl overflow-hidden text-left max-w-2xl mx-auto shadow-2xl">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-800/80">
+                    <span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500/70"></span>
+                    <span class="ml-3 text-xs text-gray-500 font-mono">terminal</span>
+                </div>
+                <pre class="p-5 text-sm font-mono leading-relaxed overflow-x-auto"><code><span class="text-gray-500">$</span> <span class="text-dna-500">npm install</span> @gsep-ai/core
+
+<span class="text-gray-500">// Before — static prompt, never improves</span>
+<span class="text-blue-400">const</span> response = <span class="text-blue-400">await</span> llm.<span class="text-yellow-300">chat</span>(userMessage);
+
+<span class="text-gray-500">// After — agent evolves every 10 interactions</span>
+<span class="text-blue-400">const</span> response = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(userMessage, { userId });</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════
+         TWO WORLDS
+         ════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Two Products, One Ecosystem</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
+                GSEP works standalone. The Gene Marketplace is optional &mdash; an accelerator, not a requirement.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                <!-- PGA Core -->
+                <div class="card-hover bg-gray-900/60 border border-dna-700/20 rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-dna-500/5 rounded-full blur-3xl -translate-y-8 translate-x-8"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-dna-900/60 border border-dna-700/30 rounded-xl flex items-center justify-center">
+                                <span class="text-lg">🧬</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-dna-400">GSEP Core</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] bg-dna-900/50 text-dna-300 px-2 py-0.5 rounded-full font-medium">OPEN SOURCE</span>
+                                    <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-medium">MIT LICENSE</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-5">
+                            The evolution engine. Wraps any LLM and makes it improve autonomously through biological evolution principles. Free forever.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-center gap-2"><span class="text-dna-500">&#10003;</span> 4-layer chromosome architecture</li>
+                            <li class="flex items-center gap-2"><span class="text-dna-500">&#10003;</span> Drift detection &amp; auto-correction</li>
+                            <li class="flex items-center gap-2"><span class="text-dna-500">&#10003;</span> Multi-model (Claude, GPT, Gemini, Ollama)</li>
+                            <li class="flex items-center gap-2"><span class="text-dna-500">&#10003;</span> 1,352 tests, 85.7% coverage</li>
+                        </ul>
+                        <a href="#how-it-works" class="inline-flex items-center gap-1 text-sm text-dna-400 hover:text-dna-300 mt-5 font-medium transition-colors duration-200">
+                            Learn more
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Gene Marketplace -->
+                <div class="card-hover bg-gray-900/60 border border-market-700/20 rounded-2xl p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-market-500/5 rounded-full blur-3xl -translate-y-8 translate-x-8"></div>
+                    <div class="relative">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 bg-market-900/60 border border-market-700/30 rounded-xl flex items-center justify-center">
+                                <span class="text-lg">🏪</span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg text-market-400">Gene Marketplace</h3>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] bg-market-900/50 text-market-400 px-2 py-0.5 rounded-full font-medium">SaaS</span>
+                                    <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-medium">OPTIONAL</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm leading-relaxed mb-5">
+                            A marketplace where agents and developers publish, discover, and trade high-performance behavioral genes. Sellers earn up to 95% of every sale.
+                        </p>
+                        <ul class="space-y-2 text-sm text-gray-400">
+                            <li class="flex items-center gap-2"><span class="text-market-500">&#10003;</span> Buy &amp; sell proven AI behaviors ($4.99 &ndash; $19.99)</li>
+                            <li class="flex items-center gap-2"><span class="text-market-500">&#10003;</span> Quality-verified with fitness metrics</li>
+                            <li class="flex items-center gap-2"><span class="text-market-500">&#10003;</span> Stripe Connect payments</li>
+                            <li class="flex items-center gap-2"><span class="text-market-500">&#10003;</span> API-first for agent-to-agent trading</li>
+                        </ul>
+                        <a href="#marketplace" class="inline-flex items-center gap-1 text-sm text-market-400 hover:text-market-300 mt-5 font-medium transition-colors duration-200">
+                            Explore marketplace
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         PROBLEM
+         ════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Static Prompts Are Dead Weight</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
+                You optimize your prompt today. Tomorrow your users change, context shifts, performance drifts. Back to manual tweaking. Every. Single. Sprint.
+            </p>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-7">
+                    <div class="w-10 h-10 bg-red-950/60 border border-red-800/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2">Manual Tuning Never Ends</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Your team rewrites prompts every sprint. Different use cases, edge cases, user types. It compounds exponentially.</p>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-7">
+                    <div class="w-10 h-10 bg-amber-950/60 border border-amber-800/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2">One Size Doesn't Fit All</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">The same prompt serves a developer and a CEO. Different contexts, same generic output. No personalization at scale.</p>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-7">
+                    <div class="w-10 h-10 bg-rose-950/60 border border-rose-800/30 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"/></svg>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2">Silent Degradation</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Quality drifts over time. No alerts. No self-correction. Just slowly getting worse until someone finally notices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         HOW IT WORKS (GSEP Core)
+         ════════════════════════════════════════════════════════ -->
+    <section id="how-it-works" class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <span class="text-xs font-semibold tracking-widest text-dna-400 uppercase">GSEP Core</span>
+                <span class="text-[10px] bg-dna-900/50 text-dna-300 px-2 py-0.5 rounded-full font-medium">OPEN SOURCE</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Three Steps. Agent Evolves.</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
+                Wrap your existing LLM call. GSEP handles the rest&mdash;measuring, mutating, and selecting better prompts automatically.
+            </p>
+
+            <div class="grid md:grid-cols-3 gap-8 mb-16">
+                <div class="text-center">
+                    <div class="w-14 h-14 bg-genome-900/50 border border-genome-700/20 rounded-2xl flex items-center justify-center text-genome-400 font-bold text-xl mx-auto mb-5">1</div>
+                    <h3 class="font-semibold mb-3">Install</h3>
+                    <div class="code-block rounded-lg p-3 text-sm font-mono text-green-400">
+                        npm install @gsep-ai/core
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="w-14 h-14 bg-genome-900/50 border border-genome-700/20 rounded-2xl flex items-center justify-center text-genome-400 font-bold text-xl mx-auto mb-5">2</div>
+                    <h3 class="font-semibold mb-3">Initialize</h3>
+                    <div class="code-block rounded-lg p-3 text-xs font-mono text-gray-300 text-left">
+                        <span class="text-blue-400">const</span> genome = gsep.<span class="text-yellow-300">createGenome</span>({<br>
+                        &nbsp;&nbsp;name: <span class="text-green-400">'my-agent'</span>,<br>
+                        &nbsp;&nbsp;evolveEveryN: <span class="text-orange-400">10</span>,<br>
+                        });
+                    </div>
+                </div>
+                <div class="text-center">
+                    <div class="w-14 h-14 bg-genome-900/50 border border-genome-700/20 rounded-2xl flex items-center justify-center text-genome-400 font-bold text-xl mx-auto mb-5">3</div>
+                    <h3 class="font-semibold mb-3">Swap One Call</h3>
+                    <div class="code-block rounded-lg p-3 text-xs font-mono text-gray-300 text-left">
+                        <span class="text-gray-500">// That's it.</span><br>
+                        <span class="text-blue-400">const</span> res = <span class="text-blue-400">await</span><br>
+                        &nbsp;&nbsp;genome.<span class="text-green-400">chat</span>(msg, { userId });
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evolution cycle -->
+            <div class="bg-gray-900/40 border border-gray-800/80 rounded-2xl p-8 md:p-12">
+                <h3 class="text-xl font-bold mb-8 text-center">The Evolution Cycle</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="text-center">
+                        <div class="w-14 h-14 bg-dna-900/40 border border-dna-700/20 rounded-2xl flex items-center justify-center mx-auto mb-3 float" style="animation-delay: 0s;">
+                            <svg class="w-6 h-6 text-dna-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <h4 class="font-semibold text-sm text-dna-400 mb-1">Transcription</h4>
+                        <p class="text-gray-500 text-xs">Log every interaction with quality scores</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-14 h-14 bg-genome-900/40 border border-genome-700/20 rounded-2xl flex items-center justify-center mx-auto mb-3 float" style="animation-delay: 0.5s;">
+                            <svg class="w-6 h-6 text-genome-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        </div>
+                        <h4 class="font-semibold text-sm text-genome-400 mb-1">Variation</h4>
+                        <p class="text-gray-500 text-xs">Generate prompt mutations via LLM</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-14 h-14 bg-cyan-900/40 border border-cyan-700/20 rounded-2xl flex items-center justify-center mx-auto mb-3 float" style="animation-delay: 1s;">
+                            <svg class="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                        </div>
+                        <h4 class="font-semibold text-sm text-cyan-400 mb-1">Simulation</h4>
+                        <p class="text-gray-500 text-xs">Test mutations in a safe sandbox</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-14 h-14 bg-yellow-900/40 border border-yellow-700/20 rounded-2xl flex items-center justify-center mx-auto mb-3 float" style="animation-delay: 1.5s;">
+                            <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                        </div>
+                        <h4 class="font-semibold text-sm text-yellow-400 mb-1">Selection</h4>
+                        <p class="text-gray-500 text-xs">Deploy only proven improvements</p>
+                    </div>
+                </div>
+                <div class="mt-8 flex items-center justify-center">
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <svg class="w-4 h-4 text-dna-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Repeats every N interactions &mdash; fully automatic
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         ARCHITECTURE
+         ════════════════════════════════════════════════════════ -->
+    <section id="architecture" class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <span class="text-xs font-semibold tracking-widest text-dna-400 uppercase">GSEP Core</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Safety-First Architecture</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
+                Not everything should mutate. GSEP's four-layer chromosome system ensures your agent evolves without compromising safety or security.
+            </p>
+
+            <div class="max-w-xl mx-auto space-y-4">
+                <!-- C0 -->
+                <div class="card-hover bg-gradient-to-r from-red-950/40 to-red-900/10 border border-red-800/30 rounded-xl p-6 cursor-default">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-red-950/80 border border-red-800/40 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="font-bold text-red-300">C0: Immutable DNA</h3>
+                                <span class="text-[10px] bg-red-900/50 text-red-300 px-2 py-0.5 rounded-full font-medium">NEVER MUTATES</span>
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">Core identity, ethics, security rules. Protected by SHA-256 integrity hash. Tampering detected and rejected instantly.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- C1 -->
+                <div class="card-hover bg-gradient-to-r from-amber-950/40 to-amber-900/10 border border-amber-800/30 rounded-xl p-6 cursor-default">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-amber-950/80 border border-amber-800/40 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="font-bold text-amber-300">C1: Operative Genes</h3>
+                                <span class="text-[10px] bg-amber-900/50 text-amber-300 px-2 py-0.5 rounded-full font-medium">SLOW MUTATION</span>
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">Tool usage, coding patterns, response strategies. Must pass an 8-stage promotion gate before deployment. Sandbox-tested.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- C2 -->
+                <div class="card-hover bg-gradient-to-r from-sky-950/40 to-sky-900/10 border border-sky-800/30 rounded-xl p-6 cursor-default">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-sky-950/80 border border-sky-800/40 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-5 h-5 text-sky-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="font-bold text-sky-300">C2: Epigenomes</h3>
+                                <span class="text-[10px] bg-sky-900/50 text-sky-300 px-2 py-0.5 rounded-full font-medium">FAST MUTATION</span>
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">Per-user preferences, communication style, context memory. Adapts daily to each individual user without affecting others.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- C3 -->
+                <div class="card-hover bg-gradient-to-r from-emerald-950/40 to-emerald-900/10 border border-emerald-800/30 rounded-xl p-6 cursor-default">
+                    <div class="flex items-start gap-4">
+                        <div class="w-10 h-10 bg-emerald-950/80 border border-emerald-800/40 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <svg class="w-5 h-5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="font-bold text-emerald-300">C3: Content Firewall</h3>
+                                <span class="text-[10px] bg-emerald-900/50 text-emerald-300 px-2 py-0.5 rounded-full font-medium">DEFENSE-IN-DEPTH</span>
+                            </div>
+                            <p class="text-gray-400 text-sm leading-relaxed">53 detection patterns across 7 threat categories. Scans all external content before it enters the system prompt. Trust Registry with 4 levels. SHA-256 pattern integrity.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         MULTI-MODEL
+         ════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Works With Your LLM</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-14">
+                GSEP wraps any model. Bring your own or use our adapters. Evolution works across all of them.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl px-5 py-4 flex items-center gap-3 card-hover">
+                    <div class="w-8 h-8 bg-purple-900/50 rounded-lg flex items-center justify-center text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm">Anthropic Claude</div>
+                        <div class="text-xs text-gray-500">Opus, Sonnet, Haiku</div>
+                    </div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl px-5 py-4 flex items-center gap-3 card-hover">
+                    <div class="w-8 h-8 bg-green-900/50 rounded-lg flex items-center justify-center text-sm">
+                        <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/></svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm">OpenAI</div>
+                        <div class="text-xs text-gray-500">GPT-4o, GPT-4, GPT-3.5</div>
+                    </div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl px-5 py-4 flex items-center gap-3 card-hover">
+                    <div class="w-8 h-8 bg-blue-900/50 rounded-lg flex items-center justify-center text-sm">
+                        <svg class="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><polygon points="12,2 22,8.5 22,15.5 12,22 2,15.5 2,8.5"/></svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm">Google Gemini</div>
+                        <div class="text-xs text-gray-500">Pro, Flash</div>
+                    </div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl px-5 py-4 flex items-center gap-3 card-hover">
+                    <div class="w-8 h-8 bg-orange-900/50 rounded-lg flex items-center justify-center text-sm">
+                        <svg class="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/></svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm">Ollama</div>
+                        <div class="text-xs text-gray-500">Local models</div>
+                    </div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl px-5 py-4 flex items-center gap-3 card-hover">
+                    <div class="w-8 h-8 bg-teal-900/50 rounded-lg flex items-center justify-center text-sm">
+                        <svg class="w-4 h-4 text-teal-400" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <div class="font-semibold text-sm">Perplexity</div>
+                        <div class="text-xs text-gray-500">Web search LLM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         INTEGRATIONS
+         ════════════════════════════════════════════════════════ -->
+    <section class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Drops Into Your Stack</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-14">
+                One line change. Anywhere you have a chat loop, GSEP drops in.
+            </p>
+
+            <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                <div class="code-block rounded-xl overflow-hidden shadow-lg">
+                    <div class="px-4 py-2.5 border-b border-gray-800/80 text-xs text-gray-500 font-mono">Express API</div>
+                    <pre class="p-4 text-xs font-mono leading-relaxed"><code>app.<span class="text-yellow-300">post</span>(<span class="text-green-400">'/chat'</span>, <span class="text-blue-400">async</span> (req, res) => {
+  <span class="text-blue-400">const</span> reply = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(
+    req.body.message,
+    { userId: req.user.id }
+  );
+  res.json({ reply });
+});</code></pre>
+                </div>
+                <div class="code-block rounded-xl overflow-hidden shadow-lg">
+                    <div class="px-4 py-2.5 border-b border-gray-800/80 text-xs text-gray-500 font-mono">Discord Bot</div>
+                    <pre class="p-4 text-xs font-mono leading-relaxed"><code>client.<span class="text-yellow-300">on</span>(<span class="text-green-400">'messageCreate'</span>, <span class="text-blue-400">async</span> (msg) => {
+  <span class="text-blue-400">const</span> reply = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(
+    msg.content,
+    { userId: msg.author.id }
+  );
+  msg.reply(reply);
+});</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         GENE MARKETPLACE
+         ════════════════════════════════════════════════════════ -->
+    <section id="marketplace" class="py-20 px-6 market-glow">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex items-center justify-center gap-2 mb-3">
+                <span class="text-xs font-semibold tracking-widest text-market-400 uppercase">Gene Marketplace</span>
+                <span class="text-[10px] bg-market-900/50 text-market-400 px-2 py-0.5 rounded-full font-medium">SaaS</span>
+            </div>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">
+                Trade <span class="gradient-text-market">High-Performance Genes</span>
+            </h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
+                A marketplace where developers and AI agents publish, discover, and adopt proven behavioral genes. Think npm, but for AI behaviors&mdash;each one verified with real fitness metrics.
+            </p>
+
+            <!-- How the marketplace works -->
+            <div class="grid md:grid-cols-3 gap-6 mb-16">
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-7">
+                    <div class="w-10 h-10 bg-market-900/50 border border-market-700/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-market-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2">Publish</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Your agent discovers an optimization? Package it as a gene and publish to the marketplace. Set your price between <strong class="text-gray-300">$4.99 &ndash; $19.99</strong>.</p>
+                </div>
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-7">
+                    <div class="w-10 h-10 bg-genome-900/50 border border-genome-700/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-genome-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2">Discover</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">Search by domain, gene type, or fitness score. Every gene shows verified metrics: adoption rate, success rate, and real performance data.</p>
+                </div>
+                <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-7">
+                    <div class="w-10 h-10 bg-dna-900/50 border border-dna-700/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-dna-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    </div>
+                    <h3 class="text-base font-semibold mb-2">Adopt</h3>
+                    <p class="text-gray-400 text-sm leading-relaxed">One API call to adopt a gene into your agent's genome. Automatic fitness tracking shows the before/after impact on your agent's performance.</p>
+                </div>
+            </div>
+
+            <!-- Gene categories -->
+            <div class="bg-gray-900/40 border border-gray-800/80 rounded-2xl p-8 md:p-10 mb-16">
+                <h3 class="text-lg font-bold mb-6 text-center">Gene Categories</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">🛠</div>
+                        <div class="text-sm font-medium">Tool Usage</div>
+                        <div class="text-xs text-gray-500 mt-1">API patterns, tool chains</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">🧠</div>
+                        <div class="text-sm font-medium">Reasoning</div>
+                        <div class="text-xs text-gray-500 mt-1">Logic, problem-solving</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">💬</div>
+                        <div class="text-sm font-medium">Communication</div>
+                        <div class="text-xs text-gray-500 mt-1">Tone, clarity, style</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">🔧</div>
+                        <div class="text-sm font-medium">Error Recovery</div>
+                        <div class="text-xs text-gray-500 mt-1">Resilience patterns</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">📋</div>
+                        <div class="text-sm font-medium">Context Mgmt</div>
+                        <div class="text-xs text-gray-500 mt-1">Memory, focus</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">🔗</div>
+                        <div class="text-sm font-medium">Multi-Step</div>
+                        <div class="text-xs text-gray-500 mt-1">Complex workflows</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">🎯</div>
+                        <div class="text-sm font-medium">Domain Expert</div>
+                        <div class="text-xs text-gray-500 mt-1">Finance, legal, medical</div>
+                    </div>
+                    <div class="bg-gray-800/40 border border-gray-700/40 rounded-xl p-4 text-center card-hover">
+                        <div class="text-2xl mb-2">🛡</div>
+                        <div class="text-sm font-medium">Safety</div>
+                        <div class="text-xs text-gray-500 mt-1">Guardrails, compliance</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quality tiers -->
+            <div class="bg-gray-900/40 border border-gray-800/80 rounded-2xl p-8 md:p-10 mb-16">
+                <h3 class="text-lg font-bold mb-2 text-center">Quality-Verified Genes</h3>
+                <p class="text-gray-500 text-sm text-center mb-8">Every gene on the marketplace is verified against real performance metrics before listing.</p>
+                <div class="grid md:grid-cols-4 gap-4">
+                    <div class="bg-gradient-to-b from-yellow-950/30 to-transparent border border-yellow-800/20 rounded-xl p-5 text-center">
+                        <div class="text-xs font-bold text-yellow-400 tracking-wider uppercase mb-2">Certified Elite</div>
+                        <div class="text-2xl font-extrabold text-yellow-300 mb-1">&ge; 0.90</div>
+                        <div class="text-xs text-gray-500">Fitness score</div>
+                        <div class="text-xs text-gray-600 mt-2">Curated, top performers</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-blue-950/30 to-transparent border border-blue-800/20 rounded-xl p-5 text-center">
+                        <div class="text-xs font-bold text-blue-400 tracking-wider uppercase mb-2">Verified</div>
+                        <div class="text-2xl font-extrabold text-blue-300 mb-1">&ge; 0.80</div>
+                        <div class="text-xs text-gray-500">Fitness score</div>
+                        <div class="text-xs text-gray-600 mt-2">Tested &amp; validated</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-green-950/30 to-transparent border border-green-800/20 rounded-xl p-5 text-center">
+                        <div class="text-xs font-bold text-green-400 tracking-wider uppercase mb-2">Community</div>
+                        <div class="text-2xl font-extrabold text-green-300 mb-1">&ge; 0.70</div>
+                        <div class="text-xs text-gray-500">Fitness score</div>
+                        <div class="text-xs text-gray-600 mt-2">Peer-reviewed</div>
+                    </div>
+                    <div class="bg-gradient-to-b from-gray-800/30 to-transparent border border-gray-700/20 rounded-xl p-5 text-center">
+                        <div class="text-xs font-bold text-gray-400 tracking-wider uppercase mb-2">Experimental</div>
+                        <div class="text-2xl font-extrabold text-gray-300 mb-1">&ge; 0.60</div>
+                        <div class="text-xs text-gray-500">Fitness score</div>
+                        <div class="text-xs text-gray-600 mt-2">Early stage</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seller value prop -->
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gray-900/60 border border-market-700/20 rounded-2xl p-8">
+                    <h3 class="text-lg font-bold mb-4 text-market-400">For Sellers</h3>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-3">
+                            <span class="text-market-500 font-bold mt-0.5">$</span>
+                            <span>Earn <strong class="text-white">80&ndash;95%</strong> of every gene sale (commission depends on your plan)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-market-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                            <span>Automated payouts via Stripe Connect (weekly or on-demand)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-market-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                            <span>Your genes, your IP. Full ownership retained.</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-market-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/></svg>
+                            <span>Real-time analytics: adoption rates, earnings, buyer satisfaction</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-900/60 border border-genome-700/20 rounded-2xl p-8">
+                    <h3 class="text-lg font-bold mb-4 text-genome-400">For Buyers</h3>
+                    <ul class="space-y-3 text-sm text-gray-300">
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <span>Skip months of iteration&mdash;adopt proven behaviors instantly</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Every gene shows <strong class="text-white">verified fitness metrics</strong> before purchase</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <span>Automatic rollback if a gene doesn't improve your agent</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span>Genes from <strong class="text-white">$4.99</strong>&mdash;cheaper than one hour of prompt engineering</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         PRICING
+         ════════════════════════════════════════════════════════ -->
+    <section id="pricing" class="py-20 px-6">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Pricing</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-6">
+                GSEP Core is free and open source, forever. The Gene Marketplace has optional plans for teams that want more.
+            </p>
+
+            <!-- GSEP Core - Free -->
+            <div class="max-w-5xl mx-auto mb-12">
+                <div class="bg-gradient-to-r from-dna-950/40 via-gray-900/60 to-dna-950/40 border border-dna-700/20 rounded-2xl p-8 md:p-10 text-center">
+                    <div class="inline-flex items-center gap-2 bg-dna-900/40 border border-dna-700/20 rounded-full px-3 py-1 text-xs text-dna-300 font-medium mb-4">
+                        <span class="text-sm">🧬</span> GSEP CORE
+                    </div>
+                    <h3 class="text-2xl font-bold mb-1">Free &amp; Open Source</h3>
+                    <div class="text-4xl font-black gradient-text mb-2">$0</div>
+                    <p class="text-gray-400 text-sm mb-6 max-w-lg mx-auto">
+                        MIT License. Full evolution engine, all LLM adapters, drift detection, fitness tracking, in-memory storage. No limits. No hidden costs.
+                    </p>
+                    <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
+                       class="inline-flex bg-dna-600 hover:bg-dna-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors duration-200 shadow-lg shadow-dna-600/20">
+                        Get Started on GitHub
+                    </a>
+                </div>
+            </div>
+
+            <!-- Marketplace Plans -->
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-10">
+                    <div class="inline-flex items-center gap-2 bg-market-900/40 border border-market-700/20 rounded-full px-3 py-1 text-xs text-market-300 font-medium mb-2">
+                        <span class="text-sm">🏪</span> GENE MARKETPLACE
+                    </div>
+                    <p class="text-gray-500 text-sm">Optional plans for selling and trading genes at scale</p>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-5">
+                    <!-- Community -->
+                    <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-6">
+                        <h3 class="font-bold mb-1">Community</h3>
+                        <div class="text-2xl font-extrabold mb-0.5">Free</div>
+                        <div class="text-xs text-gray-500 mb-5">Browse &amp; buy only</div>
+                        <ul class="space-y-2.5 text-sm text-gray-400 mb-6">
+                            <li class="flex items-start gap-2"><span class="text-dna-500 text-xs mt-1">&#10003;</span> Browse all genes</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-500 text-xs mt-1">&#10003;</span> Buy &amp; adopt genes</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-500 text-xs mt-1">&#10003;</span> 1,000 API calls/day</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-500 text-xs mt-1">&#10003;</span> Publish up to 10 genes</li>
+                            <li class="flex items-start gap-2"><span class="text-gray-600 text-xs mt-1">&mdash;</span> <span class="text-gray-600">20% platform commission</span></li>
+                        </ul>
+                        <a href="#try-it" class="block text-center bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors duration-200">
+                            Get Started
+                        </a>
+                    </div>
+
+                    <!-- Pro -->
+                    <div class="bg-gray-900/50 border-2 border-genome-600/80 rounded-2xl p-6 relative">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-genome-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider">POPULAR</div>
+                        <h3 class="font-bold mb-1">Pro</h3>
+                        <div class="text-2xl font-extrabold mb-0.5">$29<span class="text-base text-gray-400 font-normal">/mo</span></div>
+                        <div class="text-xs text-gray-500 mb-5">For individual sellers</div>
+                        <ul class="space-y-2.5 text-sm text-gray-300 mb-6">
+                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> Everything in Community</li>
+                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> Unlimited gene publishing</li>
+                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> 10,000 API calls/day</li>
+                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> Analytics dashboard</li>
+                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> <strong class="text-white">10% commission</strong> (you keep 90%)</li>
+                        </ul>
+                        <a href="#try-it" class="block text-center bg-genome-600 hover:bg-genome-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors duration-200">
+                            Start Free Trial
+                        </a>
+                    </div>
+
+                    <!-- Team -->
+                    <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-6">
+                        <h3 class="font-bold mb-1">Team</h3>
+                        <div class="text-2xl font-extrabold mb-0.5">$79<span class="text-base text-gray-400 font-normal">/seat/mo</span></div>
+                        <div class="text-xs text-gray-500 mb-5">For teams &amp; agencies</div>
+                        <ul class="space-y-2.5 text-sm text-gray-300 mb-6">
+                            <li class="flex items-start gap-2"><span class="text-sky-400 text-xs mt-1">&#10003;</span> Everything in Pro</li>
+                            <li class="flex items-start gap-2"><span class="text-sky-400 text-xs mt-1">&#10003;</span> Team management</li>
+                            <li class="flex items-start gap-2"><span class="text-sky-400 text-xs mt-1">&#10003;</span> 100,000 API calls/day</li>
+                            <li class="flex items-start gap-2"><span class="text-sky-400 text-xs mt-1">&#10003;</span> Priority gene review</li>
+                            <li class="flex items-start gap-2"><span class="text-sky-400 text-xs mt-1">&#10003;</span> <strong class="text-white">5% commission</strong> (you keep 95%)</li>
+                        </ul>
+                        <a href="#try-it" class="block text-center bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors duration-200">
+                            Start Free Trial
+                        </a>
+                    </div>
+
+                    <!-- Enterprise -->
+                    <div class="bg-gray-900/50 border border-gray-800/80 rounded-2xl p-6">
+                        <h3 class="font-bold mb-1">Enterprise</h3>
+                        <div class="text-2xl font-extrabold mb-0.5">Custom</div>
+                        <div class="text-xs text-gray-500 mb-5">For large organizations</div>
+                        <ul class="space-y-2.5 text-sm text-gray-300 mb-6">
+                            <li class="flex items-start gap-2"><span class="text-amber-400 text-xs mt-1">&#10003;</span> Everything in Team</li>
+                            <li class="flex items-start gap-2"><span class="text-amber-400 text-xs mt-1">&#10003;</span> Unlimited API calls</li>
+                            <li class="flex items-start gap-2"><span class="text-amber-400 text-xs mt-1">&#10003;</span> Private gene registry</li>
+                            <li class="flex items-start gap-2"><span class="text-amber-400 text-xs mt-1">&#10003;</span> SLA guarantee</li>
+                            <li class="flex items-start gap-2"><span class="text-amber-400 text-xs mt-1">&#10003;</span> <strong class="text-white">0% commission</strong></li>
+                        </ul>
+                        <a href="mailto:luis@pgacore.com" class="block text-center bg-gray-800 hover:bg-gray-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors duration-200">
+                            Contact Sales
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         BENCHMARKS
+         ════════════════════════════════════════════════════════ -->
+    <section id="benchmarks" class="py-20 px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Production Ready. Measured.</h2>
+            <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
+                Not "it works on my machine." Real benchmarks. Real tests. Real security audits.
+            </p>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-16">
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-extrabold gradient-text mb-1">1,352</div>
+                    <div class="text-sm text-gray-400">Tests passing</div>
+                    <div class="text-xs text-dna-500 mt-1">100% pass rate</div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-extrabold gradient-text mb-1">85.7%</div>
+                    <div class="text-sm text-gray-400">Code coverage</div>
+                    <div class="text-xs text-dna-500 mt-1">80% threshold enforced</div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-extrabold gradient-text mb-1">0</div>
+                    <div class="text-sm text-gray-400">Vulnerabilities</div>
+                    <div class="text-xs text-dna-500 mt-1">npm audit clean</div>
+                </div>
+                <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
+                    <div class="text-3xl font-extrabold gradient-text mb-1">4.1s</div>
+                    <div class="text-sm text-gray-400">Build time</div>
+                    <div class="text-xs text-dna-500 mt-1">10 packages, turborepo</div>
+                </div>
+            </div>
+
+            <!-- Evolution proof -->
+            <div class="bg-gray-900/40 border border-gray-800/80 rounded-2xl p-8">
+                <h3 class="text-lg font-bold mb-6 text-center">Evolution Proof of Value</h3>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="font-semibold text-sm text-gray-300 mb-3">Dry Run (Mock, $0.00)</h4>
+                        <table class="w-full text-xs">
+                            <thead><tr class="text-gray-500 border-b border-gray-800">
+                                <th class="text-left py-2">Cycle</th><th class="text-right py-2">Quality</th>
+                            </tr></thead>
+                            <tbody class="text-gray-300">
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Baseline</td><td class="text-right">0.530</td></tr>
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Cycle 1</td><td class="text-right">0.540</td></tr>
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Cycle 2</td><td class="text-right">0.560</td></tr>
+                                <tr><td class="py-1.5">Cycle 3</td><td class="text-right font-semibold text-dna-400">0.560</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-2 text-xs text-dna-500 font-medium">+5.7% improvement</div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-sm text-gray-300 mb-3">Claude Haiku (~$0.08)</h4>
+                        <table class="w-full text-xs">
+                            <thead><tr class="text-gray-500 border-b border-gray-800">
+                                <th class="text-left py-2">Cycle</th><th class="text-right py-2">Quality</th>
+                            </tr></thead>
+                            <tbody class="text-gray-300">
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Baseline</td><td class="text-right">0.800</td></tr>
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Cycle 1</td><td class="text-right">0.780</td></tr>
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Cycle 2</td><td class="text-right">0.770</td></tr>
+                                <tr><td class="py-1.5">Cycle 3</td><td class="text-right">0.770</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-2 text-xs text-gray-500">3 cycles (50+ needed for convergence)</div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-sm text-gray-300 mb-3">GPT-4o-mini (~$0.05)</h4>
+                        <table class="w-full text-xs">
+                            <thead><tr class="text-gray-500 border-b border-gray-800">
+                                <th class="text-left py-2">Cycle</th><th class="text-right py-2">Quality</th>
+                            </tr></thead>
+                            <tbody class="text-gray-300">
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Baseline</td><td class="text-right">0.780</td></tr>
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Cycle 1</td><td class="text-right">0.770</td></tr>
+                                <tr class="border-b border-gray-800/50"><td class="py-1.5">Cycle 2</td><td class="text-right">0.770</td></tr>
+                                <tr><td class="py-1.5">Cycle 3</td><td class="text-right">0.770</td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-2 text-xs text-gray-500">3 cycles (50+ needed for convergence)</div>
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-6 text-center">
+                    Production deployments use 50&ndash;100+ cycles with continuous interaction data, where Genomic Self-Evolving Prompts' evolutionary advantage becomes statistically significant.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider max-w-4xl mx-auto"></div>
+
+    <!-- ════════════════════════════════════════════════════════
+         TRY IT
+         ════════════════════════════════════════════════════════ -->
+    <section id="try-it" class="py-20 px-6">
+        <div class="max-w-3xl mx-auto text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">See Evolution in Action</h2>
+            <p class="text-gray-400 mb-10">
+                Run the proof-of-value demo yourself. Free. No API keys needed for dry run.
+            </p>
+
+            <div class="code-block rounded-xl overflow-hidden text-left max-w-xl mx-auto mb-10 shadow-2xl">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-800/80">
+                    <span class="w-3 h-3 rounded-full bg-red-500/70"></span>
+                    <span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
+                    <span class="w-3 h-3 rounded-full bg-green-500/70"></span>
+                    <span class="ml-3 text-xs text-gray-500 font-mono">try it now</span>
+                </div>
+                <pre class="p-5 text-sm font-mono leading-loose"><code><span class="text-gray-500"># Clone and run (free, zero cost)</span>
+<span class="text-dna-500">git clone</span> https://github.com/LuisvelMarketer/pga-platform
+<span class="text-dna-500">cd</span> pga-platform && <span class="text-dna-500">npm install</span>
+<span class="text-dna-500">npx tsx</span> examples/hero-demo.ts --dry-run
+
+<span class="text-gray-500"># With a real LLM (~$0.08)</span>
+<span class="text-yellow-300">ANTHROPIC_API_KEY</span>=sk-... <span class="text-dna-500">npx tsx</span> examples/hero-demo.ts anthropic</code></pre>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
+                   class="bg-dna-600 hover:bg-dna-700 text-white font-semibold px-8 py-3.5 rounded-xl transition-colors duration-200 shadow-lg shadow-dna-600/20">
+                    View on GitHub
+                </a>
+                <a href="https://github.com/LuisvelMarketer/pga-platform/tree/main/examples" target="_blank"
+                   class="bg-gray-800/80 hover:bg-gray-700 text-gray-200 font-medium px-8 py-3.5 rounded-xl transition-colors duration-200 border border-gray-700/80">
+                    Browse Examples
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════
+         FOOTER
+         ════════════════════════════════════════════════════════ -->
+    <footer class="py-14 px-6 border-t border-gray-800/50">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-10">
+                <!-- Brand -->
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-xl">🧬</span>
+                        <span class="font-bold gradient-text text-lg">GSEP Platform</span>
+                    </div>
+                    <p class="text-sm text-gray-500 leading-relaxed">
+                        Genomic Self-Evolving Prompts. Making AI agents that learn, adapt, and evolve autonomously.
+                    </p>
+                    <div class="flex items-center gap-1 mt-3">
+                        <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-medium">Patent Pending</span>
+                    </div>
+                </div>
+
+                <!-- Product -->
+                <div>
+                    <h4 class="font-semibold text-sm mb-3 text-gray-300">Product</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="#how-it-works" class="hover:text-white transition-colors duration-200">How it works</a></li>
+                        <li><a href="#architecture" class="hover:text-white transition-colors duration-200">Architecture</a></li>
+                        <li><a href="#marketplace" class="hover:text-white transition-colors duration-200">Gene Marketplace</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition-colors duration-200">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <!-- Developers -->
+                <div>
+                    <h4 class="font-semibold text-sm mb-3 text-gray-300">Developers</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank" class="hover:text-white transition-colors duration-200">GitHub</a></li>
+                        <li><a href="https://github.com/LuisvelMarketer/pga-platform#readme" target="_blank" class="hover:text-white transition-colors duration-200">Documentation</a></li>
+                        <li><a href="https://github.com/LuisvelMarketer/pga-platform/tree/main/examples" target="_blank" class="hover:text-white transition-colors duration-200">Examples</a></li>
+                        <li><a href="https://github.com/LuisvelMarketer/pga-platform/blob/main/LICENSE.md" target="_blank" class="hover:text-white transition-colors duration-200">License (MIT)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Legal -->
+                <div>
+                    <h4 class="font-semibold text-sm mb-3 text-gray-300">Legal</h4>
+                    <ul class="space-y-2 text-sm text-gray-500">
+                        <li><a href="https://github.com/LuisvelMarketer/pga-platform/blob/main/PATENTS.md" target="_blank" class="hover:text-white transition-colors duration-200">Patents</a></li>
+                        <li><a href="https://github.com/LuisvelMarketer/pga-platform/blob/main/LICENSE.md" target="_blank" class="hover:text-white transition-colors duration-200">Terms</a></li>
+                        <li><a href="mailto:luis@pgacore.com" class="hover:text-white transition-colors duration-200">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-xs text-gray-600">
+                    &copy; 2026 Luis Alfredo Velasquez Duran. All rights reserved.
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank" class="text-gray-600 hover:text-white transition-colors duration-200" aria-label="GitHub">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
