@@ -1,0 +1,22 @@
+{
+  "name": "gsep-demo-video",
+  "version": "1.0.0",
+  "description": "GSEP Platform Demo Video — Remotion",
+  "scripts": {
+    "dev": "remotion studio",
+    "build": "remotion render src/index.ts GSEPDemo out/gsep-demo.mp4 --codec=h264",
+    "render": "remotion render src/index.ts GSEPDemo out/gsep-demo.mp4 --codec=h264 --crf=18",
+    "tts": "node scripts/generate-tts.mjs",
+    "tts:preview": "node scripts/generate-tts.mjs --scene=S01"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@types/react": "^18.3.0",
+    "typescript": "^5.6.0"
+  }
+}

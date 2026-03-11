@@ -1,17 +1,22 @@
-# 🧬 PGA — Make Your AI Agent Self-Evolving
-
 <div align="center">
 
-![PGA Logo](https://img.shields.io/badge/PGA-Genomic%20Prompts-blue?style=for-the-badge)
+<img src="assets/gsep-logo.jpeg" alt="GSEP — Genomic Self-Evolving Prompts" width="600">
+
+<br>
+
+# 🧬 GSEP — Make Your AI Agent Self-Evolving
+
+![GSEP](https://img.shields.io/badge/GSEP-Genomic%20Self--Evolving%20Prompts-blue?style=for-the-badge)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/@pga-ai/core?style=for-the-badge)](https://www.npmjs.com/package/@pga-ai/core)
+[![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Discord](https://img.shields.io/discord/XXXXXX?style=for-the-badge&logo=discord)](https://discord.gg/pga)
 
 **Drop-in upgrade that makes any AI agent learn, adapt, and evolve autonomously.**
 
 Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 
-[Documentation](https://docs.pgacore.com) · [Discord](https://discord.gg/pga) · [pgacore.com](https://pgacore.com)
+[Documentation](https://docs.gsepcore.com) · [Discord](https://discord.gg/pga) · [gsepcore.com](https://gsepcore.com)
 
 </div>
 

@@ -3,38 +3,30 @@
 
 version: 2
 updates:
-  # npm dependencies for core package
+  # npm dependencies — security updates only (no version bumps)
   - package-ecosystem: "npm"
     directory: "/packages/core"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "09:00"
-      timezone: "America/Los_Angeles"
+      timezone: "Europe/Berlin"
     open-pull-requests-limit: 5
     reviewers:
       - "luisvelasquez"
     labels:
       - "dependencies"
-      - "automated"
+      - "security"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "fix(security)"
       include: "scope"
     versioning-strategy: increase
-    # Group minor and patch updates together
-    groups:
-      production-dependencies:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-      development-dependencies:
-        patterns:
-          - "*"
-        dependency-type: "development"
+    # Only allow patch updates (security fixes), ignore minor/major bumps
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
 
-  # GitHub Actions workflow dependencies
+  # GitHub Actions — security updates only
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -46,6 +38,9 @@ updates:
     labels:
       - "dependencies"
       - "ci"
-      - "automated"
+      - "security"
     commit-message:
-      prefix: "chore(ci)"
+      prefix: "fix(ci)"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

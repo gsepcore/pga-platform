@@ -100,7 +100,7 @@
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <a href="#" class="flex items-center gap-2.5 text-lg font-bold">
                 <span class="text-2xl">🧬</span>
-                <span class="gradient-text text-xl">GSEP</span>
+                <img src="assets/gsep-logo.jpeg" alt="GSEP" class="h-8 object-contain" style="filter: brightness(1.1);">
             </a>
             <div class="hidden lg:flex items-center gap-8 text-sm text-gray-400">
                 <a href="#how-it-works" class="hover:text-white transition-colors duration-200">How it works</a>
@@ -127,9 +127,13 @@
          ════════════════════════════════════════════════════════ -->
     <section class="hero-glow pt-32 pb-24 px-6">
         <div class="max-w-5xl mx-auto text-center">
+            <div class="mb-10">
+                <img src="assets/gsep-logo.jpeg" alt="GSEP — Genomic Self-Evolving Prompts" class="mx-auto w-full max-w-2xl rounded-xl" style="filter: brightness(1.05);">
+            </div>
+
             <div class="inline-flex items-center gap-2 bg-genome-900/40 border border-genome-700/30 rounded-full px-4 py-1.5 text-sm text-genome-300 mb-8">
                 <span class="w-2 h-2 bg-green-400 rounded-full pulse-slow"></span>
-                Patent Pending &middot; Genomic Self-Evolving Prompts &middot; v0.8.0
+                Patentado &middot; Genomic Self-Evolving Prompts &middot; v0.8.0
             </div>
 
             <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
@@ -149,6 +153,10 @@
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
                 <a href="#try-it" class="bg-dna-600 hover:bg-dna-700 text-white font-semibold px-8 py-3.5 rounded-xl text-base transition-colors duration-200 shadow-lg shadow-dna-600/20">
                     Get Started Free
+                </a>
+                <a href="#demo-video" class="bg-genome-600 hover:bg-genome-700 text-white font-medium px-8 py-3.5 rounded-xl text-base transition-colors duration-200 shadow-lg shadow-genome-600/20 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/></svg>
+                    Watch Demo
                 </a>
                 <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
                    class="bg-gray-800/80 hover:bg-gray-700 text-gray-200 font-medium px-8 py-3.5 rounded-xl text-base transition-colors duration-200 border border-gray-700/80">
@@ -171,6 +179,95 @@
 
 <span class="text-gray-500">// After — agent evolves every 10 interactions</span>
 <span class="text-blue-400">const</span> response = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(userMessage, { userId });</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════
+         DEMO VIDEO
+         ════════════════════════════════════════════════════════ -->
+    <section id="demo-video" class="py-20 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                    See GSEP <span class="gradient-text">In Action</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                    5 minutes. Everything you need to understand how genomic evolution transforms your AI agent.
+                </p>
+            </div>
+
+            <!-- Video Player -->
+            <div class="relative w-full rounded-2xl overflow-hidden border border-gray-700/50 shadow-2xl shadow-genome-600/10" style="padding-bottom: 56.25%;">
+                <!-- OPTION A: YouTube embed (uncomment and set your video ID) -->
+                <!--
+                <iframe
+                    src="https://www.youtube.com/embed/YOUR_VIDEO_ID?rel=0&modestbranding=1&color=white"
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen
+                    title="GSEP Demo Video">
+                </iframe>
+                -->
+
+                <!-- OPTION B: Self-hosted video (uncomment and set your video URL) -->
+                <!--
+                <video
+                    controls
+                    preload="metadata"
+                    poster=""
+                    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                    class="bg-black">
+                    <source src="https://cdn.gsepcore.com/gsep-demo-short.mp4" type="video/mp4">
+                </video>
+                -->
+
+                <!-- Placeholder (remove when video is configured) -->
+                <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                     class="bg-gradient-to-br from-gray-900 to-gray-800 flex flex-col items-center justify-center gap-4">
+                    <div class="w-20 h-20 rounded-full bg-genome-600/20 border-2 border-genome-500/40 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-genome-400 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-400 text-sm">Demo video coming soon</p>
+                </div>
+            </div>
+
+            <!-- Video chapters -->
+            <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">0:00</span>
+                    <span class="text-gray-300 ml-2">Introduction</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">0:55</span>
+                    <span class="text-gray-300 ml-2">4 Chromosomes</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">1:50</span>
+                    <span class="text-gray-300 ml-2">Evolution Cycle</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">2:30</span>
+                    <span class="text-gray-300 ml-2">Living Agent</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">3:15</span>
+                    <span class="text-gray-300 ml-2">Firewall</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">3:40</span>
+                    <span class="text-gray-300 ml-2">Integration</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">4:10</span>
+                    <span class="text-gray-300 ml-2">Benchmarks</span>
+                </div>
+                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-genome-400 font-mono text-xs">4:30</span>
+                    <span class="text-gray-300 ml-2">Get Started</span>
+                </div>
             </div>
         </div>
     </section>
@@ -982,13 +1079,13 @@
                 <div>
                     <div class="flex items-center gap-2 mb-3">
                         <span class="text-xl">🧬</span>
-                        <span class="font-bold gradient-text text-lg">GSEP Platform</span>
+                        <img src="assets/gsep-logo.jpeg" alt="GSEP" class="h-8 object-contain rounded" style="filter: brightness(1.1);">
                     </div>
                     <p class="text-sm text-gray-500 leading-relaxed">
                         Genomic Self-Evolving Prompts. Making AI agents that learn, adapt, and evolve autonomously.
                     </p>
                     <div class="flex items-center gap-1 mt-3">
-                        <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-medium">Patent Pending</span>
+                        <span class="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded-full font-medium">Patentado</span>
                     </div>
                 </div>
 
