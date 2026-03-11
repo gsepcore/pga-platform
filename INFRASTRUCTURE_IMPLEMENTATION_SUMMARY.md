@@ -27,7 +27,7 @@ All 12 planned tasks have been completed successfully:
 
 - **[SECURITY.md](SECURITY.md)** - Vulnerability reporting
   - Supported versions matrix
-  - Reporting process (security@pgacore.com)
+  - Reporting process (security@gsepcore.com)
   - Response timeline (48h initial, severity-based fix)
   - Security best practices
 

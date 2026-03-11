@@ -2,7 +2,7 @@
   "name": "@pga-ai/cli",
   "version": "0.1.0",
   "description": "Interactive CLI for PGA (Genomic Self-Evolving Prompts)",
-  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "type": "module",
   "bin": {

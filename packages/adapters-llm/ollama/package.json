@@ -2,7 +2,7 @@
   "name": "@pga-ai/adapters-llm-ollama",
   "version": "0.1.0",
   "description": "Ollama adapter for PGA — use local LLMs with PGA",
-  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

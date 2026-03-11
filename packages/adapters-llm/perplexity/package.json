@@ -2,7 +2,7 @@
   "name": "@pga-ai/adapters-llm-perplexity",
   "version": "0.1.0",
   "description": "Perplexity adapter for PGA — web-search powered responses",
-  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

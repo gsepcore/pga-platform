@@ -2,7 +2,7 @@
   "name": "@pga-ai/adapters-storage-postgres",
   "version": "0.1.0",
   "description": "PostgreSQL storage adapter for PGA",
-  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

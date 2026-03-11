@@ -1,18 +1,19 @@
-PGA Platform License Agreement
+GSEP Platform License Agreement
 
-Copyright (c) 2025 Luis Alfredo Velasquez Duran. All rights reserved.
+Copyright (c) 2025-2026 Luis Alfredo Velasquez Duran. All rights reserved.
 
 NOTICE: This repository contains multiple packages with different licenses.
+See LICENSE.md for the full multi-tier licensing details.
 
 ================================================================================
 
 OPEN SOURCE COMPONENTS (MIT License):
 
 The following packages are licensed under the MIT License:
-- @pga/core
-- @pga/adapters-llm
-- @pga/adapters-storage
-- @pga/types
+- @pga-ai/core
+- @pga-ai/adapters-llm-anthropic
+- @pga-ai/adapters-llm-openai
+- @pga-ai/adapters-storage-postgres
 
 MIT License:
 
@@ -38,25 +39,24 @@ SOFTWARE.
 
 COMMERCIAL COMPONENTS (Proprietary License):
 
-The following packages require a commercial license:
-- @pga/plugins/*
-- @pga/cloud (server-side components)
-- apps/dashboard
-- apps/marketplace
+The following components require a commercial license:
+- GSEP Cloud (SaaS platform)
+- Enterprise features
+- Gene Registry (BSL 1.1, converts to Apache 2.0 in 2029)
 
 These components are proprietary and confidential. Unauthorized copying,
 distribution, or use is strictly prohibited.
 
-For commercial licensing inquiries, contact: contact@pgacore.com
+For commercial licensing inquiries, contact: licensing@gsepcore.com
 
 ================================================================================
 
 PATENT NOTICE:
 
-The PGA (Genomic Self-Evolving Prompts) system and methodology are patent-pending
+The GSEP (Genomic Self-Evolving Prompts) system and methodology are patented
 inventions created by Luis Alfredo Velasquez Duran.
 
-Patent Application Status: Pending
+Patent Status: Patentado
 Jurisdiction: International (PCT)
 Priority Date: 2025
 
@@ -66,8 +66,8 @@ Any use of the patented technology must comply with applicable patent laws.
 
 TRADEMARK NOTICE:
 
-"PGA", "Genomic Self-Evolving Prompts", and the PGA logo are trademarks of
-Luis Alfredo Velasquez Duran.
+"GSEP", "Genomic Self-Evolving Prompts", "Living OS for AI Agents", and the
+GSEP logo are trademarks of Luis Alfredo Velasquez Duran.
 
 Unauthorized use of these trademarks is prohibited.
 
@@ -75,5 +75,5 @@ Unauthorized use of these trademarks is prohibited.
 
 For questions about licensing, contact:
 Luis Alfredo Velasquez Duran
-Email: contact@pgacore.com
-Website: https://pgacore.com
+Email: contact@gsepcore.com
+Website: https://gsepcore.com

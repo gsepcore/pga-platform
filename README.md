@@ -469,8 +469,8 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 ## 📬 Contact
 
-- **Website**: [pgacore.com](https://pgacore.com)
-- **Email**: contact@pgacore.com
+- **Website**: [gsepcore.com](https://gsepcore.com)
+- **Email**: contact@gsepcore.com
 - **Discord**: [Join Community](https://discord.gg/pga)
 
 ---

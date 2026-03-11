@@ -6,9 +6,9 @@ We actively support and provide security updates for the following versions:
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 0.4.x   | :white_check_mark: |
-| 0.3.x   | :x:                |
-| < 0.3   | :x:                |
+| 0.8.x   | :white_check_mark: |
+| 0.7.x   | :white_check_mark: |
+| < 0.7   | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -17,7 +17,7 @@ We actively support and provide security updates for the following versions:
 Instead, please report them to our security team:
 
 ### Email
-Send an email to: **security@pgacore.com**
+Send an email to: **security@gsepcore.com**
 
 ### What to Include
 Please include as much information as possible:
@@ -49,7 +49,7 @@ Please include as much information as possible:
 
 ## Security Best Practices
 
-When using PGA Platform:
+When using GSEP Platform:
 
 ### For Developers
 - Always use the latest stable version
@@ -75,10 +75,15 @@ When using PGA Platform:
 - **Mitigation:** Use environment variables, never commit keys to repositories
 - **Best Practice:** Rotate keys regularly, use key management services
 
+### C0 Chromosome Integrity
+- **Risk:** Tampering with immutable DNA layer could compromise agent identity
+- **Mitigation:** SHA-256 integrity verification on C0 layer
+- **Best Practice:** Never expose C0 mutation endpoints; always validate hashes
+
 ### Prompt Injection
 - **Risk:** Malicious input in prompts could affect agent behavior
-- **Mitigation:** Validate and sanitize all user inputs
-- **Best Practice:** Implement input filtering and output validation
+- **Mitigation:** C3 Content Firewall validates and sanitizes all inputs
+- **Best Practice:** Enable the Content Firewall in production environments
 
 ### Data Privacy
 - **Risk:** Sensitive data in prompts sent to external LLM APIs
@@ -89,10 +94,10 @@ When using PGA Platform:
 
 We use the following tools to maintain security:
 
-- **Dependabot:** Automated dependency updates
+- **Dependabot:** Automated security-only dependency updates (weekly)
 - **npm audit:** Vulnerability scanning
-- **CodeQL:** Static code analysis (planned)
-- **OSSF Scorecard:** Security health metrics (planned)
+- **GitHub Security Advisories:** Coordinated vulnerability disclosure
+- **Branch Protection:** Required reviews and status checks on main
 
 ## Hall of Fame
 
@@ -102,5 +107,5 @@ We recognize and thank security researchers who responsibly disclose vulnerabili
 
 ---
 
-**Last Updated:** 2026-03-02  
-**Version:** 1.0
+**Last Updated:** 2026-03-06
+**Version:** 2.0

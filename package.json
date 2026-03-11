@@ -3,9 +3,9 @@
   "version": "0.8.0",
   "private": true,
   "description": "PGA - Genomic Self-Evolving Prompts | World's First Auto-Evolving AI System",
-  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "homepage": "https://pgacore.com",
+  "homepage": "https://gsepcore.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/pga-ai/pga-platform"

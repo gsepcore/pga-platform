@@ -445,5 +445,5 @@ MIT
 ## Links
 
 - [PGA Core](../../core/README.md)
-- [Documentation](https://pgacore.com/docs)
+- [Documentation](https://gsepcore.com/docs)
 - [GitHub](https://github.com/pga-ai/pga-platform)

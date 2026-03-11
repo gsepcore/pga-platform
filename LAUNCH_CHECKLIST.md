@@ -337,7 +337,7 @@ git push origin main
 - [ ] Tweet/post about launch on social media
 - [ ] Post on relevant subreddits (r/MachineLearning, r/LangChain)
 - [ ] Share on Hacker News (Show HN: PGA Platform)
-- [ ] Write launch blog post on pgacore.com
+- [ ] Write launch blog post on gsepcore.com
 
 ### Monitoring
 

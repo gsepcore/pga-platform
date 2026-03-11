@@ -1,27 +1,27 @@
-# PGA Platform - Multi-Tier Licensing
+# GSEP Platform - Multi-Tier Licensing
 
-**Copyright © 2025-2026 Luis Alfredo Velasquez Duran**
+**Copyright (c) 2025-2026 Luis Alfredo Velasquez Duran**
 **All Rights Reserved (with exceptions below)**
 
 ---
 
-## 📋 License Structure
+## License Structure
 
-PGA Platform uses a **multi-tier licensing model** to balance open-source community growth with commercial sustainability:
+GSEP Platform uses a **multi-tier licensing model** to balance open-source community growth with commercial sustainability:
 
 | Package/Component | License | Usage |
 |-------------------|---------|-------|
 | `@pga-ai/core` | **MIT License** | Free, open source, commercial use allowed |
-| `@pga-ai/adapters-llm` | **MIT License** | Free, open source, commercial use allowed |
-| `@pga-ai/adapters-storage` | **MIT License** | Free, open source, commercial use allowed |
+| `@pga-ai/adapters-llm-*` | **MIT License** | Free, open source, commercial use allowed |
+| `@pga-ai/adapters-storage-*` | **MIT License** | Free, open source, commercial use allowed |
 | `@pga-ai/cli` | **MIT License** | Free, open source, commercial use allowed |
 | **Gene Registry** | **BSL 1.1** | Business Source License (see below) |
-| **PGA Cloud (SaaS)** | **Proprietary** | Commercial license required |
+| **GSEP Cloud (SaaS)** | **Proprietary** | Commercial license required |
 | **Enterprise Features** | **Proprietary** | Commercial license required |
 
 ---
 
-## 1️⃣ Open Source Components (MIT License)
+## 1. Open Source Components (MIT License)
 
 ### Packages: `@pga-ai/core`, `@pga-ai/adapters-*`, `@pga-ai/cli`
 
@@ -50,14 +50,14 @@ SOFTWARE.
 ```
 
 **What this means:**
-- ✅ Free to use commercially
-- ✅ Free to modify and redistribute
-- ✅ Can be included in proprietary software
-- ✅ No attribution required (but appreciated)
+- Free to use commercially
+- Free to modify and redistribute
+- Can be included in proprietary software
+- No attribution required (but appreciated)
 
 ---
 
-## 2️⃣ Gene Registry (Business Source License 1.1)
+## 2. Gene Registry (Business Source License 1.1)
 
 ### Component: Gene Registry, Gene Marketplace, Inheritance System
 
@@ -74,7 +74,7 @@ SOFTWARE.
 
 **Commercial Restriction**: You may NOT:
 - Offer the Gene Registry as a hosted service to third parties
-- Build a competing marketplace on top of PGA's Gene Registry
+- Build a competing marketplace on top of GSEP's Gene Registry
 - Re-sell access to validated genes without revenue sharing agreement
 
 **After Change Date (2029-02-27)**: This component becomes fully open source under Apache 2.0.
@@ -83,30 +83,29 @@ SOFTWARE.
 
 ---
 
-## 3️⃣ Proprietary Components
+## 3. Proprietary Components
 
-### Components: PGA Cloud, Enterprise Features, Advanced AI (Meta-Learning, AutoML)
+### Components: GSEP Cloud, Enterprise Features, Advanced AI (Meta-Learning, AutoML)
 
 **License**: Proprietary - Commercial License Required
 
 **Usage**: Requires a valid commercial license agreement with:
-- **PGA AI Inc.** (to be incorporated)
 - **Luis Alfredo Velasquez Duran** (current copyright holder)
 
 **Contact**: For commercial licensing inquiries:
-- Email: licensing@pgacore.com
-- Website: https://pgacore.com/enterprise
+- Email: licensing@gsepcore.com
+- Website: https://gsepcore.com/enterprise
 
 **Pricing**:
-- **PGA Cloud SaaS**: See https://pgacore.com/pricing
-- **Enterprise On-Premise**: Custom contract ($50K - $250K/year)
+- **GSEP Cloud SaaS**: See https://gsepcore.com/pricing
+- **Enterprise On-Premise**: Custom contract
 - **White Label**: Contact sales
 
 ---
 
-## 🛡️ Patent Protection
+## Patent Protection
 
-**Patent Status**: Patent Pending
+**Patent Status**: Patentado
 
 The following inventions are protected by patent applications:
 1. **Method for Genomic Evolution of AI Prompts** (US Patent Application)
@@ -119,21 +118,19 @@ See [PATENTS.md](./PATENTS.md) for detailed information.
 
 ---
 
-## 📝 Trademark Notice
+## Trademark Notice
 
-**"PGA"**, **"Genomic Self-Evolving Prompts"**, and **"Living OS for AI Agents"** are trademarks of Luis Alfredo Velasquez Duran.
-
-**Trademark Filing Status**: In progress (2026)
+**"GSEP"**, **"Genomic Self-Evolving Prompts"**, and **"Living OS for AI Agents"** are trademarks of Luis Alfredo Velasquez Duran.
 
 **Usage Policy**:
-- ✅ You may use these terms to refer to this software
-- ✅ You may use in educational/non-commercial contexts
-- ❌ You may NOT use in competing products
-- ❌ You may NOT register similar trademarks
+- You may use these terms to refer to this software
+- You may use in educational/non-commercial contexts
+- You may NOT use in competing products
+- You may NOT register similar trademarks
 
 ---
 
-## 🔒 Trade Secrets
+## Trade Secrets
 
 Certain algorithms, parameters, and operational data are maintained as **trade secrets**:
 - Fitness function parameters
@@ -145,7 +142,7 @@ Certain algorithms, parameters, and operational data are maintained as **trade s
 
 ---
 
-## 🤝 Contributor License Agreement (CLA)
+## Contributor License Agreement (CLA)
 
 **For Open Source Components (MIT)**: No CLA required. Contributions accepted via GitHub PR.
 
@@ -158,34 +155,32 @@ Certain algorithms, parameters, and operational data are maintained as **trade s
 
 ---
 
-## 📞 Contact & Questions
+## Contact & Questions
 
-**General Inquiries**: contact@pgacore.com
-**Licensing Questions**: licensing@pgacore.com
-**Security Issues**: security@pgacore.com
-**Patent Questions**: patents@pgacore.com
+**General Inquiries**: contact@gsepcore.com
+**Licensing Questions**: licensing@gsepcore.com
+**Security Issues**: security@gsepcore.com
+**Patent Questions**: patents@gsepcore.com
 
 **Creator**: Luis Alfredo Velasquez Duran
 **Location**: Germany
-**Year**: 2025-2026
 
 ---
 
-## 🔗 Additional Resources
+## Additional Resources
 
 - [PATENTS.md](./PATENTS.md) - Patent details and prior art documentation
 - [CONTRIBUTING.md](./CONTRIBUTING.md) - Contribution guidelines
 - [SECURITY.md](./SECURITY.md) - Security policy
-- [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) - Community standards
 
 ---
 
-## ⚖️ Legal Disclaimer
+## Legal Disclaimer
 
 This LICENSE.md is a summary and does not constitute legal advice. For authoritative license terms:
 - MIT components: See individual package.json files
 - BSL components: See full BSL 1.1 text at https://mariadb.com/bsl11/
 - Proprietary components: Contact for commercial license agreement
 
-**Last Updated**: 2026-02-27
-**Version**: 1.0.0
+**Last Updated**: 2026-03-06
+**Version**: 2.0.0

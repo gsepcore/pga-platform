@@ -164,7 +164,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 ## Links
 
 - **Repository**: https://github.com/LuisvelMarketer/pga-platform
-- **Website**: https://pgacore.com
+- **Website**: https://gsepcore.com
 - **Issues**: https://github.com/LuisvelMarketer/pga-platform/issues
 
 ---

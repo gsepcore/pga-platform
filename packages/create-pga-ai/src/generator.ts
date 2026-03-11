@@ -138,7 +138,7 @@ async function generateReadme(
 ) {
     const readme = `# ${projectName}
 
-Created with [PGA Platform](https://pgacore.com) — Genomic Self-Evolving Prompts
+Created with [PGA Platform](https://gsepcore.com) — Genomic Self-Evolving Prompts
 
 ## 🚀 Quick Start
 
@@ -169,8 +169,8 @@ Created with [PGA Platform](https://pgacore.com) — Genomic Self-Evolving Promp
 
 ## 📚 Documentation
 
-- [PGA Documentation](https://pgacore.com/docs)
-- [API Reference](https://pgacore.com/api)
+- [PGA Documentation](https://gsepcore.com/docs)
+- [API Reference](https://gsepcore.com/api)
 - [Discord Community](https://discord.gg/pga)
 
 ## 🛠️ Development

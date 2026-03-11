@@ -323,9 +323,9 @@ class GenomeKernel {
 
 ## 📞 Patent Inquiries
 
-**For Licensing**: patents@pgacore.com
-**For Challenges**: legal@pgacore.com
-**For Collaboration**: partnerships@pgacore.com
+**For Licensing**: patents@gsepcore.com
+**For Challenges**: legal@gsepcore.com
+**For Collaboration**: partnerships@gsepcore.com
 
 **Patent Attorney**: [To be assigned]
 **Trademark Attorney**: [To be assigned]

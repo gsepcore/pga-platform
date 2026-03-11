@@ -2,14 +2,14 @@
   "name": "create-pga-ai",
   "version": "0.1.1",
   "description": "Create PGA agents with one command - Interactive installer for PGA Platform",
-  "author": "Luis Alfredo Velasquez Duran <contact@pgacore.com>",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/pga-platform/pga.git",
     "directory": "packages/create-pga-ai"
   },
-  "homepage": "https://pgacore.com",
+  "homepage": "https://gsepcore.com",
   "bugs": {
     "url": "https://github.com/pga-platform/pga/issues"
   },

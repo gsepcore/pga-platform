@@ -258,8 +258,8 @@ node --version  # Should be v18 or higher
 
 ## Learn More
 
-- **Documentation:** [https://pgacore.com/docs](https://pgacore.com/docs)
-- **API Reference:** [https://pgacore.com/api](https://pgacore.com/api)
+- **Documentation:** [https://gsepcore.com/docs](https://gsepcore.com/docs)
+- **API Reference:** [https://gsepcore.com/api](https://gsepcore.com/api)
 - **Discord Community:** [https://discord.gg/pga](https://discord.gg/pga)
 - **GitHub:** [https://github.com/pga-platform](https://github.com/pga-platform)
 

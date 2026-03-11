@@ -275,4 +275,4 @@ MIT © Luis Alfredo Velasquez Duran
 
 ---
 
-**Created with 🧬 by [Luis Alfredo Velasquez Duran](https://pgacore.com)**
+**Created with 🧬 by [Luis Alfredo Velasquez Duran](https://gsepcore.com)**

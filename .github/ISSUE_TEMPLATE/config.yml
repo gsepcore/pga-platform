@@ -4,7 +4,7 @@ contact_links:
     url: https://github.com/pga-ai/pga-platform/discussions
     about: Ask questions and discuss ideas with the community
   - name: 📚 Documentation
-    url: https://pgacore.com/docs
+    url: https://gsepcore.com/docs
     about: Read the documentation
   - name: 🔒 Security Issue
     url: https://github.com/pga-ai/pga-platform/security/advisories/new

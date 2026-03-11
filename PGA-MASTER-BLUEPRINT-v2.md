@@ -848,7 +848,7 @@ const result = await adapter.call({ input: "..." });
 3. **Derecho a saber:**
    API pública para que usuarios auditen su genoma:
    ```bash
-   curl https://api.pgacore.com/v1/users/me/data-usage
+   curl https://api.gsepcore.com/v1/users/me/data-usage
    ```
 
 ### 18.3 SOC 2 Type II

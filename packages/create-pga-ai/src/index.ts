@@ -123,7 +123,7 @@ function displaySuccessMessage(projectName: string, config: any) {
             chalk.gray(`  • Evolution Boost: ${config.evolutionBoost ? 'Yes (10x faster!)' : 'No'}\n`) +
             chalk.gray(`  • Living Agent: ${config.livingAgent ? 'Yes (10 cognitive layers!)' : 'No'}\n`) +
             chalk.gray(`  • Template: ${config.template}\n\n`) +
-            chalk.white('Documentation: ') + chalk.cyan('https://pgacore.com/docs\n') +
+            chalk.white('Documentation: ') + chalk.cyan('https://gsepcore.com/docs\n') +
             chalk.white('Discord: ') + chalk.cyan('https://discord.gg/pga'),
             {
                 padding: 1,

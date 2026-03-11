@@ -1,6 +1,6 @@
-# Contributing to PGA Platform
+# Contributing to GSEP Platform
 
-Thank you for your interest in contributing to PGA! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to GSEP (Genomic Self-Evolving Prompts)! This document provides guidelines and instructions for contributing.
 
 ## Table of Contents
 - [Code of Conduct](#code-of-conduct)
@@ -30,7 +30,7 @@ By participating in this project, you agree to maintain a respectful and inclusi
 ### Initial Setup
 ```bash
 # Clone the repository
-git clone https://github.com/pga-ai/pga-platform.git
+git clone https://github.com/LuisvelMarketer/pga-platform.git
 cd pga-platform
 
 # Install dependencies
@@ -47,13 +47,23 @@ npm run build
 ```
 pga-platform/
 ├── packages/
-│   └── core/          # PGA Core package
-│       ├── src/       # Source code
-│       ├── dist/      # Built output
-│       └── tests/     # Unit tests
-├── examples/          # Example implementations
-├── docs/              # Documentation
-└── .github/           # GitHub workflows and templates
+│   ├── core/                          # @pga-ai/core (MIT License)
+│   │   ├── src/                       # Source code
+│   │   │   ├── types/                 # TypeScript type definitions
+│   │   │   ├── core/                  # GenomeKernel, PGA orchestrator
+│   │   │   ├── evolution/             # DriftAnalyzer, Fitness, Mutations
+│   │   │   ├── memory/               # LayeredMemory, MemoryCompactor
+│   │   │   ├── reasoning/            # ReasoningEngine, ThinkingEngine
+│   │   │   └── monitoring/           # Monitoring system
+│   │   ├── __tests__/                # Unit tests (Vitest)
+│   │   └── dist/                     # Built output
+│   ├── adapters-llm-anthropic/       # Claude adapter
+│   ├── adapters-llm-openai/          # OpenAI adapter
+│   └── adapters-storage-postgres/    # PostgreSQL adapter
+├── examples/                         # Working examples
+├── landing/                          # Landing page (gsepcore.com)
+├── video/                            # Remotion demo video
+└── .github/                          # GitHub workflows and templates
 ```
 
 ## Development Workflow
@@ -115,21 +125,19 @@ Then create a Pull Request on GitHub.
 
 ### Style Guide
 ```typescript
-// ✅ Good
+// Good
 interface GeneConfig {
   tenantId: string;
   minFitness: number;
 }
 
 function extractGene(config: GeneConfig): Gene {
-  // Clear, descriptive names
   const validator = GeneConfigSchema.parse(config);
   return createGene(validator);
 }
 
-// ❌ Avoid
+// Avoid
 function eg(c: any): any {
-  // Unclear, no validation
   return { ...c };
 }
 ```
@@ -142,7 +150,7 @@ function eg(c: any): any {
 
 ### Error Handling
 ```typescript
-// ✅ Good
+// Good
 try {
   const result = await riskyOperation();
   return { success: true, data: result };
@@ -151,11 +159,13 @@ try {
   return { success: false, error: error.message };
 }
 
-// ❌ Avoid
+// Avoid
 const result = await riskyOperation(); // No error handling
 ```
 
 ## Testing
+
+We use **Vitest** as our test framework.
 
 ### Running Tests
 ```bash
@@ -174,11 +184,13 @@ npm test -- gene-bank.test.ts
 
 ### Writing Tests
 ```typescript
+import { describe, it, expect } from 'vitest';
+
 describe('GeneBank', () => {
   it('should store a valid gene', async () => {
     const gene = createMockGene();
     await geneBank.storeGene(gene);
-    
+
     const retrieved = await geneBank.getGene(gene.id);
     expect(retrieved).toBeDefined();
     expect(retrieved?.id).toBe(gene.id);
@@ -202,7 +214,6 @@ Before submitting a PR, ensure:
 - [ ] Linter passes: `npm run lint`
 - [ ] Build works: `npm run build`
 - [ ] Documentation updated
-- [ ] CHANGELOG.md updated (if applicable)
 - [ ] PR description is clear and complete
 - [ ] Breaking changes are clearly marked
 
@@ -230,8 +241,8 @@ We follow [Semantic Versioning](https://semver.org/):
 2. Update CHANGELOG.md
 3. Create and push a tag:
    ```bash
-   git tag -a v0.4.0 -m "Release v0.4.0"
-   git push origin v0.4.0
+   git tag -a v0.8.0 -m "Release v0.8.0"
+   git push origin v0.8.0
    ```
 4. GitHub Actions will automatically:
    - Run all checks
@@ -240,16 +251,15 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## Getting Help
 
-- 📚 **Documentation**: https://pgacore.com/docs
-- 💬 **Discussions**: GitHub Discussions
-- 🐛 **Issues**: GitHub Issues
-- 📧 **Email**: contact@pgacore.com
+- **Documentation**: https://docs.gsepcore.com
+- **Discussions**: GitHub Discussions
+- **Issues**: GitHub Issues
+- **Email**: contact@gsepcore.com
 
 ## Recognition
 
 Contributors are recognized in:
-- CONTRIBUTORS.md
 - GitHub Contributors page
 - Release notes
 
-Thank you for contributing to PGA! 🎉
+Thank you for contributing to GSEP!
