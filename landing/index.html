@@ -19,8 +19,8 @@
             theme: {
                 extend: {
                     colors: {
-                        dna: { 50: '#f0fdf4', 100: '#dcfce7', 400: '#4ade80', 500: '#22c55e', 600: '#16a34a', 700: '#15803d', 900: '#14532d' },
-                        genome: { 50: '#f5f3ff', 100: '#ede9fe', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 900: '#4c1d95' },
+                        dna: { 50: '#eff6ff', 100: '#dbeafe', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
+                        genome: { 50: '#ecfeff', 100: '#cffafe', 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2', 700: '#0e7490', 900: '#164e63' },
                         market: { 50: '#fff7ed', 400: '#fb923c', 500: '#f97316', 600: '#ea580c', 700: '#c2410c', 900: '#7c2d12' },
                     },
                     fontFamily: {
@@ -36,35 +36,36 @@
     <style>
         body { font-family: 'Inter', system-ui, sans-serif; }
         .gradient-text {
-            background: linear-gradient(135deg, #22c55e 0%, #8b5cf6 50%, #06b6d4 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #0891b2 50%, #22d3ee 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .gradient-text-market {
-            background: linear-gradient(135deg, #f97316 0%, #8b5cf6 50%, #06b6d4 100%);
+            background: linear-gradient(135deg, #f97316 0%, #3b82f6 50%, #06b6d4 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         .hero-glow {
-            background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139, 92, 246, 0.12), transparent),
-                        radial-gradient(ellipse 60% 40% at 30% 10%, rgba(34, 197, 94, 0.06), transparent),
-                        radial-gradient(ellipse 60% 40% at 70% 10%, rgba(6, 182, 212, 0.06), transparent);
+            background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(37, 99, 235, 0.15), transparent),
+                        radial-gradient(ellipse 60% 40% at 30% 10%, rgba(6, 182, 212, 0.08), transparent),
+                        radial-gradient(ellipse 60% 40% at 70% 10%, rgba(34, 211, 238, 0.06), transparent);
         }
         .market-glow {
             background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(249, 115, 22, 0.08), transparent);
         }
         .code-block {
             background: #0d1117;
-            border: 1px solid #21262d;
+            border: 1px solid #1e3a5f;
+            box-shadow: 0 0 30px rgba(37, 99, 235, 0.05), inset 0 1px 0 rgba(37, 99, 235, 0.05);
         }
         .card-hover {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 60px rgba(37, 99, 235, 0.1), 0 0 40px rgba(6, 182, 212, 0.05);
         }
         @keyframes pulse-slow {
             0%, 100% { opacity: 1; }
@@ -77,17 +78,40 @@
         }
         .float { animation: float 5s ease-in-out infinite; }
         @keyframes glow-border {
-            0%, 100% { border-color: rgba(139, 92, 246, 0.3); }
-            50% { border-color: rgba(139, 92, 246, 0.6); }
+            0%, 100% { border-color: rgba(37, 99, 235, 0.3); }
+            50% { border-color: rgba(37, 99, 235, 0.6); }
         }
         .glow-border { animation: glow-border 4s ease-in-out infinite; }
         .section-divider {
-            background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.2), transparent);
             height: 1px;
         }
         .grid-bg {
-            background-image: radial-gradient(rgba(139, 92, 246, 0.08) 1px, transparent 1px);
+            background-image: radial-gradient(rgba(37, 99, 235, 0.06) 1px, transparent 1px);
             background-size: 32px 32px;
+        }
+        @keyframes cursor-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .cursor-blink::after {
+            content: '▋';
+            color: #3b82f6;
+            animation: cursor-blink 1s step-end infinite;
+        }
+        .code-block pre::-webkit-scrollbar { height: 6px; }
+        .code-block pre::-webkit-scrollbar-track { background: transparent; }
+        .code-block pre::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 3px; }
+        .code-block pre::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+        @keyframes line-scan {
+            0% { top: 0; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
+        }
+        .nav-glass {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
         }
     </style>
 </head>
@@ -96,7 +120,7 @@
     <!-- ════════════════════════════════════════════════════════
          NAV
          ════════════════════════════════════════════════════════ -->
-    <nav class="fixed top-0 w-full z-50 bg-gray-950/80 backdrop-blur-xl border-b border-gray-800/50">
+    <nav class="fixed top-0 w-full z-50 bg-gray-950/70 nav-glass border-b border-blue-900/20">
         <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <a href="#" class="flex items-center gap-2.5 text-lg font-bold">
                 <span class="text-2xl">🧬</span>
@@ -115,7 +139,7 @@
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                 </a>
                 <a href="https://github.com/LuisvelMarketer/pga-platform" target="_blank"
-                   class="hidden sm:inline-flex bg-genome-600 hover:bg-genome-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-200">
+                   class="hidden sm:inline-flex bg-dna-600 hover:bg-dna-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors duration-200">
                     Star on GitHub
                 </a>
             </div>
@@ -131,7 +155,7 @@
                 <img src="assets/gsep-logo.png" alt="GSEP — Genomic Self-Evolving Prompts" class="mx-auto w-full max-w-2xl rounded-xl" style="filter: brightness(1.05);">
             </div>
 
-            <div class="inline-flex items-center gap-2 bg-genome-900/40 border border-genome-700/30 rounded-full px-4 py-1.5 text-sm text-genome-300 mb-8">
+            <div class="inline-flex items-center gap-2 bg-dna-900/40 border border-dna-700/30 rounded-full px-4 py-1.5 text-sm text-dna-400 mb-8">
                 <span class="w-2 h-2 bg-green-400 rounded-full pulse-slow"></span>
                 Patentado &middot; Genomic Self-Evolving Prompts &middot; v0.8.0
             </div>
@@ -165,12 +189,12 @@
             </div>
 
             <!-- Hero code block -->
-            <div class="code-block rounded-xl overflow-hidden text-left max-w-2xl mx-auto shadow-2xl">
-                <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-800/80">
+            <div class="code-block rounded-xl overflow-hidden text-left max-w-2xl mx-auto shadow-2xl shadow-blue-950/30">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-blue-900/20 bg-[#0a0f1a]">
                     <span class="w-3 h-3 rounded-full bg-red-500/70"></span>
                     <span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
                     <span class="w-3 h-3 rounded-full bg-green-500/70"></span>
-                    <span class="ml-3 text-xs text-gray-500 font-mono">terminal</span>
+                    <span class="ml-3 text-xs text-blue-400/50 font-mono">~/gsep-platform</span>
                 </div>
                 <pre class="p-5 text-sm font-mono leading-relaxed overflow-x-auto"><code><span class="text-gray-500">$</span> <span class="text-dna-500">npm install</span> @gsep-ai/core
 
@@ -198,7 +222,7 @@
             </div>
 
             <!-- Video Player -->
-            <div class="relative w-full rounded-2xl overflow-hidden border border-gray-700/50 shadow-2xl shadow-genome-600/10" style="padding-bottom: 56.25%;">
+            <div class="relative w-full rounded-2xl overflow-hidden border border-blue-800/30 shadow-2xl shadow-blue-900/20" style="padding-bottom: 56.25%;">
                 <iframe
                     src="https://www.youtube.com/embed/cTPJqrL2IyE?rel=0&modestbranding=1&color=white"
                     style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
@@ -210,36 +234,36 @@
 
             <!-- Video chapters -->
             <div class="mt-8 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">0:00</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">0:00</span>
                     <span class="text-gray-300 ml-2">Introduction</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">0:55</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">0:55</span>
                     <span class="text-gray-300 ml-2">4 Chromosomes</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">1:50</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">1:50</span>
                     <span class="text-gray-300 ml-2">Evolution Cycle</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">2:30</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">2:30</span>
                     <span class="text-gray-300 ml-2">Living Agent</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">3:15</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">3:15</span>
                     <span class="text-gray-300 ml-2">Firewall</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">3:40</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">3:40</span>
                     <span class="text-gray-300 ml-2">Integration</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">4:10</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">4:10</span>
                     <span class="text-gray-300 ml-2">Benchmarks</span>
                 </div>
-                <div class="bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2.5 text-sm">
-                    <span class="text-genome-400 font-mono text-xs">4:30</span>
+                <div class="bg-gray-900/50 border border-blue-900/20 rounded-lg px-3 py-2.5 text-sm">
+                    <span class="text-dna-400 font-mono text-xs">4:30</span>
                     <span class="text-gray-300 ml-2">Get Started</span>
                 </div>
             </div>
@@ -379,14 +403,14 @@
 
             <div class="grid md:grid-cols-3 gap-8 mb-16">
                 <div class="text-center">
-                    <div class="w-14 h-14 bg-genome-900/50 border border-genome-700/20 rounded-2xl flex items-center justify-center text-genome-400 font-bold text-xl mx-auto mb-5">1</div>
+                    <div class="w-14 h-14 bg-dna-900/50 border border-dna-700/20 rounded-2xl flex items-center justify-center text-dna-400 font-bold text-xl mx-auto mb-5">1</div>
                     <h3 class="font-semibold mb-3">Install</h3>
                     <div class="code-block rounded-lg p-3 text-sm font-mono text-green-400">
                         npm install @gsep-ai/core
                     </div>
                 </div>
                 <div class="text-center">
-                    <div class="w-14 h-14 bg-genome-900/50 border border-genome-700/20 rounded-2xl flex items-center justify-center text-genome-400 font-bold text-xl mx-auto mb-5">2</div>
+                    <div class="w-14 h-14 bg-dna-900/50 border border-dna-700/20 rounded-2xl flex items-center justify-center text-dna-400 font-bold text-xl mx-auto mb-5">2</div>
                     <h3 class="font-semibold mb-3">Initialize</h3>
                     <div class="code-block rounded-lg p-3 text-xs font-mono text-gray-300 text-left">
                         <span class="text-blue-400">const</span> genome = gsep.<span class="text-yellow-300">createGenome</span>({<br>
@@ -396,7 +420,7 @@
                     </div>
                 </div>
                 <div class="text-center">
-                    <div class="w-14 h-14 bg-genome-900/50 border border-genome-700/20 rounded-2xl flex items-center justify-center text-genome-400 font-bold text-xl mx-auto mb-5">3</div>
+                    <div class="w-14 h-14 bg-dna-900/50 border border-dna-700/20 rounded-2xl flex items-center justify-center text-dna-400 font-bold text-xl mx-auto mb-5">3</div>
                     <h3 class="font-semibold mb-3">Swap One Call</h3>
                     <div class="code-block rounded-lg p-3 text-xs font-mono text-gray-300 text-left">
                         <span class="text-gray-500">// That's it.</span><br>
@@ -418,10 +442,10 @@
                         <p class="text-gray-500 text-xs">Log every interaction with quality scores</p>
                     </div>
                     <div class="text-center">
-                        <div class="w-14 h-14 bg-genome-900/40 border border-genome-700/20 rounded-2xl flex items-center justify-center mx-auto mb-3 float" style="animation-delay: 0.5s;">
-                            <svg class="w-6 h-6 text-genome-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                        <div class="w-14 h-14 bg-dna-900/40 border border-dna-700/20 rounded-2xl flex items-center justify-center mx-auto mb-3 float" style="animation-delay: 0.5s;">
+                            <svg class="w-6 h-6 text-dna-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
                         </div>
-                        <h4 class="font-semibold text-sm text-genome-400 mb-1">Variation</h4>
+                        <h4 class="font-semibold text-sm text-dna-400 mb-1">Variation</h4>
                         <p class="text-gray-500 text-xs">Generate prompt mutations via LLM</p>
                     </div>
                     <div class="text-center">
@@ -603,8 +627,8 @@
             </p>
 
             <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                <div class="code-block rounded-xl overflow-hidden shadow-lg">
-                    <div class="px-4 py-2.5 border-b border-gray-800/80 text-xs text-gray-500 font-mono">Express API</div>
+                <div class="code-block rounded-xl overflow-hidden shadow-lg shadow-blue-950/20">
+                    <div class="px-4 py-2.5 border-b border-blue-900/20 bg-[#0a0f1a] text-xs text-blue-400/50 font-mono">Express API</div>
                     <pre class="p-4 text-xs font-mono leading-relaxed"><code>app.<span class="text-yellow-300">post</span>(<span class="text-green-400">'/chat'</span>, <span class="text-blue-400">async</span> (req, res) => {
   <span class="text-blue-400">const</span> reply = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(
     req.body.message,
@@ -613,8 +637,8 @@
   res.json({ reply });
 });</code></pre>
                 </div>
-                <div class="code-block rounded-xl overflow-hidden shadow-lg">
-                    <div class="px-4 py-2.5 border-b border-gray-800/80 text-xs text-gray-500 font-mono">Discord Bot</div>
+                <div class="code-block rounded-xl overflow-hidden shadow-lg shadow-blue-950/20">
+                    <div class="px-4 py-2.5 border-b border-blue-900/20 bg-[#0a0f1a] text-xs text-blue-400/50 font-mono">Discord Bot</div>
                     <pre class="p-4 text-xs font-mono leading-relaxed"><code>client.<span class="text-yellow-300">on</span>(<span class="text-green-400">'messageCreate'</span>, <span class="text-blue-400">async</span> (msg) => {
   <span class="text-blue-400">const</span> reply = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(
     msg.content,
@@ -655,8 +679,8 @@
                     <p class="text-gray-400 text-sm leading-relaxed">Your agent discovers an optimization? Package it as a gene and publish to the marketplace. Set your price between <strong class="text-gray-300">$4.99 &ndash; $19.99</strong>.</p>
                 </div>
                 <div class="bg-gray-900/60 border border-gray-800/80 rounded-xl p-7">
-                    <div class="w-10 h-10 bg-genome-900/50 border border-genome-700/20 rounded-lg flex items-center justify-center mb-4">
-                        <svg class="w-5 h-5 text-genome-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <div class="w-10 h-10 bg-dna-900/50 border border-dna-700/20 rounded-lg flex items-center justify-center mb-4">
+                        <svg class="w-5 h-5 text-dna-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </div>
                     <h3 class="text-base font-semibold mb-2">Discover</h3>
                     <p class="text-gray-400 text-sm leading-relaxed">Search by domain, gene type, or fitness score. Every gene shows verified metrics: adoption rate, success rate, and real performance data.</p>
@@ -772,23 +796,23 @@
                         </li>
                     </ul>
                 </div>
-                <div class="bg-gray-900/60 border border-genome-700/20 rounded-2xl p-8">
-                    <h3 class="text-lg font-bold mb-4 text-genome-400">For Buyers</h3>
+                <div class="bg-gray-900/60 border border-dna-700/20 rounded-2xl p-8">
+                    <h3 class="text-lg font-bold mb-4 text-dna-400">For Buyers</h3>
                     <ul class="space-y-3 text-sm text-gray-300">
                         <li class="flex items-start gap-3">
-                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <svg class="w-4 h-4 text-dna-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                             <span>Skip months of iteration&mdash;adopt proven behaviors instantly</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <svg class="w-4 h-4 text-dna-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span>Every gene shows <strong class="text-white">verified fitness metrics</strong> before purchase</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            <svg class="w-4 h-4 text-dna-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
                             <span>Automatic rollback if a gene doesn't improve your agent</span>
                         </li>
                         <li class="flex items-start gap-3">
-                            <svg class="w-4 h-4 text-genome-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <svg class="w-4 h-4 text-dna-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             <span>Genes from <strong class="text-white">$4.99</strong>&mdash;cheaper than one hour of prompt engineering</span>
                         </li>
                     </ul>
@@ -855,19 +879,19 @@
                     </div>
 
                     <!-- Pro -->
-                    <div class="bg-gray-900/50 border-2 border-genome-600/80 rounded-2xl p-6 relative">
-                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-genome-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider">POPULAR</div>
+                    <div class="bg-gray-900/50 border-2 border-dna-600/80 rounded-2xl p-6 relative">
+                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-dna-600 text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wider">POPULAR</div>
                         <h3 class="font-bold mb-1">Pro</h3>
                         <div class="text-2xl font-extrabold mb-0.5">$29<span class="text-base text-gray-400 font-normal">/mo</span></div>
                         <div class="text-xs text-gray-500 mb-5">For individual sellers</div>
                         <ul class="space-y-2.5 text-sm text-gray-300 mb-6">
-                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> Everything in Community</li>
-                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> Unlimited gene publishing</li>
-                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> 10,000 API calls/day</li>
-                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> Analytics dashboard</li>
-                            <li class="flex items-start gap-2"><span class="text-genome-400 text-xs mt-1">&#10003;</span> <strong class="text-white">10% commission</strong> (you keep 90%)</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-400 text-xs mt-1">&#10003;</span> Everything in Community</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-400 text-xs mt-1">&#10003;</span> Unlimited gene publishing</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-400 text-xs mt-1">&#10003;</span> 10,000 API calls/day</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-400 text-xs mt-1">&#10003;</span> Analytics dashboard</li>
+                            <li class="flex items-start gap-2"><span class="text-dna-400 text-xs mt-1">&#10003;</span> <strong class="text-white">10% commission</strong> (you keep 90%)</li>
                         </ul>
-                        <a href="#try-it" class="block text-center bg-genome-600 hover:bg-genome-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors duration-200">
+                        <a href="#try-it" class="block text-center bg-dna-600 hover:bg-dna-700 text-white text-sm font-medium py-2.5 rounded-xl transition-colors duration-200">
                             Start Free Trial
                         </a>
                     </div>
@@ -1014,12 +1038,12 @@
                 Run the proof-of-value demo yourself. Free. No API keys needed for dry run.
             </p>
 
-            <div class="code-block rounded-xl overflow-hidden text-left max-w-xl mx-auto mb-10 shadow-2xl">
-                <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-800/80">
+            <div class="code-block rounded-xl overflow-hidden text-left max-w-xl mx-auto mb-10 shadow-2xl shadow-blue-950/30">
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-blue-900/20 bg-[#0a0f1a]">
                     <span class="w-3 h-3 rounded-full bg-red-500/70"></span>
                     <span class="w-3 h-3 rounded-full bg-yellow-500/70"></span>
                     <span class="w-3 h-3 rounded-full bg-green-500/70"></span>
-                    <span class="ml-3 text-xs text-gray-500 font-mono">try it now</span>
+                    <span class="ml-3 text-xs text-blue-400/50 font-mono">~/gsep-platform</span>
                 </div>
                 <pre class="p-5 text-sm font-mono leading-loose"><code><span class="text-gray-500"># Clone and run (free, zero cost)</span>
 <span class="text-dna-500">git clone</span> https://github.com/LuisvelMarketer/pga-platform
@@ -1046,7 +1070,7 @@
     <!-- ════════════════════════════════════════════════════════
          FOOTER
          ════════════════════════════════════════════════════════ -->
-    <footer class="py-14 px-6 border-t border-gray-800/50">
+    <footer class="py-14 px-6 border-t border-blue-900/20">
         <div class="max-w-6xl mx-auto">
             <div class="grid md:grid-cols-4 gap-8 mb-10">
                 <!-- Brand -->
@@ -1096,7 +1120,7 @@
                 </div>
             </div>
 
-            <div class="border-t border-gray-800/50 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="border-t border-blue-900/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="text-xs text-gray-600">
                     &copy; 2026 Luis Alfredo Velasquez Duran. All rights reserved.
                 </div>
