@@ -1,15 +1,18 @@
 # Contributing to GSEP Platform
 
-Thank you for your interest in contributing to GSEP (Genomic Self-Evolving Prompts)! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to GSEP (Genomic Self-Evolving Prompts)! Every contribution helps make AI agents smarter, more adaptive, and more resilient.
 
 ## Table of Contents
 - [Code of Conduct](#code-of-conduct)
+- [Ways to Contribute](#ways-to-contribute)
 - [Getting Started](#getting-started)
 - [Development Workflow](#development-workflow)
 - [Code Standards](#code-standards)
 - [Testing](#testing)
 - [Submitting Changes](#submitting-changes)
 - [Release Process](#release-process)
+- [Contributors](#contributors)
+- [Sponsors](#sponsors)
 
 ## Code of Conduct
 
@@ -19,6 +22,22 @@ By participating in this project, you agree to maintain a respectful and inclusi
 - Constructive feedback
 - Focus on the project's goals
 - Openness to different perspectives
+
+## Ways to Contribute
+
+There are many ways to contribute, not just code:
+
+| Contribution | Description |
+|---|---|
+| **Bug Reports** | Found a bug? [Open an issue](https://github.com/LuisvelMarketer/pga-platform/issues/new) |
+| **Feature Requests** | Have an idea? Start a [Discussion](https://github.com/LuisvelMarketer/pga-platform/discussions) |
+| **Code** | Fix bugs, add features, improve performance |
+| **Documentation** | Improve README, guides, JSDoc comments |
+| **LLM Adapters** | Add support for new LLM providers |
+| **Storage Adapters** | Add new persistence backends (Redis, DynamoDB, etc.) |
+| **Tests** | Improve test coverage, add edge cases |
+| **Translations** | Help translate docs to other languages |
+| **Star the repo** | ⭐ [Star us on GitHub](https://github.com/LuisvelMarketer/pga-platform) — it helps more than you think! |
 
 ## Getting Started
 
@@ -251,15 +270,74 @@ We follow [Semantic Versioning](https://semver.org/):
 
 ## Getting Help
 
-- **Documentation**: https://docs.gsepcore.com
-- **Discussions**: GitHub Discussions
-- **Issues**: GitHub Issues
+- **Website**: [gsepcore.com](https://gsepcore.com)
+- **Discussions**: [GitHub Discussions](https://github.com/LuisvelMarketer/pga-platform/discussions)
+- **Issues**: [GitHub Issues](https://github.com/LuisvelMarketer/pga-platform/issues)
 - **Email**: contact@gsepcore.com
 
-## Recognition
+---
 
-Contributors are recognized in:
-- GitHub Contributors page
-- Release notes
+## Contributors
 
-Thank you for contributing to GSEP!
+Every person who contributes to GSEP is recognized here. Thank you for making AI evolution open and accessible.
+
+<a href="https://github.com/LuisvelMarketer/pga-platform/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LuisvelMarketer/pga-platform" alt="GSEP Contributors" />
+</a>
+
+### How You Get Recognized
+
+| Contribution Type | Recognition |
+|---|---|
+| Code (merged PR) | Avatar in Contributors wall + release notes |
+| Bug report (confirmed) | Mentioned in fix commit |
+| Documentation | Avatar in Contributors wall |
+| LLM/Storage adapter | Listed as adapter author in package README |
+| Significant contribution | Added to `package.json` contributors field |
+
+### First-Time Contributors
+
+New to open source? Look for issues labeled [`good first issue`](https://github.com/LuisvelMarketer/pga-platform/labels/good%20first%20issue) — they are specifically designed to help you get started.
+
+---
+
+## Sponsors
+
+GSEP is built and maintained by [Luis Alfredo Velasquez Duran](https://github.com/LuisvelMarketer) as an independent open-source project. Sponsorship helps ensure continued development, maintenance, and new features.
+
+<a href="https://github.com/sponsors/LuisvelMarketer">
+  <img src="https://img.shields.io/badge/Become_a_Sponsor-%E2%9D%A4-pink?style=for-the-badge&logo=githubsponsors" alt="Become a Sponsor">
+</a>
+
+### Sponsor Tiers
+
+| Tier | Monthly | Perks |
+|------|---------|-------|
+| **Backer** | $5 | Name listed in Contributors |
+| **Supporter** | $25 | Logo in README + priority issue responses |
+| **Gold Sponsor** | $100 | Large logo in README + quarterly roadmap input |
+| **Enterprise** | Custom | Dedicated support, custom features, SLA |
+
+### Current Sponsors
+
+<!-- SPONSORS:START -->
+*Be the first to sponsor GSEP! Your logo and link will appear here.*
+<!-- SPONSORS:END -->
+
+### Why Sponsor?
+
+- **Sustainability** — Keep GSEP maintained and actively developed
+- **Visibility** — Your brand seen by thousands of AI developers
+- **Influence** — Input on the roadmap and feature priorities
+- **Support** — Priority responses on issues and feature requests
+- **Community** — Support the open-source AI ecosystem
+
+---
+
+<div align="center">
+
+Thank you for contributing to **GSEP** 🧬
+
+Your code, ideas, and support make AI evolution open and accessible to everyone.
+
+</div>

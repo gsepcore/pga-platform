@@ -39,11 +39,16 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 
 ---
 
-## ⭐ Support This Project
+## ⭐ Star This Repo
 
-If GSEP is useful to you, please consider giving it a star — it helps others discover the project and motivates continued development.
+Every star helps more developers discover GSEP. If this project is useful to you, please leave a star — it takes 1 second and means a lot.
 
-[![Star on GitHub](https://img.shields.io/github/stars/LuisvelMarketer/pga-platform?style=social)](https://github.com/LuisvelMarketer/pga-platform)
+<a href="https://github.com/LuisvelMarketer/pga-platform/stargazers">
+  <img src="https://img.shields.io/github/stars/LuisvelMarketer/pga-platform?style=for-the-badge&logo=github&label=Stars&color=gold" alt="GitHub Stars">
+</a>
+<a href="https://github.com/LuisvelMarketer/pga-platform/network/members">
+  <img src="https://img.shields.io/github/forks/LuisvelMarketer/pga-platform?style=for-the-badge&logo=github&label=Forks&color=blue" alt="GitHub Forks">
+</a>
 
 ---
 
@@ -461,6 +466,8 @@ console.log(runner.formatMarkdownReport(result));  // Markdown report
 
 ## 🤝 Contributing
 
+We welcome contributions from the community! Whether it's a bug fix, new feature, documentation improvement, or a new LLM adapter — every contribution matters.
+
 ```bash
 git clone https://github.com/LuisvelMarketer/pga-platform
 cd pga-platform
@@ -469,7 +476,48 @@ npm run build
 npm test
 ```
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide, code standards, and how to get recognized.
+
+---
+
+## 👥 Contributors
+
+Thanks to everyone who has contributed to GSEP. Every PR, issue, and idea makes this project better.
+
+<a href="https://github.com/LuisvelMarketer/pga-platform/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LuisvelMarketer/pga-platform" alt="Contributors" />
+</a>
+
+Want to see your avatar here? Check [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
+
+---
+
+## 💜 Sponsors
+
+GSEP is open source and free to use. If you or your company benefit from GSEP, consider sponsoring the project to support continued development.
+
+<a href="https://github.com/sponsors/LuisvelMarketer">
+  <img src="https://img.shields.io/badge/Sponsor_GSEP-%E2%9D%A4-pink?style=for-the-badge&logo=githubsponsors" alt="Sponsor GSEP">
+</a>
+
+**Why sponsor?**
+- Ensure long-term maintenance and new features
+- Get your logo displayed here and in the docs
+- Priority support and feature requests
+- Support independent open-source development
+
+### Sponsor Tiers
+
+| Tier | Amount | Perks |
+|------|--------|-------|
+| Backer | $5/mo | Name in Contributors list |
+| Supporter | $25/mo | Logo in README + priority issues |
+| Gold Sponsor | $100/mo | Large logo + quarterly roadmap input |
+| Enterprise | Custom | Dedicated support + custom features |
+
+<!-- SPONSORS:START -->
+*Become the first sponsor and your logo will appear here.*
+<!-- SPONSORS:END -->
 
 ---
 
@@ -483,6 +531,10 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 <div align="center">
 
 **GSEP** 🧬 — *Your agent, but alive.*
+
+<br>
+
+If you find GSEP useful, please ⭐ [star this repo](https://github.com/LuisvelMarketer/pga-platform) — it helps others discover the project!
 
 © 2025–2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
 
