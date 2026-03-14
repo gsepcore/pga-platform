@@ -1,6 +1,6 @@
 {
   "name": "@pga-ai/adapters-llm-perplexity",
-  "version": "0.1.0",
+  "version": "0.8.0",
   "description": "Perplexity adapter for GSEP — web-search powered responses",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",

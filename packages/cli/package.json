@@ -1,6 +1,6 @@
 {
   "name": "@pga-ai/cli",
-  "version": "0.1.0",
+  "version": "0.8.0",
   "description": "Interactive CLI for GSEP (Genomic Self-Evolving Prompts)",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",

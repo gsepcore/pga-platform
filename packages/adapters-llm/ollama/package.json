@@ -1,6 +1,6 @@
 {
   "name": "@pga-ai/adapters-llm-ollama",
-  "version": "0.1.0",
+  "version": "0.8.0",
   "description": "Ollama adapter for GSEP — use local LLMs with GSEP",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "@pga-ai/adapters-llm-openai",
-  "version": "0.1.0",
+  "version": "0.8.0",
   "description": "OpenAI adapter for GSEP",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
