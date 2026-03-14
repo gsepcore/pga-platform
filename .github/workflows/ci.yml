@@ -72,4 +72,3 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: npm audit --audit-level=moderate
-        continue-on-error: true

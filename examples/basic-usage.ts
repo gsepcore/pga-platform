@@ -1,180 +1,171 @@
 /**
- * PGA Basic Usage Example
+ * GSEP Basic Usage Example
  *
  * This example demonstrates how to:
- * 1. Initialize PGA with Claude and Postgres
- * 2. Create a genome
- * 3. Use it in a conversational agent
+ * 1. Initialize GSEP with an LLM adapter
+ * 2. Create a genome (your agent's evolving brain)
+ * 3. Chat through the genome (drop-in LLM replacement)
  * 4. Record feedback for evolution
+ *
+ * Requirements:
+ *   ANTHROPIC_API_KEY=sk-ant-... npx tsx examples/basic-usage.ts
+ *
+ * Or without an API key (dry run — shows initialization only):
+ *   npx tsx examples/basic-usage.ts
  */
 
-import { PGA } from '../packages/core/src/index.js';
-import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
-import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
+import { PGA, InMemoryStorageAdapter } from '../packages/core/src/index.js';
 
 async function main() {
     // ═══════════════════════════════════════════════════════
-    // Step 1: Initialize PGA with adapters
+    // Step 1: Initialize GSEP
     // ═══════════════════════════════════════════════════════
 
-    const pga = new PGA({
-        llm: new ClaudeAdapter({
-            apiKey: process.env.ANTHROPIC_API_KEY!,
-            model: 'claude-sonnet-4-20250514',
-        }),
-        storage: new PostgresAdapter({
-            connectionString: process.env.DATABASE_URL!,
-        }),
-        config: {
-            enableSandbox: true,
-            mutationRate: 'balanced',
-            epsilonExplore: 0.1,
-        },
+    const gsep = new PGA({
+        storage: new InMemoryStorageAdapter(),
     });
 
-    // Initialize database tables
-    await pga.initialize();
-    console.log('✓ PGA initialized');
+    await gsep.initialize();
+    console.log('✓ GSEP initialized');
 
     // ═══════════════════════════════════════════════════════
     // Step 2: Create a genome for your agent
     // ═══════════════════════════════════════════════════════
 
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'customer-support-agent',
         config: {
-            mutationRate: 'aggressive', // Override default
+            autonomous: {
+                continuousEvolution: true,
+                evolveEveryN: 10,
+                autoMutateOnDrift: true,
+            },
         },
     });
 
-    console.log(`✓ Genome created: ${genome.getId()}`);
+    console.log(`✓ Genome created: ${genome.id}`);
+    console.log(`  Name: ${genome.name}`);
 
     // ═══════════════════════════════════════════════════════
-    // Step 3: Display Welcome Message (Agent Announcement)
+    // Step 3: Add prompts to chromosome layers
     // ═══════════════════════════════════════════════════════
 
-    // Get the welcome message - choose style:
-    // 'short' | 'detailed' | 'technical' | 'casual'
-    const welcomeMessage = genome.getWelcomeMessage('detailed');
-
-    console.log('\n' + '='.repeat(60));
-    console.log('🤖 AGENT ANNOUNCEMENT:');
-    console.log('='.repeat(60));
-    console.log(welcomeMessage);
-    console.log('='.repeat(60) + '\n');
-
-    // ═══════════════════════════════════════════════════════
-    // Step 4: Add initial prompts to Layer 0 (Immutable DNA)
-    // ═══════════════════════════════════════════════════════
-
-    await genome.addAllele({
-        layer: 0,
-        gene: 'core-identity',
-        variant: 'default',
-        content: `You are a helpful customer support agent.
+    // Layer 0 — Immutable DNA (core identity, never mutates)
+    await genome.addAllele(
+        0,
+        'core-identity',
+        'default',
+        `You are a helpful customer support agent.
 Your goal is to resolve customer issues quickly and professionally.
 Always be polite, empathetic, and solution-oriented.`,
-    });
-
+    );
     console.log('✓ Layer 0 (Immutable DNA) initialized');
 
-    // ═══════════════════════════════════════════════════════
-    // Step 4: Add Layer 1 prompts (Operative Genes)
-    // ═══════════════════════════════════════════════════════
-
-    await genome.addAllele({
-        layer: 1,
-        gene: 'troubleshooting-approach',
-        variant: 'default',
-        content: `When troubleshooting:
+    // Layer 1 — Operative Genes (slow mutation, sandbox-tested)
+    await genome.addAllele(
+        1,
+        'troubleshooting-approach',
+        'default',
+        `When troubleshooting:
 1. Ask clarifying questions
 2. Reproduce the issue
 3. Identify root cause
 4. Provide clear solution steps`,
-    });
-
-    await genome.addAllele({
-        layer: 1,
-        gene: 'troubleshooting-approach',
-        variant: 'v2-direct',
-        content: `When troubleshooting:
-- Jump directly to the most likely solution
-- Provide step-by-step instructions immediately
-- Only ask for clarification if solution doesn't work`,
-    });
-
+    );
     console.log('✓ Layer 1 (Operative Genes) initialized');
 
-    // ═══════════════════════════════════════════════════════
-    // Step 5: Add Layer 2 prompts (Epigenomes - User Prefs)
-    // ═══════════════════════════════════════════════════════
-
-    await genome.addAllele({
-        layer: 2,
-        gene: 'communication-style',
-        variant: 'default',
-        content: 'Use a friendly, professional tone with balanced detail.',
-    });
-
+    // Layer 2 — Epigenomes (fast mutation, per-user adaptation)
+    await genome.addAllele(
+        2,
+        'communication-style',
+        'default',
+        'Use a friendly, professional tone with balanced detail.',
+    );
     console.log('✓ Layer 2 (Epigenomes) initialized');
 
     // ═══════════════════════════════════════════════════════
-    // Step 6: Use the genome in a conversation
+    // Step 4: Chat through the genome
     // ═══════════════════════════════════════════════════════
+
+    // Check if we have an LLM configured
+    if (!process.env.ANTHROPIC_API_KEY) {
+        console.log('\n⚠ No ANTHROPIC_API_KEY set — skipping chat demo.');
+        console.log('  To run the full demo:');
+        console.log('  ANTHROPIC_API_KEY=sk-ant-... npx tsx examples/basic-usage.ts');
+        console.log('\n✅ Initialization completed successfully!');
+        return;
+    }
+
+    // Dynamic import to avoid requiring the adapter when no key is set
+    const { ClaudeAdapter } = await import('../packages/adapters-llm/anthropic/src/index.js');
+
+    const gsepWithLLM = new PGA({
+        llm: new ClaudeAdapter({
+            apiKey: process.env.ANTHROPIC_API_KEY,
+            model: 'claude-sonnet-4-5-20250929',
+        }),
+        storage: new InMemoryStorageAdapter(),
+    });
+
+    await gsepWithLLM.initialize();
+
+    const liveGenome = await gsepWithLLM.createGenome({
+        name: 'support-agent-live',
+        config: {
+            autonomous: {
+                continuousEvolution: true,
+                evolveEveryN: 10,
+            },
+        },
+    });
+
+    // Add the same prompts
+    await liveGenome.addAllele(0, 'core-identity', 'default',
+        'You are a helpful customer support agent. Be polite, empathetic, and solution-oriented.');
+    await liveGenome.addAllele(1, 'troubleshooting', 'default',
+        'When troubleshooting: ask clarifying questions, then provide step-by-step solutions.');
 
     const userId = 'user-123';
-    const userMessage = "My app keeps crashing when I click the submit button";
-
-    const response = await genome.chat({
-        userId,
-        message: userMessage,
-    });
+    const userMessage = 'My app keeps crashing when I click the submit button';
 
     console.log('\n📩 User:', userMessage);
-    console.log('🤖 Assistant:', response.content);
 
-    // ═══════════════════════════════════════════════════════
-    // Step 7: Record user feedback (for evolution)
-    // ═══════════════════════════════════════════════════════
-
-    // Positive feedback (score: 0.0 to 1.0)
-    await genome.recordFeedback({
+    const response = await liveGenome.chat(userMessage, {
         userId,
-        score: 0.9, // User was satisfied
-        sentiment: 'positive',
+        taskType: 'support',
     });
 
+    console.log('🤖 Assistant:', response);
+
+    // ═══════════════════════════════════════════════════════
+    // Step 5: Record feedback (drives evolution)
+    // ═══════════════════════════════════════════════════════
+
+    await liveGenome.recordFeedback(userId, 'troubleshooting', 'positive');
     console.log('✓ Positive feedback recorded');
 
     // ═══════════════════════════════════════════════════════
-    // Step 8: View genome analytics
+    // Step 6: View analytics
     // ═══════════════════════════════════════════════════════
 
-    const analytics = await genome.getAnalytics();
-    console.log('\n📊 Genome Analytics:');
-    console.log('  - Total interactions:', analytics.totalInteractions);
-    console.log('  - Average satisfaction:', analytics.averageSatisfaction);
-    console.log('  - Active alleles:', analytics.activeAlleles);
+    const analytics = await liveGenome.getAnalytics();
+    console.log('\n📊 Genome Analytics:', analytics);
 
     // ═══════════════════════════════════════════════════════
-    // Step 9: Export User DNA profile
+    // Step 7: Get user DNA profile
     // ═══════════════════════════════════════════════════════
 
-    const userDNA = await genome.getUserDNA(userId);
-    console.log('\n🧬 User DNA Profile:');
-    console.log('  - Communication style:', userDNA.traits.communicationStyle);
-    console.log('  - Verbosity:', userDNA.traits.verbosity);
-    console.log('  - Generation:', userDNA.generation);
+    const userDNA = await liveGenome.getDNA(userId);
+    console.log('\n🧬 User DNA Profile:', userDNA);
 
     // ═══════════════════════════════════════════════════════
-    // Step 10: Load existing genome (for future sessions)
+    // Step 8: Reload genome (persistence demo)
     // ═══════════════════════════════════════════════════════
 
-    const genomeId = genome.getId();
-    const reloadedGenome = await pga.loadGenome(genomeId);
+    const reloadedGenome = await gsepWithLLM.loadGenome(liveGenome.id);
 
     if (reloadedGenome) {
-        console.log('\n✓ Genome reloaded successfully');
+        console.log(`\n✓ Genome reloaded: ${reloadedGenome.name}`);
     }
 
     console.log('\n✅ Example completed successfully!');

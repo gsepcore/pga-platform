@@ -4,6 +4,15 @@
   "description": "PGA Evolution Server — Secure Pull/Push API for external agents",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
+  "homepage": "https://gsepcore.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuisvelMarketer/pga-platform",
+    "directory": "packages/server"
+  },
+  "bugs": {
+    "url": "https://github.com/LuisvelMarketer/pga-platform/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

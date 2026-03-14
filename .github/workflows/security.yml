@@ -28,7 +28,6 @@ jobs:
       
       - name: Run npm audit (high severity)
         run: npm audit --audit-level=high
-        continue-on-error: true
       
       - name: Run npm audit (production only)
         run: npm audit --production --audit-level=moderate
@@ -47,6 +46,6 @@ jobs:
           scan-type: 'fs'
           scan-ref: '.'
           format: 'table'
-          exit-code: '0'
+          exit-code: '1'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'

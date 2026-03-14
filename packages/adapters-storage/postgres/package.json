@@ -4,6 +4,15 @@
   "description": "PostgreSQL storage adapter for PGA",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
+  "homepage": "https://gsepcore.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LuisvelMarketer/pga-platform",
+    "directory": "packages/adapters-storage/postgres"
+  },
+  "bugs": {
+    "url": "https://github.com/LuisvelMarketer/pga-platform/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
