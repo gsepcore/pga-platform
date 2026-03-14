@@ -18,5 +18,8 @@
     "@remotion/cli": "^4.0.0",
     "@types/react": "^18.3.0",
     "typescript": "^5.6.0"
+  },
+  "overrides": {
+    "yauzl": ">=3.2.1"
   }
 }
