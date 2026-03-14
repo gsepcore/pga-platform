@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/gsep-logo.jpeg" alt="GSEP — Genomic Self-Evolving Prompts" width="600">
+<img src="assets/gsep-logo.png" alt="GSEP — Genomic Self-Evolving Prompts" width="600">
 
 <br>
 
@@ -9,7 +9,9 @@
 ![GSEP](https://img.shields.io/badge/GSEP-Genomic%20Self--Evolving%20Prompts-blue?style=for-the-badge)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE.md)
 [![npm version](https://img.shields.io/npm/v/@pga-ai/core?style=for-the-badge)](https://www.npmjs.com/package/@pga-ai/core)
+[![CI](https://img.shields.io/github/actions/workflow/status/LuisvelMarketer/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/LuisvelMarketer/pga-platform/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
+[![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
 
 **Drop-in upgrade that makes any AI agent learn, adapt, and evolve autonomously.**
 
