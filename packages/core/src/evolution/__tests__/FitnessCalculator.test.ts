@@ -1,7 +1,7 @@
 /**
  * Fitness Calculator Tests
  *
- * Tests for PGA's multi-objective fitness computation system:
+ * Tests for GSEP's multi-objective fitness computation system:
  * - Empty interactions handling
  * - Single successful interaction
  * - Mixed success/failure interactions

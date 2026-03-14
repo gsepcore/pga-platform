@@ -6,9 +6,9 @@ import { Background } from "../components/Background";
 
 const narrationLines = [
   { text: "Ready to get started?", startFrame: 0, endFrame: 90 },
-  { text: "Read the documentation at pgacore dot com slash docs.", startFrame: 90, endFrame: 300 },
+  { text: "Read the documentation at gsepcore dot com slash docs.", startFrame: 90, endFrame: 300 },
   { text: "Star us on GitHub at github dot com slash pga dash ai slash pga dash platform.", startFrame: 300, endFrame: 550 },
-  { text: "Join our Discord community at discord dot gg slash pga.", startFrame: 550, endFrame: 750 },
+  { text: "Join our Discord community at discord dot gg slash gsep.", startFrame: 550, endFrame: 750 },
   { text: "Or install now with npm install at pga dash ai slash core.", startFrame: 750, endFrame: 1000 },
   { text: "Your agent, but alive. It starts now.", startFrame: 1000, endFrame: 1350 },
 ];
@@ -17,7 +17,7 @@ const ctaCards = [
   {
     icon: "📖",
     title: "Documentation",
-    url: "pgacore.com/docs",
+    url: "gsepcore.com/docs",
     color: THEME.accent,
     startFrame: 60,
   },
@@ -31,7 +31,7 @@ const ctaCards = [
   {
     icon: "💬",
     title: "Join Discord",
-    url: "discord.gg/pga",
+    url: "discord.gg/gsep",
     color: THEME.purple,
     startFrame: 260,
   },

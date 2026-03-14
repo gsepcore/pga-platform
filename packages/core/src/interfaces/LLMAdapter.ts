@@ -1,7 +1,7 @@
 /**
  * LLM Adapter Interface
  *
- * Makes PGA work with any LLM provider (Claude, GPT, Gemini, local models, etc.)
+ * Makes GSEP work with any LLM provider (Claude, GPT, Gemini, local models, etc.)
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2025
@@ -37,7 +37,7 @@ export interface ChatChunk {
 /**
  * LLM Adapter Interface
  *
- * Implement this interface to use PGA with your preferred LLM provider.
+ * Implement this interface to use GSEP with your preferred LLM provider.
  */
 export interface LLMAdapter {
     /**

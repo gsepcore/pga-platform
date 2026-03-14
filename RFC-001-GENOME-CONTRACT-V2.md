@@ -9,7 +9,7 @@
 
 ## 🎯 Executive Summary
 
-This RFC proposes **Genome Contract v2**, the foundational data structure that transforms PGA from a "prompt optimizer" to a **Living OS for AI Agents**.
+This RFC proposes **Genome Contract v2**, the foundational data structure that transforms GSEP from a "prompt optimizer" to a **Living OS for AI Agents**.
 
 **Key Innovation**: Evolving from "Layers" to **"Chromosomes"** with cryptographic integrity, cross-agent inheritance, and operational indispensability.
 
@@ -816,7 +816,7 @@ class GenomeManager {
 
 ## 12. Conclusion
 
-**Genome Contract v2** is the foundation of PGA as a Living OS.
+**Genome Contract v2** is the foundation of GSEP as a Living OS.
 
 **Key Innovations**:
 1. ✅ Cryptographic immutability (C0 hash)

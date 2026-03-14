@@ -449,7 +449,7 @@ async function displayMetrics(metricsCollector: MetricsCollector) {
 
 async function main() {
     console.log('╔═══════════════════════════════════════════════════════════════════╗');
-    console.log('║  🧬 PGA GENE BANK + THK DEMO                                      ║');
+    console.log('║  🧬 GSEP GENE BANK + THK DEMO                                     ║');
     console.log('║  Horizontal Knowledge Transfer System v0.4.0                      ║');
     console.log('║  Author: Luis Alfredo Velasquez Duran                             ║');
     console.log('╚═══════════════════════════════════════════════════════════════════╝');

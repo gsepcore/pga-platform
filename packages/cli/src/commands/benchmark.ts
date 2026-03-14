@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Benchmark Command
+ * GSEP CLI - Benchmark Command
  */
 
 export async function benchmark(genomeId: string | undefined, options: any): Promise<void> {

@@ -1,7 +1,7 @@
 /**
- * PGA — Genomic Self-Evolving Prompts
+ * GSEP — Genomic Self-Evolving Prompts
  *
- * Main entry point for the PGA SDK
+ * Main entry point for the GSEP SDK
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2025
@@ -100,7 +100,7 @@ export interface PGAConfig {
 }
 
 /**
- * PGA Main Class
+ * GSEP Main Class
  *
  * Example usage:
  * ```typescript
@@ -122,8 +122,8 @@ export class PGA {
         // ─── LLM Validation ────────────────────────────────────
         if (!pgaConfig.llm) {
             throw new Error(
-                `[PGA] LLM adapter is required.\n\n`
-                + `PGA needs an AI model to function. Please provide an LLM adapter:\n\n`
+                `[GSEP] LLM adapter is required.\n\n`
+                + `GSEP needs an AI model to function. Please provide an LLM adapter:\n\n`
                 + `  import { PGA } from '@pga-ai/core';\n`
                 + `  import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';\n\n`
                 + `  const pga = new PGA({\n`
@@ -139,8 +139,8 @@ export class PGA {
 
         if (!pgaConfig.storage) {
             throw new Error(
-                `[PGA] Storage adapter is required.\n\n`
-                + `PGA needs a storage adapter to persist genomes. Please provide one:\n\n`
+                `[GSEP] Storage adapter is required.\n\n`
+                + `GSEP needs a storage adapter to persist genomes. Please provide one:\n\n`
                 + `  import { InMemoryStorage } from '@pga-ai/core';\n\n`
                 + `  const pga = new PGA({\n`
                 + `    llm: yourLLMAdapter,\n`
@@ -167,7 +167,7 @@ export class PGA {
     }
 
     /**
-     * Initialize PGA (setup database, load seeds, etc.)
+     * Initialize GSEP (setup database, load seeds, etc.)
      */
     async initialize(): Promise<void> {
         await this.pgaConfig.storage.initialize();
@@ -182,7 +182,7 @@ export class PGA {
             level: 'info',
             component: 'pga',
             operation: 'initialize',
-            message: 'PGA system initialized successfully',
+            message: 'GSEP system initialized successfully',
         });
     }
 
@@ -222,7 +222,7 @@ export class PGA {
     }
 
     /**
-     * Shutdown PGA gracefully
+     * Shutdown GSEP gracefully
      */
     shutdown(): void {
         if (this.dashboard) {
@@ -233,7 +233,7 @@ export class PGA {
             level: 'info',
             component: 'pga',
             operation: 'shutdown',
-            message: 'PGA system shutdown',
+            message: 'GSEP system shutdown',
         });
     }
 
@@ -555,14 +555,14 @@ export class GenomeInstance {
     }
 
     /**
-     * Get welcome message for the agent to announce PGA capabilities
+     * Get welcome message for the agent to announce GSEP capabilities
      *
      * @param style - Message style: 'short' | 'detailed' | 'technical' | 'casual'
-     * @returns Welcome message explaining PGA capabilities
+     * @returns Welcome message explaining GSEP capabilities
      */
     getWelcomeMessage(style: 'short' | 'detailed' | 'technical' | 'casual' = 'detailed'): string {
         const messages = {
-            short: `🧬 I now have PGA — Genomic Self-Evolving Prompts integrated into my DNA!
+            short: `🧬 I now have GSEP — Genomic Self-Evolving Prompts integrated into my DNA!
 
 This means I can:
 ✓ Learn from every interaction
@@ -571,7 +571,7 @@ This means I can:
 
 I'm ready to evolve with you!`,
 
-            detailed: `🧬 Great news! I now have PGA — Genomic Self-Evolving Prompts integrated into my core system!
+            detailed: `🧬 Great news! I now have GSEP — Genomic Self-Evolving Prompts integrated into my core system!
 
 What this means for you:
 
@@ -598,7 +598,7 @@ What this means for you:
 
 Let's evolve together! How can I help you today?`,
 
-            technical: `🧬 System Update: PGA (Genomic Self-Evolving Prompts) — ACTIVE
+            technical: `🧬 System Update: GSEP (Genomic Self-Evolving Prompts) — ACTIVE
 
 **Architecture Overview:**
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -631,7 +631,7 @@ Every interaction contributes to:
 
 System ready. Genomic evolution: INITIALIZED.`,
 
-            casual: `🧬 Hey! Exciting update — I just got upgraded with PGA (think of it as evolutionary AI)!
+            casual: `🧬 Hey! Exciting update — I just got upgraded with GSEP (think of it as evolutionary AI)!
 
 Here's the cool part:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -666,12 +666,12 @@ Ready to see what we can do together? 😊`,
     }
 
     /**
-     * Chat with PGA optimization + Intelligence Boost + Auto Monitoring
+     * Chat with GSEP optimization + Intelligence Boost + Auto Monitoring
      */
     async chat(userMessage: string, context: SelectionContext): Promise<string> {
         if (!this.llm) {
             throw new Error(
-                `[PGA] Cannot chat: no LLM adapter configured. `
+                `[GSEP] Cannot chat: no LLM adapter configured. `
                 + `The agent needs an AI model to generate responses.`,
             );
         }
@@ -962,8 +962,8 @@ Ready to see what we can do together? 😊`,
     /**
      * Report metrics from an external interaction (Pull/Push model).
      *
-     * Used by PGA Server to feed metrics from agents that call LLMs directly.
-     * PGA never sees the actual content — only numeric metrics flow in.
+     * Used by GSEP Server to feed metrics from agents that call LLMs directly.
+     * GSEP never sees the actual content — only numeric metrics flow in.
      *
      * Triggers the same fitness + evolution pipeline as chat():
      * MetricsCollector → FitnessCalculator → DriftAnalyzer → Evolution
@@ -2348,8 +2348,8 @@ Ready to see what we can do together? 😊`,
                         safetyRules: [],
                     },
                     attribution: {
-                        creator: 'PGA',
-                        copyright: 'PGA Platform',
+                        creator: 'GSEP',
+                        copyright: 'GSEP Platform',
                         license: 'MIT',
                     },
                     metadata: {
@@ -2517,7 +2517,7 @@ Ready to see what we can do together? 😊`,
      * Get the recommended mutation strategy based on current drift signals.
      *
      * Returns ranked operators with contextual reasoning — useful for
-     * understanding WHY PGA chose a specific mutation approach.
+     * understanding WHY GSEP chose a specific mutation approach.
      */
     getMutationStrategy(): Array<{
         operator: string;

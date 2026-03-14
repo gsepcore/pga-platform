@@ -1,5 +1,5 @@
 /**
- * WrappedAgent — The main wrapper class returned by PGA.wrap()
+ * WrappedAgent — The main wrapper class returned by PGA.wrap() (GSEP)
  *
  * Turns any LLMAdapter or async function into a self-evolving agent
  * with zero migration cost.
@@ -77,7 +77,7 @@ export class WrappedAgent {
     }
 
     /**
-     * Initialize the PGA system and create the genome.
+     * Initialize the GSEP system and create the genome.
      *
      * We save the pre-built genome to storage and then use PGA.loadGenome()
      * which constructs a full GenomeInstance with all evolution systems.
@@ -88,7 +88,7 @@ export class WrappedAgent {
         // Save the pre-built genome to storage
         await this.storage.saveGenome(this.genome);
 
-        // Load through PGA to get a full GenomeInstance
+        // Load through GSEP to get a full GenomeInstance
         const instance = await this.pga.loadGenome(this.genome.id);
         if (!instance) {
             throw new Error('Failed to initialize wrapped genome');

@@ -2,7 +2,7 @@
 
 ## Objectives
 
-Define and track minimum quality standards for the PGA platform repository to ensure:
+Define and track minimum quality standards for the GSEP platform repository to ensure:
 - **Code quality**: Maintainable, tested, and well-documented code
 - **Security**: Proactive vulnerability management and secure development practices
 - **Reliability**: Consistent builds, comprehensive testing, and production readiness

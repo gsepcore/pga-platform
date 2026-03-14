@@ -9,7 +9,7 @@
 ## 📦 What Was Implemented
 
 ### 1. **MetricsCollector** (`MetricsCollector.ts`)
-Complete metrics collection and aggregation system for PGA.
+Complete metrics collection and aggregation system for GSEP.
 
 **Features:**
 - ✅ Performance metrics (latency, throughput, success rates)
@@ -114,7 +114,7 @@ Comprehensive tests ensuring reliability.
    - Cost tracking across multiple LLM providers
 
 2. **Validation System**
-   - Can now measure if PGA evolution is actually working
+   - Can now measure if GSEP evolution is actually working
    - Objective performance metrics
    - Cost vs quality tradeoffs visible
 
@@ -241,4 +241,4 @@ const alerts = metrics.getAlerts();
 
 **Status:** ✅ **COMPLETE & PRODUCTION-READY**
 
-This monitoring system is now the **critical validation layer** that proves PGA evolution actually works. Without monitoring, you're flying blind. With it, you can measure, optimize, and demonstrate real improvements.
+This monitoring system is now the **critical validation layer** that proves GSEP evolution actually works. Without monitoring, you're flying blind. With it, you can measure, optimize, and demonstrate real improvements.

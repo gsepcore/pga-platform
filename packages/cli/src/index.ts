@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * PGA CLI - Interactive Command Line Interface
+ * GSEP CLI - Interactive Command Line Interface
  *
  * @author Luis Alfredo Velasquez Duran (Germany, 2025)
  * @license MIT
@@ -17,7 +17,7 @@ const program = new Command();
 // ASCII Art Banner
 console.log(
     chalk.cyan(
-        figlet.textSync('PGA CLI', {
+        figlet.textSync('GSEP CLI', {
             font: 'Standard',
             horizontalLayout: 'default',
         })
@@ -33,7 +33,7 @@ console.log(
 // CLI Configuration
 program
     .name('pga')
-    .description('Interactive CLI for PGA (Genomic Self-Evolving Prompts)')
+    .description('Interactive CLI for GSEP (Genomic Self-Evolving Prompts)')
     .version(VERSION)
     .option('-v, --verbose', 'Enable verbose output')
     .option('--no-color', 'Disable colored output');
@@ -42,7 +42,7 @@ program
 
 program
     .command('init')
-    .description('Initialize a new PGA project')
+    .description('Initialize a new GSEP project')
     .option('-t, --template <name>', 'Use a template (basic, advanced, enterprise)', 'basic')
     .option('-d, --dir <path>', 'Project directory', '.')
     .action(async (options) => {
@@ -140,7 +140,7 @@ program
 
 program
     .command('config')
-    .description('Configure PGA settings')
+    .description('Configure GSEP settings')
     .option('-s, --set <key=value>', 'Set a configuration value')
     .option('-g, --get <key>', 'Get a configuration value')
     .option('--list', 'List all configuration')

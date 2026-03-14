@@ -25,12 +25,12 @@ interface GroundTruth {
 const KNOWLEDGE_BASE: RAGDocument[] = [
     {
         id: 'pga-1',
-        content: 'PGA (Progressive Genomic Algorithms) is a self-evolving prompt system that uses genetic algorithms to optimize AI agent prompts through continuous evolution and learning.',
+        content: 'GSEP (Genomic Self-Evolving Prompts) is a self-evolving prompt system that uses genetic algorithms to optimize AI agent prompts through continuous evolution and learning.',
         metadata: { category: 'overview', topic: 'pga' },
     },
     {
         id: 'memory-1',
-        content: 'Layered Memory in PGA provides a three-tier architecture: short-term (recent messages), medium-term (summarized context), and long-term (semantic facts). This achieves 85-95% token reduction while maintaining context quality.',
+        content: 'Layered Memory in GSEP provides a three-tier architecture: short-term (recent messages), medium-term (summarized context), and long-term (semantic facts). This achieves 85-95% token reduction while maintaining context quality.',
         metadata: { category: 'features', topic: 'memory' },
     },
     {
@@ -50,7 +50,7 @@ const KNOWLEDGE_BASE: RAGDocument[] = [
     },
     {
         id: 'storage-1',
-        content: 'PGA uses PostgreSQL for persistent storage with optimized indexes. Tables include genomes, user_dna, interactions, mutations, and semantic_facts.',
+        content: 'GSEP uses PostgreSQL for persistent storage with optimized indexes. Tables include genomes, user_dna, interactions, mutations, and semantic_facts.',
         metadata: { category: 'architecture', topic: 'storage' },
     },
     {
@@ -72,7 +72,7 @@ const TEST_QUERIES: GroundTruth[] = [
         expectedAnswer: '85-95% token reduction',
     },
     {
-        query: 'What is PGA?',
+        query: 'What is GSEP?',
         relevantDocIds: ['pga-1'],
         expectedAnswer: 'self-evolving prompt system',
     },
@@ -82,12 +82,12 @@ const TEST_QUERIES: GroundTruth[] = [
         expectedAnswer: 'vector search',
     },
     {
-        query: 'What database does PGA use?',
+        query: 'What database does GSEP use?',
         relevantDocIds: ['storage-1'],
         expectedAnswer: 'PostgreSQL',
     },
     {
-        query: 'Tell me about monitoring in PGA',
+        query: 'Tell me about monitoring in GSEP',
         relevantDocIds: ['observability-1'],
         expectedAnswer: 'MetricsCollector',
     },
@@ -117,13 +117,13 @@ class EvaluationLLMAdapter implements LLMAdapter {
                 response = 'Layered Memory achieves 85-95% token reduction through a three-tier architecture.';
                 quality = 0.9;
             } else if (contextContent.includes('self-evolving prompt system')) {
-                response = 'PGA is a self-evolving prompt system using genetic algorithms.';
+                response = 'GSEP is a self-evolving prompt system using genetic algorithms.';
                 quality = 0.9;
             } else if (contextContent.includes('vector search')) {
                 response = 'RAG Engine uses vector search to retrieve relevant documents.';
                 quality = 0.85;
             } else if (contextContent.includes('PostgreSQL')) {
-                response = 'PGA uses PostgreSQL for persistent storage.';
+                response = 'GSEP uses PostgreSQL for persistent storage.';
                 quality = 0.9;
             } else if (contextContent.includes('MetricsCollector')) {
                 response = 'MetricsCollector tracks performance, cost, and health metrics.';

@@ -81,7 +81,7 @@ async function generateTsConfig(projectPath: string) {
 }
 
 async function generateEnvFile(projectPath: string, config: ProjectConfig) {
-    let envContent = '# PGA Platform Configuration\n\n';
+    let envContent = '# GSEP Platform Configuration\n\n';
 
     if (config.llmProvider === 'anthropic' || config.llmProvider === 'both') {
         envContent += '# Anthropic API Key\nANTHROPIC_API_KEY=your-api-key-here\n\n';
@@ -101,7 +101,7 @@ async function generateEnvFile(projectPath: string, config: ProjectConfig) {
 }
 
 async function generateEnvExample(projectPath: string, config: ProjectConfig) {
-    let envContent = '# PGA Platform Configuration\n\n';
+    let envContent = '# GSEP Platform Configuration\n\n';
 
     if (config.llmProvider === 'anthropic' || config.llmProvider === 'both') {
         envContent += '# Anthropic API Key\nANTHROPIC_API_KEY=\n\n';
@@ -138,7 +138,7 @@ async function generateReadme(
 ) {
     const readme = `# ${projectName}
 
-Created with [PGA Platform](https://gsepcore.com) — Genomic Self-Evolving Prompts
+Created with [GSEP Platform](https://gsepcore.com) — Genomic Self-Evolving Prompts
 
 ## 🚀 Quick Start
 
@@ -169,7 +169,7 @@ Created with [PGA Platform](https://gsepcore.com) — Genomic Self-Evolving Prom
 
 ## 📚 Documentation
 
-- [PGA Documentation](https://gsepcore.com/docs)
+- [GSEP Documentation](https://gsepcore.com/docs)
 - [API Reference](https://gsepcore.com/api)
 - [Discord Community](https://discord.gg/pga)
 
@@ -184,7 +184,7 @@ npm test         # Run tests
 
 ---
 
-**Built with PGA** 🧬
+**Built with GSEP** 🧬
 `;
 
     await fs.writeFile(path.join(projectPath, 'README.md'), readme);
@@ -247,20 +247,20 @@ function generateIndexFile(config: ProjectConfig): string {
         : '';
 
     return `${imports}async function main() {
-  console.log('🧬 Starting PGA Agent...\\n');
+  console.log('🧬 Starting GSEP Agent...\\n');
 
   // Initialize LLM adapter
   ${llmSetup}
   // Initialize storage
   ${storageSetup}
-  // Initialize PGA
+  // Initialize GSEP
   const pga = new PGA({
     llm,
     storage,
   });
 
   await pga.initialize();
-  console.log('✅ PGA initialized\\n');
+  console.log('✅ GSEP initialized\\n');
 
   // Setup agent genome
   const genome = await setupAgent(pga);
@@ -273,7 +273,7 @@ function generateIndexFile(config: ProjectConfig): string {
   const response = await genome.chat(message, { userId, taskType: 'general' });
   console.log(\`Agent: \${response}\\n\`);
 ${livingAgentDemo}
-  console.log('✨ Your PGA-powered agent is working!');
+  console.log('✨ Your GSEP-powered agent is working!');
   console.log('Next: Customize the genome in src/agent.ts\\n');
 }
 

@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Evolve Command
+ * GSEP CLI - Evolve Command
  */
 
 export async function evolve(genomeId: string, options: any): Promise<void> {

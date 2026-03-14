@@ -1,5 +1,5 @@
-# 🧬 PGA PLATFORM - PROCESO COMPLETO
-## Cómo PGA hace agentes autónomos, inteligentes y evolutivos
+# 🧬 GSEP PLATFORM - PROCESO COMPLETO
+## Cómo GSEP hace agentes autónomos, inteligentes y evolutivos
 
 ---
 
@@ -155,7 +155,7 @@ Extrae patrones exitosos como **Cognitive Genes**:
 
 ### 🔟 **THK - HORIZONTAL KNOWLEDGE TRANSFER** 🌐
 
-**¡La magia de PGA!** - Conocimiento entre agentes:
+**¡La magia de GSEP!** - Conocimiento entre agentes:
 
 ```
 Agente A [Customer Support]
@@ -268,7 +268,7 @@ DÍA 30:
 
 ## 🎨 ANALOGÍA PARA ENTENDERLO FÁCIL
 
-**PGA es como un equipo de Pokémon que evoluciona solo:**
+**GSEP es como un equipo de Pokémon que evoluciona solo:**
 
 1. **Pokémon Base** = Agente inicial con genome
 2. **Batallas** = Interacciones con usuarios
@@ -279,13 +279,13 @@ DÍA 30:
 
 **PERO mejor que Pokémon porque:**
 - ❌ Pokémon: Necesitas pelear para evolucionar
-- ✅ PGA: Evoluciona automáticamente mientras trabaja
+- ✅ GSEP: Evoluciona automáticamente mientras trabaja
 
 - ❌ Pokémon: Solo aprende 4 movimientos
-- ✅ PGA: Aprende ilimitados genes
+- ✅ GSEP: Aprende ilimitados genes
 
 - ❌ Pokémon: No comparte conocimiento
-- ✅ PGA: THK comparte todo con toda la red
+- ✅ GSEP: THK comparte todo con toda la red
 
 ---
 
@@ -293,7 +293,7 @@ DÍA 30:
 
 ```
 ┌──────────────────────────────────────────────┐
-│           🧬 PGA PLATFORM                     │
+│           🧬 GSEP PLATFORM                     │
 ├──────────────────────────────────────────────┤
 │                                               │
 │  ┌─────────────┐      ┌──────────────┐      │
@@ -389,7 +389,7 @@ npm install @pga-ai/core
 
 ---
 
-**🧬 PGA PLATFORM**
+**🧬 GSEP PLATFORM**
 *The Living OS for AI Agents*
 
 **Patent Pending** | **Made with Claude Sonnet 4.5** | **2026**

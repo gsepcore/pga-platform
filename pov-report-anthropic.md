@@ -1,4 +1,4 @@
-# PGA Proof of Value Report
+# GSEP Proof of Value Report
 
 **Experiment**: Real LLM Test (anthropic)
 **Date**: 2026-03-09

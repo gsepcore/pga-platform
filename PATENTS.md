@@ -1,4 +1,4 @@
-# PGA Platform - Patent Documentation
+# GSEP Platform - Patent Documentation
 
 **Patent Holder**: Luis Alfredo Velasquez Duran
 **Location**: Germany
@@ -9,7 +9,7 @@
 
 ## 🛡️ Patent Portfolio Overview
 
-PGA Platform is protected by **three patent applications** covering novel methods in AI prompt engineering through genomic evolution principles.
+GSEP Platform is protected by **three patent applications** covering novel methods in AI prompt engineering through genomic evolution principles.
 
 | Patent | Status | Jurisdiction | Filing Date | Application # |
 |--------|--------|--------------|-------------|---------------|
@@ -69,22 +69,22 @@ A novel system for automatically optimizing AI agent prompts through biological 
 
 1. **vs. Prompt Engineering (Manual)**:
    - Prior art: Static prompts requiring manual optimization
-   - PGA: Autonomous evolution with zero human intervention
+   - GSEP: Autonomous evolution with zero human intervention
    - Novel element: Self-improving system without external input
 
 2. **vs. Fine-Tuning (Neural Network Optimization)**:
    - Prior art: Requires large datasets and compute for model retraining
-   - PGA: Operates at prompt level, no model modification
+   - GSEP: Operates at prompt level, no model modification
    - Novel element: Real-time adaptation without retraining costs
 
 3. **vs. Reinforcement Learning from Human Feedback (RLHF)**:
    - Prior art: Requires explicit human ratings for each interaction
-   - PGA: Uses implicit signals (tokens, latency, success) for fitness
+   - GSEP: Uses implicit signals (tokens, latency, success) for fitness
    - Novel element: Autonomous fitness calculation without human labels
 
 4. **vs. Genetic Algorithms (General)**:
    - Prior art: Generic evolutionary algorithms for optimization
-   - PGA: Specialized three-layer architecture with immutability constraints
+   - GSEP: Specialized three-layer architecture with immutability constraints
    - Novel element: Layer-specific mutation rules and cryptographic protection
 
 ### Technical Specifications
@@ -160,7 +160,7 @@ A knowledge-sharing system enabling AI agents to inherit successful prompt optim
 
 **Differentiation**:
 - **No prior art exists** for inheritance-based prompt optimization across multiple AI agents
-- Existing transfer learning requires model-level updates; PGA operates at prompt level
+- Existing transfer learning requires model-level updates; GSEP operates at prompt level
 - Novel contribution: Zero-cost knowledge transfer without retraining
 
 **Technical Innovation**:
@@ -299,7 +299,7 @@ class GenomeKernel {
 2. **Google AutoML Patent (US20220234567)**: Automates neural architecture search, not prompt optimization
 3. **General Genetic Algorithm Patents**: Generic evolutionary computation, not specialized for prompts
 
-**Differentiation**: PGA's innovation lies in the **combination and application** to prompt engineering, not individual components.
+**Differentiation**: GSEP's innovation lies in the **combination and application** to prompt engineering, not individual components.
 
 ---
 

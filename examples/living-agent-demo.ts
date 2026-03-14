@@ -1,7 +1,7 @@
 /**
- * Living Agent Demo - End-to-End PGA Evolution
+ * Living Agent Demo - End-to-End GSEP Evolution
  *
- * Demonstrates the COMPLETE lifecycle of a living PGA agent:
+ * Demonstrates the COMPLETE lifecycle of a living GSEP agent:
  * 1. Agent creation with genome
  * 2. Interactions with quality tracking
  * 3. Drift detection from declining quality
@@ -109,7 +109,7 @@ class DemoStorageAdapter implements StorageAdapter {
 
 async function main() {
     console.log('========================================');
-    console.log(' PGA Living Agent Demo');
+    console.log(' GSEP Living Agent Demo');
     console.log(' Genomic Self-Evolving Prompts');
     console.log('========================================\n');
 

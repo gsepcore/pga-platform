@@ -1,7 +1,7 @@
 /**
  * Evaluator Tests
  *
- * Tests for PGA's performance evaluation framework:
+ * Tests for GSEP's performance evaluation framework:
  * - Constructor (with/without LLM, enableSemanticJudge flag)
  * - evaluate: success rate, avg tokens, avg response time, avg quality
  * - evaluateTask: happy path, error handling, token estimation
@@ -561,8 +561,8 @@ describe('Evaluator', () => {
             vi.spyOn(console, 'log').mockImplementation(() => {});
         });
 
-        it('should return PGA_WINS when PGA genome outperforms baseline significantly', async () => {
-            // PGA genome: responds with all keywords and long responses
+        it('should return PGA_WINS when GSEP genome outperforms baseline significantly', async () => {
+            // GSEP genome: responds with all keywords and long responses
             const pgaGenome = createMockGenome(
                 'test undefined check null validation error handling auth login token ' +
                 'performance optimize memo scalable microservices database async await ' +
@@ -583,12 +583,12 @@ describe('Evaluator', () => {
             expect(result.withPGA).toBeDefined();
             expect(result.withoutPGA).toBeDefined();
             expect(result.improvements).toBeDefined();
-            // PGA succeeds, baseline fails on minLength (though 'ok' is only 2 chars vs min 5)
+            // GSEP succeeds, baseline fails on minLength (though 'ok' is only 2 chars vs min 5)
             expect(result.withPGA.successRate).toBeGreaterThanOrEqual(result.withoutPGA.successRate);
         });
 
-        it('should return BASELINE_WINS or TIE when baseline outperforms PGA on success rate', async () => {
-            // PGA genome: missing required keywords → fails success checks
+        it('should return BASELINE_WINS or TIE when baseline outperforms GSEP on success rate', async () => {
+            // GSEP genome: missing required keywords → fails success checks
             const pgaGenome = createMockGenome('irrelevant content without required words');
             // Baseline: has keywords → passes
             const baselineGenome = createMockGenome('test response that passes');
@@ -602,7 +602,7 @@ describe('Evaluator', () => {
 
             const result = await evaluator.compare(pgaGenome, baselineGenome, tasks, 'user-1');
 
-            // PGA fails, baseline passes
+            // GSEP fails, baseline passes
             expect(result.withPGA.successRate).toBe(0);
             expect(result.withoutPGA.successRate).toBe(100);
             // Verdict depends on sum of 4 metrics; responseTime NaN with 0ms mocks → TIE
@@ -669,7 +669,7 @@ describe('Evaluator', () => {
 
             const report = evaluator.formatReport(benchmark);
 
-            expect(report).toContain('PGA Evaluation Report');
+            expect(report).toContain('GSEP Evaluation Report');
             expect(report).toContain('Overall Results');
             expect(report).toContain('Task Results');
             expect(report).toContain('Total Tasks');
@@ -726,7 +726,7 @@ describe('Evaluator', () => {
 
             const report = evaluator.formatComparisonReport(comparison);
 
-            expect(report).toContain('PGA vs Baseline');
+            expect(report).toContain('GSEP vs Baseline');
             expect(report).toContain('VERDICT: PGA_WINS');
             expect(report).toContain('Improvements');
             expect(report).toContain('Side-by-Side');

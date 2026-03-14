@@ -1,4 +1,4 @@
-# 🚀 PGA PITCH DECK
+# 🚀 GSEP PITCH DECK
 **Genomic Self-Evolving Prompts**
 
 **Founder:** Luis Alfredo Velasquez Durán
@@ -9,10 +9,10 @@
 
 ## SLIDE 1: COVER
 
-**Visual:** Logo de PGA + Background minimalista (DNA helix abstracto)
+**Visual:** Logo de GSEP + Background minimalista (DNA helix abstracto)
 
 ```
-PGA
+GSEP
 Genomic Self-Evolving Prompts
 
 The First Self-Optimizing AI System
@@ -58,20 +58,20 @@ February 2025
 
 ## SLIDE 3: THE SOLUTION
 
-**Headline:** PGA — AI That Evolves Itself
+**Headline:** GSEP — AI That Evolves Itself
 
 **Visual:** Diagrama de DNA helix transformándose
 
-### What is PGA?
+### What is GSEP?
 
-**PGA is the first Prompt Operating System that uses biological principles to make AI agents self-optimize.**
+**GSEP is the first Prompt Operating System that uses biological principles to make AI agents self-optimize.**
 
 ### How it works (Simple):
 
 ```
 1. Agent uses a prompt → Gets results
-2. PGA measures success (fitness)
-3. Low score? PGA generates variations
+2. GSEP measures success (fitness)
+3. Low score? GSEP generates variations
 4. Tests them safely (sandbox)
 5. Deploys the best one automatically
 ```
@@ -166,7 +166,7 @@ February 2025
 
 **90% of AI agent projects fail in production** due to lack of adaptability.
 
-PGA attacks that **$42B "failure market"**.
+GSEP attacks that **$42B "failure market"**.
 
 ### Early Adopter Segments:
 
@@ -189,7 +189,7 @@ PGA attacks that **$42B "failure market"**.
 
 **Visual:** Comparison table
 
-| Feature | **PGA** | LangChain | AutoGPT | Prompt Layer | Dust.tt |
+| Feature | **GSEP** | LangChain | AutoGPT | Prompt Layer | Dust.tt |
 |---------|---------|-----------|---------|--------------|---------|
 | Auto-evolution | ✅ | ❌ | ❌ | ❌ | ❌ |
 | Model-agnostic | ✅ | ✅ | ❌ | ✅ | ✅ |
@@ -208,7 +208,7 @@ PGA attacks that **$42B "failure market"**.
 ### Positioning:
 
 **LangChain is the framework.**
-**PGA is the operating system.**
+**GSEP is the operating system.**
 
 ---
 
@@ -218,7 +218,7 @@ PGA attacks that **$42B "failure market"**.
 
 **Visual:** Tres columnas con iconos
 
-### 1. PGA Cloud (SaaS)
+### 1. GSEP Cloud (SaaS)
 
 | Tier | Price | Target |
 |------|-------|--------|
@@ -230,7 +230,7 @@ PGA attacks that **$42B "failure market"**.
 ### 2. Gene Marketplace
 
 - Users buy/sell optimized "genes" (skills)
-- PGA takes 25% commission
+- GSEP takes 25% commission
 - Projected GMV: $150K/mo by Month 24
 
 ### 3. White Label (On-Premise)
@@ -256,15 +256,15 @@ PGA attacks that **$42B "failure market"**.
 
 ### Phase 1: "The Trojan Horse" (Months 1-6)
 
-**Launch Orbis** (consumer AI assistant) powered by PGA
+**Launch Orbis** (consumer AI assistant) powered by GSEP
 - Validates tech without selling it directly
 - Builds brand awareness
 - **Goal:** 10,000 Orbis users
 
 ### Phase 2: "Developer Evangelism" (Months 7-12)
 
-**Open-source PGA Core SDK**
-- PGA Hackathons with $10K prizes
+**Open-source GSEP Core SDK**
+- GSEP Hackathons with $10K prizes
 - God-mode documentation
 - Integrations with LangChain, AutoGPT
 - **Goal:** 5,000 NPM installs/month
@@ -331,13 +331,13 @@ PGA attacks that **$42B "failure market"**.
 
 ### Q2-Q3 2025 (Months 4-9) - Expansion
 - 🚀 Public launch of @pga-ai/core
-- 🚀 PGA Cloud Dashboard (Beta)
+- 🚀 GSEP Cloud Dashboard (Beta)
 - 🚀 10 enterprise beta customers
 - 🚀 1,000 NPM installs/week
 
 ### Q4 2025 - Q2 2026 (Months 10-18) - Ecosystem
 - 🌐 Gene Marketplace launch
-- 🌐 PGA DevCon (global developer event)
+- 🌐 GSEP DevCon (global developer event)
 - 🌐 SOC 2 Type II certification
 - 🌐 Series A fundraising
 
@@ -357,10 +357,10 @@ PGA attacks that **$42B "failure market"**.
 ### Luis Alfredo Velasquez Durán
 **Founder & CEO**
 
-- Inventor of PGA system
+- Inventor of GSEP system
 - [Add: Previous experience - startups, AI projects, technical background]
 - Based in Germany
-- Filed 3 patents for PGA architecture
+- Filed 3 patents for GSEP architecture
 
 ### [CTO - To Be Hired]
 **Chief Technology Officer**
@@ -455,7 +455,7 @@ PGA attacks that **$42B "failure market"**.
 
 ### Milestones with This Capital:
 
-✅ Launch PGA Cloud (public beta)
+✅ Launch GSEP Cloud (public beta)
 ✅ 1,000 active developers
 ✅ 50 paying customers
 ✅ $250K MRR
@@ -471,18 +471,18 @@ PGA attacks that **$42B "failure market"**.
 
 ### In 3 Years:
 
-**PGA becomes the standard for AI agent deployment.**
+**GSEP becomes the standard for AI agent deployment.**
 
 Just like:
 - Docker → Containers
 - Kubernetes → Orchestration
-- **PGA → Prompt Operating Systems**
+- **GSEP → Prompt Operating Systems**
 
 ### The Question Will Be:
 
-> "What PGA runtime are you using?"
+> "What GSEP runtime are you using?"
 
-Not "Are you using PGA?"
+Not "Are you using GSEP?"
 
 ### Impact:
 
@@ -496,7 +496,7 @@ Not "Are you using PGA?"
 - Cross-pollination of AI capabilities
 - A thriving ecosystem of intelligence
 
-🚀 **PGA expands beyond text**
+🚀 **GSEP expands beyond text**
 - Robotics (physical agents)
 - IoT (smart devices)
 - Gaming (NPC intelligence)
@@ -514,7 +514,7 @@ Not "Are you using PGA?"
 **Visual:** Logo + contact info
 
 ```
-PGA
+GSEP
 Genomic Self-Evolving Prompts
 
 We're not building another AI tool.

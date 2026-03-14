@@ -1,7 +1,7 @@
 {
   "name": "@pga-ai/adapters-llm-anthropic",
   "version": "0.1.0",
-  "description": "Anthropic Claude adapter for PGA",
+  "description": "Anthropic Claude adapter for GSEP",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",

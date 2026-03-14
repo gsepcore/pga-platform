@@ -1,7 +1,7 @@
 /**
  * Complete Monitoring System Demo — Direct Import Version
  *
- * Demonstrates PGA monitoring capabilities with direct imports from source.
+ * Demonstrates GSEP monitoring capabilities with direct imports from source.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-27
@@ -12,9 +12,9 @@ import { MonitoringDashboard } from '../packages/core/src/monitoring/MonitoringD
 
 async function completeMonitoringDemo() {
     console.log('╔═══════════════════════════════════════════════════════════════╗');
-    console.log('║  PGA MONITORING SYSTEM — Complete Demo                       ║');
+    console.log('║  GSEP MONITORING SYSTEM — Complete Demo                      ║');
     console.log('╠═══════════════════════════════════════════════════════════════╣');
-    console.log('║  This demo simulates a production PGA deployment with:       ║');
+    console.log('║  This demo simulates a production GSEP deployment with:      ║');
     console.log('║  • Multiple concurrent requests                              ║');
     console.log('║  • Different models (Claude, GPT-4)                          ║');
     console.log('║  • Success and failure scenarios                             ║');

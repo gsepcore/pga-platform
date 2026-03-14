@@ -1,7 +1,7 @@
 /**
  * FunctionLLMAdapter — Bridges async functions into the LLMAdapter interface
  *
- * Wraps any `(input: string) => Promise<string>` so it can be used with PGA.
+ * Wraps any `(input: string) => Promise<string>` so it can be used with GSEP.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

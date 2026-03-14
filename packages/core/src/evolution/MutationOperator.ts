@@ -411,7 +411,7 @@ export class ToolSelectionBiasOperator implements IMutationOperator {
  * Token Compression Operator - Evolutionary Token Reduction
  *
  * Uses LLM to compress gene content while preserving ALL functional capabilities.
- * This is the core of PGA's token optimization: never discard a functional gene,
+ * This is the core of GSEP's token optimization: never discard a functional gene,
  * instead compress it to use fewer tokens with identical behavior.
  *
  * Key principles:

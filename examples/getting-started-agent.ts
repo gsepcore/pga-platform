@@ -1,5 +1,5 @@
 /**
- * Getting Started with PGA Platform
+ * Getting Started with GSEP Platform
  *
  * This example shows how to create a basic agent with:
  * - Gene Bank integration
@@ -11,7 +11,7 @@
  */
 
 import {
-    // Core PGA
+    // Core GSEP
     PGA,
 
     // Adapters
@@ -67,11 +67,11 @@ const config: AgentConfig = {
 };
 
 // ============================================================================
-// STEP 2: INITIALIZE PGA AGENT
+// STEP 2: INITIALIZE GSEP AGENT
 // ============================================================================
 
 async function createAgent() {
-    console.log('🚀 Initializing PGA Agent...\n');
+    console.log('🚀 Initializing GSEP Agent...\n');
 
     // Create LLM adapter
     const llmAdapter = new ClaudeAdapter({
@@ -91,7 +91,7 @@ async function createAgent() {
         enableTHK: config.geneBank.enableTHK,
     });
 
-    // Initialize PGA
+    // Initialize GSEP
     const pga = new PGA({
         llm: llmAdapter,
         geneBank,
@@ -99,7 +99,7 @@ async function createAgent() {
         tenantId: config.tenantId,
     });
 
-    console.log('✅ PGA Agent initialized successfully!\n');
+    console.log('✅ GSEP Agent initialized successfully!\n');
 
     return { pga, geneBank, llmAdapter };
 }
@@ -296,7 +296,7 @@ async function runAgentDemo(pga: PGA, geneBank: GeneBank) {
 async function main() {
     try {
         console.log('═══════════════════════════════════════════════════════');
-        console.log('   PGA Platform - Getting Started Demo');
+        console.log('   GSEP Platform - Getting Started Demo');
         console.log('═══════════════════════════════════════════════════════\n');
 
         // Check for API key

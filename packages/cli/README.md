@@ -1,6 +1,6 @@
 # @pga-ai/cli
 
-Interactive command-line interface for PGA (Genomic Self-Evolving Prompts).
+Interactive command-line interface for GSEP (Genomic Self-Evolving Prompts).
 
 ## Installation
 
@@ -19,7 +19,7 @@ npm install --save-dev @pga-ai/cli
 ## Quick Start
 
 ```bash
-# Initialize a new PGA project
+# Initialize a new GSEP project
 pga init
 
 # Create a genome
@@ -42,7 +42,7 @@ pga status
 
 ### `pga init`
 
-Initialize a new PGA project with templates.
+Initialize a new GSEP project with templates.
 
 ```bash
 pga init                      # Interactive template selection
@@ -53,7 +53,7 @@ pga init --dir ./my-project   # Specify directory
 ```
 
 **Templates:**
-- **basic** - Simple PGA setup with Claude
+- **basic** - Simple GSEP setup with Claude
 - **advanced** - Multi-model support + monitoring
 - **enterprise** - Production-ready with PostgreSQL
 
@@ -134,7 +134,7 @@ pga status --watch      # Watch mode (updates every 5s)
 
 ### `pga config`
 
-Configure PGA settings.
+Configure GSEP settings.
 
 ```bash
 pga config --list                           # List all settings
@@ -173,14 +173,14 @@ pga doctor --fix    # Attempt to fix issues
 **Checks:**
 - Node.js version (requires 20+)
 - TypeScript installation
-- PGA core package
+- GSEP core package
 - Environment variables
 
 ## Project Templates
 
 ### Basic Template
 
-Simple PGA setup for getting started quickly.
+Simple GSEP setup for getting started quickly.
 
 **Includes:**
 - TypeScript configuration
@@ -350,7 +350,7 @@ Always commit your `package.json` and `tsconfig.json`:
 
 ```bash
 git add package.json tsconfig.json src/
-git commit -m "Initialize PGA project"
+git commit -m "Initialize GSEP project"
 ```
 
 ### 3. Environment Variables
@@ -444,6 +444,6 @@ MIT
 
 ## Links
 
-- [PGA Core](../../core/README.md)
+- [GSEP Core](../../core/README.md)
 - [Documentation](https://gsepcore.com/docs)
 - [GitHub](https://github.com/pga-ai/pga-platform)

@@ -1,5 +1,5 @@
 /**
- * Circuit Breaker for PGA
+ * Circuit Breaker for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Prevents cascade failures with circuit breaker pattern.

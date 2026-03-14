@@ -1,5 +1,5 @@
 /**
- * Metrics Collector for PGA
+ * Metrics Collector for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Collects and aggregates performance metrics, costs, and health data.
@@ -308,7 +308,7 @@ interface RequestMetrics {
 /**
  * Metrics Collector
  *
- * Collects and aggregates metrics from PGA operations.
+ * Collects and aggregates metrics from GSEP operations.
  */
 export class MetricsCollector {
     private config: Required<MetricsCollectorConfig>;

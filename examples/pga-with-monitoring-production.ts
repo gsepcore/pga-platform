@@ -1,7 +1,7 @@
 /**
- * PGA with Integrated Monitoring — Production Example
+ * GSEP with Integrated Monitoring — Production Example
  *
- * Demonstrates how to use PGA with built-in monitoring and dashboard
+ * Demonstrates how to use GSEP with built-in monitoring and dashboard
  * in a production environment.
  *
  * @author Luis Alfredo Velasquez Duran
@@ -71,14 +71,14 @@ class MockStorageAdapter {
  */
 async function productionExample() {
     console.log('╔═══════════════════════════════════════════════════════════════╗');
-    console.log('║  PGA WITH INTEGRATED MONITORING — Production Setup           ║');
+    console.log('║  GSEP WITH INTEGRATED MONITORING — Production Setup          ║');
     console.log('╚═══════════════════════════════════════════════════════════════╝\n');
 
     // ═══════════════════════════════════════════════════════
-    // STEP 1: Initialize PGA with Monitoring Configuration
+    // STEP 1: Initialize GSEP with Monitoring Configuration
     // ═══════════════════════════════════════════════════════
 
-    console.log('🚀 Initializing PGA with monitoring...\n');
+    console.log('🚀 Initializing GSEP with monitoring...\n');
 
     const pga = new PGA({
         llm: new MockLLMAdapter() as any,
@@ -111,10 +111,10 @@ async function productionExample() {
         },
     });
 
-    // Initialize PGA (also starts dashboard if enabled)
+    // Initialize GSEP (also starts dashboard if enabled)
     await pga.initialize();
 
-    console.log('✓ PGA initialized with monitoring enabled');
+    console.log('✓ GSEP initialized with monitoring enabled');
     console.log('✓ Dashboard started (refreshing every 2s)\n');
 
     // ═══════════════════════════════════════════════════════
@@ -222,7 +222,7 @@ async function productionExample() {
     // Stop dashboard and log shutdown
     pga.shutdown();
 
-    console.log('✓ PGA shutdown complete\n');
+    console.log('✓ GSEP shutdown complete\n');
 
     // ═══════════════════════════════════════════════════════
     // PRODUCTION BEST PRACTICES

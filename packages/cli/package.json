@@ -1,7 +1,7 @@
 {
   "name": "@pga-ai/cli",
   "version": "0.1.0",
-  "description": "Interactive CLI for PGA (Genomic Self-Evolving Prompts)",
+  "description": "Interactive CLI for GSEP (Genomic Self-Evolving Prompts)",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",
@@ -51,7 +51,7 @@
     "typescript": "^5.6.0"
   },
   "keywords": [
-    "pga",
+    "gsep",
     "cli",
     "prompt-evolution",
     "ai-agents",

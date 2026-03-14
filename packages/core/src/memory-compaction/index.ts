@@ -1,6 +1,6 @@
 /**
  * @file Memory Compaction Module
- * @description Intelligent memory management and conversation compaction for PGA agents
+ * @description Intelligent memory management and conversation compaction for GSEP agents
  * @module @pga-ai/core/memory-compaction
  *
  * @example

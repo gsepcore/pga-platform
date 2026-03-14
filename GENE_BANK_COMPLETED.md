@@ -8,7 +8,7 @@
 
 ## 🎉 Executive Summary
 
-The PGA platform has been enhanced with a revolutionary **Gene Bank** system that enables **Horizontal Knowledge Transfer (THK)** between AI agents, inspired by bacterial plasmid sharing. This represents a fundamental breakthrough in how AI agents learn and share knowledge.
+The GSEP platform has been enhanced with a revolutionary **Gene Bank** system that enables **Horizontal Knowledge Transfer (THK)** between AI agents, inspired by bacterial plasmid sharing. This represents a fundamental breakthrough in how AI agents learn and share knowledge.
 
 ### What Was Built
 

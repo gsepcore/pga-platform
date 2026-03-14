@@ -1,5 +1,5 @@
 /**
- * Anthropic Claude Adapter for PGA
+ * Anthropic Claude Adapter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Implements LLMAdapter interface for Anthropic's Claude models

@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /**
- * create-pga-ai — Interactive PGA Platform Installer
+ * create-pga-ai — Interactive GSEP Platform Installer
  *
- * One command to create a complete PGA agent project:
+ * One command to create a complete GSEP agent project:
  * npm create pga-ai@latest my-agent
  *
  * @author Luis Alfredo Velasquez Duran
@@ -25,7 +25,7 @@ function displayBanner() {
     console.log('\n');
     console.log(
         chalk.cyan(
-            figlet.textSync('PGA Platform', {
+            figlet.textSync('GSEP Platform', {
                 font: 'Standard',
                 horizontalLayout: 'default',
             })
@@ -49,7 +49,7 @@ function displayBanner() {
 // Main CLI
 program
     .name('create-pga-ai')
-    .description('Create a new PGA agent project')
+    .description('Create a new GSEP agent project')
     .version('0.1.0')
     .argument('[project-name]', 'Project name')
     .option('--template <template>', 'Project template (chatbot|code-assistant|customer-support|custom)')
@@ -85,7 +85,7 @@ program
                 name = inputName;
             }
 
-            console.log(chalk.cyan('\n📋 Let\'s configure your PGA agent...\n'));
+            console.log(chalk.cyan('\n📋 Let\'s configure your GSEP agent...\n'));
 
             // Prompt user for configuration
             const config = await promptUser(options);
@@ -113,7 +113,7 @@ function displaySuccessMessage(projectName: string, config: any) {
     console.log('\n');
     console.log(
         boxen(
-            chalk.green.bold('🎉 Success! Your PGA agent is ready.\n\n') +
+            chalk.green.bold('🎉 Success! Your GSEP agent is ready.\n\n') +
             chalk.white('Next steps:\n') +
             chalk.cyan(`  cd ${projectName}\n`) +
             chalk.cyan('  npm run dev\n\n') +

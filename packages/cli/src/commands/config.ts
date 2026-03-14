@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Config Command
+ * GSEP CLI - Config Command
  */
 
 export async function config(options: any): Promise<void> {

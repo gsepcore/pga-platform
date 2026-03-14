@@ -1,7 +1,7 @@
 {
   "name": "create-pga-ai",
   "version": "0.1.1",
-  "description": "Create PGA agents with one command - Interactive installer for PGA Platform",
+  "description": "Create GSEP agents with one command - Interactive installer for GSEP Platform",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "repository": {
@@ -27,7 +27,7 @@
     "clean": "rm -rf dist"
   },
   "keywords": [
-    "pga",
+    "gsep",
     "create-pga-ai",
     "installer",
     "cli",

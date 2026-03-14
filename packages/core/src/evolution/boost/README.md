@@ -1,12 +1,12 @@
 # 🚀 Evolution Boost 2.0 — The 10 → 1000 Upgrade
 
-**Making PGA evolution 100x more powerful while keeping everything backward compatible**
+**Making GSEP evolution 100x more powerful while keeping everything backward compatible**
 
 ---
 
 ## 🎯 What is Evolution Boost 2.0?
 
-Evolution Boost 2.0 is a **NON-DESTRUCTIVE** upgrade to PGA's evolution system that makes it **dramatically more powerful** while keeping all existing code working.
+Evolution Boost 2.0 is a **NON-DESTRUCTIVE** upgrade to GSEP's evolution system that makes it **dramatically more powerful** while keeping all existing code working.
 
 ### The Problem
 

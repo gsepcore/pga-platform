@@ -1,5 +1,5 @@
 /**
- * PostgreSQL Storage Adapter for PGA
+ * PostgreSQL Storage Adapter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Implements StorageAdapter interface for PostgreSQL
@@ -87,7 +87,7 @@ export class PostgresAdapter implements StorageAdapter {
             const schema = readFileSync(schemaPath, 'utf-8');
 
             await this.pool.query(schema);
-            console.log('[PGA] PostgreSQL schema initialized');
+            console.log('[GSEP] PostgreSQL schema initialized');
         } catch (error) {
             throw new Error(
                 `Failed to initialize PostgreSQL schema: ${error instanceof Error ? error.message : 'Unknown error'}`,

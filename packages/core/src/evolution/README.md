@@ -1,10 +1,10 @@
-# PGA Evolution Engine - Living OS Core
+# GSEP Evolution Engine - Living OS Core
 
 **Version**: 2.0.0
 **Author**: Luis Alfredo Velasquez Duran
 **Created**: 2026-02-27
 
-The Evolution Engine is the heart of PGA's "Living OS" - enabling autonomous self-improvement without human intervention.
+The Evolution Engine is the heart of GSEP's "Living OS" - enabling autonomous self-improvement without human intervention.
 
 ---
 
@@ -482,7 +482,7 @@ Want to add a custom mutation operator? See [CONTRIBUTING.md](../../../../CONTRI
 
 ---
 
-**Built with PGA Platform** 🧬
+**Built with GSEP Platform** 🧬
 **The Living OS for AI Agents**
 
 *© 2026 Luis Alfredo Velasquez Duran - Germany*

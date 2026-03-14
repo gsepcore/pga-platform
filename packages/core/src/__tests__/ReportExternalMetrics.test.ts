@@ -2,7 +2,7 @@
  * GenomeInstance.reportExternalMetrics() Tests
  *
  * Tests for the Pull/Push model that allows external agents
- * to feed metrics into PGA without PGA touching the LLM call.
+ * to feed metrics into GSEP without GSEP touching the LLM call.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

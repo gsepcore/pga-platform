@@ -1,5 +1,5 @@
 /**
- * Google Gemini Adapter for PGA
+ * Google Gemini Adapter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Supports:

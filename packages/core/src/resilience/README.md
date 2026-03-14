@@ -1,4 +1,4 @@
-# PGA Resilience
+# GSEP Resilience
 
 Production-hardening features: Circuit Breakers, Retry Logic, and Error Recovery.
 

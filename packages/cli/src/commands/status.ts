@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Status Command
+ * GSEP CLI - Status Command
  */
 
 export async function status(options: any): Promise<void> {

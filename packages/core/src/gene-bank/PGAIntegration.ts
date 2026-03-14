@@ -1,7 +1,7 @@
 /**
- * PGA Core Integration for Gene Bank
+ * GSEP Core Integration for Gene Bank
  *
- * Shows how to integrate Gene Bank with PGA's mutation engine
+ * Shows how to integrate Gene Bank with GSEP's mutation engine
  * for automatic gene extraction and adoption
  *
  * @version 0.4.0
@@ -19,13 +19,13 @@ import type { GeneStorageAdapter } from './GeneBank';
 import type { LLMAdapter } from '../interfaces/LLMAdapter';
 import type { MetricsCollector } from '../monitoring/MetricsCollector';
 
-// Import PGA types (these would be from actual PGA core)
+// Import GSEP types (these would be from actual GSEP core)
 type Genome = any; // Placeholder
 type MutationProposal = any; // Placeholder
 type FitnessMetrics = any; // Placeholder
 
 /**
- * Configuration for PGA Gene Bank Integration
+ * Configuration for GSEP Gene Bank Integration
  */
 export interface PGAGeneBankConfig {
     /** Enable automatic gene extraction */
@@ -51,9 +51,9 @@ export interface PGAGeneBankConfig {
 }
 
 /**
- * PGA Gene Bank Integration
+ * GSEP Gene Bank Integration
  *
- * Connects Gene Bank with PGA's mutation engine for:
+ * Connects Gene Bank with GSEP's mutation engine for:
  * 1. Auto-extraction when mutations succeed
  * 2. Auto-adoption when similar tasks detected
  * 3. Lineage tracking for gene evolution
@@ -93,7 +93,7 @@ export class PGAGeneBankIntegration {
     }
 
     /**
-     * Hook into PGA mutation lifecycle
+     * Hook into GSEP mutation lifecycle
      *
      * Call this after a mutation is promoted to production
      */
@@ -145,7 +145,7 @@ export class PGAGeneBankIntegration {
     }
 
     /**
-     * Hook into PGA task execution
+     * Hook into GSEP task execution
      *
      * Call this before executing a task to check for helpful genes
      */
@@ -200,7 +200,7 @@ export class PGAGeneBankIntegration {
     }
 
     /**
-     * Hook into PGA task completion
+     * Hook into GSEP task completion
      *
      * Call this after a task completes to track gene performance
      */
@@ -266,7 +266,7 @@ export class PGAGeneBankIntegration {
     }
 
     // ========================================================================
-    // HELPER METHODS (Placeholders - implement based on actual PGA API)
+    // HELPER METHODS (Placeholders - implement based on actual GSEP API)
     // ========================================================================
 
     private extractPromptFromGenome(genome: Genome, version: 'before' | 'after'): string {
@@ -287,7 +287,7 @@ export class PGAGeneBankIntegration {
     }
 
     private convertFitnessMetrics(fitnessMetrics: FitnessMetrics): any {
-        // TODO: Convert PGA fitness metrics to gene fitness format
+        // TODO: Convert GSEP fitness metrics to gene fitness format
         return {
             taskSuccessRate: fitnessMetrics?.successRate || 0,
             tokenEfficiency: fitnessMetrics?.tokenEfficiency || 0,
@@ -307,7 +307,7 @@ export class PGAGeneBankIntegration {
  * Usage Example:
  *
  * ```typescript
- * // Initialize PGA with Gene Bank
+ * // Initialize GSEP with Gene Bank
  * const pga = new PGA({
  *   llm: new ClaudeAdapter({ apiKey }),
  *   storage: new PostgresAdapter({ connectionString }),
@@ -325,7 +325,7 @@ export class PGAGeneBankIntegration {
  *   'tenant_company_123'
  * );
  *
- * // Hook into PGA lifecycle
+ * // Hook into GSEP lifecycle
  * pga.on('mutation:promoted', async (genome, mutation, oldFitness, newFitness) => {
  *   const gene = await geneBankIntegration.onMutationPromoted(
  *     genome,

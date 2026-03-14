@@ -1,5 +1,5 @@
 /**
- * PGA.wrap() Tests
+ * PGA.wrap() Tests (GSEP)
  *
  * Tests for the universal self-evolving agent middleware
  *

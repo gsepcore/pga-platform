@@ -1,6 +1,6 @@
 # @pga-ai/adapters-llm-perplexity
 
-> Perplexity adapter for PGA — web-search powered self-evolving agents
+> Perplexity adapter for GSEP — web-search powered self-evolving agents
 
 Your agent can search the web in real-time while evolving its prompts.
 

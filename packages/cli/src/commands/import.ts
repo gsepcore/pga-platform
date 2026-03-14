@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Import Command
+ * GSEP CLI - Import Command
  */
 
 export async function importGenome(file: string, options: any): Promise<void> {

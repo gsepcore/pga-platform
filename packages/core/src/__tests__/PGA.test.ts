@@ -1,5 +1,5 @@
 /**
- * PGA Core Tests
+ * GSEP Core Tests
  *
  * Tests for the main PGA class with integrated monitoring
  *
@@ -92,21 +92,21 @@ describe('PGA', () => {
             expect(() => new PGA({
                 llm: undefined as any,
                 storage,
-            })).toThrow('[PGA] LLM adapter is required');
+            })).toThrow('[GSEP] LLM adapter is required');
         });
 
         it('should throw descriptive error when LLM adapter is null', () => {
             expect(() => new PGA({
                 llm: null as any,
                 storage,
-            })).toThrow('[PGA] LLM adapter is required');
+            })).toThrow('[GSEP] LLM adapter is required');
         });
 
         it('should throw descriptive error when storage adapter is missing', () => {
             expect(() => new PGA({
                 llm,
                 storage: undefined as any,
-            })).toThrow('[PGA] Storage adapter is required');
+            })).toThrow('[GSEP] Storage adapter is required');
         });
 
         it('should include actionable instructions in error message', () => {
@@ -127,7 +127,7 @@ describe('PGA', () => {
     });
 
     describe('initialization', () => {
-        it('should initialize PGA with default monitoring config', async () => {
+        it('should initialize GSEP with default monitoring config', async () => {
             const pga = new PGA({
                 llm,
                 storage,
@@ -139,7 +139,7 @@ describe('PGA', () => {
             expect(metrics).toBeDefined();
         });
 
-        it('should initialize PGA with custom monitoring config', async () => {
+        it('should initialize GSEP with custom monitoring config', async () => {
             const pga = new PGA({
                 llm,
                 storage,

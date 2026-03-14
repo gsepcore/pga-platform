@@ -1,7 +1,7 @@
 /**
  * Gene Bank Module
  *
- * Horizontal Knowledge Transfer (THK) system for PGA agents.
+ * Horizontal Knowledge Transfer (THK) system for GSEP agents.
  *
  * Inspired by bacterial plasmid transfer, this module enables agents to:
  * - Extract successful behavioral patterns as "Cognitive Genes"

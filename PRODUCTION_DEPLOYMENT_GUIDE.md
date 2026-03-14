@@ -1,4 +1,4 @@
-# PGA PLATFORM — PRODUCTION DEPLOYMENT GUIDE
+# GSEP PLATFORM — PRODUCTION DEPLOYMENT GUIDE
 
 **Version:** 0.3.0
 **Date:** 2026-03-01
@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-This guide covers the complete production deployment of the PGA platform with all advanced features:
+This guide covers the complete production deployment of the GSEP platform with all advanced features:
 
 - ✅ **Layered Memory** (Phase 1) - 85-95% token reduction
 - ✅ **RAG Engine** (Phase 2) - Knowledge-grounded responses
@@ -23,7 +23,7 @@ All components have been validated with objective KPIs and are production-ready.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      PGA PLATFORM v0.3                      │
+│                      GSEP PLATFORM v0.3                      │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
 │  ┌───────────────┐  ┌──────────────┐  ┌─────────────────┐  │
@@ -38,7 +38,7 @@ All components have been validated with objective KPIs and are production-ready.
 │                             │                               │
 │                   ┌─────────▼─────────┐                     │
 │                   │  GenomeInstance   │                     │
-│                   │   (PGA Agent)     │                     │
+│                   │   (GSEP Agent)    │                     │
 │                   └─────────┬─────────┘                     │
 │                             │                               │
 │         ┌───────────────────┼───────────────────┐           │
@@ -104,7 +104,7 @@ const memory = new LayeredMemory({
 await memory.initialize('genome-id', 'user-123');
 ```
 
-3. **Integrate with PGA:**
+3. **Integrate with GSEP:**
 ```typescript
 const genome = await pga.createGenome({
     name: 'production-agent',
@@ -218,7 +218,7 @@ await ragEngine.indexDocuments(documents);
 console.log('Indexed', documents.length, 'documents');
 ```
 
-4. **Integrate with PGA:**
+4. **Integrate with GSEP:**
 ```typescript
 const genome = await pga.createGenome({
     name: 'rag-enabled-agent',
@@ -318,7 +318,7 @@ async function reasonWithRules(question: string, context: string) {
 }
 ```
 
-3. **Integrate with PGA:**
+3. **Integrate with GSEP:**
 ```typescript
 const genome = await pga.createGenome({
     name: 'reasoning-agent',
@@ -341,7 +341,7 @@ const genome = await pga.createGenome({
 
 ## 🔗 Full Integration Example
 
-**Complete PGA Agent with All Features:**
+**Complete GSEP Agent with All Features:**
 
 ```typescript
 import { PGA, LayeredMemory, RAGEngine, ReasoningEngine, MetricsCollector } from '@pga-ai/core';
@@ -378,7 +378,7 @@ const vectorStore = new PineconeAdapter({
     indexName: 'pga-knowledge',
 });
 
-// 5. Initialize PGA
+// 5. Initialize GSEP
 const pga = new PGA({
     llm,
     storage,
@@ -437,7 +437,7 @@ const pga = new PGA({
 // 6. Create Genome
 const genome = await pga.createGenome({
     name: 'production-agent-v1',
-    description: 'Full-featured PGA agent with memory, RAG, and reasoning',
+    description: 'Full-featured GSEP agent with memory, RAG, and reasoning',
 });
 
 // 7. Use the Agent
@@ -853,7 +853,7 @@ const storage = new PostgresAdapter({ pool });
 
 ## 🏁 Conclusion
 
-The PGA platform with Layered Memory, RAG Engine, and Reasoning Engine is **production-ready**. All components have been:
+The GSEP platform with Layered Memory, RAG Engine, and Reasoning Engine is **production-ready**. All components have been:
 
 ✅ Fully implemented
 ✅ Validated with objective KPIs

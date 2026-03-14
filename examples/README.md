@@ -1,13 +1,13 @@
-# 🧬 PGA Examples
+# 🧬 GSEP Examples
 
-This directory contains examples demonstrating different aspects of PGA integration.
+This directory contains examples demonstrating different aspects of GSEP integration.
 
 ## 📚 Available Examples
 
 ### 1. **basic-usage.ts** — Complete Integration Example
 
 Full example showing:
-- PGA initialization
+- GSEP initialization
 - Genome creation
 - **Welcome message** (agent announcement)
 - Layer configuration
@@ -37,7 +37,7 @@ npx tsx examples/welcome-messages.ts
 
 ## 🎯 Welcome Message Integration
 
-When a user installs PGA in their agent, the agent should announce its new capabilities using `getWelcomeMessage()`:
+When a user installs GSEP in their agent, the agent should announce its new capabilities using `getWelcomeMessage()`:
 
 ### Quick Integration
 
@@ -47,7 +47,7 @@ import { PGA } from '@pga-ai/core';
 const pga = new PGA({ /* config */ });
 const genome = await pga.createGenome({ name: 'my-agent' });
 
-// Agent announces PGA integration
+// Agent announces GSEP integration
 const announcement = genome.getWelcomeMessage('detailed');
 console.log(announcement);
 
@@ -163,7 +163,7 @@ You can also create your own custom welcome message:
 ```typescript
 function getCustomWelcome(genome: GenomeInstance): string {
     return `
-🧬 ${genome.name} is now PGA-powered!
+🧬 ${genome.name} is now GSEP-powered!
 
 Configuration:
 - Mutation Rate: ${genome.config.mutationRate}
@@ -179,7 +179,7 @@ I'm ready to learn and evolve with you!
 
 ## 📖 More Resources
 
-- [PGA Documentation](https://docs.gsepcore.com)
+- [GSEP Documentation](https://docs.gsepcore.com)
 - [API Reference](https://docs.gsepcore.com/api)
 - [Best Practices](https://docs.gsepcore.com/guides/best-practices)
 

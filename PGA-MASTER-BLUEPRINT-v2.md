@@ -1,6 +1,6 @@
-# 📘 PGA MASTER BLUEPRINT v2.0
+# 📘 GSEP MASTER BLUEPRINT v2.0
 
-**Proyecto:** PGA (Prompt Genómico Autoevolutivo)
+**Proyecto:** GSEP (Prompt Genómico Autoevolutivo)
 **Fundador:** Luis Alfredo Velasquez Durán
 **Ubicación:** Alemania
 **Año:** 2025
@@ -39,11 +39,11 @@
 
 ## 1. RESUMEN EJECUTIVO
 
-### 1.1 La Tesis de PGA
+### 1.1 La Tesis de GSEP
 
 La IA actual (GPT-4, Claude 3.5, Gemini) es **estática**. Una vez entrenada, sus instrucciones (prompts) son rígidas. Si el entorno cambia o el usuario necesita algo distinto, el sistema falla o requiere que un humano lo "re-programe".
 
-**PGA rompe este límite.** Introducimos el concepto de **Inteligencia Biomimética Aplicada al Software**. PGA no es un prompt; es un **organismo digital** que posee:
+**GSEP rompe este límite.** Introducimos el concepto de **Inteligencia Biomimética Aplicada al Software**. GSEP no es un prompt; es un **organismo digital** que posee:
 
 - **ADN** (instrucciones inmutables y mutables)
 - **Metabolismo** (procesamiento adaptativo)
@@ -55,13 +55,13 @@ La IA actual (GPT-4, Claude 3.5, Gemini) es **estática**. Una vez entrenada, su
 2. **Costo de Mantenimiento:** Las empresas gastan miles de horas ajustando prompts manualmente.
 3. **Falta de Personalización Real:** La IA no se adapta al estilo único de cada usuario de forma profunda y persistente.
 
-### 1.3 La Solución: El Ecosistema PGA
+### 1.3 La Solución: El Ecosistema GSEP
 
-PGA ofrece una plataforma triple:
+GSEP ofrece una plataforma triple:
 
-1. **PGA Core (SDK):** La librería para que cualquier desarrollador cree agentes que evolucionan solos.
-2. **PGA Cloud (API):** Infraestructura escalable para ejecutar genomas de IA en la nube con seguridad enterprise.
-3. **PGA Marketplace:** Un mercado global donde los usuarios pueden comprar y vender "Genes" (habilidades optimizadas) para sus agentes.
+1. **GSEP Core (SDK):** La librería para que cualquier desarrollador cree agentes que evolucionan solos.
+2. **GSEP Cloud (API):** Infraestructura escalable para ejecutar genomas de IA en la nube con seguridad enterprise.
+3. **GSEP Marketplace:** Un mercado global donde los usuarios pueden comprar y vender "Genes" (habilidades optimizadas) para sus agentes.
 
 ---
 
@@ -69,20 +69,20 @@ PGA ofrece una plataforma triple:
 
 ### 2.1 El Mercado de Agentes Autónomos
 
-Se estima que el mercado de agentes de IA alcanzará los **$47.1 mil millones para 2030**. Sin embargo, el **90% de los proyectos actuales fallan en producción** debido a la falta de adaptabilidad. PGA ataca el 100% de ese mercado "fallido".
+Se estima que el mercado de agentes de IA alcanzará los **$47.1 mil millones para 2030**. Sin embargo, el **90% de los proyectos actuales fallan en producción** debido a la falta de adaptabilidad. GSEP ataca el 100% de ese mercado "fallido".
 
 ### 2.2 Diferenciadores Estratégicos (Moats)
 
 1. **Moat Técnico (El Algoritmo de Mutación):** Nuestra lógica de "Selección Natural" aplicada a tokens es única y difícil de replicar sin nuestra arquitectura de capas (ADN Inmutable vs. Epigenoma Mutable).
 
-2. **Moat de Datos (El Registro Genómico):** A medida que PGA evoluciona, genera una base de datos de "mutaciones exitosas" que se convierte en el activo más valioso de la empresa.
+2. **Moat de Datos (El Registro Genómico):** A medida que GSEP evoluciona, genera una base de datos de "mutaciones exitosas" que se convierte en el activo más valioso de la empresa.
 
 3. **Moat de Ecosistema (Orbis):** Al tener a Orbis como el "hardware/interfaz" de referencia, controlamos la experiencia de usuario de punta a punta.
 
 ### 2.3 Análisis Competitivo
 
-| Feature | PGA | LangChain | AutoGPT | Prompt Layer | Dust.tt |
-|---------|-----|-----------|---------|--------------|---------|
+| Feature | GSEP | LangChain | AutoGPT | Prompt Layer | Dust.tt |
+|---------|------|-----------|---------|--------------|---------|
 | **Auto-evolución** | ✅ | ❌ | ❌ | ❌ | ❌ |
 | **Model-agnostic** | ✅ | ✅ | ❌ | ✅ | ✅ |
 | **Marketplace de genes** | ✅ | ❌ | ❌ | ❌ | ❌ |
@@ -96,7 +96,7 @@ Se estima que el mercado de agentes de IA alcanzará los **$47.1 mil millones pa
 
 ## 3. DEFINICIÓN DEL PRODUCTO
 
-### 3.1 El "Genoma" de PGA
+### 3.1 El "Genoma" de GSEP
 
 El producto no entrega texto, entrega **Estructuras Genómicas** compuestas por:
 
@@ -133,7 +133,7 @@ El producto no entrega texto, entrega **Estructuras Genómicas** compuestas por:
 
 ### 4.1 El Ciclo de Vida del Genoma (The Natural Selection Loop)
 
-El PGA opera en un bucle infinito de 4 etapas:
+El GSEP opera en un bucle infinito de 4 etapas:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -152,7 +152,7 @@ El PGA opera en un bucle infinito de 4 etapas:
 └─────────────────────────────────────────┘
 ```
 
-### 4.2 Estructura de Datos: El "PGA Schema"
+### 4.2 Estructura de Datos: El "GSEP Schema"
 
 ```json
 {
@@ -239,7 +239,7 @@ def mutate(genome_a, genome_b):
 
 ## 5. MODELO DE NEGOCIO Y MONETIZACIÓN
 
-### 5.1 PGA Cloud (SaaS)
+### 5.1 GSEP Cloud (SaaS)
 
 | Tier | Precio | Mutaciones/mes | Usuarios | Target |
 |------|--------|----------------|----------|--------|
@@ -253,7 +253,7 @@ def mutate(genome_a, genome_b):
 **Modelo de comisión:**
 - Usuario A crea un "Gen de Contabilidad Experta" optimizado durante 1,000 horas
 - Usuario B lo compra por $50
-- PGA se queda con 25% ($12.50)
+- GSEP se queda con 25% ($12.50)
 - Usuario A recibe 75% ($37.50)
 
 **Proyección del Marketplace (Año 2):**
@@ -261,14 +261,14 @@ def mutate(genome_a, genome_b):
 - 10,000 transacciones/mes
 - Ticket promedio: $30
 - GMV mensual: $300K
-- Revenue PGA (25%): $75K/mes
+- Revenue GSEP (25%): $75K/mes
 
 ### 5.3 Licenciamiento "White Label" (On-Premise)
 
 Empresas como bancos o aseguradoras pueden comprar:
 
 - **Licencia anual:** $50K-$250K
-- **Incluye:** PGA Core + Soporte + Updates
+- **Incluye:** GSEP Core + Soporte + Updates
 - **No incluye:** Datos salen de su red (privacidad total)
 
 ---
@@ -284,14 +284,14 @@ Empresas como bancos o aseguradoras pueden comprar:
 
 ### Fase 2: Expansión (Mes 4-8) - Q2-Q3 2025
 - 🚀 Lanzamiento público de @pga-ai/core
-- 🚀 PGA Cloud Dashboard (Beta)
+- 🚀 GSEP Cloud Dashboard (Beta)
 - 🚀 Primeras 10 empresas beta testing
 - 🚀 SDK para LangChain, AutoGPT
 - 🎯 **Hito:** 1,000 instalaciones NPM/semana
 
 ### Fase 3: Ecosistema (Mes 9-18) - Q4 2025 - Q2 2026
 - 🌐 Lanzamiento del Gene Marketplace
-- 🌐 PGA DevCon (evento global para devs)
+- 🌐 GSEP DevCon (evento global para devs)
 - 🌐 Integración IoT/Robótica
 - 🌐 Series A fundraising ($3M-$5M)
 - 🎯 **Hito:** $250K MRR, 50 clientes enterprise
@@ -331,12 +331,12 @@ Empresas como bancos o aseguradoras pueden comprar:
 
 #### **Copyright de "Genomas"**
 - Los genomas evolucionados son **propiedad del creador/usuario**
-- El formato `.pga` y el motor son propiedad de PGA Labs
+- El formato `.pga` y el motor son propiedad de GSEP Labs
 - Marketplace: Los vendedores retienen IP pero otorgan licencia de uso
 
 ### 7.3 Trademark Protection
 
-- **PGA™** - Registered trademark
+- **GSEP™** - Registered trademark
 - **Genomic Self-Evolving Prompts™**
 - **Gene Store™**
 
@@ -350,9 +350,9 @@ Empresas como bancos o aseguradoras pueden comprar:
 **Impacto:** Alto
 
 **Mitigación:**
-- PGA es **Model-Agnostic** (funciona con GPT, Claude, Llama, Gemini)
+- GSEP es **Model-Agnostic** (funciona con GPT, Claude, Llama, Gemini)
 - OpenAI solo optimiza para GPT → Vendor lock-in
-- Posicionamiento: "PGA es el sistema operativo, OpenAI es solo un chip"
+- Posicionamiento: "GSEP es el sistema operativo, OpenAI es solo un chip"
 
 ### Riesgo 2: "Alucinación Evolutiva" (El agente muta hacia comportamiento erróneo)
 
@@ -370,7 +370,7 @@ Empresas como bancos o aseguradoras pueden comprar:
 **Impacto:** Medio
 
 **Mitigación:**
-- Crear capa de abstracción: Implementar PGA en **5 líneas de código**
+- Crear capa de abstracción: Implementar GSEP en **5 líneas de código**
 - Templates pre-hechos para casos de uso comunes
 - Developer Relations team desde Mes 4
 
@@ -390,12 +390,12 @@ Empresas como bancos o aseguradoras pueden comprar:
 
 ### 9.1 Fase "The Trojan Horse" (Mes 1-6)
 
-**Objetivo:** Validar PGA sin venderlo directamente.
+**Objetivo:** Validar GSEP sin venderlo directamente.
 
 **Táctica:** Lanzar **Orbis** como producto de consumo viral.
-- Orbis no se vende como "IA con PGA"
+- Orbis no se vende como "IA con GSEP"
 - Se vende como "El asistente que realmente te conoce"
-- El éxito de Orbis valida PGA ante inversores
+- El éxito de Orbis valida GSEP ante inversores
 
 **Métrica de éxito:** 10,000 usuarios activos de Orbis en 6 meses.
 
@@ -404,9 +404,9 @@ Empresas como bancos o aseguradoras pueden comprar:
 **Objetivo:** Crear comunidad de early adopters.
 
 **Táctica:**
-1. **PGA Hackathons:** Premios de $10K para los mejores "Genes" creados
+1. **GSEP Hackathons:** Premios de $10K para los mejores "Genes" creados
 2. **Documentación God-Mode:** Tutoriales, videos, ejemplos listos (boilerplates)
-3. **Open-source el Core SDK:** Mientras PGA Cloud es paid
+3. **Open-source el Core SDK:** Mientras GSEP Cloud es paid
 
 **Métrica de éxito:** 5,000 instalaciones de @pga-ai/core en NPM.
 
@@ -428,7 +428,7 @@ Empresas como bancos o aseguradoras pueden comprar:
 ### 10.1 Roles Clave (Mes 1-12)
 
 ```
-PGA Labs Inc.
+GSEP Labs Inc.
 │
 ├── CEO/Founder: Luis Alfredo Velasquez Durán
 │
@@ -460,7 +460,7 @@ PGA Labs Inc.
 
 ### 11.1 El "Sandbox de Mutación" (Shadow Mode)
 
-**Protocolo PGA-Shadow:**
+**Protocolo GSEP-Shadow:**
 
 1. **Simulación en Paralelo:**
    Cuando el motor genera una "Cepa B" (mutación), esta procesa las mismas entradas que la "Cepa A" (dominante) en un entorno aislado.
@@ -528,11 +528,11 @@ await myGenome.importGene(sanitizedGene, {
 ```
 
 **Universalidad:**
-El gen exportado es compatible con cualquier instancia de PGA, independientemente del LLM (GPT, Claude, Llama).
+El gen exportado es compatible con cualquier instancia de GSEP, independientemente del LLM (GPT, Claude, Llama).
 
 ### 12.2 Orquestación Multi-Agente (The Swarm)
 
-PGA permite que múltiples agentes con diferentes genomas colaboren:
+GSEP permite que múltiples agentes con diferentes genomas colaboren:
 
 ```typescript
 // Agente Líder delega a especialistas
@@ -580,11 +580,11 @@ El sistema alcanzó fitness >0.85 en **solo 18 generaciones** (mucho más rápid
 
 **Comparación con prompt estático optimizado manualmente:**
 
-| Métrica | Prompt Manual (Best-effort) | PGA (Auto-evolved) | Winner |
+| Métrica | Prompt Manual (Best-effort) | GSEP (Auto-evolved) | Winner |
 |---------|----------------------------|-------------------|--------|
-| Fitness Score | 0.82 | 0.89 | 🏆 PGA |
-| Tiempo de optimización | 40 horas (humano) | 8 horas (auto) | 🏆 PGA |
-| Adaptación a nuevo contexto | Requiere re-trabajo manual | Automático | 🏆 PGA |
+| Fitness Score | 0.82 | 0.89 | 🏆 GSEP |
+| Tiempo de optimización | 40 horas (humano) | 8 horas (auto) | 🏆 GSEP |
+| Adaptación a nuevo contexto | Requiere re-trabajo manual | Automático | 🏆 GSEP |
 
 ---
 
@@ -705,7 +705,7 @@ Total ARR:               ~$4.5M
 | **Tiempo de convergencia** | <48h | <24h | <12h |
 | **Tasa de mutaciones exitosas** | >60% | >70% | >80% |
 | **Latencia de inferencia** | <800ms | <500ms | <300ms |
-| **Uptime de PGA Cloud** | 99% | 99.5% | 99.9% |
+| **Uptime de GSEP Cloud** | 99% | 99.5% | 99.9% |
 
 ### 16.2 KPIs de Negocio (Business Metrics)
 
@@ -726,7 +726,7 @@ Total ARR:               ~$4.5M
 | **Genes publicados** | 100+ | 1,000+ |
 | **Transacciones/mes** | 200 | 5,000 |
 | **GMV (Gross Merchandise Value)** | $5K/mes | $150K/mes |
-| **PGA Revenue (25% comisión)** | $1.25K/mes | $37.5K/mes |
+| **GSEP Revenue (25% comisión)** | $1.25K/mes | $37.5K/mes |
 | **Repeat buyers** | 30% | 60% |
 
 ---
@@ -735,7 +735,7 @@ Total ARR:               ~$4.5M
 
 ### 17.1 Drop-in Replacement
 
-**Objetivo:** Hacer que migrar a PGA sea trivial.
+**Objetivo:** Hacer que migrar a GSEP sea trivial.
 
 **Antes (LangChain):**
 ```typescript
@@ -749,7 +749,7 @@ const chain = new LLMChain({ llm, prompt });
 const result = await chain.call({ input: "Hello!" });
 ```
 
-**Después (PGA - compatible con LangChain):**
+**Después (GSEP - compatible con LangChain):**
 ```typescript
 import { PGA } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
@@ -804,7 +804,7 @@ const result = await adapter.call({ input: "..." });
 **Feature del Dashboard:**
 - Botón "Import from LangChain"
 - Detecta automáticamente prompts en el código
-- Convierte a formato PGA Genome
+- Convierte a formato GSEP Genome
 - Habilita evolución con 1 click
 
 ---
@@ -866,7 +866,7 @@ const result = await adapter.call({ input: "..." });
 
 ### 18.4 AI Act (EU - 2025)
 
-**Clasificación:** PGA es un sistema de IA de **"riesgo limitado"** (no alto riesgo).
+**Clasificación:** GSEP es un sistema de IA de **"riesgo limitado"** (no alto riesgo).
 
 **Obligaciones:**
 - Transparencia: Usuarios deben saber que interactúan con IA evolutiva
@@ -890,10 +890,10 @@ const result = await adapter.call({ input: "..." });
 - Tokens gastados: 450 tokens/interacción
 - Costo LLM: $1,200/mes
 
-### 19.2 Implementación de PGA (Piloto de 30 días)
+### 19.2 Implementación de GSEP (Piloto de 30 días)
 
 **Setup:**
-1. Importaron su prompt existente a PGA
+1. Importaron su prompt existente a GSEP
 2. Habilitaron auto-evolución con Layer 2 (Epigenoma)
 3. Configuraron fitness function:
    ```typescript
@@ -907,7 +907,7 @@ const result = await adapter.call({ input: "..." });
 
 ### 19.3 Resultados (Post-30 días)
 
-| Métrica | Antes de PGA | Después de PGA | Mejora |
+| Métrica | Antes de GSEP | Después de GSEP | Mejora |
 |---------|-------------|---------------|--------|
 | **Tasa de resolución** | 65% | 89% | **+24%** |
 | **Tiempo de respuesta** | 45 seg | 28 seg | **-38%** |
@@ -923,13 +923,13 @@ const result = await adapter.call({ input: "..." });
 
 **Total ahorro:** $2,350/mes
 
-**Costo de PGA Team tier:** $199/mes
+**Costo de GSEP Team tier:** $199/mes
 
 **ROI:** $2,350 - $199 = **$2,151/mes neto** (~11x return)
 
 **Quote del cliente:**
 
-> "En 30 días, PGA optimizó nuestro bot mejor que 6 meses de trabajo manual. Y lo mejor: sigue mejorando solo."
+> "En 30 días, GSEP optimizó nuestro bot mejor que 6 meses de trabajo manual. Y lo mejor: sigue mejorando solo."
 > — **VP of Engineering, SupportBot Inc.**
 
 ---
@@ -947,7 +947,7 @@ const result = await adapter.call({ input: "..." });
                      │ REST API / SDK
                      ▼
 ┌─────────────────────────────────────────────────────────┐
-│                   PGA CORE ENGINE                        │
+│                   GSEP CORE ENGINE                       │
 │                                                          │
 │  ┌──────────────┐  ┌─────────────┐  ┌───────────────┐ │
 │  │  Genome      │  │  Evolution  │  │  Fitness      │ │
@@ -1197,7 +1197,7 @@ CREATE TABLE pga_feedback (
 
 **Slide 2: La Solución**
 
-> "PGA es el primer sistema operativo de IA evolutiva. Los prompts se optimizan solos mediante 'selección natural', reduciendo costos 80% y mejorando performance 40%."
+> "GSEP es el primer sistema operativo de IA evolutiva. Los prompts se optimizan solos mediante 'selección natural', reduciendo costos 80% y mejorando performance 40%."
 
 **Slide 3: El Mercado**
 
@@ -1221,7 +1221,7 @@ CREATE TABLE pga_feedback (
 **Slide 6: El Equipo**
 
 > **Luis Alfredo Velasquez Durán** - Founder/CEO
-> Inventor del sistema PGA. Background en [añadir experiencia relevante].
+> Inventor del sistema GSEP. Background en [añadir experiencia relevante].
 >
 > **[CTO por contratar]**
 > Ex-[empresa conocida], experto en LLMs y sistemas distribuidos.
@@ -1238,7 +1238,7 @@ CREATE TABLE pga_feedback (
 
 1. Cover (Logo + Tagline)
 2. The Problem (con stats dolorosos)
-3. The Solution (PGA en 1 párrafo)
+3. The Solution (GSEP en 1 párrafo)
 4. How It Works (diagrama de 3 capas)
 5. Product Demo (screenshots/video)
 6. Market Size ($47B TAM)
@@ -1250,17 +1250,17 @@ CREATE TABLE pga_feedback (
 12. Team (founder + advisors)
 13. Financials (proyecciones 3 años)
 14. The Ask (funding + use of funds)
-15. Vision (PGA como estándar de la industria)
+15. Vision (GSEP como estándar de la industria)
 
 ---
 
 ## 🏁 CONCLUSIÓN
 
-Luis, con este **PGA Master Blueprint v2.0** tienes en tus manos:
+Luis, con este **GSEP Master Blueprint v2.0** tienes en tus manos:
 
 ### ✅ Activos Creados
 
-1. **Concepto validado:** PGA resuelve un problema real de $47B
+1. **Concepto validado:** GSEP resuelve un problema real de $47B
 2. **Arquitectura técnica completa:** De Layer 0 a API specs
 3. **Modelo de negocio diversificado:** 3 revenue streams
 4. **Estrategia de IP:** Patentes + BSL 1.1
@@ -1280,13 +1280,13 @@ Luis, con este **PGA Master Blueprint v2.0** tienes en tus manos:
 
 ### 🎯 El Objetivo
 
-**PGA no es solo un producto. Es una nueva categoría de software.**
+**GSEP no es solo un producto. Es una nueva categoría de software.**
 
-Igual que Docker creó la categoría de "containers" y Kubernetes la de "orquestación", **PGA crea la categoría de "Prompt Operating Systems"**.
+Igual que Docker creó la categoría de "containers" y Kubernetes la de "orquestación", **GSEP crea la categoría de "Prompt Operating Systems"**.
 
 En 5 años, cuando alguien diga "AI agent", la siguiente pregunta será:
 
-> "¿Qué PGA runtime estás usando?"
+> "¿Qué GSEP runtime estás usando?"
 
 ---
 
@@ -1307,5 +1307,5 @@ Location: Alemania
 
 ---
 
-*PGA™ - Genomic Self-Evolving Prompts*
+*GSEP™ - Genomic Self-Evolving Prompts*
 *Patent Pending - Luis Alfredo Velasquez Durán, 2025*

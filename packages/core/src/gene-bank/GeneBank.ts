@@ -34,7 +34,7 @@ import type { MetricsCollector } from '../monitoring/MetricsCollector';
 
 /**
  * Storage adapter for gene persistence
- * (Similar pattern to LLMAdapter, StorageAdapter in PGA)
+ * (Similar pattern to LLMAdapter, StorageAdapter in GSEP)
  */
 export interface GeneStorageAdapter {
     /**

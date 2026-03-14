@@ -2,7 +2,7 @@
 
 ## Overview
 
-Intelligence Boost transforms PGA agents from basic AI assistants into genius-level intelligent systems. This document explains the architecture, implementation, and usage of the 5 intelligence systems.
+Intelligence Boost transforms GSEP agents from basic AI assistants into genius-level intelligent systems. This document explains the architecture, implementation, and usage of the 5 intelligence systems.
 
 ---
 
@@ -757,7 +757,7 @@ console.log('Recent messages:', context.recentMessages.length);
 
 ## Migration Guide
 
-### From Regular PGA to Intelligence Boost
+### From Regular GSEP to Intelligence Boost
 
 No breaking changes! Intelligence features are opt-in via `userId`:
 

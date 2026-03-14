@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Create Command
+ * GSEP CLI - Create Command
  */
 
 export async function create(options: any): Promise<void> {

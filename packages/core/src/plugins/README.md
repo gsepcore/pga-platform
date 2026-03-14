@@ -1,4 +1,4 @@
-# PGA Plugin System
+# GSEP Plugin System
 
 Extensible plugin architecture for community tools and integrations.
 
@@ -60,7 +60,7 @@ await plugins.register(myPlugin, {
 
 ## Lifecycle Hooks
 
-Plugins can hook into PGA operations:
+Plugins can hook into GSEP operations:
 
 ### onLoad / onUnload
 
@@ -460,7 +460,7 @@ const loggingPlugin: Plugin = {
 };
 ```
 
-## Integration with PGA
+## Integration with GSEP
 
 ```typescript
 import { PGA, PluginManager } from '@pga-ai/core';
@@ -479,7 +479,7 @@ const pga = new PGA({
   pluginManager: plugins, // Pass plugin manager
 });
 
-// Plugins will automatically hook into PGA operations
+// Plugins will automatically hook into GSEP operations
 const genome = await pga.createGenome({ name: 'assistant' });
 // beforeGenomeCreate and afterGenomeCreate hooks are called
 
@@ -560,9 +560,9 @@ const plugin: Plugin = {
   },
   hooks: {
     async onLoad() {
-      // Check PGA version
+      // Check GSEP version
       if (!isCompatibleVersion(PGA.VERSION, '>=0.1.0')) {
-        throw new Error('Requires PGA >= 0.1.0');
+        throw new Error('Requires GSEP >= 0.1.0');
       }
     },
   },
@@ -575,7 +575,7 @@ Create and share your plugins:
 
 1. **Structure**: Follow the Plugin interface
 2. **Documentation**: Include README and examples
-3. **Testing**: Test with different PGA versions
+3. **Testing**: Test with different GSEP versions
 4. **Publishing**: Publish to npm with `@pga-plugin/` prefix
 5. **Tagging**: Use descriptive tags for discovery
 
@@ -585,7 +585,7 @@ Example package.json:
 {
   "name": "@pga-plugin/slack-notifications",
   "version": "1.0.0",
-  "description": "Slack notifications for PGA",
+  "description": "Slack notifications for GSEP",
   "main": "dist/index.js",
   "keywords": ["pga", "plugin", "slack", "notifications"],
   "peerDependencies": {

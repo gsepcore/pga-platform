@@ -93,12 +93,12 @@ async function main() {
     const documents: RAGDocument[] = [
         {
             id: 'doc-1',
-            content: 'PGA (Progressive Genomic Algorithms) is a self-evolving prompt system that uses genetic algorithms to optimize AI agent prompts through continuous evolution and learning.',
+            content: 'GSEP (Genomic Self-Evolving Prompts) is a self-evolving prompt system that uses genetic algorithms to optimize AI agent prompts through continuous evolution and learning.',
             metadata: { category: 'overview', topic: 'pga-basics' },
         },
         {
             id: 'doc-2',
-            content: 'Layered Memory in PGA provides a three-tier architecture: short-term (recent messages), medium-term (summarized context), and long-term (semantic facts). This achieves 85-95% token reduction.',
+            content: 'Layered Memory in GSEP provides a three-tier architecture: short-term (recent messages), medium-term (summarized context), and long-term (semantic facts). This achieves 85-95% token reduction.',
             metadata: { category: 'features', topic: 'layered-memory' },
         },
         {
@@ -108,17 +108,17 @@ async function main() {
         },
         {
             id: 'doc-4',
-            content: 'The Reasoning Engine in PGA supports multiple strategies: Chain of Thought, Self-Consistency, Tree of Thoughts, and Analogical Reasoning for complex problem solving.',
+            content: 'The Reasoning Engine in GSEP supports multiple strategies: Chain of Thought, Self-Consistency, Tree of Thoughts, and Analogical Reasoning for complex problem solving.',
             metadata: { category: 'features', topic: 'reasoning-engine' },
         },
         {
             id: 'doc-5',
-            content: 'PGA uses PostgreSQL for persistent storage of genomes, user DNA, interactions, mutations, and semantic facts. All data includes proper indexing for performance.',
+            content: 'GSEP uses PostgreSQL for persistent storage of genomes, user DNA, interactions, mutations, and semantic facts. All data includes proper indexing for performance.',
             metadata: { category: 'architecture', topic: 'storage' },
         },
         {
             id: 'doc-6',
-            content: 'MetricsCollector in PGA tracks performance metrics, cost metrics, health status, and audit logs. It provides automatic alerting when thresholds are exceeded.',
+            content: 'MetricsCollector in GSEP tracks performance metrics, cost metrics, health status, and audit logs. It provides automatic alerting when thresholds are exceeded.',
             metadata: { category: 'features', topic: 'observability' },
         },
     ];
@@ -131,7 +131,7 @@ async function main() {
     console.log('─'.repeat(80));
 
     const queries = [
-        'How does memory work in PGA?',
+        'How does memory work in GSEP?',
         'Tell me about database storage',
         'What metrics are tracked?',
     ];
@@ -157,7 +157,7 @@ async function main() {
     const testQuery = 'How does Layered Memory achieve token reduction?';
     console.log(`\nQuery: "${testQuery}"\n`);
 
-    const basePrompt = 'You are a helpful AI assistant that answers questions about PGA.';
+    const basePrompt = 'You are a helpful AI assistant that answers questions about GSEP.';
     const context = await ragEngine.augment(testQuery, basePrompt);
 
     console.log('Augmented Prompt Preview:');
@@ -172,9 +172,9 @@ async function main() {
     console.log('─'.repeat(80));
 
     const ragQuestions = [
-        'What is PGA?',
+        'What is GSEP?',
         'How does Layered Memory reduce tokens?',
-        'What database does PGA use?',
+        'What database does GSEP use?',
     ];
 
     for (const question of ragQuestions) {
@@ -182,7 +182,7 @@ async function main() {
 
         const answer = await ragEngine.generate(
             question,
-            'You are a knowledgeable assistant about PGA (Progressive Genomic Algorithms).'
+            'You are a knowledgeable assistant about GSEP (Genomic Self-Evolving Prompts).'
         );
 
         console.log(`✅ Answer: ${answer}`);

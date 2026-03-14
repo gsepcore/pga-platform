@@ -1,4 +1,4 @@
-# 🏆 PGA Platform - 10/10 Certification Checklist
+# 🏆 GSEP Platform - 10/10 Certification Checklist
 
 This document provides a comprehensive, binary (PASS/FAIL) checklist to verify the platform has achieved 10/10 operational maturity.
 
@@ -193,7 +193,7 @@ Run this script to automatically verify certification status:
 # Save as: scripts/verify-certification.sh
 # Usage: bash scripts/verify-certification.sh
 
-echo "🔍 PGA Platform - 10/10 Certification Verification"
+echo "🔍 GSEP Platform - 10/10 Certification Verification"
 echo "=================================================="
 echo ""
 
@@ -261,9 +261,9 @@ Once all checkboxes are ✅ PASS:
 ### Certification Statement
 
 ```
-🏆 PGA PLATFORM CERTIFICATION
+🏆 GSEP PLATFORM CERTIFICATION
 
-Organization: PGA.AI
+Organization: GSEP.AI
 Repository: pga-platform
 Version: 0.4.0
 Date: [TO BE COMPLETED]
@@ -274,7 +274,7 @@ OPERATIONAL MATURITY: PRODUCTION READY
 Verified by: Luis Alfredo Velasquez Duran + Claude Sonnet 4.5
 Signature: [TO BE COMPLETED]
 
-This certification confirms that the PGA Platform meets all
+This certification confirms that the GSEP Platform meets all
 requirements for 10/10 operational maturity across:
 - Engineering fundamentals
 - CI/CD automation

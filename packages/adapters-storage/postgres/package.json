@@ -1,7 +1,7 @@
 {
   "name": "@pga-ai/adapters-storage-postgres",
   "version": "0.1.0",
-  "description": "PostgreSQL storage adapter for PGA",
+  "description": "PostgreSQL storage adapter for GSEP",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",

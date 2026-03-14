@@ -1,6 +1,6 @@
-# 🚀 Getting Started with PGA Platform
+# 🚀 Getting Started with GSEP Platform
 
-Complete guide for installing and using PGA in your AI agents.
+Complete guide for installing and using GSEP in your AI agents.
 
 ---
 
@@ -64,11 +64,11 @@ npx tsx examples/getting-started-agent.ts
 **Expected Output:**
 ```
 ═══════════════════════════════════════════════════════
-   PGA Platform - Getting Started Demo
+   GSEP Platform - Getting Started Demo
 ═══════════════════════════════════════════════════════
 
-🚀 Initializing PGA Agent...
-✅ PGA Agent initialized successfully!
+🚀 Initializing GSEP Agent...
+✅ GSEP Agent initialized successfully!
 
 🧬 Seeding Gene Bank with sample genes...
 ✅ Stored 2 sample genes in Gene Bank
@@ -120,7 +120,7 @@ import {
 
 ### Minimal Setup (Gene Bank Only)
 
-The simplest way to add PGA to your agent:
+The simplest way to add GSEP to your agent:
 
 ```typescript
 import { GeneBank, InMemoryGeneStorage, createGeneId } from '@pga-ai/core';
@@ -150,7 +150,7 @@ const genes = await geneBank.searchGenes({
 
 ---
 
-### Full PGA Setup (Advanced)
+### Full GSEP Setup (Advanced)
 
 For complete genomic evolution system with LLM integration:
 
@@ -169,7 +169,7 @@ const geneBank = new GeneBank(new InMemoryGeneStorage(), {
     enableTHK: true,
 });
 
-// 2. Initialize PGA with LLM
+// 2. Initialize GSEP with LLM
 const pga = new PGA({
     llm: new ClaudeAdapter({
         apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -320,7 +320,7 @@ console.log(`  Genes by Domain:`, stats.genesByDomain);
 
 ## 🎯 Multi-Model Support
 
-PGA supports multiple LLM providers out of the box:
+GSEP supports multiple LLM providers out of the box:
 
 ### Using Claude (Anthropic)
 

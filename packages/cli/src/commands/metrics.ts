@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Metrics Command
+ * GSEP CLI - Metrics Command
  */
 
 export async function metrics(options: any): Promise<void> {

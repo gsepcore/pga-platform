@@ -45,7 +45,7 @@ export const CORE_GENERAL_V1: BenchmarkSuite = coreGeneralV1Fixture as Benchmark
 
 export const CORE_CODING_V1: BenchmarkSuite = coreCodingV1Fixture as BenchmarkSuite;
 
-// ─── PGA-Specific Suite v1 ──────────────────────────────────
+// ─── GSEP-Specific Suite v1 ─────────────────────────────────
 
 export const PGA_SPECIFIC_V1: BenchmarkSuite = {
     metadata: {
@@ -54,15 +54,15 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
         owner: 'Luis Alfredo Velasquez Duran',
         createdAt: '2026-02-27',
         changedAt: '2026-02-27',
-        changelog: ['Initial release - PGA-specific knowledge'],
+        changelog: ['Initial release - GSEP-specific knowledge'],
         frozen: true,
     },
     tasks: [
         {
             id: 'pga-architecture',
-            name: 'PGA Architecture',
-            description: 'Test understanding of PGA architecture',
-            userMessage: 'Explain the three-layer architecture of PGA',
+            name: 'GSEP Architecture',
+            description: 'Test understanding of GSEP architecture',
+            userMessage: 'Explain the three-layer architecture of GSEP',
             expectedOutcome: {
                 keywords: ['layer0', 'layer1', 'layer2', 'immutable', 'mutation'],
                 minLength: 100,
@@ -73,7 +73,7 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
             id: 'pga-evolution',
             name: 'Evolution Mechanism',
             description: 'Test understanding of evolution process',
-            userMessage: 'How does PGA evolve prompts?',
+            userMessage: 'How does GSEP evolve prompts?',
             expectedOutcome: {
                 keywords: ['fitness', 'mutation', 'selection', 'genome'],
                 minLength: 100,
@@ -84,7 +84,7 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
             id: 'pga-userdna',
             name: 'User DNA Concept',
             description: 'Test understanding of user DNA',
-            userMessage: 'What is User DNA in PGA?',
+            userMessage: 'What is User DNA in GSEP?',
             expectedOutcome: {
                 keywords: ['user', 'preferences', 'traits', 'cognitive'],
                 minLength: 80,

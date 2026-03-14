@@ -1,7 +1,7 @@
 /**
  * PromptAssembler Tests - Token Budget Enforcement
  *
- * Tests for PGA's token budget system in prompt assembly:
+ * Tests for GSEP's token budget system in prompt assembly:
  * - Genes under budget → all included
  * - Genes over budget → ranked by token efficiency (fitness/tokens)
  * - Efficient genes preferred over bloated genes

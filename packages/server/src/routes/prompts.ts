@@ -4,7 +4,7 @@
  * External agents call this to get the latest evolved prompt.
  * Authenticated with genome-specific secret (not admin key).
  *
- * Security: PGA returns only its own evolved prompt content.
+ * Security: GSEP returns only its own evolved prompt content.
  * No user data, no LLM API keys, no message content flows through here.
  *
  * @author Luis Alfredo Velasquez Duran

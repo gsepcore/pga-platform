@@ -1,6 +1,6 @@
 # @pga-ai/adapters-llm-openai
 
-OpenAI adapter for PGA (Genomic Self-Evolving Prompts).
+OpenAI adapter for GSEP (Genomic Self-Evolving Prompts).
 
 ## Supported Models
 
@@ -58,7 +58,7 @@ for await (const chunk of adapter.chatStream([
 }
 ```
 
-### With PGA Genome
+### With GSEP Genome
 
 ```typescript
 import { PGA } from '@pga-ai/core';
@@ -203,6 +203,6 @@ MIT
 
 ## Links
 
-- [PGA Core Documentation](../../core/README.md)
+- [GSEP Core Documentation](../../core/README.md)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
 - [GitHub Repository](https://github.com/LuisvelMarketer/pga-platform)

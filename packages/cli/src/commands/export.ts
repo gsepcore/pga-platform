@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Export Command
+ * GSEP CLI - Export Command
  */
 
 export async function exportGenome(genomeId: string, options: any): Promise<void> {

@@ -1,7 +1,7 @@
 {
   "name": "@pga-ai/core",
   "version": "0.8.0",
-  "description": "PGA Core - Genomic Self-Evolving Prompts with Gene Bank, THK, Layered Memory, RAG, and Advanced Reasoning",
+  "description": "GSEP Core - Genomic Self-Evolving Prompts with Gene Bank, THK, Layered Memory, RAG, and Advanced Reasoning",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",
@@ -14,7 +14,7 @@
     "directory": "packages/core"
   },
   "keywords": [
-    "pga",
+    "gsep",
     "prompt-evolution",
     "genomic-prompts",
     "ai",

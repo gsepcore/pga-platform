@@ -1,11 +1,11 @@
 /**
- * PGA End-to-End Validation
+ * GSEP End-to-End Validation
  *
- * Demonstrates that PGA evolution ACTUALLY WORKS by comparing:
+ * Demonstrates that GSEP evolution ACTUALLY WORKS by comparing:
  * - Baseline Agent (no evolution)
- * - PGA Agent (with evolution + monitoring)
+ * - GSEP Agent (with evolution + monitoring)
  *
- * This validation proves the core value proposition of PGA.
+ * This validation proves the core value proposition of GSEP.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-28
@@ -57,7 +57,7 @@ class BaselineAgent {
 }
 
 /**
- * PGA Agent - With evolution, improves over time
+ * GSEP Agent - With evolution, improves over time
  */
 class PGAAgent {
     private baseQuality = 0.65; // Same starting point
@@ -85,7 +85,7 @@ class PGAAgent {
         const optimizedCost = Math.max(0.008, baseCost * Math.exp(-0.05 * this.iterations));
 
         return {
-            output: `PGA evolved response (iteration ${this.iterations}) to: ${task}`,
+            output: `GSEP evolved response (iteration ${this.iterations}) to: ${task}`,
             quality: Math.max(0, Math.min(1, quality)),
             latency: Math.floor(optimizedLatency),
             cost: optimizedCost,
@@ -107,10 +107,10 @@ class PGAAgent {
 
 async function runValidation() {
     console.log('╔═══════════════════════════════════════════════════════════════╗');
-    console.log('║  PGA END-TO-END VALIDATION                                    ║');
+    console.log('║  GSEP END-TO-END VALIDATION                                   ║');
     console.log('╠═══════════════════════════════════════════════════════════════╣');
-    console.log('║  Comparing: Baseline Agent vs PGA Agent                      ║');
-    console.log('║  Hypothesis: PGA agent improves over time through evolution  ║');
+    console.log('║  Comparing: Baseline Agent vs GSEP Agent                     ║');
+    console.log('║  Hypothesis: GSEP agent improves over time through evolution ║');
     console.log('╚═══════════════════════════════════════════════════════════════╝\n');
 
     // Setup metrics collectors
@@ -136,7 +136,7 @@ async function runValidation() {
     ];
 
     console.log('📊 Running validation over 10 iterations...\n');
-    console.log('Task | Baseline Quality | PGA Quality | Improvement | Baseline Cost | PGA Cost | Cost Savings');
+    console.log('Task | Baseline Quality | GSEP Quality | Improvement | Baseline Cost | GSEP Cost | Cost Savings');
     console.log('─────────────────────────────────────────────────────────────────────────────────────────────');
 
     const results: Array<{
@@ -225,19 +225,19 @@ async function runValidation() {
     console.log('📈 Quality Metrics:');
     console.log('─────────────────────────────────────────');
     console.log(`Baseline Avg Quality:    ${(avgBaselineQuality * 100).toFixed(1)}%`);
-    console.log(`PGA Avg Quality:         ${(avgPGAQuality * 100).toFixed(1)}%`);
+    console.log(`GSEP Avg Quality:        ${(avgPGAQuality * 100).toFixed(1)}%`);
     console.log(`Quality Improvement:     ${qualityImprovement >= 0 ? '+' : ''}${qualityImprovement.toFixed(1)}%`);
 
     console.log('\n💰 Cost Metrics:');
     console.log('─────────────────────────────────────────');
     console.log(`Baseline Avg Cost:       $${avgBaselineCost.toFixed(6)}`);
-    console.log(`PGA Avg Cost:            $${avgPGACost.toFixed(6)}`);
+    console.log(`GSEP Avg Cost:           $${avgPGACost.toFixed(6)}`);
     console.log(`Cost Savings:            ${costSavings >= 0 ? '+' : ''}${costSavings.toFixed(1)}%`);
 
     console.log('\n⚡ Performance Metrics:');
     console.log('─────────────────────────────────────────');
     console.log(`Baseline Avg Latency:    ${avgBaselineLatency.toFixed(0)}ms`);
-    console.log(`PGA Avg Latency:         ${avgPGALatency.toFixed(0)}ms`);
+    console.log(`GSEP Avg Latency:        ${avgPGALatency.toFixed(0)}ms`);
     console.log(`Latency Improvement:     ${latencyImprovement >= 0 ? '+' : ''}${latencyImprovement.toFixed(1)}%`);
 
     // Trend analysis (first half vs second half)
@@ -248,7 +248,7 @@ async function runValidation() {
     const secondHalfPGAQuality = secondHalf.reduce((sum, r) => sum + r.pgaQuality, 0) / secondHalf.length;
     const learningGrowth = ((secondHalfPGAQuality - firstHalfPGAQuality) / firstHalfPGAQuality) * 100;
 
-    console.log('\n📚 Evolution Trend (PGA Agent):');
+    console.log('\n📚 Evolution Trend (GSEP Agent):');
     console.log('─────────────────────────────────────────');
     console.log(`First 5 iterations:      ${(firstHalfPGAQuality * 100).toFixed(1)}%`);
     console.log(`Last 5 iterations:       ${(secondHalfPGAQuality * 100).toFixed(1)}%`);
@@ -258,7 +258,7 @@ async function runValidation() {
     console.log('\n📊 Statistical Validation:');
     console.log('─────────────────────────────────────────');
     console.log(`Sample Size:             ${results.length} tasks`);
-    console.log(`PGA Win Rate:            ${results.filter(r => r.pgaQuality > r.baselineQuality).length}/${results.length} (${((results.filter(r => r.pgaQuality > r.baselineQuality).length / results.length) * 100).toFixed(0)}%)`);
+    console.log(`GSEP Win Rate:           ${results.filter(r => r.pgaQuality > r.baselineQuality).length}/${results.length} (${((results.filter(r => r.pgaQuality > r.baselineQuality).length / results.length) * 100).toFixed(0)}%)`);
     console.log(`Consistency:             ${learningGrowth > 0 ? '✓ Improving over time' : '✗ Not improving'}`);
 
     // ═══════════════════════════════════════════════════════
@@ -272,15 +272,15 @@ async function runValidation() {
     const isValidated = qualityImprovement > 5 && costSavings > 0 && learningGrowth > 0;
 
     if (isValidated) {
-        console.log('✅ HYPOTHESIS CONFIRMED: PGA Evolution Works!\n');
+        console.log('✅ HYPOTHESIS CONFIRMED: GSEP Evolution Works!\n');
         console.log('Evidence:');
         console.log(`  ✓ Quality improved by ${qualityImprovement.toFixed(1)}%`);
         console.log(`  ✓ Costs reduced by ${costSavings.toFixed(1)}%`);
         console.log(`  ✓ Latency improved by ${latencyImprovement.toFixed(1)}%`);
         console.log(`  ✓ Learning curve shows ${learningGrowth.toFixed(1)}% growth`);
-        console.log(`  ✓ PGA won ${results.filter(r => r.pgaQuality > r.baselineQuality).length}/${results.length} comparisons\n`);
-        console.log('🎯 PGA demonstrates measurable improvement through evolution.');
-        console.log('   Agents using PGA are smarter, cheaper, and faster over time.\n');
+        console.log(`  ✓ GSEP won ${results.filter(r => r.pgaQuality > r.baselineQuality).length}/${results.length} comparisons\n`);
+        console.log('🎯 GSEP demonstrates measurable improvement through evolution.');
+        console.log('   Agents using GSEP are smarter, cheaper, and faster over time.\n');
     } else {
         console.log('⚠️ HYPOTHESIS NEEDS REFINEMENT\n');
         console.log('Results:');
@@ -291,7 +291,7 @@ async function runValidation() {
 
     console.log('💡 Next Steps:');
     console.log('─────────────────────────────────────────');
-    console.log('1. Integrate monitoring into real PGA.ts');
+    console.log('1. Integrate monitoring into real GSEP');
     console.log('2. Test with actual LLM calls (Claude/GPT-4)');
     console.log('3. Run long-term validation (100+ iterations)');
     console.log('4. Compare multiple evolution strategies');

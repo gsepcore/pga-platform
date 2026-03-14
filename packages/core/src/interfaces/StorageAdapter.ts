@@ -1,7 +1,7 @@
 /**
  * Storage Adapter Interface
  *
- * Makes PGA work with any database (Postgres, MongoDB, Redis, SQLite, etc.)
+ * Makes GSEP work with any database (Postgres, MongoDB, Redis, SQLite, etc.)
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2025
@@ -13,7 +13,7 @@ import type { SemanticFact } from '../memory/LayeredMemory.js';
 /**
  * Storage Adapter Interface
  *
- * Implement this interface to use PGA with your preferred database.
+ * Implement this interface to use GSEP with your preferred database.
  */
 export interface StorageAdapter {
     /**

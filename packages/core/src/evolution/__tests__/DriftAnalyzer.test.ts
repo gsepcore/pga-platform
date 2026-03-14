@@ -1,7 +1,7 @@
 /**
  * Drift Analyzer Tests
  *
- * Tests for PGA's proactive performance monitoring system:
+ * Tests for GSEP's proactive performance monitoring system:
  * - Initial state with no data
  * - Fitness recording and history management
  * - Insufficient sample handling

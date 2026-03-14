@@ -10,7 +10,7 @@ const narrationLines = [
   { text: "Integrating GSEP takes just three steps.", startFrame: 0, endFrame: 90 },
   { text: "First, install the core package and your LLM adapter.", startFrame: 90, endFrame: 240 },
   { text: "We support Claude, GPT-4, Gemini, Ollama, and Perplexity.", startFrame: 240, endFrame: 400 },
-  { text: "Second, initialize PGA with your chosen LLM and storage.", startFrame: 400, endFrame: 600 },
+  { text: "Second, initialize GSEP with your chosen LLM and storage.", startFrame: 400, endFrame: 600 },
   { text: "Create a genome for your agent. That's your evolutionary container.", startFrame: 600, endFrame: 850 },
   { text: "Third, replace your existing LLM call with genome dot chat.", startFrame: 850, endFrame: 1050 },
   { text: "It's literally a one-line change.", startFrame: 1050, endFrame: 1200 },

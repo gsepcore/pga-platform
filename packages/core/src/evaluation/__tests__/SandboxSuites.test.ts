@@ -1,7 +1,7 @@
 /**
  * SandboxSuites Tests
  *
- * Tests for PGA's sandbox benchmark suite system:
+ * Tests for GSEP's sandbox benchmark suite system:
  * - getSandboxPromotionThreshold for each layer (0, 1, 2)
  * - getSandboxPromotionThreshold for each operator
  * - getSandboxPromotionThreshold for each taskType

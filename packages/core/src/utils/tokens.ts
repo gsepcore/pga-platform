@@ -2,7 +2,7 @@
  * Token Utilities — Estimation and Efficiency Metrics
  *
  * Provides token counting, efficiency scoring, and compression ratio
- * calculations for the PGA evolutionary token compression system.
+ * calculations for the GSEP evolutionary token compression system.
  *
  * No external dependencies — uses character-based estimation (1 token ≈ 4 chars).
  *

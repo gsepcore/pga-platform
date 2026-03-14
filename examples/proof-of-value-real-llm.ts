@@ -1,7 +1,7 @@
 /**
- * PGA Proof of Value — Real LLM Validation
+ * GSEP Proof of Value — Real LLM Validation
  *
- * Runs the full PGA pipeline with a real LLM to prove that
+ * Runs the full GSEP pipeline with a real LLM to prove that
  * evolution produces measurable improvement.
  *
  * Usage:
@@ -69,7 +69,7 @@ async function main() {
     const provider = process.argv[2] || 'anthropic';
 
     console.log('\n' + '='.repeat(62));
-    console.log('  PGA PROOF OF VALUE — REAL LLM VALIDATION');
+    console.log('  GSEP PROOF OF VALUE — REAL LLM VALIDATION');
     console.log(`  Provider: ${provider.toUpperCase()}`);
     console.log('='.repeat(62) + '\n');
 
@@ -83,7 +83,7 @@ async function main() {
     console.log(`  Cycles: 3`);
     console.log(`  Interactions/cycle: 5\n`);
 
-    // Create evaluatable genome (raw LLM, no PGA evolution)
+    // Create evaluatable genome (raw LLM, no GSEP evolution)
     const genome = createLLMGenome(llm);
 
     // Run experiment

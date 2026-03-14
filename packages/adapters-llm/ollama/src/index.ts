@@ -1,8 +1,8 @@
 /**
- * Ollama Adapter for PGA
+ * Ollama Adapter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
- * Connects PGA to local LLMs running via Ollama.
+ * Connects GSEP to local LLMs running via Ollama.
  * No external SDK needed — uses native fetch.
  *
  * Supports:

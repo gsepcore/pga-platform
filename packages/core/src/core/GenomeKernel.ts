@@ -1,7 +1,7 @@
 /**
  * Genome Kernel - Living OS Core
  *
- * The heart of PGA's "Living OS" - manages genome lifecycle,
+ * The heart of GSEP's "Living OS" - manages genome lifecycle,
  * enforces C0 immutability, and coordinates evolution.
  *
  * Key Responsibilities:

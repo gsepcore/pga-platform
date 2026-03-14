@@ -1,5 +1,5 @@
 /**
- * Retry Manager for PGA
+ * Retry Manager for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  */
 

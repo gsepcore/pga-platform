@@ -1,8 +1,8 @@
 /**
- * PGA Welcome Messages Example
+ * GSEP Welcome Messages Example
  *
  * This example demonstrates the different welcome message styles
- * that your agent can use to announce PGA integration to users.
+ * that your agent can use to announce GSEP integration to users.
  */
 
 import { PGA } from '../packages/core/src/index.js';
@@ -10,7 +10,7 @@ import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
 async function main() {
-    // Initialize PGA
+    // Initialize GSEP
     const pga = new PGA({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -33,7 +33,7 @@ async function main() {
         },
     });
 
-    console.log('🧬 PGA Welcome Message Styles Demo\n');
+    console.log('🧬 GSEP Welcome Message Styles Demo\n');
     console.log('='.repeat(80) + '\n');
 
     // ═══════════════════════════════════════════════════════

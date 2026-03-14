@@ -84,8 +84,8 @@ export const CUSTOMER_SUPPORT_BOT_TEMPLATE: Partial<GenomeV2> = {
             },
 
             attribution: {
-                creator: 'PGA Platform',
-                copyright: '© 2026 PGA AI - Starter Template',
+                creator: 'GSEP Platform',
+                copyright: '© 2026 GSEP AI - Starter Template',
                 license: 'MIT',
             },
 
@@ -395,7 +395,7 @@ export async function createCustomerSupportBot(
 export const USAGE_EXAMPLE = `
 # Customer Support Bot - Quick Start
 
-## 1. Install PGA
+## 1. Install GSEP
 \`\`\`bash
 npm install @pga-ai/core @pga-ai/adapters-llm-anthropic @pga-ai/adapters-storage-postgres
 \`\`\`

@@ -1,7 +1,7 @@
 /**
  * Genome Contract v2 - Living OS Foundation
  *
- * Transforms PGA from "prompt optimizer" to "Living OS for AI Agents"
+ * Transforms GSEP from "prompt optimizer" to "Living OS for AI Agents"
  * with cryptographic integrity, cross-agent inheritance, and full auditability.
  *
  * @see RFC-001-GENOME-CONTRACT-V2.md for complete specification

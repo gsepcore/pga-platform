@@ -1,7 +1,7 @@
 /**
  * Complete Monitoring System Demo
  *
- * Demonstrates PGA monitoring capabilities with:
+ * Demonstrates GSEP monitoring capabilities with:
  * - Real-time metrics collection
  * - Cost tracking across models
  * - Health monitoring
@@ -19,9 +19,9 @@ import { MetricsCollector, MonitoringDashboard } from '@pga-ai/core';
 
 async function completeMonitoringDemo() {
     console.log('╔═══════════════════════════════════════════════════════════════╗');
-    console.log('║  PGA MONITORING SYSTEM — Complete Demo                       ║');
+    console.log('║  GSEP MONITORING SYSTEM — Complete Demo                      ║');
     console.log('╠═══════════════════════════════════════════════════════════════╣');
-    console.log('║  This demo simulates a production PGA deployment with:       ║');
+    console.log('║  This demo simulates a production GSEP deployment with:      ║');
     console.log('║  • Multiple concurrent requests                              ║');
     console.log('║  • Different models (Claude, GPT-4)                          ║');
     console.log('║  • Success and failure scenarios                             ║');
@@ -343,7 +343,7 @@ async function completeMonitoringDemo() {
 
     console.log('\n✨ Demo complete!\n');
     console.log('💡 Next Steps:');
-    console.log('   1. Integrate monitoring into your PGA deployment');
+    console.log('   1. Integrate monitoring into your GSEP deployment');
     console.log('   2. Configure alert thresholds for your use case');
     console.log('   3. Set up periodic metric exports to your monitoring service');
     console.log('   4. Use the dashboard for real-time visibility\n');

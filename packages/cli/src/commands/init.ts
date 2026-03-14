@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Init Command
+ * GSEP CLI - Init Command
  *
  * @author Luis Alfredo Velasquez Duran (Germany, 2025)
  */
@@ -17,7 +17,7 @@ interface InitOptions {
 }
 
 export async function init(options: InitOptions): Promise<void> {
-    console.log(chalk.bold('\n🚀 Initialize PGA Project\n'));
+    console.log(chalk.bold('\n🚀 Initialize GSEP Project\n'));
 
     // Prompt for template if not provided
     let template = options.template || 'basic';
@@ -30,7 +30,7 @@ export async function init(options: InitOptions): Promise<void> {
                 message: 'Choose a project template:',
                 choices: [
                     {
-                        name: '📦 Basic - Simple PGA setup',
+                        name: '📦 Basic - Simple GSEP setup',
                         value: 'basic',
                     },
                     {
@@ -49,7 +49,7 @@ export async function init(options: InitOptions): Promise<void> {
         template = answers.template;
     }
 
-    const spinner = ora('Initializing PGA project...').start();
+    const spinner = ora('Initializing GSEP project...').start();
 
     try {
         const projectDir = path.resolve(options.dir || '.');
@@ -91,7 +91,7 @@ async function createProjectStructure(
         name: 'my-pga-project',
         version: '1.0.0',
         type: 'module',
-        description: 'PGA-powered AI application',
+        description: 'GSEP-powered AI application',
         main: 'dist/index.js',
         scripts: {
             dev: 'tsx watch src/index.ts',
@@ -170,7 +170,7 @@ genomes/*.json
 }
 
 function getEnvTemplate(template: string): string {
-    let env = '# PGA Configuration\n\n';
+    let env = '# GSEP Configuration\n\n';
     env += '# Anthropic API Key\n';
     env += 'ANTHROPIC_API_KEY=your-api-key-here\n\n';
 
@@ -190,14 +190,14 @@ function getEnvTemplate(template: string): string {
 function getMainTemplate(template: string): string {
     if (template === 'basic') {
         return `/**
- * Basic PGA Application
+ * Basic GSEP Application
  */
 
 import { PGA } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
 
 async function main() {
-    // Initialize PGA
+    // Initialize GSEP
     const pga = new PGA({
         llmAdapter: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -232,7 +232,7 @@ main().catch(console.error);
 
     if (template === 'advanced') {
         return `/**
- * Advanced PGA Application
+ * Advanced GSEP Application
  * Includes monitoring and multi-model support
  */
 
@@ -250,7 +250,7 @@ async function main() {
         },
     });
 
-    // Initialize PGA with Claude
+    // Initialize GSEP with Claude
     const pgaClaude = new PGA({
         llmAdapter: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -258,7 +258,7 @@ async function main() {
         }),
     });
 
-    // Initialize PGA with OpenAI (alternative)
+    // Initialize GSEP with OpenAI (alternative)
     const pgaOpenAI = new PGA({
         llmAdapter: new OpenAIAdapter({
             apiKey: process.env.OPENAI_API_KEY!,
@@ -282,7 +282,7 @@ async function main() {
     const startTime = Date.now();
 
     try {
-        const response = await genome.chat('Explain PGA architecture', {
+        const response = await genome.chat('Explain GSEP architecture', {
             userId: 'user-123',
         });
 
@@ -321,7 +321,7 @@ main().catch(console.error);
 
     // Enterprise template
     return `/**
- * Enterprise PGA Application
+ * Enterprise GSEP Application
  * Production-ready with PostgreSQL, monitoring, and multi-model support
  */
 
@@ -348,7 +348,7 @@ async function main() {
         },
     });
 
-    // Initialize PGA
+    // Initialize GSEP
     const pga = new PGA({
         llmAdapter: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -405,9 +405,9 @@ main().catch(console.error);
 }
 
 function getReadmeTemplate(template: string): string {
-    return `# My PGA Project
+    return `# My GSEP Project
 
-${template.charAt(0).toUpperCase() + template.slice(1)} PGA application with genomic self-evolving prompts.
+${template.charAt(0).toUpperCase() + template.slice(1)} GSEP application with genomic self-evolving prompts.
 
 ## Setup
 
@@ -447,7 +447,7 @@ my-pga-project/
 
 ## Learn More
 
-- [PGA Documentation](https://github.com/pga-ai/pga-platform)
+- [GSEP Documentation](https://github.com/pga-ai/pga-platform)
 - [API Reference](https://gsepcore.com/docs)
 - [Examples](https://github.com/pga-ai/pga-platform/tree/main/examples)
 

@@ -1,6 +1,6 @@
 # create-pga-ai
 
-**The fastest way to start building with PGA Platform** — Create a complete PGA agent project with a single command.
+**The fastest way to start building with GSEP Platform** — Create a complete GSEP agent project with a single command.
 
 ```bash
 npm create pga-ai@latest my-agent
@@ -39,7 +39,7 @@ nano .env
 npm run dev
 ```
 
-That's it! Your agent is now running with PGA's self-evolution capabilities.
+That's it! Your agent is now running with GSEP's self-evolution capabilities.
 
 ## Usage
 
@@ -150,7 +150,7 @@ EVOLUTION_MODE=aggressive  # Options: conservative, balanced, aggressive
 Depending on your configuration, the installer adds:
 
 **Core Package:**
-- `@pga-ai/core` — Main PGA framework
+- `@pga-ai/core` — Main GSEP framework
 
 **LLM Adapters:**
 - `@pga-ai/adapters-llm-anthropic` — Claude integration
@@ -265,8 +265,8 @@ node --version  # Should be v18 or higher
 
 ## License
 
-MIT © PGA Platform
+MIT © GSEP Platform
 
 ---
 
-**Built with PGA** 🧬 — The world's first genomic self-evolving AI system
+**Built with GSEP** 🧬 — The world's first genomic self-evolving AI system

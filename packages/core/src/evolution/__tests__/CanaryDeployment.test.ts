@@ -1,7 +1,7 @@
 /**
  * CanaryDeployment Tests
  *
- * Tests for PGA's canary deployment system:
+ * Tests for GSEP's canary deployment system:
  * - Starting canary deployments with correct defaults
  * - Hash-based traffic routing (shouldUseCanary)
  * - Request metric recording and EMA calculations

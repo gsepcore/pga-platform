@@ -1,4 +1,4 @@
-# PGA Platform — Performance Benchmarks
+# GSEP Platform — Performance Benchmarks
 
 **Date**: 2026-03-09
 **Platform**: macOS (Darwin 25.3.0), Node.js
@@ -95,4 +95,4 @@ Duration: 346.2s | Verdict: -1.3% (3 cycles insufficient for convergence)
 
 ---
 
-*Generated from PGA Platform v0.8.0*
+*Generated from GSEP Platform v0.8.0*

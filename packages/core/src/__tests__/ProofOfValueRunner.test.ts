@@ -2,7 +2,7 @@
  * ProofOfValueRunner Tests
  *
  * Tests for the proof-of-value orchestrator that measures
- * PGA evolution improvement over multiple cycles.
+ * GSEP evolution improvement over multiple cycles.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-03-05
@@ -244,7 +244,7 @@ describe('ProofOfValueRunner', () => {
             const result = await runner.run(genome, config);
             const report = runner.formatMarkdownReport(result);
 
-            expect(report).toContain('# PGA Proof of Value Report');
+            expect(report).toContain('# GSEP Proof of Value Report');
         });
 
         it('should include evolution curve table', async () => {

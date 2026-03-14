@@ -1,7 +1,7 @@
 /**
  * CalibrationManager Tests
  *
- * Tests for PGA's dynamic threshold calibration system:
+ * Tests for GSEP's dynamic threshold calibration system:
  * - Default threshold computation by layer, operator, and taskType
  * - Cache behavior (hit / miss / invalidation)
  * - Calibration history loading (currently returns null stub)

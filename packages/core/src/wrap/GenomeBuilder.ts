@@ -2,7 +2,7 @@
  * GenomeBuilder — Parses WrapOptions into a valid Genome object
  *
  * Converts systemPrompt + protect/evolve/adapt into the three-layer
- * chromosome architecture (C0/C1/C2) that PGA uses internally.
+ * chromosome architecture (C0/C1/C2) that GSEP uses internally.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

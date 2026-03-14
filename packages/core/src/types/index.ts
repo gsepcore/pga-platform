@@ -1,5 +1,5 @@
 /**
- * PGA Core Types
+ * GSEP Core Types
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2025

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to PGA (Genomic Self-Evolving Prompts) will be documented in this file.
+All notable changes to GSEP (Genomic Self-Evolving Prompts) will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -43,7 +43,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 - **PurposeSurvival** — state machine (THRIVING > STABLE > STRESSED > SURVIVAL > CRITICAL), threat detection, genome snapshots, purpose fidelity gates
 - **StrategicAutonomy** — goal-based decisions, evolution prioritization, adaptive mutation rates, task refusal
 - **AgentVitals** — unified health scoring across all living agent systems
-- **ProofOfValueRunner** — objective measurement of PGA's impact with fitness curve reporting
+- **ProofOfValueRunner** — objective measurement of GSEP's impact with fitness curve reporting
 - **LLM-powered mutation operators** — 4 mutation types rewritten with intelligence-fed evolution
 - **PGA.wrap()** — universal self-evolving agent middleware for any LLM call
 - **@pga-ai/server** — secure Pull/Push evolution server for external agents (HMAC auth, rate limiting)
@@ -179,6 +179,6 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 
 - **@pga-ai/core**: MIT License
 - **Gene Registry**: BSL 1.1 (converts to Apache 2.0 in 2029)
-- **PGA Cloud**: Proprietary
+- **GSEP Cloud**: Proprietary
 
 See [LICENSE](./LICENSE) for details.

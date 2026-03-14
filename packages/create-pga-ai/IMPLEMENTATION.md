@@ -251,7 +251,7 @@ npm publish
 
 ## 🚀 Usage After Publication
 
-Once published, users can create new PGA projects with:
+Once published, users can create new GSEP projects with:
 
 ```bash
 # Latest version
@@ -304,6 +304,6 @@ Potential features for future versions:
 
 ## ✅ Ready for Launch
 
-The `create-pga-ai` package is **complete, tested, and ready for npm publication**. It provides a best-in-class developer experience for getting started with PGA Platform in seconds.
+The `create-pga-ai` package is **complete, tested, and ready for npm publication**. It provides a best-in-class developer experience for getting started with GSEP Platform in seconds.
 
 **Next Step**: Test locally using the guide above, then publish to npm! 🚀

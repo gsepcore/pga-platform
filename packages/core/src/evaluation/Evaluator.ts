@@ -1,8 +1,8 @@
 /**
- * Evaluator — PGA Performance Evaluation Framework
+ * Evaluator — GSEP Performance Evaluation Framework
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
- * Provides objective benchmarking to prove PGA superiority.
+ * Provides objective benchmarking to prove GSEP superiority.
  *
  * Measures:
  * - Success Rate (task completion)
@@ -357,7 +357,7 @@ export class Evaluator {
     }
 
     /**
-     * Compare PGA vs baseline (no PGA)
+     * Compare GSEP vs baseline (no GSEP)
      *
      * Living OS v1.0 Week 5: Uses EvaluatableGenome interface
      */
@@ -367,13 +367,13 @@ export class Evaluator {
         tasks: EvaluationTask[],
         userId: string,
     ): Promise<ComparisonResult> {
-        console.log('🔬 Running benchmark: PGA vs Baseline...\n');
+        console.log('🔬 Running benchmark: GSEP vs Baseline...\n');
 
         // Run both benchmarks
-        console.log('📊 Testing WITH PGA...');
+        console.log('📊 Testing WITH GSEP...');
         const withPGA = await this.evaluate(genomeWithPGA, tasks, userId);
 
-        console.log('📊 Testing WITHOUT PGA (baseline)...');
+        console.log('📊 Testing WITHOUT GSEP (baseline)...');
         const withoutPGA = await this.evaluate(genomeBaseline, tasks, userId);
 
         // Calculate improvements
@@ -418,7 +418,7 @@ export class Evaluator {
     formatReport(benchmark: BenchmarkResult): string {
         const lines: string[] = [];
 
-        lines.push('# 📊 PGA Evaluation Report\n');
+        lines.push('# 📊 GSEP Evaluation Report\n');
         lines.push(`**Date**: ${benchmark.timestamp.toISOString()}\n`);
         lines.push('---\n');
 
@@ -455,7 +455,7 @@ export class Evaluator {
     formatComparisonReport(comparison: ComparisonResult): string {
         const lines: string[] = [];
 
-        lines.push('# 🔬 PGA vs Baseline Comparison\n');
+        lines.push('# 🔬 GSEP vs Baseline Comparison\n');
         lines.push('---\n');
 
         // Verdict
@@ -486,7 +486,7 @@ export class Evaluator {
         // Side-by-side comparison
         lines.push('---\n');
         lines.push('## 📋 Side-by-Side Comparison\n');
-        lines.push('| Metric | Without PGA | With PGA | Improvement |');
+        lines.push('| Metric | Without GSEP | With GSEP | Improvement |');
         lines.push('|--------|-------------|----------|-------------|');
 
         const metrics = [

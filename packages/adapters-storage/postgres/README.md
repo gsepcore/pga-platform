@@ -1,6 +1,6 @@
 # @pga-ai/adapters-storage-postgres
 
-> PostgreSQL storage adapter for PGA (Genomic Self-Evolving Prompts)
+> PostgreSQL storage adapter for GSEP (Genomic Self-Evolving Prompts)
 
 ## Installation
 
@@ -81,7 +81,7 @@ const adapter = new PostgresAdapter({
 // Run your own migrations
 await runMigrations();
 
-// Then initialize PGA (will skip schema creation)
+// Then initialize GSEP (will skip schema creation)
 await pga.initialize();
 ```
 

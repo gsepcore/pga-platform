@@ -1,5 +1,5 @@
 /**
- * Event Emitter for PGA Real-Time Features
+ * Event Emitter for GSEP Real-Time Features
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Type-safe event system for genome changes, mutations, and system events.
@@ -89,7 +89,7 @@ interface EventSubscription {
 }
 
 /**
- * PGA Event Emitter
+ * GSEP Event Emitter
  *
  * Type-safe event system for real-time updates and notifications.
  */

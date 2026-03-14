@@ -1,5 +1,5 @@
 /**
- * Rate Limiter for PGA
+ * Rate Limiter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Implements token bucket and sliding window rate limiting algorithms.

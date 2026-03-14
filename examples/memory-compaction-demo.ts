@@ -1,7 +1,7 @@
 /**
  * Memory Compaction Demo
  *
- * Demonstrates how to use PGA's Memory Compactor to manage conversation memory
+ * Demonstrates how to use GSEP's Memory Compactor to manage conversation memory
  * and reduce token costs by up to 70%.
  */
 
@@ -356,7 +356,7 @@ function generateRandomText(length: number): string {
 
 async function main() {
     console.log('═══════════════════════════════════════════════════════');
-    console.log('         PGA MEMORY COMPACTION DEMO');
+    console.log('         GSEP MEMORY COMPACTION DEMO');
     console.log('═══════════════════════════════════════════════════════');
 
     await basicCompactionExample();

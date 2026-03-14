@@ -1,7 +1,7 @@
 {
   "name": "@pga-ai/adapters-llm-google",
   "version": "0.1.0",
-  "description": "Google Gemini adapter for PGA",
+  "description": "Google Gemini adapter for GSEP",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",

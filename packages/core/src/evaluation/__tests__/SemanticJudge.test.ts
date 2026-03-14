@@ -1,7 +1,7 @@
 /**
  * SemanticJudge Tests
  *
- * Tests for PGA's LLM-based semantic validation system:
+ * Tests for GSEP's LLM-based semantic validation system:
  * - Auto-pass when no semanticChecks are defined
  * - LLM-based judging with valid JSON response
  * - LLM-based judging with JSON wrapped in markdown code block

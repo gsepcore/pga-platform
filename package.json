@@ -2,7 +2,7 @@
   "name": "pga-platform",
   "version": "0.8.0",
   "private": true,
-  "description": "PGA - Genomic Self-Evolving Prompts | World's First Auto-Evolving AI System",
+  "description": "GSEP - Genomic Self-Evolving Prompts | World's First Auto-Evolving AI System",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "SEE LICENSE IN LICENSE",
   "homepage": "https://gsepcore.com",
@@ -11,7 +11,7 @@
     "url": "https://github.com/LuisvelMarketer/pga-platform"
   },
   "keywords": [
-    "pga",
+    "gsep",
     "prompt-evolution",
     "genomic-prompts",
     "ai-agents",

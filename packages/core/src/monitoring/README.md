@@ -1,6 +1,6 @@
-# PGA Monitoring & Observability
+# GSEP Monitoring & Observability
 
-Enterprise-grade monitoring and observability for PGA (Genomic Self-Evolving Prompts).
+Enterprise-grade monitoring and observability for GSEP (Genomic Self-Evolving Prompts).
 
 ## Features
 
@@ -285,7 +285,7 @@ interface MetricsCollectorConfig {
 
 ## Best Practices
 
-### 1. Wrap PGA Calls
+### 1. Wrap GSEP Calls
 
 ```typescript
 async function monitoredChat(genome, message, userId) {

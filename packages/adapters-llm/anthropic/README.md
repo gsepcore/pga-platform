@@ -1,6 +1,6 @@
 # @pga-ai/adapters-llm-anthropic
 
-> Anthropic Claude adapter for PGA (Genomic Self-Evolving Prompts)
+> Anthropic Claude adapter for GSEP (Genomic Self-Evolving Prompts)
 
 ## Installation
 

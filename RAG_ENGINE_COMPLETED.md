@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-The **RAG Engine** (Retrieval-Augmented Generation) has been successfully implemented as a core component of the PGA platform. It combines vector search with LLM generation to provide knowledge-grounded responses with full observability.
+The **RAG Engine** (Retrieval-Augmented Generation) has been successfully implemented as a core component of the GSEP platform. It combines vector search with LLM generation to provide knowledge-grounded responses with full observability.
 
 ### What is RAG?
 
@@ -112,7 +112,7 @@ this.metricsCollector?.logAudit({
 #### **Demo File:** `examples/rag-demo.ts`
 
 **Demonstrates:**
-- Document indexing (6 PGA knowledge base articles)
+- Document indexing (6 GSEP knowledge base articles)
 - Semantic search with multiple queries
 - Context augmentation preview
 - Full RAG pipeline with LLM responses
@@ -123,16 +123,16 @@ this.metricsCollector?.logAudit({
 ```
 🔍 SEMANTIC SEARCH DEMO:
 
-Query: "How does memory work in PGA?"
+Query: "How does memory work in GSEP?"
 Found 3 relevant documents:
   - layered-memory (relevance: 85%)
-    "Layered Memory in PGA provides a three-tier architecture..."
+    "Layered Memory in GSEP provides a three-tier architecture..."
   - pga-basics (relevance: 72%)
   - storage (relevance: 65%)
 
 🤖 FULL RAG PIPELINE:
-❓ Question: "What is PGA?"
-✅ Answer: Based on the provided documentation, PGA (Progressive Genomic
+❓ Question: "What is GSEP?"
+✅ Answer: Based on the provided documentation, GSEP (Progressive Genomic
    Algorithms) is a self-evolving prompt system that uses genetic algorithms...
 
 📊 METRICS:
@@ -333,7 +333,7 @@ const ragEngine = new RAGEngine(
 await ragEngine.indexDocuments([
     {
         id: 'doc-1',
-        content: 'PGA is a self-evolving prompt system...',
+        content: 'GSEP is a self-evolving prompt system...',
         metadata: { category: 'overview', version: '0.3.0' },
     },
     {
@@ -360,12 +360,12 @@ for (const result of results) {
 ```typescript
 // Get knowledge-grounded response
 const answer = await ragEngine.generate(
-    'What are the main features of PGA?',
-    'You are a helpful AI assistant about PGA.'
+    'What are the main features of GSEP?',
+    'You are a helpful AI assistant about GSEP.'
 );
 
 console.log(answer);
-// "Based on the provided documentation, PGA's main features include..."
+// "Based on the provided documentation, GSEP's main features include..."
 ```
 
 ---

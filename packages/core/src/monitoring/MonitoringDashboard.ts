@@ -1,7 +1,7 @@
 /**
  * Real-Time Monitoring Dashboard
  *
- * Interactive dashboard for monitoring PGA performance, costs, and health in real-time.
+ * Interactive dashboard for monitoring GSEP performance, costs, and health in real-time.
  * Displays metrics, alerts, and trends in the terminal.
  *
  * @author Luis Alfredo Velasquez Duran
@@ -57,7 +57,7 @@ export interface DashboardConfig {
 /**
  * Monitoring Dashboard
  *
- * Real-time terminal dashboard for PGA metrics and health.
+ * Real-time terminal dashboard for GSEP metrics and health.
  */
 export class MonitoringDashboard {
     private config: Required<DashboardConfig>;
@@ -131,7 +131,7 @@ export class MonitoringDashboard {
         const timestamp = new Date().toISOString();
 
         console.log('╔════════════════════════════════════════════════════════════════╗');
-        console.log('║       PGA MONITORING DASHBOARD — Real-Time Metrics            ║');
+        console.log('║       GSEP MONITORING DASHBOARD — Real-Time Metrics           ║');
         console.log('╠════════════════════════════════════════════════════════════════╣');
         console.log(`║ Updated: ${timestamp}                       ║`);
         console.log('╚════════════════════════════════════════════════════════════════╝\n');

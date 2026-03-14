@@ -1,6 +1,6 @@
-# PGA Enterprise Features
+# GSEP Enterprise Features
 
-Enterprise-grade security, access control, and resource management for PGA.
+Enterprise-grade security, access control, and resource management for GSEP.
 
 ## Features
 
@@ -339,7 +339,7 @@ app.post('/genome/:id/evolve', async (req, res) => {
 });
 ```
 
-### PGA Integration
+### GSEP Integration
 
 ```typescript
 import { PGA, RateLimiter, AuthManager } from '@pga-ai/core';
@@ -479,7 +479,7 @@ Cleanup runs periodically to prevent memory leaks.
 4. **Rotate keys** - Regularly update API keys and secrets
 5. **Monitor access patterns** - Detect anomalies with metrics
 6. **Implement retry budgets** - Prevent retry storms
-7. **Use secure session management** - External to PGA
+7. **Use secure session management** - External to GSEP
 
 ## License
 

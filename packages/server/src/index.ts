@@ -1,8 +1,8 @@
 /**
- * @pga-ai/server — PGA Evolution Server
+ * @pga-ai/server — GSEP Evolution Server
  *
  * Secure Pull/Push API for external agents in any language.
- * PGA never touches LLM traffic — only evolved prompts and metrics flow.
+ * GSEP never touches LLM traffic — only evolved prompts and metrics flow.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

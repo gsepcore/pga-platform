@@ -1,6 +1,6 @@
 # 🧠 Memory Compaction Module
 
-**Intelligent memory management and conversation compaction for PGA agents**
+**Intelligent memory management and conversation compaction for GSEP agents**
 
 Reduce token costs by up to 70% while maintaining conversation context and quality.
 
@@ -367,9 +367,9 @@ compactor.strategies.set('my-strategy', new MyCustomStrategy());
 
 ---
 
-## 🚀 Integration with PGA
+## 🚀 Integration with GSEP
 
-Memory Compaction works seamlessly with PGA's evolution system:
+Memory Compaction works seamlessly with GSEP's evolution system:
 
 ```typescript
 import { PGA, MemoryCompactor } from '@pga-ai/core';
@@ -407,10 +407,10 @@ See [examples/memory-compaction-demo.ts](../../../examples/memory-compaction-dem
 
 ## 🎓 Learn More
 
-- [PGA Documentation](../../../README.md)
+- [GSEP Documentation](../../../README.md)
 - [Evolution System](../evolution/README.md)
 - [Gene Bank](../gene-bank/README.md)
 
 ---
 
-**Built with ❤️ by the PGA team**
+**Built with ❤️ by the GSEP team**

@@ -1,7 +1,7 @@
 /**
  * Evaluation Framework Demo
  *
- * This example shows how to use the Evaluator to prove PGA superiority.
+ * This example shows how to use the Evaluator to prove GSEP superiority.
  */
 
 import { PGA } from '../packages/core/src/index.js';
@@ -10,12 +10,12 @@ import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index
 import { Evaluator, STANDARD_TASKS } from '../packages/core/src/evaluation/Evaluator.js';
 
 async function main() {
-    console.log('\n🔬 PGA EVALUATION FRAMEWORK DEMO\n');
+    console.log('\n🔬 GSEP EVALUATION FRAMEWORK DEMO\n');
     console.log('═'.repeat(80));
-    console.log('Proving PGA superiority with objective benchmarks');
+    console.log('Proving GSEP superiority with objective benchmarks');
     console.log('═'.repeat(80) + '\n');
 
-    // Initialize PGA
+    // Initialize GSEP
     const pga = new PGA({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -28,7 +28,7 @@ async function main() {
 
     await pga.initialize();
 
-    // Create two genomes: one with PGA features, one baseline
+    // Create two genomes: one with GSEP features, one baseline
     console.log('📦 Creating genomes...\n');
 
     const genomeWithPGA = await pga.createGenome({
@@ -72,7 +72,7 @@ async function main() {
     // SCENARIO 1: Single Benchmark
     // ═══════════════════════════════════════════════════════
 
-    console.log('📊 SCENARIO 1: Benchmarking PGA Genome\n');
+    console.log('📊 SCENARIO 1: Benchmarking GSEP Genome\n');
     console.log('-'.repeat(80));
 
     const evaluator = new Evaluator();
@@ -94,11 +94,11 @@ async function main() {
     console.log(report);
 
     // ═══════════════════════════════════════════════════════
-    // SCENARIO 2: Comparison (PGA vs Baseline)
+    // SCENARIO 2: Comparison (GSEP vs Baseline)
     // ═══════════════════════════════════════════════════════
 
     console.log('\n' + '═'.repeat(80));
-    console.log('🔬 SCENARIO 2: PGA vs Baseline Comparison\n');
+    console.log('🔬 SCENARIO 2: GSEP vs Baseline Comparison\n');
     console.log('-'.repeat(80));
 
     const comparison = await evaluator.compare(
@@ -176,11 +176,11 @@ async function main() {
     console.log('\n' + '═'.repeat(80));
     console.log('✅ EVALUATION COMPLETE\n');
     console.log('Key Findings:');
-    console.log('1. ✅ PGA can be objectively measured');
+    console.log('1. ✅ GSEP can be objectively measured');
     console.log('2. ✅ Comparison with baseline is automated');
     console.log('3. ✅ Learning over time is quantifiable');
     console.log('4. ✅ Reports are generated automatically');
-    console.log('\nThis framework provides PROOF that PGA works! 🎯');
+    console.log('\nThis framework provides PROOF that GSEP works! 🎯');
     console.log('═'.repeat(80) + '\n');
 }
 

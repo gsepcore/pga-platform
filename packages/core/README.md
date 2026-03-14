@@ -11,9 +11,9 @@
 
 ## What is @pga-ai/core?
 
-The core engine for PGA (Genomic Self-Evolving Prompts) — the world's first system that makes AI prompts **evolve automatically** like biological organisms.
+The core engine for GSEP (Genomic Self-Evolving Prompts) — the world's first system that makes AI prompts **evolve automatically** like biological organisms.
 
-Instead of manually tweaking prompts, PGA:
+Instead of manually tweaking prompts, GSEP:
 - ✅ Learns from every interaction
 - ✅ Adapts to each user uniquely
 - ✅ Improves continuously (autonomous)
@@ -39,7 +39,7 @@ import { PGA } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
 import { PostgresAdapter } from '@pga-ai/adapters-storage/postgres';
 
-// 1. Initialize PGA
+// 1. Initialize GSEP
 const pga = new PGA({
   llm: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_KEY,
@@ -62,7 +62,7 @@ async function chat(userId: string, message: string) {
   return response;
 }
 
-// 4. PGA learns automatically from interactions
+// 4. GSEP learns automatically from interactions
 await genome.recordInteraction({
   userId: 'user123',
   userMessage: 'Hello!',
@@ -113,7 +113,7 @@ console.log(dna.traits);
 
 ### Automatic Evolution
 
-PGA evolves through a 4-phase cycle:
+GSEP evolves through a 4-phase cycle:
 
 1. **Transcription**: Log every interaction
 2. **Variation**: Generate mutations
@@ -176,7 +176,7 @@ const prompt = await genome.assemblePrompt({
 
 #### `genome.chat(message, context)`
 
-Chat with PGA optimization.
+Chat with GSEP optimization.
 
 ```typescript
 const response = await genome.chat('Hello!', {

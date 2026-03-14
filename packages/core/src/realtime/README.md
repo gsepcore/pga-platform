@@ -1,6 +1,6 @@
-# PGA Real-Time Features
+# GSEP Real-Time Features
 
-Real-time event system, streaming responses, and live updates for PGA.
+Real-time event system, streaming responses, and live updates for GSEP.
 
 ## Features
 
@@ -140,7 +140,7 @@ const myGenomeEvolved = await events.waitFor(
 );
 ```
 
-### Integration with PGA
+### Integration with GSEP
 
 ```typescript
 import { PGA, PGAEventEmitter } from '@pga-ai/core';

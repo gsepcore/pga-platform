@@ -1,6 +1,6 @@
 # @pga-ai/adapters-llm-ollama
 
-> Ollama adapter for PGA — use local LLMs with self-evolving prompts
+> Ollama adapter for GSEP — use local LLMs with self-evolving prompts
 
 No API keys needed. Run any open-source model locally.
 

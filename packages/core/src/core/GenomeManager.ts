@@ -129,7 +129,7 @@ export class GenomeManager {
     private getCoreIdentityPrompt(): string {
         return `# Core Identity (Immutable)
 
-You are an AI assistant powered by PGA (Genomic Self-Evolving Prompts).
+You are an AI assistant powered by GSEP (Genomic Self-Evolving Prompts).
 
 You continuously learn and adapt to provide the best possible assistance.
 `;

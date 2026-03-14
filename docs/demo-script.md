@@ -1,4 +1,4 @@
-# PGA Platform — Demo Video Script
+# GSEP Platform — Demo Video Script
 
 **Duration**: ~2 minutes
 **Format**: Terminal recording (asciinema) + voiceover
@@ -19,13 +19,13 @@
 
 ---
 
-## Scene 2: Introducing PGA (10s)
+## Scene 2: Introducing GSEP (10s)
 
 **Screen**: Show the terminal, clean.
 
 **Voiceover**:
 > "What if your agent could evolve its own prompts?
-> PGA is a drop-in evolution layer. Three steps. That's it."
+> GSEP is a drop-in evolution layer. Three steps. That's it."
 
 **Terminal**:
 ```bash
@@ -47,7 +47,7 @@ npx tsx examples/hero-demo.ts --dry-run
 **Wait for output**. The demo will show:
 
 ```
-🧬 PGA Proof of Value — Dry Run (Mock LLM)
+🧬 GSEP Proof of Value — Dry Run (Mock LLM)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📊 Baseline Evaluation (before evolution)
@@ -81,12 +81,12 @@ npx tsx examples/hero-demo.ts --dry-run
 **Screen**: Show a diagram (can be ASCII art in terminal or overlay graphic).
 
 **Voiceover**:
-> "Under the hood, PGA uses a 3-layer chromosome system.
+> "Under the hood, GSEP uses a 3-layer chromosome system.
 > Layer 0 is your immutable DNA — ethics, identity, safety — locked with SHA-256.
 > Layer 1 is your operative behavior — it mutates slowly, with an 8-stage safety gate.
 > Layer 2 is per-user preferences — adapts fast, daily.
 >
-> Every 10 interactions, PGA runs an evolution cycle:
+> Every 10 interactions, GSEP runs an evolution cycle:
 > transcribe, mutate, test in sandbox, keep only improvements."
 
 **Terminal** (optional — show the architecture):
@@ -138,7 +138,7 @@ Duration: 146s | Cost: ~$0.08
 ## Scene 6: Integration (15s)
 
 **Voiceover**:
-> "PGA works with any stack. Express, Fastify, Discord, Slack, LangChain.
+> "GSEP works with any stack. Express, Fastify, Discord, Slack, LangChain.
 > One line change: swap your LLM call for genome.chat()."
 
 **Terminal** (show code):
@@ -146,7 +146,7 @@ Duration: 146s | Cost: ~$0.08
 // Before
 const response = await llm.chat(userMessage);
 
-// After (PGA evolution enabled)
+// After (GSEP evolution enabled)
 const response = await genome.chat(userMessage, { userId });
 ```
 
@@ -168,7 +168,7 @@ npx tsx examples/hero-demo.ts --dry-run
 
 **End card**:
 ```
-🧬 PGA — Your AI Agent, But Alive
+🧬 GSEP — Your AI Agent, But Alive
 
 GitHub:  github.com/LuisvelMarketer/pga-platform
 License: MIT (free forever)
@@ -185,7 +185,7 @@ License: MIT (free forever)
 pip3 install asciinema
 
 # Record
-asciinema rec demo.cast --title "PGA Platform Demo"
+asciinema rec demo.cast --title "GSEP Platform Demo"
 
 # Play back
 asciinema play demo.cast

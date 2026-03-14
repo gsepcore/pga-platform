@@ -1,5 +1,5 @@
 /**
- * PGA CLI - List Command
+ * GSEP CLI - List Command
  */
 
 export async function list(options: any): Promise<void> {

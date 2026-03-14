@@ -481,7 +481,7 @@ describe('RAGEngine', () => {
                 {
                     document: {
                         id: 'knowledge-1',
-                        content: 'PGA uses genomic evolution for prompt optimization.',
+                        content: 'GSEP uses genomic evolution for prompt optimization.',
                         metadata: { source: 'docs' },
                     },
                     score: 0.92,
@@ -490,17 +490,17 @@ describe('RAGEngine', () => {
             ] as RAGSearchResult[]);
 
             mockLLM.chat.mockResolvedValue({
-                content: 'PGA Platform uses biological evolution principles to improve prompts automatically.',
+                content: 'GSEP Platform uses biological evolution principles to improve prompts automatically.',
                 usage: { inputTokens: 200, outputTokens: 80 },
             });
 
             const response = await engine.generate(
-                'What is PGA?',
+                'What is GSEP?',
                 'You are a documentation assistant.'
             );
 
             // Embedding was generated
-            expect(mockVectorStore.generateEmbedding).toHaveBeenCalledWith('What is PGA?');
+            expect(mockVectorStore.generateEmbedding).toHaveBeenCalledWith('What is GSEP?');
 
             // Vector store was searched
             expect(mockVectorStore.search).toHaveBeenCalled();

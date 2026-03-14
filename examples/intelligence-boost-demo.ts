@@ -1,7 +1,7 @@
 /**
- * PGA INTELLIGENCE BOOST DEMO
+ * GSEP INTELLIGENCE BOOST DEMO
  *
- * This demo shows the RADICAL difference between a regular agent and a PGA-powered agent.
+ * This demo shows the RADICAL difference between a regular agent and a GSEP-powered agent.
  * You'll see:
  * 1. Perfect memory of past conversations
  * 2. Proactive suggestions BEFORE you ask
@@ -17,12 +17,12 @@ import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
 async function main() {
-    console.log('\n🧬 PGA INTELLIGENCE BOOST DEMO\n');
+    console.log('\n🧬 GSEP INTELLIGENCE BOOST DEMO\n');
     console.log('═'.repeat(80));
-    console.log('Watch how PGA transforms a regular agent into a GENIUS agent');
+    console.log('Watch how GSEP transforms a regular agent into a GENIUS agent');
     console.log('═'.repeat(80) + '\n');
 
-    // Initialize PGA
+    // Initialize GSEP
     const pga = new PGA({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -45,14 +45,14 @@ async function main() {
         name: 'intelligence-demo',
     });
 
-    console.log('✓ PGA initialized\n');
+    console.log('✓ GSEP initialized\n');
 
     // Add Layer 0 (Core Identity)
     await genome.addAllele({
         layer: 0,
         gene: 'core-identity',
         variant: 'default',
-        content: `You are an intelligent coding assistant with PGA — Genomic Self-Evolving Prompts.
+        content: `You are an intelligent coding assistant with GSEP — Genomic Self-Evolving Prompts.
 
 You have perfect memory, proactive intelligence, and you learn from every interaction.`,
     });
@@ -175,7 +175,7 @@ Compare this to a regular agent:
 ❌ No adaptation → One-size-fits-all
 ❌ No intelligence → Mechanical responses
 
-WITH PGA, YOUR AGENT IS ALIVE! 🧬
+WITH GSEP, YOUR AGENT IS ALIVE! 🧬
     `);
 }
 

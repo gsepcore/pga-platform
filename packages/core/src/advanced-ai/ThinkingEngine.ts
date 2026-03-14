@@ -1,5 +1,5 @@
 /**
- * Advanced AI Thinking Engine for PGA
+ * Advanced AI Thinking Engine for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Implements chain-of-thought, self-reflection, and meta-learning.

@@ -3,7 +3,7 @@
  *
  * Tests that all 3 living agent systems (EnhancedSelfModel,
  * PurposeSurvival, StrategicAutonomy) work correctly when
- * initialized together via PGA config flags.
+ * initialized together via GSEP config flags.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-03-05

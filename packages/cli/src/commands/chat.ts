@@ -1,5 +1,5 @@
 /**
- * PGA CLI - Chat Command
+ * GSEP CLI - Chat Command
  *
  * @author Luis Alfredo Velasquez Duran (Germany, 2025)
  */
@@ -66,18 +66,18 @@ export async function chat(genomeId: string | undefined, options: ChatOptions): 
         const spinner = ora('Thinking...').start();
 
         try {
-            // TODO: Integrate with actual PGA instance
+            // TODO: Integrate with actual GSEP instance
             // For now, show a placeholder response
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             spinner.stop();
 
-            const response = `[This is a placeholder response. Connect to PGA instance to get real responses]
+            const response = `[This is a placeholder response. Connect to GSEP instance to get real responses]
 
 Your message: "${message}"
 
-To connect this CLI to a live PGA instance:
-1. Initialize a PGA instance in your application
+To connect this CLI to a live GSEP instance:
+1. Initialize a GSEP instance in your application
 2. Expose it via API or IPC
 3. Configure the CLI to connect to it
 

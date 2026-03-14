@@ -1,7 +1,7 @@
 /**
- * Quick Start - PGA Installation in 3 Lines
+ * Quick Start - GSEP Installation in 3 Lines
  *
- * This is the simplest possible PGA integration.
+ * This is the simplest possible GSEP integration.
  * No configuration needed - just install and go!
  *
  * @version 0.4.0
@@ -28,7 +28,7 @@ const geneBank = new GeneBank(new InMemoryGeneStorage(), {
 // ═══════════════════════════════════════════════════════
 
 async function demo() {
-    console.log('🧬 PGA Quick Start - 3 Line Installation\n');
+    console.log('🧬 GSEP Quick Start - 3 Line Installation\n');
 
     // Create a gene
     const gene: CognitiveGene = {
@@ -93,7 +93,7 @@ async function demo() {
     console.log(`   Total Genes: ${stats.totalGenes}`);
     console.log(`   Average Fitness: ${stats.averageFitness.toFixed(2)}\n`);
 
-    console.log('🎉 PGA is ready! Installation took 3 lines of code.');
+    console.log('🎉 GSEP is ready! Installation took 3 lines of code.');
 }
 
 // Run

@@ -1,5 +1,5 @@
 /**
- * Perplexity Adapter for PGA
+ * Perplexity Adapter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Uses OpenAI-compatible API with Perplexity's base URL.

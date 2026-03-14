@@ -2,7 +2,7 @@
  * PGAServer — Secure Evolution Server (Pull/Push Architecture)
  *
  * Provides a REST API for external agents (Python, Go, Rust, etc.)
- * to benefit from PGA evolution WITHOUT proxying LLM traffic.
+ * to benefit from GSEP evolution WITHOUT proxying LLM traffic.
  *
  * Security guarantees:
  * - NEVER receives LLM API keys
@@ -71,7 +71,7 @@ class NoopLLMAdapter implements LLMAdapter {
     }
 }
 
-// ─── PGA Server ─────────────────────────────────────────────
+// ─── GSEP Server ────────────────────────────────────────────
 
 export class PGAServer {
     private app: FastifyInstance;
@@ -99,7 +99,7 @@ export class PGAServer {
     async start(port?: number): Promise<void> {
         const listenPort = port ?? this.port;
 
-        // Initialize PGA core
+        // Initialize GSEP core
         this.pga = new PGA({
             llm: this.llm,
             storage: this.storage,

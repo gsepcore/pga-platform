@@ -1,5 +1,5 @@
 /**
- * PGAServer Tests — Secure Pull/Push Evolution Server
+ * PGAServer Tests — Secure Pull/Push Evolution Server (GSEP)
  *
  * Uses Fastify inject() for testing (no real HTTP server needed).
  *

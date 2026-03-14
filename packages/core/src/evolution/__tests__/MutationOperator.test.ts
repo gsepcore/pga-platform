@@ -1,7 +1,7 @@
 /**
  * MutationOperator Tests
  *
- * Tests for PGA's mutation engine and operator library:
+ * Tests for GSEP's mutation engine and operator library:
  * - MutationEngine registration, listing, and mutant generation
  * - CompressInstructionsOperator compression and deep cloning
  * - ReorderConstraintsOperator priority-based reordering

@@ -1,5 +1,5 @@
 /**
- * Authentication & Authorization Manager for PGA
+ * Authentication & Authorization Manager for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Implements RBAC (Role-Based Access Control) and policy-based authorization.

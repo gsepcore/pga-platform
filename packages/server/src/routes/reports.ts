@@ -53,7 +53,7 @@ export function registerReportRoutes(app: FastifyInstance, server: PGAServer): v
             return reply.status(400).send({ error: 'success (boolean) and latencyMs (number) are required' });
         }
 
-        // Feed metrics into PGA evolution pipeline
+        // Feed metrics into GSEP evolution pipeline
         try {
             await entry.instance.reportExternalMetrics({
                 userId: body.userId,

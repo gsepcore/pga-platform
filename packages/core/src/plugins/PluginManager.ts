@@ -1,5 +1,5 @@
 /**
- * Plugin Manager for PGA
+ * Plugin Manager for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Extensible plugin system for community tools and integrations.

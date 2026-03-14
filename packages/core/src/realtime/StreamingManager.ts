@@ -1,5 +1,5 @@
 /**
- * Streaming Manager for PGA
+ * Streaming Manager for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Manages streaming responses and real-time data flows.

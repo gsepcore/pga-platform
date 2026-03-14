@@ -1,6 +1,6 @@
 # @pga-ai/adapters-llm-google
 
-> Google Gemini adapter for PGA (Genomic Self-Evolving Prompts)
+> Google Gemini adapter for GSEP (Genomic Self-Evolving Prompts)
 
 ## Installation
 

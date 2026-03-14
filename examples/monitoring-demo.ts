@@ -2,7 +2,7 @@
  * Production Monitoring Dashboard Demo
  *
  * Demonstrates how to monitor Evolution Guardrails and economic metrics
- * in a production PGA deployment.
+ * in a production GSEP deployment.
  *
  * Living OS v1.0 Must-Have: Real-time production monitoring
  *
@@ -16,7 +16,7 @@ import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index
 
 async function productionMonitoringDemo() {
     // ═══════════════════════════════════════════════════════
-    // SETUP: Initialize PGA with production configuration
+    // SETUP: Initialize GSEP with production configuration
     // ═══════════════════════════════════════════════════════
 
     const pga = new PGA({

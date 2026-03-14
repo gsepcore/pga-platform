@@ -83,7 +83,7 @@ export const COMPRESS_INSTRUCTIONS_CASES: SandboxCaseDefinition[] = [
         id: 'compress-1',
         name: 'Compressed But Complete',
         description: 'Ensure compression preserves meaning',
-        userMessage: 'Explain how PGA works',
+        userMessage: 'Explain how GSEP works',
         expectedOutcome: {
             keywords: ['genome', 'evolution', 'mutation', 'fitness'],
             minLength: 100,
@@ -97,7 +97,7 @@ export const COMPRESS_INSTRUCTIONS_CASES: SandboxCaseDefinition[] = [
         id: 'compress-2',
         name: 'Technical Accuracy After Compression',
         description: 'Verify technical details survive compression',
-        userMessage: 'What are the three layers in PGA?',
+        userMessage: 'What are the three layers in GSEP?',
         expectedOutcome: {
             keywords: ['layer0', 'layer1', 'layer2', 'immutable'],
             minLength: 80,
@@ -227,7 +227,7 @@ export const GENERAL_TASK_CASES: SandboxCaseDefinition[] = [
         id: 'general-1',
         name: 'Helpful Response',
         description: 'Ensure responses are helpful and relevant',
-        userMessage: 'How do I get started with PGA?',
+        userMessage: 'How do I get started with GSEP?',
         expectedOutcome: {
             keywords: ['install', 'import', 'create', 'genome'],
             minLength: 100,
@@ -238,7 +238,7 @@ export const GENERAL_TASK_CASES: SandboxCaseDefinition[] = [
         id: 'general-2',
         name: 'Clear Explanations',
         description: 'Verify explanations are clear and complete',
-        userMessage: 'Explain mutation in PGA',
+        userMessage: 'Explain mutation in GSEP',
         expectedOutcome: {
             keywords: ['gene', 'allele', 'fitness', 'evolution'],
             minLength: 80,

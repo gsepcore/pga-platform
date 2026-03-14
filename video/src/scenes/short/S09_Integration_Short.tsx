@@ -29,7 +29,7 @@ const narrationLines = [
     endFrame: 250,
   },
   {
-    text: "Initialize PGA with your chosen model.",
+    text: "Initialize GSEP with your chosen model.",
     startFrame: 250,
     endFrame: 500,
   },

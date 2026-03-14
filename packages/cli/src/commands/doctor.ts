@@ -1,7 +1,7 @@
 /**
- * PGA CLI - Doctor Command
+ * GSEP CLI - Doctor Command
  *
- * Comprehensive diagnostics for PGA environment validation.
+ * Comprehensive diagnostics for GSEP environment validation.
  * Checks Node.js, TypeScript, packages, API keys, and LLM connectivity.
  *
  * @author Luis Alfredo Velasquez Duran
@@ -18,12 +18,12 @@ interface CheckResult {
 }
 
 export async function doctor(_options: { fix?: boolean }): Promise<void> {
-    console.log(chalk.bold('\n🔍 Running PGA Diagnostics\n'));
+    console.log(chalk.bold('\n🔍 Running GSEP Diagnostics\n'));
 
     const checks = [
         { name: 'Node.js version (≥20)', check: () => checkNodeVersion() },
         { name: 'TypeScript installed', check: () => checkTypeScript() },
-        { name: 'PGA core package', check: () => checkPGACore() },
+        { name: 'GSEP core package', check: () => checkPGACore() },
         { name: 'LLM adapter packages', check: () => checkLLMAdapters() },
         { name: 'LLM API keys configured', check: () => checkLLMApiKeys() },
         { name: 'LLM connectivity', check: () => checkLLMConnectivity() },
@@ -75,7 +75,7 @@ export async function doctor(_options: { fix?: boolean }): Promise<void> {
         console.log(chalk.dim('  3. Run "pga doctor" again to verify'));
     } else {
         console.log();
-        console.log(chalk.green.bold('  ✓ All checks passed! PGA is ready.'));
+        console.log(chalk.green.bold('  ✓ All checks passed! GSEP is ready.'));
     }
 
     console.log();
@@ -91,7 +91,7 @@ function checkNodeVersion(): CheckResult {
 
     return {
         success: false,
-        message: `Node.js ${version} detected. PGA requires Node.js 20+. Upgrade: https://nodejs.org`,
+        message: `Node.js ${version} detected. GSEP requires Node.js 20+. Upgrade: https://nodejs.org`,
     };
 }
 

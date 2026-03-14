@@ -1,5 +1,5 @@
 /**
- * OpenAI Adapter for PGA
+ * OpenAI Adapter for GSEP
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Supports:
@@ -161,7 +161,7 @@ export class OpenAIAdapter implements LLMAdapter {
     }
 
     /**
-     * Convert PGA messages to OpenAI format
+     * Convert GSEP messages to OpenAI format
      */
     private convertMessages(
         messages: Message[],

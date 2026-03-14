@@ -1,7 +1,7 @@
 /**
  * Token Compression Operator Tests
  *
- * Tests for PGA's evolutionary token compression system:
+ * Tests for GSEP's evolutionary token compression system:
  * - LLM-powered compression with behavior preservation
  * - Compression gate (rejects if no reduction)
  * - Fitness preservation (no degradation)

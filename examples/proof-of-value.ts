@@ -1,7 +1,7 @@
 /**
- * PGA Proof of Value Demo
+ * GSEP Proof of Value Demo
  *
- * Demonstrates measurable improvement through PGA evolution cycles.
+ * Demonstrates measurable improvement through GSEP evolution cycles.
  * Runs with a mock LLM (no API key needed) to show the full pipeline.
  *
  * Usage:
@@ -102,7 +102,7 @@ This approach ensures reliable and scalable results with proper error handling a
 
 async function main() {
     console.log('\n' + '='.repeat(62));
-    console.log('  PGA PROOF OF VALUE EXPERIMENT');
+    console.log('  GSEP PROOF OF VALUE EXPERIMENT');
     console.log('  Demonstrating measurable improvement through evolution');
     console.log('='.repeat(62) + '\n');
 

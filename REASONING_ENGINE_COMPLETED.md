@@ -8,7 +8,7 @@
 
 ## 📋 Overview
 
-The **Reasoning Engine** has been successfully implemented as a core component of the PGA platform. It provides multiple reasoning strategies that allow AI agents to solve problems with varying levels of depth, accuracy, and computational cost.
+The **Reasoning Engine** has been successfully implemented as a core component of the GSEP platform. It provides multiple reasoning strategies that allow AI agents to solve problems with varying levels of depth, accuracy, and computational cost.
 
 ### What is the Reasoning Engine?
 

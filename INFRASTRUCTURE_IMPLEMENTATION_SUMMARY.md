@@ -228,7 +228,7 @@ bash scripts/verify-certification.sh
 
 **Expected Output:**
 ```
-🔍 PGA Platform - 10/10 Certification Verification
+🔍 GSEP Platform - 10/10 Certification Verification
 ==================================================
 ...
 Results: 20-22 passed, 2-4 failed

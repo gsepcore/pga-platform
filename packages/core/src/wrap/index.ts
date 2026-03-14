@@ -1,5 +1,5 @@
 /**
- * PGA Wrap Module — Universal Self-Evolving Agent Middleware
+ * GSEP Wrap Module — Universal Self-Evolving Agent Middleware
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

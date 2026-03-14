@@ -1,4 +1,4 @@
-# PGA Advanced AI
+# GSEP Advanced AI
 
 Advanced reasoning techniques: Chain-of-Thought, Self-Reflection, and Meta-Learning.
 
