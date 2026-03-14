@@ -8,6 +8,7 @@
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 import type { GeneBank } from '../gene-bank/GeneBank.js';
 import type { GeneCategory } from '../types/GenomeV2.js';
+import type { GSEPVisibility } from '../types/index.js';
 import type { MetricsCollectorConfig } from '../monitoring/MetricsCollector.js';
 import type { DashboardConfig } from '../monitoring/MonitoringDashboard.js';
 
@@ -96,6 +97,17 @@ export interface WrapOptions {
     enableEmotionalModel?: boolean;
     /** Agent purpose statement */
     agentPurpose?: string;
+
+    // ─── GSEP Visibility ───────────────────────────────────
+
+    /**
+     * Controls GSEP visibility in interactions.
+     * - 'always': Full GSEP identity in prompt + activity footer + rich metadata
+     * - 'subtle': Minimal GSEP hints in prompt + compact footer + rich metadata (default)
+     * - 'metadata-only': No prompt/footer changes, only metadata enrichment
+     * - 'silent': No GSEP visibility at all (backward compatible)
+     */
+    gsepVisibility?: GSEPVisibility;
 }
 
 // ─── Function Wrap Options ──────────────────────────────────

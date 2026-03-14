@@ -43,6 +43,7 @@ export class GenomeBuilder {
         const config: GenomeConfig = {
             enableSandbox: true,
             mutationRate: GenomeBuilder.mapMutationRate(options.evolution?.mode),
+            gsepVisibility: options.gsepVisibility ?? 'subtle',
             autonomous,
         };
 

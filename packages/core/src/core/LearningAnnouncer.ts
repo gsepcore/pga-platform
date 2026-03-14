@@ -24,11 +24,21 @@ export interface LearningEvent {
 }
 
 export class LearningAnnouncer {
+    private lastLearningCount: number = 0;
+
+    /**
+     * Get the number of learning events from the last detectLearning() call.
+     */
+    getLastLearningCount(): number {
+        return this.lastLearningCount;
+    }
+
     /**
      * Detect what the agent learned from DNA changes
      */
     detectLearning(previousDNA: UserDNA | null, currentDNA: UserDNA): LearningEvent[] {
         const events: LearningEvent[] = [];
+        this.lastLearningCount = 0;
 
         if (!previousDNA) {
             // First interaction
@@ -159,6 +169,7 @@ export class LearningAnnouncer {
             });
         }
 
+        this.lastLearningCount = events.length;
         return events;
     }
 

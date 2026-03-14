@@ -29,6 +29,29 @@ export interface Genome {
     updatedAt: Date;
 }
 
+// ─── GSEP Visibility ─────────────────────────────────────
+
+/** Controls how visible GSEP is in agent interactions */
+export type GSEPVisibility = 'always' | 'subtle' | 'metadata-only' | 'silent';
+
+/** GSEP status returned with every chat response */
+export interface GSEPStatus {
+    active: true;
+    version: string;
+    interactionNumber: number;
+    health: { score: number; label: string };
+    fitness: { composite: number; quality: number; successRate: number };
+    drift: { isDrifting: boolean; signalCount: number };
+    learning: { eventsDetected: number };
+    evolution: { triggered: boolean; generation: number };
+}
+
+/** Internal result from GenomeInstance.chatWithStatus() */
+export interface GSEPChatResult {
+    content: string;
+    gsep: GSEPStatus;
+}
+
 export interface GenomeConfig {
     enableSandbox: boolean;
     mutationRate: 'slow' | 'balanced' | 'aggressive';
@@ -36,6 +59,8 @@ export interface GenomeConfig {
     enableAutoML?: boolean;
     enableMultiModel?: boolean;
     evolutionGuardrails?: EvolutionGuardrails;
+    /** GSEP visibility level (default: 'subtle') */
+    gsepVisibility?: GSEPVisibility;
 
     // Advanced Features (v0.3.0)
     layeredMemory?: {

@@ -131,21 +131,22 @@ export class WrappedAgent {
         };
 
         const startTime = Date.now();
-        const content = await this.genomeInstance.chat(lastUserMessage.content, context);
+        const result = await this.genomeInstance.chatWithStatus(lastUserMessage.content, context);
         const duration = Date.now() - startTime;
 
         this.interactionCount++;
 
         return {
-            content,
+            content: result.content,
             usage: {
                 inputTokens: Math.ceil(lastUserMessage.content.length / 4),
-                outputTokens: Math.ceil(content.length / 4),
+                outputTokens: Math.ceil(result.content.length / 4),
             },
             metadata: {
                 genomeId: this._id,
                 interactionCount: this.interactionCount,
                 duration,
+                gsep: result.gsep,
             },
         };
     }

@@ -20,6 +20,7 @@ import type { CalibratedAutonomy } from '../advanced-ai/CalibratedAutonomy.js';
 import type { PersonalNarrative } from '../memory/PersonalNarrative.js';
 import type { AnalyticMemoryEngine } from '../memory/AnalyticMemoryEngine.js';
 import type { ContentFirewall } from '../firewall/ContentFirewall.js';
+import type { GSEPIdentitySection, GSEPIdentityContext } from './GSEPIdentitySection.js';
 
 const DEFAULT_C1_TOKEN_BUDGET = 2000;
 const getC1Budget = (genome: Genome): number =>
@@ -36,6 +37,8 @@ export class PromptAssembler {
     private personalNarrative?: PersonalNarrative;
     private analyticMemory?: AnalyticMemoryEngine;
     private firewall?: ContentFirewall;
+    private gsepIdentity?: GSEPIdentitySection;
+    private gsepIdentityContext?: GSEPIdentityContext;
 
     constructor(
         storage: StorageAdapter,
@@ -102,6 +105,21 @@ export class PromptAssembler {
     }
 
     /**
+     * Set GSEPIdentitySection for GSEP visibility in system prompt.
+     */
+    setGSEPIdentity(identity: GSEPIdentitySection, context: GSEPIdentityContext): void {
+        this.gsepIdentity = identity;
+        this.gsepIdentityContext = context;
+    }
+
+    /**
+     * Update the GSEP identity context (called before each prompt assembly).
+     */
+    updateGSEPIdentityContext(context: GSEPIdentityContext): void {
+        this.gsepIdentityContext = context;
+    }
+
+    /**
      * Assemble full prompt from all three layers + intelligence boost
      */
     async assemblePrompt(context?: SelectionContext, currentMessage?: string): Promise<string> {
@@ -112,6 +130,14 @@ export class PromptAssembler {
             const preamble = this.firewall.getContentTrustPreamble();
             if (preamble) {
                 sections.push(preamble);
+            }
+        }
+
+        // GSEP Identity Section (after C3 preamble, before C0)
+        if (this.gsepIdentity && this.gsepIdentityContext) {
+            const identityPrompt = this.gsepIdentity.generate(this.gsepIdentityContext);
+            if (identityPrompt) {
+                sections.push(this.processContent(identityPrompt, 'gsep-identity'));
             }
         }
 

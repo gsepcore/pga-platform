@@ -549,7 +549,8 @@ export type ContentSource =
     | 'self-model' | 'pattern-memory' | 'metacognition'
     | 'emotional-model' | 'calibrated-autonomy'
     | 'personal-narrative' | 'analytic-memory'
-    | 'rag-engine' | 'plugin' | 'gene-bank';
+    | 'rag-engine' | 'plugin' | 'gene-bank'
+    | 'gsep-identity';
 
 export interface SanitizationRule {
     id: string;

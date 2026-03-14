@@ -122,6 +122,15 @@ export class DriftAnalyzer {
         }
     }
 
+    /**
+     * Get the most recent fitness vector from history.
+     * Returns undefined if no data has been recorded yet.
+     */
+    public getLatestFitness(): FitnessVector | undefined {
+        if (this.history.length === 0) return undefined;
+        return { ...this.history[this.history.length - 1].fitness };
+    }
+
     // ─── Analyze Drift ───────────────────────────────────────────
 
     /**

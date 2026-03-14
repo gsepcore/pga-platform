@@ -51,6 +51,9 @@ import { PurposeSurvival, type OperatingMode, type SurvivalStrategy, type Genome
 import { StrategicAutonomy, type EvolutionPriority } from './advanced-ai/StrategicAutonomy.js';
 import { computeAgentVitals, type AgentVitals } from './advanced-ai/AgentVitals.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
+import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
+import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
+import type { GSEPStatus, GSEPChatResult } from './types/index.js';
 
 export interface PGAConfig {
     /**
@@ -401,6 +404,8 @@ export class GenomeInstance {
     private enhancedSelfModel?: EnhancedSelfModel;
     private purposeSurvival?: PurposeSurvival;
     private strategicAutonomy?: StrategicAutonomy;
+    private gsepIdentitySection: GSEPIdentitySection;
+    private gsepActivityFooter: GSEPActivityFooter;
     private interactionCount: number = 0;
 
     constructor(
@@ -537,6 +542,16 @@ export class GenomeInstance {
         if (genome.config.firewall?.enabled !== false) {
             const firewall = new ContentFirewall();
             this.assembler.setFirewall(firewall);
+        }
+
+        // GSEP Identity & Activity Footer
+        this.gsepIdentitySection = new GSEPIdentitySection();
+        this.gsepActivityFooter = new GSEPActivityFooter();
+
+        // Wire identity section into prompt assembler
+        const visibility = genome.config.gsepVisibility ?? 'subtle';
+        if (visibility !== 'silent') {
+            this.assembler.setGSEPIdentity(this.gsepIdentitySection, this.buildIdentityContext());
         }
     }
 
@@ -877,6 +892,123 @@ Ready to see what we can do together? 😊`,
 
             throw err;
         }
+    }
+
+    /**
+     * Chat with GSEP optimization — returns rich GSEPChatResult with status metadata.
+     *
+     * Same core flow as chat() but:
+     * - Collects fitness, drift, learning data
+     * - Appends GSEP activity footer (unless 'silent'/'metadata-only')
+     * - Returns GSEPChatResult with full GSEP status
+     */
+    async chatWithStatus(userMessage: string, context: SelectionContext): Promise<GSEPChatResult> {
+        const visibility = this.genome.config.gsepVisibility ?? 'subtle';
+
+        // Update identity context before prompt assembly
+        if (visibility !== 'silent') {
+            this.assembler.updateGSEPIdentityContext(this.buildIdentityContext(context.userId));
+        }
+
+        // Run the standard chat flow
+        const rawContent = await this.chat(userMessage, context);
+
+        // Collect GSEP status from runtime data
+        const driftReport = this.driftAnalyzer.analyzeDrift();
+        const fitnessVector = this.driftAnalyzer.getLatestFitness();
+
+        const healthScore = fitnessVector?.composite ?? 0.5;
+        const healthLabel =
+            healthScore >= 0.8 ? 'excellent' :
+            healthScore >= 0.6 ? 'stable' :
+            healthScore >= 0.4 ? 'degraded' : 'critical';
+
+        const autoConfig = this.genome.config.autonomous;
+        const evolutionTriggered = !!(autoConfig?.continuousEvolution
+            && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0);
+
+        // Count learning events from the last interaction
+        // (learningAnnouncer already computed these in chat())
+        const learningEventsCount = this.learningAnnouncer.getLastLearningCount();
+
+        // Build GSEPStatus
+        const gsepStatus: GSEPStatus = {
+            active: true,
+            version: `${this.genome.version ?? 1}`,
+            interactionNumber: this.interactionCount,
+            health: { score: healthScore, label: healthLabel },
+            fitness: {
+                composite: fitnessVector?.composite ?? 0.5,
+                quality: fitnessVector?.quality ?? 0.5,
+                successRate: fitnessVector?.successRate ?? 1.0,
+            },
+            drift: {
+                isDrifting: driftReport.isDrifting,
+                signalCount: driftReport.signals?.length ?? 0,
+            },
+            learning: { eventsDetected: learningEventsCount },
+            evolution: {
+                triggered: evolutionTriggered,
+                generation: Math.max(...this.genome.layers.layer1.map(a => a.generation || 0), 0),
+            },
+        };
+
+        // Append activity footer
+        const activity: GSEPActivity = {
+            learningEventsCount,
+            driftDetected: driftReport.isDrifting,
+            evolutionTriggered,
+            healthLabel,
+            healthScore,
+            interactionNumber: this.interactionCount,
+        };
+        const footer = this.gsepActivityFooter.format(activity, visibility);
+        const content = footer ? rawContent + footer : rawContent;
+
+        return { content, gsep: gsepStatus };
+    }
+
+    /**
+     * Build GSEP identity context from current runtime state.
+     */
+    private buildIdentityContext(userId?: string): GSEPIdentityContext {
+        const visibility = this.genome.config.gsepVisibility ?? 'subtle';
+        const driftReport = this.driftAnalyzer.analyzeDrift();
+        const fitnessVector = this.driftAnalyzer.getLatestFitness();
+
+        const healthScore = fitnessVector?.composite ?? 0.5;
+        const healthLabel =
+            healthScore >= 0.8 ? 'excellent' :
+            healthScore >= 0.6 ? 'stable' :
+            healthScore >= 0.4 ? 'degraded' : 'critical';
+
+        const activeCapabilities: string[] = [];
+        if (this.contextMemory) activeCapabilities.push('Adaptive memory — remembers your preferences');
+        if (this.patternMemory) activeCapabilities.push('Pattern recognition — predicts your needs');
+        if (this.emotionalModel) activeCapabilities.push('Emotional awareness — adapts tone to your state');
+        if (this.metacognition) activeCapabilities.push('Metacognition — reflects on response quality');
+        if (this.selfModel || this.enhancedSelfModel) activeCapabilities.push('Self-awareness — monitors its own performance');
+        if (this.calibratedAutonomy || this.strategicAutonomy) activeCapabilities.push('Calibrated autonomy — adjusts independence level');
+        if (this.personalNarrative) activeCapabilities.push('Relationship memory — builds on past conversations');
+        if (this.analyticMemory) activeCapabilities.push('Knowledge graph — connects information across sessions');
+        if (this.ragEngine) activeCapabilities.push('Knowledge retrieval — searches relevant documents');
+        if (this.reasoningEngine) activeCapabilities.push('Advanced reasoning — multi-step problem solving');
+
+        return {
+            genomeName: this.genome.name,
+            version: `${this.genome.version ?? 1}`,
+            visibility,
+            interactionCount: this.interactionCount,
+            isFirstInteraction: this.interactionCount === 0,
+            healthLabel,
+            healthScore,
+            fitnessScore: fitnessVector?.composite,
+            userLearningSummary: userId ? undefined : undefined, // Populated async in updateGSEPIdentityContext
+            activeCapabilities,
+            driftStatus: driftReport.isDrifting
+                ? { isDrifting: true, severity: driftReport.overallSeverity }
+                : undefined,
+        };
     }
 
     /**

@@ -602,6 +602,14 @@ export {
     CONTENT_TRUST_PREAMBLE,
 } from './firewall/DefaultPatterns.js';
 
+// ─── GSEP Visibility (v0.8.0) ──────────────────────────
+
+export { GSEPIdentitySection } from './core/GSEPIdentitySection.js';
+export type { GSEPIdentityContext } from './core/GSEPIdentitySection.js';
+export { GSEPActivityFooter } from './core/GSEPActivityFooter.js';
+export type { GSEPActivity } from './core/GSEPActivityFooter.js';
+export type { GSEPVisibility, GSEPStatus, GSEPChatResult } from './types/index.js';
+
 // ─── Token Utilities ────────────────────────────────────
 
 export { estimateTokenCount, tokenEfficiency, compressionRatio } from './utils/tokens.js';
