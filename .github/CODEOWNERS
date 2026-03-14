@@ -1,28 +1,28 @@
-# CODEOWNERS for PGA Platform
+# CODEOWNERS for GSEP Platform
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default owner for everything
-* @luisvelasquez
+* @LuisvelMarketer
 
 # Core package - requires review
-/packages/core/ @luisvelasquez
+/packages/core/ @LuisvelMarketer
 
 # Gene Bank system - critical component
-/packages/core/src/gene-bank/ @luisvelasquez
+/packages/core/src/gene-bank/ @LuisvelMarketer
 
 # Infrastructure & CI/CD
-/.github/ @luisvelasquez
-/.github/workflows/ @luisvelasquez
+/.github/ @LuisvelMarketer
+/.github/workflows/ @LuisvelMarketer
 
 # Documentation
-/docs/ @luisvelasquez
-*.md @luisvelasquez
+/docs/ @LuisvelMarketer
+*.md @LuisvelMarketer
 
 # Configuration files
-package.json @luisvelasquez
-tsconfig.json @luisvelasquez
-.gitignore @luisvelasquez
+package.json @LuisvelMarketer
+tsconfig.json @LuisvelMarketer
+.gitignore @LuisvelMarketer
 
 # Security-sensitive files
-/SECURITY.md @luisvelasquez
-/.github/dependabot.yml @luisvelasquez
+/SECURITY.md @LuisvelMarketer
+/.github/dependabot.yml @LuisvelMarketer

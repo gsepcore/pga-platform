@@ -23,7 +23,7 @@ body:
       label: Steps to Reproduce
       description: Detailed steps to reproduce the behavior
       placeholder: |
-        1. Initialize PGA with...
+        1. Initialize GSEP with...
         2. Call method...
         3. Observe error...
     validations:
@@ -55,9 +55,9 @@ body:
   - type: input
     id: version
     attributes:
-      label: PGA Version
-      description: Which version are you using?
-      placeholder: "0.4.0"
+      label: GSEP Version
+      description: Which version of @pga-ai/core are you using?
+      placeholder: "0.8.0"
     validations:
       required: true
 

@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
   - name: 💬 Discussions
-    url: https://github.com/pga-ai/pga-platform/discussions
+    url: https://github.com/LuisvelMarketer/pga-platform/discussions
     about: Ask questions and discuss ideas with the community
   - name: 📚 Documentation
-    url: https://gsepcore.com/docs
+    url: https://gsepcore.com
     about: Read the documentation
   - name: 🔒 Security Issue
-    url: https://github.com/pga-ai/pga-platform/security/advisories/new
+    url: https://github.com/LuisvelMarketer/pga-platform/security/advisories/new
     about: Report a security vulnerability privately
