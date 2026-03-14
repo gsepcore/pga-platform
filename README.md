@@ -7,36 +7,43 @@
 # 🧬 GSEP — Make Your AI Agent Self-Evolving
 
 ![GSEP](https://img.shields.io/badge/GSEP-Genomic%20Self--Evolving%20Prompts-blue?style=for-the-badge)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE.md)
 [![npm version](https://img.shields.io/npm/v/@pga-ai/core?style=for-the-badge)](https://www.npmjs.com/package/@pga-ai/core)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
-[![Discord](https://img.shields.io/discord/XXXXXX?style=for-the-badge&logo=discord)](https://discord.gg/pga)
 
 **Drop-in upgrade that makes any AI agent learn, adapt, and evolve autonomously.**
 
-Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
+Created by **Luis Alfredo Velasquez Duran** | Germany, 2025–2026
 
-[Documentation](https://docs.gsepcore.com) · [Discord](https://discord.gg/pga) · [gsepcore.com](https://gsepcore.com)
+[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/LuisvelMarketer/pga-platform)
 
 </div>
 
 ---
 
-## What is PGA?
+## What is GSEP?
 
-**PGA is not a framework to build agents.** You already have an agent — PGA makes it better.
+**GSEP is not a framework to build agents.** You already have an agent — GSEP makes it better.
 
-PGA wraps your existing agent's LLM calls with a genomic evolution layer. Your agent's prompts stop being static text and become **living organisms** that mutate, adapt, and improve with every interaction.
+GSEP wraps your existing agent's LLM calls with a genomic evolution layer. Your agent's prompts stop being static text and become **living organisms** that mutate, adapt, and improve with every interaction.
 
 ```
-YOUR AGENT (before)                YOUR AGENT (after PGA)
+YOUR AGENT (before)                YOUR AGENT (after GSEP)
 ┌──────────────────┐               ┌──────────────────┐
 │  Static prompt   │               │  🧬 Evolving prompt  │
-│  Same for all    │    + PGA →    │  Adapts per user      │
+│  Same for all    │   + GSEP →   │  Adapts per user      │
 │  Never improves  │               │  Auto-improves        │
 │  Manual tuning   │               │  Self-healing         │
 └──────────────────┘               └──────────────────┘
 ```
+
+---
+
+## ⭐ Support This Project
+
+If GSEP is useful to you, please consider giving it a star — it helps others discover the project and motivates continued development.
+
+[![Star on GitHub](https://img.shields.io/github/stars/LuisvelMarketer/pga-platform?style=social)](https://github.com/LuisvelMarketer/pga-platform)
 
 ---
 
@@ -53,10 +60,10 @@ npm install @pga-ai/core @pga-ai/adapters-llm-ollama       # Local models (Llama
 npm install @pga-ai/core @pga-ai/adapters-llm-perplexity   # Perplexity (web search)
 ```
 
-### Step 2: Initialize PGA (once, at startup)
+### Step 2: Initialize GSEP (once, at startup)
 
 ```typescript
-// pga-setup.ts — add this file to your project
+// gsep-setup.ts — add this file to your project
 import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
 
@@ -65,14 +72,14 @@ const llm = new ClaudeAdapter({
   model: 'claude-sonnet-4-5-20250929',
 });
 
-const pga = new PGA({
+const gsep = new PGA({
   llm,
   storage: new InMemoryStorageAdapter(),  // or PostgresAdapter for production
 });
-await pga.initialize();
+await gsep.initialize();
 
 // Create the genome — this is your agent's evolving brain
-export const genome = await pga.createGenome({
+export const genome = await gsep.createGenome({
   name: 'my-agent',
   config: {
     autonomous: {
@@ -92,8 +99,8 @@ export const genome = await pga.createGenome({
 // BEFORE — direct LLM call in your agent:
 const response = await llm.chat(userMessage);
 
-// AFTER — route through PGA:
-import { genome } from './pga-setup.js';
+// AFTER — route through GSEP:
+import { genome } from './gsep-setup.js';
 
 const response = await genome.chat(userMessage, {
   userId: user.id,
@@ -106,9 +113,9 @@ const response = await genome.chat(userMessage, {
 
 ---
 
-## What changes after installing PGA?
+## What changes after installing GSEP?
 
-| Before PGA | After PGA |
+| Before GSEP | After GSEP |
 |------------|-----------|
 | Same prompt for every user | Adapts per user automatically |
 | Performance degrades over time | Self-heals when drift detected |
@@ -121,7 +128,7 @@ const response = await genome.chat(userMessage, {
 
 ## 🧬 How It Works
 
-PGA adds a **four-layer chromosome** around your agent's prompts:
+GSEP adds a **four-layer chromosome** around your agent's prompts:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -154,15 +161,15 @@ Every interaction flows through a **four-phase evolution cycle**:
 
 ---
 
-## 🗑️ Uninstall PGA
+## 🗑️ Uninstall GSEP
 
-PGA is non-invasive. Removing it takes 2 steps:
+GSEP is non-invasive. Removing it takes 2 steps:
 
 ### Step 1: Revert your LLM call
 
 ```typescript
 // Remove this:
-import { genome } from './pga-setup.js';
+import { genome } from './gsep-setup.js';
 const response = await genome.chat(userMessage, { userId, taskType: 'support' });
 
 // Restore your original call:
@@ -173,7 +180,7 @@ const response = await llm.chat(userMessage);
 
 ```bash
 npm uninstall @pga-ai/core @pga-ai/adapters-llm-anthropic @pga-ai/adapters-llm-openai @pga-ai/adapters-storage-postgres
-rm pga-setup.ts  # or wherever you placed the setup file
+rm gsep-setup.ts  # or wherever you placed the setup file
 ```
 
 Your agent goes back to exactly how it was before. No side effects, no leftover config, no database cleanup needed (in-memory storage is gone when the process stops; PostgreSQL tables can be dropped with `DROP TABLE IF EXISTS pga_genomes, pga_interactions CASCADE;`).
@@ -185,7 +192,7 @@ Your agent goes back to exactly how it was before. No side effects, no leftover 
 ### Minimal (just evolution)
 
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   name: 'my-agent',
   config: {
     autonomous: {
@@ -200,7 +207,7 @@ const genome = await pga.createGenome({
 ### Full Living Agent
 
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   name: 'my-agent',
   config: {
     autonomous: {
@@ -238,7 +245,7 @@ const genome = await pga.createGenome({
 ```typescript
 import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
 
-const pga = new PGA({
+const gsep = new PGA({
   llm,
   storage: new PostgresAdapter({
     connectionString: process.env.DATABASE_URL!,
@@ -261,12 +268,12 @@ DATABASE_URL=postgresql://...        # optional, for persistence
 ### Express/Fastify API agent
 
 ```typescript
-import { genome } from './pga-setup.js';
+import { genome } from './gsep-setup.js';
 
 app.post('/chat', async (req, res) => {
   const { message, userId } = req.body;
 
-  // PGA handles evolution, memory, adaptation automatically
+  // GSEP handles evolution, memory, adaptation automatically
   const response = await genome.chat(message, {
     userId,
     taskType: 'support',
@@ -279,7 +286,7 @@ app.post('/chat', async (req, res) => {
 ### Discord/Slack bot
 
 ```typescript
-import { genome } from './pga-setup.js';
+import { genome } from './gsep-setup.js';
 
 bot.on('message', async (msg) => {
   const response = await genome.chat(msg.content, {
@@ -294,7 +301,7 @@ bot.on('message', async (msg) => {
 ### LangChain agent
 
 ```typescript
-import { genome } from './pga-setup.js';
+import { genome } from './gsep-setup.js';
 
 // Replace your LLM call inside the chain
 const response = await genome.chat(question, {
@@ -306,7 +313,7 @@ const response = await genome.chat(question, {
 ### Any agent with a chat loop
 
 ```typescript
-import { genome } from './pga-setup.js';
+import { genome } from './gsep-setup.js';
 
 // Whatever your loop looks like — just swap the LLM call
 while (true) {
@@ -337,7 +344,7 @@ while (true) {
 
 ## 🔧 Bring Your Own LLM
 
-PGA works with **any LLM**. If your provider isn't listed above, implement the `LLMAdapter` interface:
+GSEP works with **any LLM**. If your provider isn't listed above, implement the `LLMAdapter` interface:
 
 ```typescript
 import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '@pga-ai/core';
@@ -356,21 +363,21 @@ class MyLLMAdapter implements LLMAdapter {
   }
 }
 
-// Use it with PGA:
-const pga = new PGA({ llm: new MyLLMAdapter() });
+// Use it with GSEP:
+const gsep = new PGA({ llm: new MyLLMAdapter() });
 ```
 
 Only `chat()` is required. `stream()` and `estimateCost()` are optional.
 
 ---
 
-## 🧪 What PGA adds to your agent
+## 🧪 What GSEP adds to your agent
 
 ### Autonomous Evolution
 Your agent's prompts improve every 10 interactions without manual intervention.
 
 ### Drift Detection
-If your agent starts performing worse, PGA detects it and auto-corrects.
+If your agent starts performing worse, GSEP detects it and auto-corrects.
 
 ### SelfModel (Metacognition)
 Your agent knows its strengths and weaknesses and injects that awareness into responses.
@@ -404,7 +411,7 @@ Defense-in-depth against prompt injection, skill poisoning, and supply-chain att
 
 ### Proof of Value Runner (v0.7.0)
 
-Measure PGA's impact objectively. Runs multiple evolution cycles and reports the fitness curve:
+Measure GSEP's impact objectively. Runs multiple evolution cycles and reports the fitness curve:
 
 ```bash
 npx tsx examples/proof-of-value.ts
@@ -443,11 +450,10 @@ console.log(runner.formatMarkdownReport(result));  // Markdown report
 
 ## 🛡️ Intellectual Property
 
-**Patent Status**: Patent Pending
+**Patent Status**: Patented
 
 - 3 Patent Applications (US, EU, PCT) — 34 claims
 - 4 Trademark Applications (US & EU)
-- See [ip-filings/](./ip-filings/) for details
 
 **License**: MIT (core) | BSL 1.1 (Gene Registry) | Proprietary (Cloud)
 
@@ -456,7 +462,7 @@ console.log(runner.formatMarkdownReport(result));  // Markdown report
 ## 🤝 Contributing
 
 ```bash
-git clone https://github.com/pga-ai/pga-platform
+git clone https://github.com/LuisvelMarketer/pga-platform
 cd pga-platform
 npm install
 npm run build
@@ -471,14 +477,13 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 
 - **Website**: [gsepcore.com](https://gsepcore.com)
 - **Email**: contact@gsepcore.com
-- **Discord**: [Join Community](https://discord.gg/pga)
 
 ---
 
 <div align="center">
 
-**PGA** 🧬 — *Your agent, but alive.*
+**GSEP** 🧬 — *Your agent, but alive.*
 
-© 2025-2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
+© 2025–2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
 
 </div>
