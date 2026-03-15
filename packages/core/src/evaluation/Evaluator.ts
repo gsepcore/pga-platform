@@ -376,17 +376,17 @@ export class Evaluator {
         console.log('📊 Testing WITHOUT GSEP (baseline)...');
         const withoutPGA = await this.evaluate(genomeBaseline, tasks, userId);
 
-        // Calculate improvements
+        // Calculate improvements (guard against division by zero)
         const successRateImprovement = withPGA.successRate - withoutPGA.successRate;
-        const tokenEfficiency =
-            ((withoutPGA.avgTokensPerTask - withPGA.avgTokensPerTask) / withoutPGA.avgTokensPerTask) *
-            100;
-        const responseTimeImprovement =
-            ((withoutPGA.avgResponseTime - withPGA.avgResponseTime) / withoutPGA.avgResponseTime) *
-            100;
-        const qualityImprovement =
-            ((withPGA.avgQualityScore - withoutPGA.avgQualityScore) / withoutPGA.avgQualityScore) *
-            100;
+        const tokenEfficiency = withoutPGA.avgTokensPerTask > 0
+            ? ((withoutPGA.avgTokensPerTask - withPGA.avgTokensPerTask) / withoutPGA.avgTokensPerTask) * 100
+            : 0;
+        const responseTimeImprovement = withoutPGA.avgResponseTime > 0
+            ? ((withoutPGA.avgResponseTime - withPGA.avgResponseTime) / withoutPGA.avgResponseTime) * 100
+            : 0;
+        const qualityImprovement = withoutPGA.avgQualityScore > 0
+            ? ((withPGA.avgQualityScore - withoutPGA.avgQualityScore) / withoutPGA.avgQualityScore) * 100
+            : 0;
 
         // Determine verdict
         let verdict: ComparisonResult['verdict'] = 'TIE';
