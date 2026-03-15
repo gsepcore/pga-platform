@@ -52,6 +52,10 @@ import { PurposeSurvival, type OperatingMode, type SurvivalStrategy, type Genome
 import { StrategicAutonomy, type EvolutionPriority } from './advanced-ai/StrategicAutonomy.js';
 import { computeAgentVitals, type AgentVitals } from './advanced-ai/AgentVitals.js';
 import { ThinkingEngine } from './advanced-ai/ThinkingEngine.js';
+import { AgentStateVector } from './advanced-ai/AgentStateVector.js';
+import { AutonomousLoop } from './advanced-ai/AutonomousLoop.js';
+import { GrowthJournal } from './memory/GrowthJournal.js';
+import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
@@ -408,6 +412,10 @@ export class GenomeInstance {
     private purposeSurvival?: PurposeSurvival;
     private strategicAutonomy?: StrategicAutonomy;
     private thinkingEngine?: ThinkingEngine;
+    private stateVector?: AgentStateVector;
+    private autonomousLoop?: AutonomousLoop;
+    private growthJournal?: GrowthJournal;
+    private curiosityEngine?: CuriosityEngine;
     private gsepIdentitySection: GSEPIdentitySection;
     private gsepActivityFooter: GSEPActivityFooter;
     private interactionCount: number = 0;
@@ -551,6 +559,30 @@ export class GenomeInstance {
         // Thinking Engine: chain-of-thought + self-reflection
         if (genome.config.autonomous?.enableThinkingEngine) {
             this.thinkingEngine = new ThinkingEngine();
+        }
+
+        // Agent State Vector: blackboard architecture for unified consciousness
+        if (genome.config.autonomous?.enableStateVector) {
+            this.stateVector = new AgentStateVector();
+            this.assembler.setStateVector(this.stateVector);
+        }
+
+        // Autonomous Loop: observe→think→plan→act→learn cognitive cycle
+        if (genome.config.autonomous?.enableAutonomousLoop) {
+            this.autonomousLoop = new AutonomousLoop();
+            this.assembler.setAutonomousLoop(this.autonomousLoop);
+        }
+
+        // Growth Journal: narrative self-model for agent learning
+        if (genome.config.autonomous?.enableGrowthJournal) {
+            this.growthJournal = new GrowthJournal();
+            this.assembler.setGrowthJournal(this.growthJournal);
+        }
+
+        // Curiosity Engine: intrinsic motivation for knowledge exploration
+        if (genome.config.autonomous?.enableCuriosityEngine) {
+            this.curiosityEngine = new CuriosityEngine();
+            this.assembler.setCuriosityEngine(this.curiosityEngine);
         }
 
         // C3 Content Firewall — enabled by default
@@ -711,6 +743,105 @@ Ready to see what we can do together? 😊`,
         let error: string | undefined;
 
         try {
+            // ── PRE-LLM: Blackboard — begin new consciousness cycle ──
+            // All cognitive modules will write their state to this shared vector
+            if (this.stateVector) {
+                this.stateVector.beginCycle(userMessage, context.taskType);
+            }
+
+            // ── PRE-LLM: Populate blackboard from existing modules ──
+            if (this.stateVector) {
+                // Emotional facet (from EmotionalModel)
+                if (this.emotionalModel) {
+                    const emotion = this.emotionalModel.inferEmotion(userMessage);
+                    const tone = this.emotionalModel.getToneGuidance(emotion);
+                    this.stateVector.updateEmotional({
+                        userEmotion: emotion.primary,
+                        intensity: emotion.intensity,
+                        agentTone: tone.suggestedTone,
+                    });
+                }
+
+                // Cognitive facet (from Metacognition)
+                if (this.metacognition) {
+                    const preAnalysis = this.metacognition.analyzePreResponse(userMessage);
+                    this.stateVector.updateCognitive({
+                        confidence: preAnalysis.confidence.overall,
+                        knowledgeGaps: preAnalysis.knowledgeGaps ?? [],
+                        suggestedAction: preAnalysis.suggestedAction,
+                        domain: context.taskType ?? null,
+                    });
+                }
+
+                // Memory facet (from PatternMemory + PersonalNarrative + AnalyticMemory)
+                if (this.patternMemory) {
+                    const preds = this.patternMemory.getPredictions();
+                    this.stateVector.updateMemory({ predictions: preds.map(p => p.prediction) });
+                }
+                if (this.personalNarrative) {
+                    const stage = this.personalNarrative.getRelationshipStage();
+                    this.stateVector.updateMemory({ relationshipStage: stage });
+                }
+                if (this.analyticMemory && context.userId) {
+                    const ks = this.analyticMemory.getKnowledgeSummary(context.userId);
+                    this.stateVector.updateMemory({
+                        knowledgeSummary: ks.summary,
+                        recentTopics: ks.topEntities?.slice(0, 5).map(
+                            (e) => e.name
+                        ) ?? [],
+                    });
+                }
+
+                // Health facet (from PurposeSurvival + DriftAnalyzer)
+                const driftReport = this.driftAnalyzer.analyzeDrift();
+                const fitnessVec = this.driftAnalyzer.getLatestFitness();
+                const hScore = fitnessVec?.composite ?? 0.5;
+                this.stateVector.updateHealth({
+                    operatingMode: this.purposeSurvival?.getMode() ?? 'stable',
+                    healthScore: hScore,
+                    healthLabel: hScore >= 0.8 ? 'excellent' : hScore >= 0.6 ? 'stable' : hScore >= 0.4 ? 'degraded' : 'critical',
+                    isDrifting: driftReport.isDrifting,
+                    driftSeverity: driftReport.overallSeverity ?? 'none',
+                });
+
+                // Evolution facet (from MetaEvolutionEngine)
+                if (this.metaEvolutionEngine) {
+                    const rec = this.metaEvolutionEngine.getStrategyRecommendation();
+                    const vel = this.metaEvolutionEngine.getLearningVelocity();
+                    this.stateVector.updateEvolution({
+                        bestOperator: rec.bestOperator,
+                        learningVelocity: vel.status,
+                        interactionCount: this.interactionCount,
+                        lastEvolutionTriggered: false,
+                    });
+                }
+
+                // Autonomy facet (from StrategicAutonomy)
+                if (this.strategicAutonomy && context.taskType) {
+                    const decision = this.strategicAutonomy.evaluateStrategic(context.taskType, undefined, userMessage);
+                    this.stateVector.updateAutonomy({
+                        canActAutonomously: decision.action === 'proceed',
+                        mutationRate: decision.suggestedMutationRate ?? 'balanced',
+                        refusedCurrentTask: decision.action === 'refuse',
+                        refusalReason: decision.action === 'refuse' ? decision.reasoning : null,
+                    });
+                }
+            }
+
+            // ── PRE-LLM: Autonomous Loop — observe + think + plan ──
+            if (this.autonomousLoop && this.stateVector) {
+                const observation = this.autonomousLoop.observe(userMessage, this.stateVector.getState());
+                const thinking = this.autonomousLoop.think(observation);
+                this.autonomousLoop.plan(thinking);
+            }
+
+            // ── PRE-LLM: Curiosity Engine — detect knowledge gaps ──
+            if (this.curiosityEngine) {
+                const domain = this.stateVector?.getState().cognitive.domain ?? context.taskType ?? null;
+                const confidence = this.stateVector?.getState().cognitive.confidence ?? 0.7;
+                this.curiosityEngine.detectGaps(userMessage, domain, confidence);
+            }
+
             // ── PRE-LLM: Strategic Autonomy refusal check ──
             // If the agent has purpose-awareness, check if this task should be refused
             if (this.strategicAutonomy && context.taskType) {
@@ -729,10 +860,8 @@ Ready to see what we can do together? 😊`,
             }
 
             // ── PRE-LLM: Metacognition pre-response analysis ──
-            // Assess confidence and identify gaps BEFORE generating a response.
-            // The analysis runs here so it's available in PromptAssembler (via setMetacognition)
-            // when assemblePrompt() is called below. The result also feeds post-response learning.
-            if (this.metacognition) {
+            // Only run if NOT already done by the blackboard populate phase above
+            if (this.metacognition && !this.stateVector) {
                 this.metacognition.analyzePreResponse(userMessage);
             }
 
@@ -871,6 +1000,22 @@ Ready to see what we can do together? 😊`,
                     cost: (inputTokens + outputTokens) / 1_000_000,
                     latency: Date.now() - startTime,
                 });
+            }
+
+            // ── POST-LLM: Autonomous Loop — learn phase ──
+            if (this.autonomousLoop) {
+                this.autonomousLoop.learn(quality, true);
+            }
+
+            // ── POST-LLM: Growth Journal — record success + lessons ──
+            if (this.growthJournal) {
+                const domain = context.taskType ?? null;
+                this.growthJournal.recordSuccess(domain, userMessage, quality);
+            }
+
+            // ── POST-LLM: Curiosity Engine — record exploration outcome ──
+            if (this.curiosityEngine && context.taskType) {
+                this.curiosityEngine.recordExploration(context.taskType, true);
             }
 
             // Record canary metrics if active
@@ -1100,6 +1245,10 @@ Ready to see what we can do together? 😊`,
         if (this.reasoningEngine) activeCapabilities.push('Advanced reasoning — multi-step problem solving');
         if (this.thinkingEngine) activeCapabilities.push('Chain-of-thought — self-reflects on response quality');
         if (this.genome.config.autonomous?.enableModelRouting) activeCapabilities.push('Intelligent routing — optimizes model selection per task');
+        if (this.stateVector) activeCapabilities.push('Unified consciousness — blackboard architecture for self-awareness');
+        if (this.autonomousLoop) activeCapabilities.push('Cognitive loop — observe→think→plan→act→learn cycle');
+        if (this.growthJournal) activeCapabilities.push('Growth narrative — tracks learning journey and milestones');
+        if (this.curiosityEngine) activeCapabilities.push('Curiosity driven — explores knowledge gaps proactively');
 
         return {
             genomeName: this.genome.name,

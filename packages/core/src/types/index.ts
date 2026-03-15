@@ -221,6 +221,18 @@ export interface AutonomousConfig {
     /** Enable Model Router intelligence — use routing decisions for model selection (default: false) */
     enableModelRouting?: boolean;
 
+    /** Enable Agent State Vector — blackboard architecture for unified consciousness (default: false) */
+    enableStateVector?: boolean;
+
+    /** Enable Autonomous Loop — observe→think→plan→act→learn cognitive cycle (default: false) */
+    enableAutonomousLoop?: boolean;
+
+    /** Enable Growth Journal — narrative self-model for agent learning (default: false) */
+    enableGrowthJournal?: boolean;
+
+    /** Enable Curiosity Engine — intrinsic motivation for knowledge exploration (default: false) */
+    enableCuriosityEngine?: boolean;
+
     /** Agent purpose statement — falls back to C0 identity if not set */
     agentPurpose?: string;
 }

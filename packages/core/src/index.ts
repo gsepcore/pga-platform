@@ -593,6 +593,42 @@ export type {
 export { computeAgentVitals } from './advanced-ai/AgentVitals.js';
 export type { AgentVitals } from './advanced-ai/AgentVitals.js';
 
+// ─── Consciousness & Autonomy (v0.8.0) ─────────────────
+
+export { AgentStateVector } from './advanced-ai/AgentStateVector.js';
+export type {
+    StateVector,
+    EmotionalFacet,
+    CognitiveFacet,
+    MemoryFacet,
+    HealthFacet,
+    EvolutionFacet,
+    AutonomyFacet,
+} from './advanced-ai/AgentStateVector.js';
+
+export { AutonomousLoop } from './advanced-ai/AutonomousLoop.js';
+export type {
+    Observation,
+    ThinkingResult as LoopThinkingResult,
+    Plan,
+    LearningOutcome,
+    CycleReport,
+} from './advanced-ai/AutonomousLoop.js';
+
+export { GrowthJournal } from './memory/GrowthJournal.js';
+export type {
+    JournalEntry,
+    GrowthMilestone,
+    GrowthSnapshot,
+} from './memory/GrowthJournal.js';
+
+export { CuriosityEngine } from './memory/CuriosityEngine.js';
+export type {
+    KnowledgeGap,
+    CuriositySignal,
+    ExplorationRecord,
+} from './memory/CuriosityEngine.js';
+
 // ─── C3 Content Firewall (v0.8.0) ──────────────────────
 
 export { ContentFirewall } from './firewall/ContentFirewall.js';

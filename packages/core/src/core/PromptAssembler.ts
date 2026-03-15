@@ -20,6 +20,10 @@ import type { CalibratedAutonomy } from '../advanced-ai/CalibratedAutonomy.js';
 import type { PersonalNarrative } from '../memory/PersonalNarrative.js';
 import type { AnalyticMemoryEngine } from '../memory/AnalyticMemoryEngine.js';
 import type { MetaEvolutionEngine } from '../evolution/boost/MetaEvolutionEngine.js';
+import type { AgentStateVector } from '../advanced-ai/AgentStateVector.js';
+import type { AutonomousLoop } from '../advanced-ai/AutonomousLoop.js';
+import type { GrowthJournal } from '../memory/GrowthJournal.js';
+import type { CuriosityEngine } from '../memory/CuriosityEngine.js';
 import type { ContentFirewall } from '../firewall/ContentFirewall.js';
 import type { GSEPIdentitySection, GSEPIdentityContext } from './GSEPIdentitySection.js';
 
@@ -38,6 +42,10 @@ export class PromptAssembler {
     private personalNarrative?: PersonalNarrative;
     private analyticMemory?: AnalyticMemoryEngine;
     private metaEvolution?: MetaEvolutionEngine;
+    private stateVector?: AgentStateVector;
+    private autonomousLoop?: AutonomousLoop;
+    private growthJournal?: GrowthJournal;
+    private curiosityEngine?: CuriosityEngine;
     private firewall?: ContentFirewall;
     private gsepIdentity?: GSEPIdentitySection;
     private gsepIdentityContext?: GSEPIdentityContext;
@@ -111,6 +119,34 @@ export class PromptAssembler {
      */
     setMetaEvolution(metaEvolution: MetaEvolutionEngine): void {
         this.metaEvolution = metaEvolution;
+    }
+
+    /**
+     * Set AgentStateVector for blackboard-based self-awareness.
+     */
+    setStateVector(stateVector: AgentStateVector): void {
+        this.stateVector = stateVector;
+    }
+
+    /**
+     * Set AutonomousLoop for cognitive cycle injection.
+     */
+    setAutonomousLoop(autonomousLoop: AutonomousLoop): void {
+        this.autonomousLoop = autonomousLoop;
+    }
+
+    /**
+     * Set GrowthJournal for agent growth narrative injection.
+     */
+    setGrowthJournal(growthJournal: GrowthJournal): void {
+        this.growthJournal = growthJournal;
+    }
+
+    /**
+     * Set CuriosityEngine for knowledge gap awareness injection.
+     */
+    setCuriosityEngine(curiosityEngine: CuriosityEngine): void {
+        this.curiosityEngine = curiosityEngine;
     }
 
     /**
@@ -258,6 +294,39 @@ export class PromptAssembler {
             const metaSection = this.metaEvolution.toPromptSection();
             if (metaSection) {
                 sections.push(this.processContent(metaSection, 'layer1'));
+            }
+        }
+
+        // Agent State Vector: blackboard self-awareness
+        if (this.stateVector) {
+            const stateSection = this.stateVector.toPromptSection();
+            if (stateSection) {
+                sections.push(this.processContent(stateSection, 'layer1'));
+            }
+        }
+
+        // Autonomous Loop: cognitive cycle guidance
+        if (this.autonomousLoop) {
+            const loopSection = this.autonomousLoop.toPromptSection();
+            if (loopSection) {
+                sections.push(this.processContent(loopSection, 'layer1'));
+            }
+        }
+
+        // Growth Journal: agent growth narrative
+        if (this.growthJournal) {
+            const currentDomain = context?.taskType || context?.metadata?.taskType as string | undefined;
+            const growthSection = this.growthJournal.toPromptSection(currentDomain);
+            if (growthSection) {
+                sections.push(this.processContent(growthSection, 'layer1'));
+            }
+        }
+
+        // Curiosity Engine: knowledge gap awareness
+        if (this.curiosityEngine) {
+            const curiositySection = this.curiosityEngine.toPromptSection();
+            if (curiositySection) {
+                sections.push(this.processContent(curiositySection, 'layer1'));
             }
         }
 
