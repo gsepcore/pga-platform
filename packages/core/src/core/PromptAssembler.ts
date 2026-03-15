@@ -19,6 +19,7 @@ import type { EmotionalModel } from '../advanced-ai/EmotionalModel.js';
 import type { CalibratedAutonomy } from '../advanced-ai/CalibratedAutonomy.js';
 import type { PersonalNarrative } from '../memory/PersonalNarrative.js';
 import type { AnalyticMemoryEngine } from '../memory/AnalyticMemoryEngine.js';
+import type { MetaEvolutionEngine } from '../evolution/boost/MetaEvolutionEngine.js';
 import type { ContentFirewall } from '../firewall/ContentFirewall.js';
 import type { GSEPIdentitySection, GSEPIdentityContext } from './GSEPIdentitySection.js';
 
@@ -36,6 +37,7 @@ export class PromptAssembler {
     private calibratedAutonomy?: CalibratedAutonomy;
     private personalNarrative?: PersonalNarrative;
     private analyticMemory?: AnalyticMemoryEngine;
+    private metaEvolution?: MetaEvolutionEngine;
     private firewall?: ContentFirewall;
     private gsepIdentity?: GSEPIdentitySection;
     private gsepIdentityContext?: GSEPIdentityContext;
@@ -102,6 +104,13 @@ export class PromptAssembler {
      */
     setAnalyticMemory(analyticMemory: AnalyticMemoryEngine): void {
         this.analyticMemory = analyticMemory;
+    }
+
+    /**
+     * Set MetaEvolutionEngine for evolution strategy injection.
+     */
+    setMetaEvolution(metaEvolution: MetaEvolutionEngine): void {
+        this.metaEvolution = metaEvolution;
     }
 
     /**
@@ -241,6 +250,14 @@ export class PromptAssembler {
             const knowledgeSection = this.analyticMemory.toPromptSection(currentTopic);
             if (knowledgeSection) {
                 sections.push(this.processContent(knowledgeSection, 'analytic-memory'));
+            }
+        }
+
+        // Meta-evolution: evolution strategy insight
+        if (this.metaEvolution) {
+            const metaSection = this.metaEvolution.toPromptSection();
+            if (metaSection) {
+                sections.push(this.processContent(metaSection, 'layer1'));
             }
         }
 

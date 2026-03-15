@@ -58,6 +58,11 @@ const TECHNICAL_KEYWORDS: Record<string, string[]> = {
     'devops': ['docker', 'kubernetes', 'ci/cd', 'pipeline', 'deploy', 'container', 'infra'],
     'design': ['ui', 'ux', 'component', 'layout', 'style', 'responsive', 'accessible'],
     'architecture': ['microservice', 'monolith', 'pattern', 'refactor', 'scale', 'cache'],
+    'ai-ml': ['model', 'training', 'inference', 'neural', 'llm', 'embedding', 'fine-tune', 'prompt', 'ai', 'machine learning'],
+    'security': ['auth', 'encryption', 'vulnerability', 'oauth', 'jwt', 'firewall', 'xss', 'injection', 'csrf'],
+    'testing': ['unit test', 'integration test', 'e2e', 'coverage', 'mock', 'vitest', 'jest', 'cypress', 'playwright'],
+    'documentation': ['readme', 'docs', 'jsdoc', 'comment', 'changelog', 'specification', 'wiki'],
+    'performance': ['optimize', 'benchmark', 'latency', 'throughput', 'profil', 'memory leak', 'bottleneck', 'cache'],
 };
 
 export class Metacognition {
@@ -65,8 +70,10 @@ export class Metacognition {
         message: string;
         wasSuccessful: boolean;
         action: 'respond' | 'ask' | 'research';
+        domain: string | null;
         timestamp: Date;
     }> = [];
+    private domainCalibration: Map<string, number> = new Map();
 
     constructor(
         private selfAssessmentFn?: () => SelfAssessment | null,
@@ -179,13 +186,23 @@ export class Metacognition {
         if (whatCouldImprove.length > whatWentWell.length) effectivenessScore -= 0.15;
         effectivenessScore = Math.max(0, Math.min(1, effectivenessScore));
 
-        // Record for future reference
+        // Record for future reference (with domain)
+        const detectedDomain = domain;
         this.interactionHistory.push({
             message: userMessage.slice(0, 100),
             wasSuccessful,
             action: wasSuccessful ? 'respond' : 'ask',
+            domain: detectedDomain,
             timestamp: new Date(),
         });
+
+        // Update domain calibration based on outcome
+        if (detectedDomain) {
+            const currentOffset = this.domainCalibration.get(detectedDomain) ?? 0;
+            const adjustment = wasSuccessful ? 0.02 : -0.05;
+            const newOffset = Math.max(-0.20, Math.min(0.15, currentOffset + adjustment));
+            this.domainCalibration.set(detectedDomain, newOffset);
+        }
 
         // Keep history manageable
         if (this.interactionHistory.length > 100) {
@@ -202,12 +219,16 @@ export class Metacognition {
 
     /**
      * Generate a prompt section for metacognitive awareness.
+     * Includes reflection insights when enough interaction history exists.
      */
     toPromptSection(preAnalysis: PreResponseAnalysis): string | null {
+        const reflectionInsights = this.getReflectionInsights();
+
         // Only inject when there's something actionable
         if (preAnalysis.missingInfo.length === 0 &&
             preAnalysis.knowledgeGaps.length === 0 &&
-            preAnalysis.suggestedAction === 'respond') {
+            preAnalysis.suggestedAction === 'respond' &&
+            reflectionInsights.length === 0) {
             return null;
         }
 
@@ -227,6 +248,14 @@ export class Metacognition {
 
         lines.push(`**Recommended action:** ${preAnalysis.suggestedAction}`);
         lines.push(`**Reasoning:** ${preAnalysis.reasoning}`);
+
+        // Reflection insights from interaction history
+        if (reflectionInsights.length > 0) {
+            lines.push('**Reflection:**');
+            for (const insight of reflectionInsights) {
+                lines.push(`- ${insight}`);
+            }
+        }
 
         return lines.join('\n');
     }
@@ -267,8 +296,8 @@ export class Metacognition {
         // Technical confidence: based on self-assessment if available
         let technical = 0.7;
         const selfAssessment = this.selfAssessmentFn?.();
+        const domain = this.detectDomain(userMessage);
         if (selfAssessment) {
-            const domain = this.detectDomain(userMessage);
             if (domain) {
                 const strength = selfAssessment.strengths.find(s => s.category === domain);
                 const weakness = selfAssessment.weaknesses.find(w => w.category === domain);
@@ -278,6 +307,11 @@ export class Metacognition {
             // Overall health affects base confidence
             if (selfAssessment.overallHealth === 'thriving') technical = Math.max(technical, 0.7);
             else if (selfAssessment.overallHealth === 'struggling') technical = Math.min(technical, 0.5);
+        }
+
+        // Apply domain calibration from interaction history
+        if (domain) {
+            technical = this.calibrateFromHistory(domain, technical);
         }
 
         // Informational confidence: do we have enough info?
@@ -432,5 +466,71 @@ export class Metacognition {
 
     private countAmbiguity(message: string): number {
         return AMBIGUITY_INDICATORS.filter(ind => message.includes(ind)).length;
+    }
+
+    /**
+     * Calibrate confidence for a domain using historical performance.
+     * Applies stored calibration offset + blends with recent success rate.
+     */
+    private calibrateFromHistory(domain: string, baseConfidence: number): number {
+        // Apply calibration offset
+        const offset = this.domainCalibration.get(domain) ?? 0;
+        let calibrated = baseConfidence + offset;
+
+        // If 3+ recent interactions in this domain, blend with historical success rate
+        const recentDomainInteractions = this.interactionHistory
+            .filter(h => h.domain === domain)
+            .slice(-20);
+
+        if (recentDomainInteractions.length >= 3) {
+            const historicalSuccessRate = recentDomainInteractions.filter(h => h.wasSuccessful).length
+                / recentDomainInteractions.length;
+            calibrated = 0.7 * calibrated + 0.3 * historicalSuccessRate;
+        }
+
+        return Math.max(0, Math.min(1, calibrated));
+    }
+
+    /**
+     * Generate reflection insights from interaction history.
+     * Returns max 3 insights about per-domain success rates,
+     * overall trends, and similar past challenges.
+     */
+    private getReflectionInsights(): string[] {
+        if (this.interactionHistory.length < 3) return [];
+
+        const insights: string[] = [];
+
+        // Per-domain success rates from last 20 interactions
+        const recent = this.interactionHistory.slice(-20);
+        const domainStats = new Map<string, { total: number; successful: number }>();
+
+        for (const entry of recent) {
+            if (!entry.domain) continue;
+            const stats = domainStats.get(entry.domain) ?? { total: 0, successful: 0 };
+            stats.total++;
+            if (entry.wasSuccessful) stats.successful++;
+            domainStats.set(entry.domain, stats);
+        }
+
+        for (const [domain, stats] of domainStats) {
+            if (stats.total < 2) continue;
+            const rate = Math.round((stats.successful / stats.total) * 100);
+            if (rate < 60) {
+                insights.push(`${domain}: ${rate}% success rate (${stats.total} recent interactions) — may need extra care`);
+            } else if (rate >= 90) {
+                insights.push(`${domain}: strong performance (${rate}% success rate)`);
+            }
+        }
+
+        // Overall trend
+        const trend = this.getEffectivenessTrend();
+        if (trend.trend === 'declining') {
+            insights.push(`Overall trend: declining (recent success rate: ${Math.round(trend.recentRate * 100)}%)`);
+        } else if (trend.trend === 'improving') {
+            insights.push(`Overall trend: improving (recent success rate: ${Math.round(trend.recentRate * 100)}%)`);
+        }
+
+        return insights.slice(0, 3);
     }
 }

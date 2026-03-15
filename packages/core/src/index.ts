@@ -404,6 +404,8 @@ export type {
     OperatorPerformance,
     ContextualPerformance,
     MetaEvolutionConfig,
+    StrategyRecommendation,
+    LearningVelocity,
 } from './evolution/boost/MetaEvolutionEngine.js';
 
 export { ParetoOptimizer } from './evolution/boost/ParetoOptimizer.js';
@@ -558,6 +560,7 @@ export type {
     Inference,
     MemoryQueryResult,
     TemporalPattern,
+    KnowledgeSummary,
 } from './memory/AnalyticMemoryEngine.js';
 
 // ─── Living Agent v0.7.0 ────────────────────────────────

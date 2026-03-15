@@ -45,6 +45,26 @@ export interface ContextualPerformance {
 }
 
 /**
+ * Strategy recommendation based on learned operator performance
+ */
+export interface StrategyRecommendation {
+    bestOperator: string | null;
+    confidence: number;
+    alternatives: Array<{ operator: string; score: number }>;
+    reasoning: string;
+}
+
+/**
+ * Learning velocity — how fast the meta-learning is converging
+ */
+export interface LearningVelocity {
+    velocityScore: number;
+    status: 'converging' | 'exploring' | 'unstable';
+    dominantOperator: string | null;
+    stabilityTrend: 'stabilizing' | 'volatile' | 'unknown';
+}
+
+/**
  * Meta-Evolution Configuration
  */
 export interface MetaEvolutionConfig {
@@ -68,6 +88,8 @@ export class MetaEvolutionEngine {
     private contextualPerformance: ContextualPerformance[] = [];
     private operatorProbabilities = new Map<string, number>();
     private config: Required<MetaEvolutionConfig>;
+    private probabilitySnapshots: Array<{ probabilities: Map<string, number>; timestamp: Date }> = [];
+    private totalMutationCount = 0;
 
     constructor(config?: Partial<MetaEvolutionConfig>) {
         this.config = {
@@ -129,6 +151,19 @@ export class MetaEvolutionEngine {
 
         // Adapt operator probabilities
         this.adaptOperatorProbabilities();
+
+        // Snapshot probabilities every 5 mutations for velocity tracking
+        this.totalMutationCount++;
+        if (this.totalMutationCount % 5 === 0) {
+            this.probabilitySnapshots.push({
+                probabilities: new Map(this.operatorProbabilities),
+                timestamp: new Date(),
+            });
+            // Keep max 20 snapshots
+            if (this.probabilitySnapshots.length > 20) {
+                this.probabilitySnapshots = this.probabilitySnapshots.slice(-20);
+            }
+        }
     }
 
     /**
@@ -385,11 +420,157 @@ export class MetaEvolutionEngine {
     }
 
     /**
+     * Get a strategy recommendation based on learned operator performance.
+     */
+    getStrategyRecommendation(context?: string): StrategyRecommendation {
+        const operators = Array.from(this.operatorPerformance.values());
+
+        if (operators.length === 0) {
+            return {
+                bestOperator: null,
+                confidence: 0,
+                alternatives: [],
+                reasoning: 'No mutation data yet — using uniform exploration.',
+            };
+        }
+
+        // If context provided, check contextual performance first
+        if (context) {
+            const ctx = this.contextualPerformance.find(c => c.context === context);
+            if (ctx && ctx.operators.size > 0) {
+                const ranked = Array.from(ctx.operators.entries())
+                    .filter(([, stats]) => stats.sampleSize >= 3)
+                    .sort((a, b) => (b[1].successRate * 0.5 + b[1].avgImprovement * 0.5) - (a[1].successRate * 0.5 + a[1].avgImprovement * 0.5));
+
+                if (ranked.length > 0) {
+                    const [bestName, bestStats] = ranked[0];
+                    return {
+                        bestOperator: bestName,
+                        confidence: Math.min(1, bestStats.successRate * (bestStats.sampleSize / 10)),
+                        alternatives: ranked.slice(1, 3).map(([name, stats]) => ({
+                            operator: name,
+                            score: stats.successRate * 0.5 + stats.avgImprovement * 0.5,
+                        })),
+                        reasoning: `Contextual best for '${context}': ${bestName} (${Math.round(bestStats.successRate * 100)}% success, ${bestStats.sampleSize} samples).`,
+                    };
+                }
+            }
+        }
+
+        // Use global scores
+        const scored = operators.map(op => ({
+            name: op.operatorName,
+            score: this.calculateOperatorScore(op),
+            perf: op,
+        })).sort((a, b) => b.score - a.score);
+
+        const best = scored[0];
+        const totalSamples = operators.reduce((sum, op) => sum + op.timesUsed, 0);
+
+        return {
+            bestOperator: best.name,
+            confidence: Math.min(1, best.perf.successRate * (totalSamples / 20)),
+            alternatives: scored.slice(1, 3).map(s => ({ operator: s.name, score: s.score })),
+            reasoning: `Best operator: ${best.name} (${Math.round(best.perf.successRate * 100)}% success rate across ${best.perf.timesUsed} uses).`,
+        };
+    }
+
+    /**
+     * Get learning velocity — how fast the meta-learning is converging.
+     */
+    getLearningVelocity(): LearningVelocity {
+        if (this.probabilitySnapshots.length < 2) {
+            const dominant = this.getDominantOperator();
+            return {
+                velocityScore: 0.3,
+                status: 'exploring',
+                dominantOperator: dominant,
+                stabilityTrend: 'unknown',
+            };
+        }
+
+        // Calculate average delta between consecutive snapshots
+        const deltas: number[] = [];
+        for (let i = 1; i < this.probabilitySnapshots.length; i++) {
+            const prev = this.probabilitySnapshots[i - 1].probabilities;
+            const curr = this.probabilitySnapshots[i].probabilities;
+            let totalDelta = 0;
+            let count = 0;
+            for (const [name, prob] of curr) {
+                const prevProb = prev.get(name) ?? prob;
+                totalDelta += Math.abs(prob - prevProb);
+                count++;
+            }
+            if (count > 0) deltas.push(totalDelta / count);
+        }
+
+        const avgDelta = deltas.length > 0 ? deltas.reduce((a, b) => a + b, 0) / deltas.length : 0;
+
+        // Determine status
+        const status: LearningVelocity['status'] =
+            avgDelta < 0.1 ? 'converging' :
+            avgDelta < 0.4 ? 'exploring' : 'unstable';
+
+        // Determine stability trend: compare recent deltas vs older
+        let stabilityTrend: LearningVelocity['stabilityTrend'] = 'unknown';
+        if (deltas.length >= 4) {
+            const midpoint = Math.floor(deltas.length / 2);
+            const olderAvg = deltas.slice(0, midpoint).reduce((a, b) => a + b, 0) / midpoint;
+            const recentAvg = deltas.slice(midpoint).reduce((a, b) => a + b, 0) / (deltas.length - midpoint);
+            stabilityTrend = recentAvg < olderAvg * 0.8 ? 'stabilizing' : 'volatile';
+        }
+
+        return {
+            velocityScore: avgDelta,
+            status,
+            dominantOperator: this.getDominantOperator(),
+            stabilityTrend,
+        };
+    }
+
+    /**
+     * Generate a prompt section for the system prompt with evolution strategy info.
+     * Returns null if no mutation data exists yet.
+     */
+    toPromptSection(): string | null {
+        const summary = this.getLearningSummary();
+        if (summary.totalMutations === 0) return null;
+
+        const recommendation = this.getStrategyRecommendation();
+        const velocity = this.getLearningVelocity();
+
+        const lines: string[] = ['## Evolution Strategy'];
+        if (recommendation.bestOperator) {
+            lines.push(`**Best operator:** ${recommendation.bestOperator} (${Math.round(recommendation.confidence * 100)}% confidence)`);
+        }
+        lines.push(`**Success rate:** ${Math.round(summary.overallSuccessRate * 100)}% across ${summary.totalMutations} mutations`);
+        lines.push(`**Learning status:** ${velocity.status} (velocity: ${velocity.velocityScore.toFixed(2)}, trend: ${velocity.stabilityTrend})`);
+
+        return lines.join('\n');
+    }
+
+    /**
      * Reset learning (for testing or fresh start)
      */
     reset(): void {
         this.operatorPerformance.clear();
         this.contextualPerformance = [];
         this.operatorProbabilities.clear();
+        this.probabilitySnapshots = [];
+        this.totalMutationCount = 0;
+    }
+
+    // ── Private Helpers ─────────────────────────────────────
+
+    private getDominantOperator(): string | null {
+        let maxProb = 0;
+        let dominant: string | null = null;
+        for (const [name, prob] of this.operatorProbabilities) {
+            if (prob > maxProb) {
+                maxProb = prob;
+                dominant = name;
+            }
+        }
+        return dominant;
     }
 }

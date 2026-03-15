@@ -318,6 +318,97 @@ describe('MetaEvolutionEngine', () => {
         expect(lowQualityCtx).toBeDefined();
         expect(lowQualityCtx!.operators.has('compress_instructions')).toBe(true);
     });
+
+    // ─── Strategy Recommendation Tests ───────────────────────
+
+    it('should return default recommendation with no data', () => {
+        const freshEngine = new MetaEvolutionEngine();
+        const rec = freshEngine.getStrategyRecommendation();
+
+        expect(rec.bestOperator).toBeNull();
+        expect(rec.confidence).toBe(0);
+        expect(rec.reasoning).toContain('No mutation data');
+    });
+
+    it('should recommend best operator based on performance', () => {
+        // Record many successes for one operator
+        for (let i = 0; i < 10; i++) {
+            engine.recordMutationAttempt('compress_instructions', true, 0.20);
+            engine.recordMutationAttempt('reorder_constraints', false, 0.01);
+        }
+
+        const rec = engine.getStrategyRecommendation();
+        expect(rec.bestOperator).toBe('compress_instructions');
+        expect(rec.confidence).toBeGreaterThan(0);
+    });
+
+    it('should use contextual data when context is provided', () => {
+        // Record contextual performance
+        for (let i = 0; i < 5; i++) {
+            engine.recordMutationAttempt('compress_instructions', false, 0.01, undefined, 'high-quality');
+            engine.recordMutationAttempt('reorder_constraints', true, 0.15, undefined, 'high-quality');
+        }
+
+        const rec = engine.getStrategyRecommendation('high-quality');
+        // For high-quality context, reorder should be better
+        expect(rec.bestOperator).toBe('reorder_constraints');
+    });
+
+    // ─── Learning Velocity Tests ─────────────────────────────
+
+    it('should return exploring status with insufficient snapshots', () => {
+        const freshEngine = new MetaEvolutionEngine();
+        const velocity = freshEngine.getLearningVelocity();
+
+        expect(velocity.status).toBe('exploring');
+        expect(velocity.stabilityTrend).toBe('unknown');
+    });
+
+    it('should track snapshots after mutations', () => {
+        // Record 10 mutations (2 snapshots at mutation 5 and 10)
+        for (let i = 0; i < 10; i++) {
+            engine.recordMutationAttempt('compress_instructions', true, 0.15);
+        }
+
+        const velocity = engine.getLearningVelocity();
+        // Should have snapshots now
+        expect(velocity.velocityScore).toBeGreaterThanOrEqual(0);
+        expect(['converging', 'exploring', 'unstable']).toContain(velocity.status);
+    });
+
+    it('should detect convergence with consistent mutations', () => {
+        const convEngine = new MetaEvolutionEngine({ minSampleSize: 3 });
+
+        // Record many consistent mutations to one operator
+        for (let i = 0; i < 25; i++) {
+            convEngine.recordMutationAttempt('compress_instructions', true, 0.15);
+        }
+
+        const velocity = convEngine.getLearningVelocity();
+        // With only one operator, probabilities should converge
+        expect(['converging', 'exploring']).toContain(velocity.status);
+        expect(velocity.dominantOperator).toBe('compress_instructions');
+    });
+
+    // ─── toPromptSection Tests ───────────────────────────────
+
+    it('should return null toPromptSection with no data', () => {
+        const freshEngine = new MetaEvolutionEngine();
+        expect(freshEngine.toPromptSection()).toBeNull();
+    });
+
+    it('should return section with evolution strategy data', () => {
+        for (let i = 0; i < 5; i++) {
+            engine.recordMutationAttempt('compress_instructions', true, 0.15);
+        }
+
+        const section = engine.toPromptSection();
+        expect(section).not.toBeNull();
+        expect(section).toContain('Evolution Strategy');
+        expect(section).toContain('Best operator');
+        expect(section).toContain('Success rate');
+        expect(section).toContain('Learning status');
+    });
 });
 
 // ─── MutationEngine Tests ────────────────────────────────────

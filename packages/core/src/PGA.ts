@@ -42,6 +42,7 @@ import { EmotionalModel, type EmotionalState } from './advanced-ai/EmotionalMode
 import { CalibratedAutonomy, type AutonomyDecision } from './advanced-ai/CalibratedAutonomy.js';
 import { PersonalNarrative, type NarrativeSummary, type SignificantMoment } from './memory/PersonalNarrative.js';
 import { AnalyticMemoryEngine, type MemoryQueryResult } from './memory/AnalyticMemoryEngine.js';
+import { MetaEvolutionEngine } from './evolution/boost/MetaEvolutionEngine.js';
 import type { GeneBank } from './gene-bank/GeneBank.js';
 import type { DriftSignal } from './evolution/DriftAnalyzer.js';
 import { CanaryDeploymentManager } from './evolution/CanaryDeployment.js';
@@ -400,6 +401,7 @@ export class GenomeInstance {
     private calibratedAutonomy?: CalibratedAutonomy;
     private personalNarrative?: PersonalNarrative;
     private analyticMemory?: AnalyticMemoryEngine;
+    private metaEvolutionEngine?: MetaEvolutionEngine;
     private canaryManager: CanaryDeploymentManager;
     private enhancedSelfModel?: EnhancedSelfModel;
     private purposeSurvival?: PurposeSurvival;
@@ -505,6 +507,12 @@ export class GenomeInstance {
         if (genome.config.autonomous?.enableAnalyticMemory) {
             this.analyticMemory = new AnalyticMemoryEngine();
             this.assembler.setAnalyticMemory(this.analyticMemory);
+        }
+
+        // Autonomous Agent: MetaEvolutionEngine (adaptive evolution strategy)
+        if (genome.config.autonomous) {
+            this.metaEvolutionEngine = new MetaEvolutionEngine();
+            this.assembler.setMetaEvolution(this.metaEvolutionEngine);
         }
 
         // Living Agent: EnhancedSelfModel (purpose + capability + trajectory)
@@ -1003,7 +1011,9 @@ Ready to see what we can do together? 😊`,
             healthLabel,
             healthScore,
             fitnessScore: fitnessVector?.composite,
-            userLearningSummary: userId ? undefined : undefined, // Populated async in updateGSEPIdentityContext
+            userLearningSummary: userId && this.analyticMemory
+                ? this.analyticMemory.getKnowledgeSummary(userId).summary || undefined
+                : undefined,
             activeCapabilities,
             driftStatus: driftReport.isDrifting
                 ? { isDrifting: true, severity: driftReport.overallSeverity }
@@ -1052,13 +1062,42 @@ Ready to see what we can do together? 😊`,
         }
 
         // Analytic Memory: record observations from interaction
-        if (this.analyticMemory && interaction.taskType) {
-            this.analyticMemory.recordObservation({
-                subject: interaction.userId,
-                action: 'performed',
-                object: interaction.taskType,
-                timestamp: interaction.timestamp,
-            });
+        if (this.analyticMemory) {
+            // Record task type observation
+            if (interaction.taskType) {
+                this.analyticMemory.recordObservation({
+                    subject: interaction.userId,
+                    action: 'performed',
+                    object: interaction.taskType,
+                    timestamp: interaction.timestamp,
+                });
+            }
+
+            // Extract and record mentioned topics from user message
+            if (interaction.userMessage) {
+                const topics = this.extractTopicsFromMessage(interaction.userMessage);
+                for (const topic of topics) {
+                    this.analyticMemory.recordObservation({
+                        subject: interaction.userId,
+                        action: 'mentioned',
+                        object: topic,
+                        timestamp: interaction.timestamp,
+                    });
+                }
+            }
+
+            // Record tool usage observations
+            if (interaction.toolCalls) {
+                for (const tool of interaction.toolCalls) {
+                    const toolName = typeof tool === 'string' ? tool : (tool as { name?: string }).name ?? String(tool);
+                    this.analyticMemory.recordObservation({
+                        subject: interaction.userId,
+                        action: 'used tool',
+                        object: toolName,
+                        timestamp: interaction.timestamp,
+                    });
+                }
+            }
         }
 
         // Metacognition: post-response analysis
@@ -2697,5 +2736,23 @@ Ready to see what we can do together? 😊`,
             message: `Restored from snapshot taken at ${snapshot.timestamp.toISOString()}`,
             genomeId: this.genome.id,
         });
+    }
+
+    /**
+     * Extract technology/topic terms from user message for analytic memory.
+     */
+    private extractTopicsFromMessage(message: string): string[] {
+        const TECH_TERMS = [
+            'typescript', 'javascript', 'python', 'rust', 'go', 'java', 'c++', 'ruby', 'php', 'swift',
+            'react', 'vue', 'angular', 'svelte', 'nextjs', 'node', 'deno', 'bun',
+            'docker', 'kubernetes', 'aws', 'azure', 'gcp', 'terraform', 'ci/cd',
+            'sql', 'postgres', 'mongodb', 'redis', 'graphql', 'rest', 'grpc',
+            'machine learning', 'ai', 'llm', 'neural network', 'deep learning',
+            'security', 'authentication', 'oauth', 'jwt', 'encryption',
+            'testing', 'vitest', 'jest', 'cypress', 'playwright',
+            'git', 'github', 'linux', 'nginx', 'webpack', 'vite',
+        ];
+        const lower = message.toLowerCase();
+        return TECH_TERMS.filter(term => lower.includes(term));
     }
 }

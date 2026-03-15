@@ -75,12 +75,21 @@ export interface TemporalPattern {
     prediction?: string;
 }
 
+export interface KnowledgeSummary {
+    topEntities: Array<{ name: string; type: Entity['type']; mentionCount: number; recency: 'recent' | 'month' | 'historical' }>;
+    topRelations: Array<{ from: string; to: string; type: RelationType; weight: number }>;
+    topInferences: Array<{ conclusion: string; confidence: number }>;
+    interactionPatterns: string[];
+    summary: string;
+}
+
 // ─── Constants ──────────────────────────────────────────
 
 const MAX_ENTITIES = 200;
 const MAX_RELATIONS = 500;
 const MAX_INFERENCES = 100;
 const MIN_CONFIDENCE_FOR_INFERENCE = 0.4;
+const HALF_LIFE_DAYS = 30;
 
 // Domain implications: when entity X is observed, these relations are inferred
 const DOMAIN_IMPLICATIONS: Record<string, Array<{ entity: string; relation: RelationType; confidence: number }>> = {
@@ -188,6 +197,7 @@ export class AnalyticMemoryEngine {
 
     /**
      * Query the knowledge graph semantically.
+     * Returned entities have confidence adjusted by temporal decay (copies, not mutations).
      */
     query(question: string): MemoryQueryResult {
         const lower = question.toLowerCase();
@@ -202,7 +212,12 @@ export class AnalyticMemoryEngine {
             );
 
             if (nameMatch || attrMatch) {
-                matchingEntities.push(entity);
+                // Return a copy with decayed confidence
+                matchingEntities.push({
+                    ...entity,
+                    attributes: { ...entity.attributes },
+                    confidence: this.computeEffectiveConfidence(entity.confidence, entity.lastSeen),
+                });
             }
         }
 
@@ -330,6 +345,7 @@ export class AnalyticMemoryEngine {
 
     /**
      * Generate a prompt section with knowledge graph context.
+     * Includes temporal recency labels for entities.
      */
     toPromptSection(currentTopic?: string): string | null {
         if (this.entities.size === 0 && this.inferences.length === 0) {
@@ -346,10 +362,11 @@ export class AnalyticMemoryEngine {
         if (relevantEntities.length > 0) {
             lines.push('**Known facts:**');
             for (const entity of relevantEntities.slice(0, 5)) {
+                const recencyLabel = this.getRecencyLabel(entity.lastSeen);
                 const attrs = Object.entries(entity.attributes)
                     .map(([k, v]) => `${k}=${String(v)}`)
                     .join(', ');
-                lines.push(`- ${entity.name}: ${attrs || entity.type}`);
+                lines.push(`- ${entity.name} (${recencyLabel}): ${attrs || entity.type}`);
             }
         }
 
@@ -375,6 +392,69 @@ export class AnalyticMemoryEngine {
         }
 
         return lines.length > 1 ? lines.join('\n') : null;
+    }
+
+    /**
+     * Get a knowledge summary suitable for GSEP identity context.
+     */
+    getKnowledgeSummary(userId?: string): KnowledgeSummary {
+        // Entities sorted by effective confidence (decay-aware)
+        const entitiesWithDecay = Array.from(this.entities.values())
+            .filter(e => !userId || e.id !== userId) // exclude the user entity itself
+            .map(e => ({
+                ...e,
+                effectiveConfidence: this.computeEffectiveConfidence(e.confidence, e.lastSeen),
+                recency: this.getRecencyLabel(e.lastSeen) as 'recent' | 'month' | 'historical',
+            }))
+            .sort((a, b) => b.effectiveConfidence * b.mentionCount - a.effectiveConfidence * a.mentionCount);
+
+        const topEntities = entitiesWithDecay.slice(0, 5).map(e => ({
+            name: e.name,
+            type: e.type,
+            mentionCount: e.mentionCount,
+            recency: e.recency,
+        }));
+
+        const topRelations = this.relations
+            .sort((a, b) => b.weight - a.weight)
+            .slice(0, 5)
+            .map(r => ({ from: r.from, to: r.to, type: r.type, weight: r.weight }));
+
+        const topInferences = this.inferences
+            .filter(i => i.confidence >= 0.5)
+            .sort((a, b) => b.confidence - a.confidence)
+            .slice(0, 3)
+            .map(i => ({ conclusion: i.conclusion, confidence: i.confidence }));
+
+        // Derive interaction patterns from temporal data
+        const interactionPatterns: string[] = [];
+        if (this.temporalPatterns.length > 0) {
+            for (const p of this.temporalPatterns.slice(0, 2)) {
+                interactionPatterns.push(p.description);
+            }
+        }
+
+        // Generate human-readable summary
+        const summaryParts: string[] = [];
+        const recentEntities = entitiesWithDecay.filter(e => e.recency === 'recent');
+        if (recentEntities.length > 0) {
+            summaryParts.push(`Recently active in: ${recentEntities.slice(0, 3).map(e => e.name).join(', ')}`);
+        }
+        const totalTopics = entitiesWithDecay.filter(e => e.type === 'concept' || e.type === 'tool').length;
+        if (totalTopics > 0) {
+            summaryParts.push(`${totalTopics} known topic${totalTopics > 1 ? 's' : ''}`);
+        }
+        if (topInferences.length > 0) {
+            summaryParts.push(`${topInferences.length} active inference${topInferences.length > 1 ? 's' : ''}`);
+        }
+
+        return {
+            topEntities,
+            topRelations,
+            topInferences,
+            interactionPatterns,
+            summary: summaryParts.length > 0 ? summaryParts.join('. ') + '.' : '',
+        };
     }
 
     // ── Private Methods ─────────────────────────────────────
@@ -579,5 +659,25 @@ export class AnalyticMemoryEngine {
         if (lower.includes('skill') || lower.includes('expert')) return 'skilled-in';
         if (lower.includes('part') || lower.includes('component')) return 'part-of';
         return 'related-to';
+    }
+
+    /**
+     * Compute effective confidence with temporal decay.
+     * confidence * exp(-daysSinceLastSeen / HALF_LIFE_DAYS)
+     * Does NOT mutate stored data — returns a new value.
+     */
+    private computeEffectiveConfidence(storedConfidence: number, lastSeen: Date): number {
+        const daysSinceLastSeen = (Date.now() - lastSeen.getTime()) / (1000 * 60 * 60 * 24);
+        return storedConfidence * Math.exp(-daysSinceLastSeen / HALF_LIFE_DAYS);
+    }
+
+    /**
+     * Get a human-readable recency label for an entity.
+     */
+    private getRecencyLabel(lastSeen: Date): 'recent' | 'month' | 'historical' {
+        const daysSince = (Date.now() - lastSeen.getTime()) / (1000 * 60 * 60 * 24);
+        if (daysSince <= 7) return 'recent';
+        if (daysSince <= 30) return 'month';
+        return 'historical';
     }
 }

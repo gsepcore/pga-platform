@@ -126,4 +126,113 @@ describe('Metacognition', () => {
         expect(trend.recentRate).toBeGreaterThan(0);
         expect(['improving', 'stable', 'declining']).toContain(trend.trend);
     });
+
+    // ─── Domain Calibration Tests ────────────────────────────
+
+    it('should lower confidence after failures in a domain', () => {
+        const meta = new Metacognition();
+
+        // Record failures in 'coding' domain
+        for (let i = 0; i < 5; i++) {
+            meta.analyzePostResponse(
+                'Write a function to sort arrays using code and class',
+                'response...',
+                false,
+            );
+        }
+
+        // Now assess confidence for a coding task
+        const analysis = meta.analyzePreResponse('Write code to implement a class');
+        // After 5 failures, calibration should reduce confidence
+        expect(analysis.confidence.technical).toBeLessThan(0.7);
+    });
+
+    it('should boost confidence after successes in a domain', () => {
+        const meta = new Metacognition();
+
+        // Record successes in 'coding' domain
+        for (let i = 0; i < 5; i++) {
+            meta.analyzePostResponse(
+                'Write a function to debug this code error',
+                'Here is the fix:\n```\ncode\n```',
+                true,
+            );
+        }
+
+        // Get analysis — coding domain should be calibrated upward
+        const analysis = meta.analyzePreResponse('Write a function and test the api endpoint');
+        expect(analysis.confidence.technical).toBeGreaterThanOrEqual(0.7);
+    });
+
+    it('should not affect unrelated domains', () => {
+        const meta = new Metacognition();
+
+        // Record failures in 'design' domain
+        for (let i = 0; i < 5; i++) {
+            meta.analyzePostResponse(
+                'Help me with the UI layout and responsive style',
+                'long response...',
+                false,
+            );
+        }
+
+        // Coding domain should not be affected
+        const codingAnalysis = meta.analyzePreResponse('Write a function to sort an array with code');
+        // Should still be around baseline since we didn't affect coding
+        expect(codingAnalysis.confidence.technical).toBeGreaterThanOrEqual(0.6);
+    });
+
+    it('should include reflection insights in toPromptSection after history', () => {
+        const meta = new Metacognition();
+
+        // Build some history with a mix of success/failure in a domain
+        for (let i = 0; i < 4; i++) {
+            meta.analyzePostResponse(
+                'Write code to debug this api error',
+                'response...',
+                i < 1, // 1 success, 3 failures
+            );
+        }
+
+        const analysis = meta.analyzePreResponse('Fix this code bug');
+        const section = meta.toPromptSection(analysis);
+        expect(section).not.toBeNull();
+        // Should contain reflection with domain success rate
+        expect(section).toContain('Reflection');
+    });
+
+    // ─── Expanded Domain Detection Tests ─────────────────────
+
+    it('should detect ai-ml domain', () => {
+        const assessment = createMockSelfAssessment({
+            weaknesses: [{ category: 'ai-ml', confidence: 0.30, suggestion: 'improve ML skills' }],
+        });
+        const meta = new Metacognition(() => assessment);
+
+        const analysis = meta.analyzePreResponse('Train a neural network model with embedding and fine-tune the llm');
+        expect(analysis.knowledgeGaps.length).toBeGreaterThan(0);
+        expect(analysis.knowledgeGaps[0]).toContain('ai-ml');
+    });
+
+    it('should detect security domain', () => {
+        const assessment = createMockSelfAssessment({
+            weaknesses: [{ category: 'security', confidence: 0.25, suggestion: 'improve security knowledge' }],
+        });
+        const meta = new Metacognition(() => assessment);
+
+        const analysis = meta.analyzePreResponse('Implement oauth authentication with jwt encryption for this vulnerability');
+        expect(analysis.knowledgeGaps.length).toBeGreaterThan(0);
+        expect(analysis.knowledgeGaps[0]).toContain('security');
+    });
+
+    it('should detect testing domain', () => {
+        const assessment = createMockSelfAssessment({
+            weaknesses: [{ category: 'testing', confidence: 0.30, suggestion: 'improve testing practices' }],
+        });
+        const meta = new Metacognition(() => assessment);
+
+        const analysis = meta.analyzePreResponse('Write a unit test with vitest and mock for coverage');
+        expect(analysis.knowledgeGaps.length).toBeGreaterThan(0);
+        expect(analysis.knowledgeGaps[0]).toContain('testing');
+    });
 });

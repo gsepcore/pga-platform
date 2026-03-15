@@ -141,4 +141,90 @@ describe('AnalyticMemoryEngine', () => {
         expect(predictions.length).toBeGreaterThan(0);
         expect(predictions[0].prediction).toContain('code_review');
     });
+
+    // ─── Temporal Decay Tests ────────────────────────────────
+
+    it('should return higher confidence for recent entities than old ones via query', () => {
+        const engine = new AnalyticMemoryEngine();
+
+        // Record a recent entity
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'typescript' });
+
+        // Record an old entity by manipulating the entity's lastSeen
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'cobol' });
+        const entities = engine.getEntities();
+        const cobolEntity = entities.find(e => e.name === 'cobol');
+        if (cobolEntity) {
+            cobolEntity.lastSeen = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000); // 90 days ago
+        }
+
+        const resultTs = engine.query('typescript');
+        const resultCobol = engine.query('cobol');
+
+        const tsEntity = resultTs.entities.find(e => e.name === 'typescript');
+        const cobolResult = resultCobol.entities.find(e => e.name === 'cobol');
+
+        expect(tsEntity).toBeDefined();
+        expect(cobolResult).toBeDefined();
+        // Recent entity should have higher effective confidence
+        expect(tsEntity!.confidence).toBeGreaterThan(cobolResult!.confidence);
+    });
+
+    it('should NOT mutate stored entity confidence during query', () => {
+        const engine = new AnalyticMemoryEngine();
+
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'python' });
+
+        const storedBefore = engine.getEntities().find(e => e.name === 'python')!.confidence;
+        engine.query('python');
+        const storedAfter = engine.getEntities().find(e => e.name === 'python')!.confidence;
+
+        expect(storedAfter).toBe(storedBefore);
+    });
+
+    it('should include recency labels in toPromptSection', () => {
+        const engine = new AnalyticMemoryEngine();
+
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'react' });
+
+        const section = engine.toPromptSection();
+        expect(section).not.toBeNull();
+        expect(section).toContain('(recent)');
+    });
+
+    // ─── Knowledge Summary Tests ─────────────────────────────
+
+    it('should return correct KnowledgeSummary structure', () => {
+        const engine = new AnalyticMemoryEngine();
+
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'docker' });
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'typescript' });
+
+        const summary = engine.getKnowledgeSummary('user');
+
+        expect(summary).toHaveProperty('topEntities');
+        expect(summary).toHaveProperty('topRelations');
+        expect(summary).toHaveProperty('topInferences');
+        expect(summary).toHaveProperty('interactionPatterns');
+        expect(summary).toHaveProperty('summary');
+        expect(summary.topEntities.length).toBeGreaterThan(0);
+    });
+
+    it('should return empty summary when no data', () => {
+        const engine = new AnalyticMemoryEngine();
+
+        const summary = engine.getKnowledgeSummary();
+        expect(summary.topEntities).toHaveLength(0);
+        expect(summary.summary).toBe('');
+    });
+
+    it('should include recent entities in summary text', () => {
+        const engine = new AnalyticMemoryEngine();
+
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'react' });
+        engine.recordObservation({ subject: 'user', action: 'uses', object: 'vue' });
+
+        const summary = engine.getKnowledgeSummary('user');
+        expect(summary.summary).toContain('Recently active in');
+    });
 });
