@@ -161,7 +161,6 @@ export class AlertWebhooks {
                 if (attempt < maxRetries) {
                     await this.sleep(delayMs * Math.pow(2, attempt));
                 } else {
-                    console.error(`Failed to send webhook after ${maxRetries} retries:`, error);
                     throw error;
                 }
             }

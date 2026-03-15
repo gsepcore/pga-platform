@@ -217,10 +217,7 @@ export class EvolutionBoostEngine {
         context: MutationContext,
         testInteractions?: InteractionData[]
     ): Promise<EvolutionResult> {
-        console.log(`🚀 Evolution Boost 2.0 - Mode: ${this.config.mode.toUpperCase()}`);
-
         // Step 1: Generate parallel mutations
-        console.log(`⚡ Generating ${this.config.parallelBranches} parallel mutations...`);
 
         const result = await this.parallelEngine.evolveGeneration(
             context,
@@ -244,8 +241,6 @@ export class EvolutionBoostEngine {
         let best = result.selected[0];
 
         if (this.config.enableRecombination && result.selected.length >= 2) {
-            console.log('🧬 Applying genetic recombination...');
-
             const parents = result.selected.slice(0, 3).map(branch => ({
                 genome: branch.mutant,
                 fitness: branch.sandboxFitness || branch.mutation.expectedImprovement,
@@ -280,11 +275,6 @@ export class EvolutionBoostEngine {
         const metaStats = this.config.enableMetaLearning
             ? this.metaEngine.getLearningSummary()
             : undefined;
-
-        console.log(`✅ Evolution complete!`);
-        console.log(`   Top improvement: ${(topImprovement * 100).toFixed(1)}%`);
-        console.log(`   Avg improvement: ${(avgImprovement * 100).toFixed(1)}%`);
-        console.log(`   Operators used: ${operatorsUsed.join(', ')}`);
 
         return {
             best: best.mutant,

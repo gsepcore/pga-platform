@@ -261,8 +261,6 @@ describe('SemanticJudge', () => {
         });
 
         it('should fall back to heuristic when LLM throws', async () => {
-            const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
             const testCase = createTestCase({
                 semanticChecks: { requiresValidationClause: true },
             });
@@ -272,9 +270,6 @@ describe('SemanticJudge', () => {
             expect(result.passed).toBe(true);
             expect(result.confidence).toBe(0.7);
             expect(result.reasoning).toContain('Heuristic validation passed');
-            expect(consoleSpy).toHaveBeenCalled();
-
-            consoleSpy.mockRestore();
         });
 
         it('should detect missing priority flow in heuristic mode', async () => {

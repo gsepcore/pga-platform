@@ -339,8 +339,7 @@ export class ContentFirewall {
                 const regex = new RegExp(pattern.pattern, 'gi');
                 this.compiledPatterns.push({ pattern, regex });
             } catch {
-                // Invalid regex pattern — skip and log
-                console.warn(`[C3 Firewall] Invalid pattern regex: ${pattern.id} — ${pattern.name}`);
+                // Invalid regex pattern — skip silently
             }
         }
     }

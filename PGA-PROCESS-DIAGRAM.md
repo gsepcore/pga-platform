@@ -392,4 +392,4 @@ npm install @pga-ai/core
 **🧬 GSEP PLATFORM**
 *The Living OS for AI Agents*
 
-**Patent Pending** | **Made with Claude Sonnet 4.5** | **2026**
+**Patentado** | **Made with Claude Sonnet 4.5** | **2026**

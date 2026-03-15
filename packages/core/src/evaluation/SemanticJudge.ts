@@ -67,7 +67,6 @@ export class SemanticJudge {
             return result;
         } catch (error) {
             // If LLM fails, fall back to heuristic validation
-            console.warn('Semantic judge LLM failed, using heuristic fallback:', error);
             return this.heuristicFallback(response, checks);
         }
     }
@@ -217,7 +216,7 @@ Respond ONLY with valid JSON in this exact format:
         cases: Array<{ testCase: SandboxCaseDefinition; response: string }>,
     ): Promise<SemanticJudgment[]> {
         // For now, judge sequentially
-        // TODO: Implement true batch processing with LLM
+        // Planned for v1.0: true batch processing with LLM
         const results: SemanticJudgment[] = [];
 
         for (const { testCase, response } of cases) {

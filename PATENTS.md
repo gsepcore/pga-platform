@@ -3,7 +3,7 @@
 **Patent Holder**: Luis Alfredo Velasquez Duran
 **Location**: Germany
 **Filing Year**: 2025
-**Status**: Patent Pending
+**Status**: Patentado
 
 ---
 

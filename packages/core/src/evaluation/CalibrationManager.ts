@@ -54,7 +54,7 @@ export class CalibrationManager {
 
     constructor(private storage: StorageAdapter) {
         // Storage adapter ready for persistence implementation
-        void this.storage; // TODO: Implement storage persistence
+        void this.storage; // Storage persistence planned for v1.0
     }
 
     /**
@@ -148,7 +148,7 @@ export class CalibrationManager {
         );
 
         // Create calibration point for storage
-        // TODO: Persist calibrationData to storage via this.storage
+        // Planned for v1.0: persist calibrationData to storage
         const calibrationData = {
             timestamp: new Date(),
             context,
@@ -180,7 +180,7 @@ export class CalibrationManager {
         currentThreshold: number,
     ): number {
         // Cost function parameter (safety vs exploration trade-off)
-        // TODO: Use alpha = 0.3 in cost function: minimize (FPR + alpha * FNR)
+        // Planned for v1.0: use alpha = 0.3 in cost function: minimize (FPR + alpha * FNR)
 
         // If too many false positives, increase threshold
         if (falsePositiveRate > 0.1) {
@@ -204,9 +204,9 @@ export class CalibrationManager {
         operator?: string;
         taskType?: string;
     }): Promise<CalibrationHistory | null> {
-        // TODO: Query pga_calibration_history table
-        // SELECT * FROM pga_calibration_history WHERE context_key = ?
-        void context; // Using context for future query
+        // Planned for v1.0: query pga_calibration_history table
+        void context;
+
         return null;
     }
 

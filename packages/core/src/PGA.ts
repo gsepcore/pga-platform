@@ -1372,7 +1372,15 @@ Ready to see what we can do together? 😊`,
             const threshold = this.genome.config.autonomous.autoPublishThreshold ?? 0.85;
             for (const allele of this.genome.layers.layer1.filter(a => a.status === 'active')) {
                 if (allele.fitness >= threshold && !allele.publishedToSwarm) {
-                    this.autoPublishGene(allele).catch(() => {});
+                    this.autoPublishGene(allele).catch(err =>
+                        this.metrics.logAudit({
+                            level: 'warning',
+                            component: 'gene-bank',
+                            operation: 'auto-publish',
+                            message: `Auto-publish gene failed: ${err instanceof Error ? err.message : String(err)}`,
+                            genomeId: this.genome.id,
+                        }),
+                    );
                 }
             }
         }
@@ -2553,7 +2561,15 @@ Ready to see what we can do together? 😊`,
         const threshold = this.genome.config.autonomous?.autoPublishThreshold ?? 0.85;
         for (const allele of this.genome.layers.layer1.filter(a => a.status === 'active')) {
             if (allele.fitness >= threshold && !allele.publishedToSwarm) {
-                await this.autoPublishGene(allele).catch(() => {});
+                await this.autoPublishGene(allele).catch(err =>
+                    this.metrics.logAudit({
+                        level: 'warning',
+                        component: 'gene-bank',
+                        operation: 'auto-publish',
+                        message: `Auto-publish gene failed: ${err instanceof Error ? err.message : String(err)}`,
+                        genomeId: this.genome.id,
+                    }),
+                );
             }
         }
     }
@@ -2976,7 +2992,15 @@ Ready to see what we can do together? 😊`,
                 allele.fitness = saved.fitness;
             }
         }
-        this.storage.saveGenome(this.genome).catch(() => {});
+        this.storage.saveGenome(this.genome).catch(err =>
+            this.metrics.logAudit({
+                level: 'error',
+                component: 'genome',
+                operation: 'emergency-rollback-save',
+                message: `Failed to persist rollback: ${err instanceof Error ? err.message : String(err)}`,
+                genomeId: this.genome.id,
+            }),
+        );
         this.metrics.logAudit({
             level: 'warning',
             component: 'genome',

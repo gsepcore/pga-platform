@@ -99,8 +99,8 @@ async function createProjectStructure(
             start: 'node dist/index.js',
         },
         dependencies: {
-            '@pga-ai/core': '^0.1.0',
-            '@pga-ai/adapters-llm-anthropic': '^0.1.0',
+            '@pga-ai/core': '^0.8.0',
+            '@pga-ai/adapters-llm-anthropic': '^0.8.0',
         },
         devDependencies: {
             typescript: '^5.4.5',
@@ -111,11 +111,11 @@ async function createProjectStructure(
 
     // Add dependencies based on template
     if (template === 'advanced' || template === 'enterprise') {
-        packageJson.dependencies['@pga-ai/adapters-llm-openai'] = '^0.1.0';
+        packageJson.dependencies['@pga-ai/adapters-llm-openai'] = '^0.8.0';
     }
 
     if (template === 'enterprise') {
-        packageJson.dependencies['@pga-ai/adapters-storage-postgres'] = '^0.1.0';
+        packageJson.dependencies['@pga-ai/adapters-storage-postgres'] = '^0.8.0';
     }
 
     await fs.writeFile(
@@ -193,26 +193,25 @@ function getMainTemplate(template: string): string {
  * Basic GSEP Application
  */
 
-import { PGA } from '@pga-ai/core';
+import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
 
 async function main() {
     // Initialize GSEP
     const pga = new PGA({
-        llmAdapter: new ClaudeAdapter({
+        llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
         }),
+        storage: new InMemoryStorageAdapter(),
     });
 
     // Create a genome
     const genome = await pga.createGenome({
         name: 'my-assistant',
         config: {
-            layer0: {
-                systemPrompt: 'You are a helpful AI assistant.',
-                constraints: ['Be concise', 'Be accurate'],
-                capabilities: ['coding', 'analysis'],
-            },
+            systemPrompt: 'You are a helpful AI assistant.',
+            constraints: ['Be concise', 'Be accurate'],
+            capabilities: ['coding', 'analysis'],
         },
     });
 
@@ -223,7 +222,7 @@ async function main() {
         userId: 'user-123',
     });
 
-    console.log('Response:', response.content);
+    console.log('Response:', response);
 }
 
 main().catch(console.error);
@@ -236,83 +235,50 @@ main().catch(console.error);
  * Includes monitoring and multi-model support
  */
 
-import { PGA, MetricsCollector } from '@pga-ai/core';
+import { PGA, InMemoryStorageAdapter, MetricsCollector } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
 import { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';
 
 async function main() {
-    // Initialize metrics collector
-    const metrics = new MetricsCollector({
-        alertThresholds: {
-            maxCostPerHour: 50,
-            maxErrorRate: 0.05,
-            maxP95Latency: 3000,
-        },
-    });
-
     // Initialize GSEP with Claude
     const pgaClaude = new PGA({
-        llmAdapter: new ClaudeAdapter({
+        llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
-            model: 'claude-sonnet-4.5',
+            model: 'claude-sonnet-4-5-20250929',
         }),
+        storage: new InMemoryStorageAdapter(),
     });
 
     // Initialize GSEP with OpenAI (alternative)
     const pgaOpenAI = new PGA({
-        llmAdapter: new OpenAIAdapter({
+        llm: new OpenAIAdapter({
             apiKey: process.env.OPENAI_API_KEY!,
             model: 'gpt-4-turbo-preview',
         }),
+        storage: new InMemoryStorageAdapter(),
     });
 
     // Create genome
     const genome = await pgaClaude.createGenome({
         name: 'monitored-assistant',
         config: {
-            layer0: {
-                systemPrompt: 'You are an advanced AI assistant with self-evolving capabilities.',
-                constraints: ['Be precise', 'Learn from interactions'],
-                capabilities: ['coding', 'debugging', 'architecture'],
-            },
+            systemPrompt: 'You are an advanced AI assistant with self-evolving capabilities.',
+            constraints: ['Be precise', 'Learn from interactions'],
+            capabilities: ['coding', 'debugging', 'architecture'],
         },
     });
 
-    // Chat with metrics tracking
-    const startTime = Date.now();
+    // Chat
+    const response = await genome.chat('Explain GSEP architecture', {
+        userId: 'user-123',
+        taskType: 'architecture',
+    });
 
-    try {
-        const response = await genome.chat('Explain GSEP architecture', {
-            userId: 'user-123',
-        });
-
-        metrics.recordRequest({
-            requestId: crypto.randomUUID(),
-            duration: Date.now() - startTime,
-            success: true,
-            model: 'claude-sonnet-4.5',
-            inputTokens: response.usage?.inputTokens || 0,
-            outputTokens: response.usage?.outputTokens || 0,
-        });
-
-        console.log('Response:', response.content);
-    } catch (error) {
-        metrics.recordRequest({
-            requestId: crypto.randomUUID(),
-            duration: Date.now() - startTime,
-            success: false,
-            model: 'claude-sonnet-4.5',
-            inputTokens: 0,
-            outputTokens: 0,
-            error: error.message,
-        });
-
-        throw error;
-    }
+    console.log('Response:', response);
 
     // Display metrics
-    console.log('\\nMetrics:', metrics.getPerformanceMetrics());
-    console.log('Costs:', metrics.getCostMetrics());
+    const metrics = genome.getMetrics();
+    console.log('\\nMetrics:', JSON.stringify(metrics, null, 2));
 }
 
 main().catch(console.error);
@@ -325,72 +291,44 @@ main().catch(console.error);
  * Production-ready with PostgreSQL, monitoring, and multi-model support
  */
 
-import { PGA, MetricsCollector, Evaluator } from '@pga-ai/core';
+import { PGA } from '@pga-ai/core';
 import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';
 import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
 
 async function main() {
-    // Initialize storage
+    // Initialize PostgreSQL storage
     const storage = new PostgresAdapter({
         connectionString: process.env.DATABASE_URL!,
     });
 
     await storage.initialize();
 
-    // Initialize metrics
-    const metrics = new MetricsCollector({
-        alertThresholds: {
-            maxCostPerHour: 100,
-            maxErrorRate: 0.05,
-            maxP95Latency: 3000,
-            maxMemoryUsageMB: 500,
-        },
-    });
-
-    // Initialize GSEP
+    // Initialize GSEP with persistent storage
     const pga = new PGA({
-        llmAdapter: new ClaudeAdapter({
+        llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
-            model: 'claude-sonnet-4.5',
+            model: 'claude-sonnet-4-5-20250929',
         }),
-        storageAdapter: storage,
+        storage,
     });
 
     // Create genome
     const genome = await pga.createGenome({
         name: 'enterprise-assistant',
         config: {
-            layer0: {
-                systemPrompt: 'You are an enterprise-grade AI assistant with genomic evolution.',
-                constraints: ['Security-first', 'Audit all operations', 'Performance optimized'],
-                capabilities: ['enterprise-coding', 'architecture', 'security-analysis'],
-            },
+            systemPrompt: 'You are an enterprise-grade AI assistant with genomic evolution.',
+            constraints: ['Security-first', 'Audit all operations', 'Performance optimized'],
+            capabilities: ['enterprise-coding', 'architecture', 'security-analysis'],
         },
     });
 
-    // Run evaluation
-    const evaluator = new Evaluator(pga, metrics);
-    const benchmark = await evaluator.evaluate(genome, STANDARD_TASKS, 'admin');
+    // Chat with evolution tracking
+    const response = await genome.chat('Analyze the security posture of our API', {
+        userId: 'admin',
+        taskType: 'security-analysis',
+    });
 
-    console.log('Benchmark Results:');
-    console.log(\`Success Rate: \${(benchmark.successRate * 100).toFixed(1)}%\`);
-    console.log(\`Avg Response Time: \${benchmark.avgResponseTime.toFixed(0)}ms\`);
-    console.log(\`Total Cost: $\${benchmark.totalCost.toFixed(4)}\`);
-
-    // Monitor health
-    setInterval(() => {
-        const health = metrics.getHealthStatus();
-        const alerts = metrics.getAlerts();
-
-        if (health.status !== 'healthy') {
-            console.warn('Health degraded:', health);
-        }
-
-        if (alerts.length > 0) {
-            console.warn('Active alerts:', alerts);
-        }
-    }, 60000); // Check every minute
+    console.log('Response:', response);
 
     // Graceful shutdown
     process.on('SIGINT', async () => {

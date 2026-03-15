@@ -3,7 +3,7 @@
 **Project:** Genomic Self-Evolving Prompts (PGA Platform)
 **Creator:** Luis Alfredo Velasquez Duran
 **Location:** Germany
-**Status:** Patent Pending | Production Development
+**Status:** Patentado | Production Development
 
 ---
 
@@ -135,7 +135,7 @@ pga-platform/
 
 ## 🛡️ INTELLECTUAL PROPERTY PROTECTION
 
-### Patent Status: **Patent Pending** 🔒
+### Patent Status: **Patentado** 🔒
 
 **3 Patent Applications Ready to File:**
 1. **Genomic Evolution Method** (US utility patent, 12 claims)

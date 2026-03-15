@@ -37,7 +37,6 @@ export class FitnessTracker {
         const allele = layerAlleles.find(a => a.gene === gene && a.variant === variant);
 
         if (!allele) {
-            console.warn(`[FITNESS] Allele not found: Layer ${layer}/${gene}/${variant}`);
             return;
         }
 
@@ -61,12 +60,10 @@ export class FitnessTracker {
         // Save genome
         await this.storage.saveGenome(this.genome);
 
-        // Check immune system (fire-and-forget)
-        this.checkImmune(layer, gene, variant, recentScores, allele.fitness).catch(() => {});
-
-        console.log(
-            `[FITNESS] Recorded: L${layer}/${gene}/${variant} score=${score.toFixed(3)}, fitness=${newFitness.toFixed(4)}`,
-        );
+        // Check immune system (fire-and-forget with logging)
+        this.checkImmune(layer, gene, variant, recentScores, allele.fitness).catch(() => {
+            // Immune check is non-critical; genome is already saved above
+        });
     }
 
     /**
@@ -95,11 +92,6 @@ export class FitnessTracker {
         const drop = currentFitness - windowAvg;
 
         if (drop > IMMUNE_DROP_THRESHOLD) {
-            console.log(
-                `[IMMUNE] Triggered: L${layer}/${gene}/${variant} ` +
-                    `drop=${drop.toFixed(3)} (fitness=${currentFitness.toFixed(3)}, window=${windowAvg.toFixed(3)})`,
-            );
-
             // Rollback: retire this variant, restore parent
             await this.rollbackVariant(layer, gene, variant);
 
@@ -130,7 +122,6 @@ export class FitnessTracker {
      */
     private async rollbackVariant(layer: Layer, gene: string, variant: string): Promise<boolean> {
         if (layer === 0) {
-            console.warn('[FITNESS] Cannot rollback Layer 0 (immutable)');
             return false;
         }
 
@@ -157,9 +148,6 @@ export class FitnessTracker {
         // Save genome
         await this.storage.saveGenome(this.genome);
 
-        console.log(
-            `[FITNESS] Rollback: L${layer}/${gene}/${variant} → parent: ${target.parentVariant}`,
-        );
         return true;
     }
 

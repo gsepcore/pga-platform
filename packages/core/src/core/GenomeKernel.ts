@@ -473,21 +473,6 @@ export class GenomeKernel {
      * Log security event
      */
     private logSecurityEvent(event: SecurityEvent): void {
-        // Log to console in development
-        if (process.env.NODE_ENV !== 'production') {
-            const levelEmoji = {
-                info: 'ℹ️',
-                warning: '⚠️',
-                error: '❌',
-                critical: '🔥',
-            };
-
-            console.log(
-                `${levelEmoji[event.level]} [${event.level.toUpperCase()}] ${event.event}`,
-                event.details
-            );
-        }
-
         // Notify callback
         this.options.onSecurityEvent(event);
     }

@@ -996,15 +996,15 @@ describe('GenomeKernel', () => {
             expect(quarantineEvent![0].level).toBe('critical');
         });
 
-        it('should log to console in non-production environment', () => {
+        it('should emit security events via callback in non-production environment', () => {
             const originalEnv = process.env.NODE_ENV;
             process.env.NODE_ENV = 'development';
 
-            consoleSpy.mockClear();
             const genome = createGenomeV2();
-            new GenomeKernel(genome);
+            const onSec = vi.fn();
+            new GenomeKernel(genome, { onSecurityEvent: onSec });
 
-            expect(consoleSpy).toHaveBeenCalled();
+            expect(onSec).toHaveBeenCalled();
 
             process.env.NODE_ENV = originalEnv;
         });

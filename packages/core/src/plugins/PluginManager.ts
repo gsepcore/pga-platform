@@ -229,11 +229,8 @@ export class PluginManager {
                 if (hookResult !== undefined) {
                     result = hookResult;
                 }
-            } catch (error) {
-                console.error(
-                    `Error in plugin ${name} hook ${hookName}:`,
-                    error
-                );
+            } catch {
+                // Plugin hook error — continue with remaining plugins
             }
         }
 

@@ -158,8 +158,7 @@ export class ParallelEvolutionEngine {
                 mutation: result,
                 operator: operator.name,
             };
-        } catch (error) {
-            console.error(`Branch creation failed for operator ${operator.name}:`, error);
+        } catch {
             return null;
         }
     }

@@ -238,8 +238,8 @@ export class PGAEventEmitter {
                 if (subscription.once) {
                     this.off(subscription.id);
                 }
-            } catch (error) {
-                console.error(`Error in event handler for ${type}:`, error);
+            } catch {
+                // Silently catch handler errors to prevent event propagation failures
             }
         }
 
@@ -257,8 +257,8 @@ export class PGAEventEmitter {
         data: T,
         metadata?: PGAEvent<T>['metadata']
     ): void {
-        this.emit(type, data, metadata).catch((error) => {
-            console.error(`Error emitting event ${type}:`, error);
+        this.emit(type, data, metadata).catch(() => {
+            // Fire-and-forget: silently ignore async emission errors
         });
     }
 

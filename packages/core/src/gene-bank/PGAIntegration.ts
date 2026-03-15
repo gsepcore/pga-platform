@@ -18,11 +18,31 @@ import { GeneAdopter } from './GeneAdopter';
 import type { GeneStorageAdapter } from './GeneBank';
 import type { LLMAdapter } from '../interfaces/LLMAdapter';
 import type { MetricsCollector } from '../monitoring/MetricsCollector';
+import type { SandboxTestCase } from './SandboxTester';
 
-// Import GSEP types (these would be from actual GSEP core)
-type Genome = any; // Placeholder
-type MutationProposal = any; // Placeholder
-type FitnessMetrics = any; // Placeholder
+// ─── Bridge Types ─────────────────────────────────────────
+// Minimal shape required from GSEP core genome/mutation objects.
+// Planned for v1.0: import canonical types from core once GenomeV2 migration is complete.
+
+interface GenomeBridge {
+    id: string;
+    previousPrompt?: string;
+    currentPrompt?: string;
+    taskContext?: string;
+    domain?: string;
+}
+
+interface MutationProposalBridge {
+    id?: string;
+    fitnessMetrics?: FitnessMetricsBridge;
+}
+
+interface FitnessMetricsBridge {
+    successRate?: number;
+    tokenEfficiency?: number;
+    quality?: number;
+    userSatisfaction?: number;
+}
 
 /**
  * Configuration for GSEP Gene Bank Integration
@@ -98,8 +118,8 @@ export class PGAGeneBankIntegration {
      * Call this after a mutation is promoted to production
      */
     async onMutationPromoted(
-        genome: Genome,
-        mutation: MutationProposal,
+        genome: GenomeBridge,
+        mutation: MutationProposalBridge,
         oldFitness: number,
         newFitness: number
     ): Promise<CognitiveGene | null> {
@@ -150,7 +170,7 @@ export class PGAGeneBankIntegration {
      * Call this before executing a task to check for helpful genes
      */
     async onTaskStart(
-        genome: Genome,
+        genome: GenomeBridge,
         taskDescription: string,
         domain?: string
     ): Promise<CognitiveGene[]> {
@@ -205,7 +225,7 @@ export class PGAGeneBankIntegration {
      * Call this after a task completes to track gene performance
      */
     async onTaskComplete(
-        genome: Genome,
+        genome: GenomeBridge,
         taskSuccess: boolean,
         fitness: number
     ): Promise<void> {
@@ -227,7 +247,7 @@ export class PGAGeneBankIntegration {
      * Call this to get a prompt that includes gene instructions
      */
     async getEnhancedPrompt(
-        genome: Genome,
+        genome: GenomeBridge,
         basePrompt: string
     ): Promise<string> {
         const adopter = this.geneAdopters.get(genome.id);
@@ -266,28 +286,28 @@ export class PGAGeneBankIntegration {
     }
 
     // ========================================================================
-    // HELPER METHODS (Placeholders - implement based on actual GSEP API)
+    // HELPER METHODS — Bridge to GSEP Core
     // ========================================================================
 
-    private extractPromptFromGenome(genome: Genome, version: 'before' | 'after'): string {
-        // TODO: Implement based on actual Genome structure
+    private extractPromptFromGenome(genome: GenomeBridge, version: 'before' | 'after'): string {
+        // Planned for v1.0: full GenomeV2 prompt extraction
         return version === 'before'
             ? genome.previousPrompt || 'Original prompt'
             : genome.currentPrompt || 'Mutated prompt';
     }
 
-    private extractTaskContext(genome: Genome): string {
-        // TODO: Extract task context from genome metadata
+    private extractTaskContext(genome: GenomeBridge): string {
+        // Planned for v1.0: richer task context from genome metadata
         return genome.taskContext || 'General task context';
     }
 
-    private inferDomain(genome: Genome): string {
-        // TODO: Infer domain from genome metadata, tags, or usage patterns
+    private inferDomain(genome: GenomeBridge): string {
+        // Planned for v1.0: infer domain from genome metadata, tags, or usage patterns
         return genome.domain || 'general';
     }
 
-    private convertFitnessMetrics(fitnessMetrics: FitnessMetrics): any {
-        // TODO: Convert GSEP fitness metrics to gene fitness format
+    private convertFitnessMetrics(fitnessMetrics?: FitnessMetricsBridge): MutationContext['metrics'] {
+        // Planned for v1.0: richer fitness metric conversion
         return {
             taskSuccessRate: fitnessMetrics?.successRate || 0,
             tokenEfficiency: fitnessMetrics?.tokenEfficiency || 0,
@@ -296,9 +316,8 @@ export class PGAGeneBankIntegration {
         };
     }
 
-    private generateTestCasesForTask(_taskDescription: string): any[] {
-        // TODO: Generate relevant test cases based on task
-        // For now, return empty array (sandbox testing will be skipped)
+    private generateTestCasesForTask(_taskDescription: string): SandboxTestCase[] {
+        // Planned for v1.0: generate relevant test cases based on task description
         return [];
     }
 }

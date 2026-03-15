@@ -621,7 +621,6 @@ If no permanent facts found, return: {"facts": []}
             });
 
             // Silently fail if extraction fails (not critical)
-            console.warn('Failed to extract long-term facts:', error);
         }
     }
 

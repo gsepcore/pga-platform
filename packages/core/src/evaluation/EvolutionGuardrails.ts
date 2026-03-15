@@ -236,7 +236,7 @@ export class EvolutionGuardrailsManager {
         }
 
         // Otherwise, estimate based on content length and interactions
-        // TODO: Use analytics for more accurate economic metrics
+        // Planned for v1.0: use analytics for more accurate economic metrics
         void await this.storage.getAnalytics(genomeId);
 
         // Estimate tokens (rough: 4 chars per token)

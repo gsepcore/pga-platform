@@ -336,7 +336,7 @@ export class GeneMatcher {
 
     /**
      * Score semantic match (simple keyword-based for now)
-     * TODO: Implement embeddings-based semantic matching in future
+     * Planned for v1.0: embeddings-based semantic matching
      */
     private scoreSemanticMatch(gene: CognitiveGene, context: MatchContext): number {
         if (!context.currentContext) return 0;

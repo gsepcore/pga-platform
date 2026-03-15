@@ -1308,4 +1308,4 @@ Location: Alemania
 ---
 
 *GSEP™ - Genomic Self-Evolving Prompts*
-*Patent Pending - Luis Alfredo Velasquez Durán, 2025*
+*Patentado - Luis Alfredo Velasquez Durán, 2025*

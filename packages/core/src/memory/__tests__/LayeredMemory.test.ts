@@ -426,7 +426,6 @@ describe('LayeredMemory', () => {
                 mem.addInteraction('user-1', 'genome-1', makeInteraction())
             ).resolves.not.toThrow();
 
-            expect(consoleSpy).toHaveBeenCalled();
             expect(metrics.logAudit).toHaveBeenCalledWith(
                 expect.objectContaining({ level: 'error', operation: 'fact_extraction' })
             );

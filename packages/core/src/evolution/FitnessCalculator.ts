@@ -210,7 +210,6 @@ export class FitnessCalculator {
             const pricing = this.config.modelPricing[interaction.model];
 
             if (!pricing) {
-                console.warn(`No pricing found for model: ${interaction.model}`);
                 continue;
             }
 

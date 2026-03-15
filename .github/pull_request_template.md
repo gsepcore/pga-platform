@@ -57,4 +57,4 @@ Fixes #
 
 ---
 
-**By submitting this pull request, I confirm that my contribution is made under the terms of the MIT license.**
+**By submitting this pull request, I confirm that my contribution is made under the terms of the applicable project license (MIT for core and adapters, BSL 1.1 for Gene Registry).**
