@@ -55,10 +55,7 @@ const ctas = [
   },
 ];
 
-// ── Replace with your YouTube video ID once uploaded ────────────────────────
-// Example: if your YouTube URL is https://youtube.com/watch?v=ABC123
-// set YOUTUBE_VIDEO_ID = "ABC123"
-const YOUTUBE_VIDEO_ID: string | null = null;
+const YOUTUBE_VIDEO_ID: string | null = "cTPJqrL2IyE";
 
 // Self-hosted video fallback URL (e.g., Cloudflare R2, Bunny CDN)
 // Example: "https://cdn.gsepcore.com/gsep-demo.mp4"
