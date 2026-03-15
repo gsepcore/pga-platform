@@ -323,7 +323,7 @@ TOTAL:                      5,030+ lines
 
 **Author:** Luis Alfredo Velasquez Duran
 **Email:** contact@gsepcore.com
-**GitHub:** https://github.com/pga-ai/pga-platform
+**GitHub:** https://github.com/LuisvelMarketer/pga-platform
 **License:** MIT (Core), BSL 1.1 (Gene Registry)
 
 **Want to Contribute?**

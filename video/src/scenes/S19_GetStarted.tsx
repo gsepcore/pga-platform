@@ -24,7 +24,7 @@ const ctaCards = [
   {
     icon: "⭐",
     title: "Star on GitHub",
-    url: "github.com/pga-ai/pga-platform",
+    url: "github.com/LuisvelMarketer/pga-platform",
     color: THEME.amber,
     startFrame: 160,
   },

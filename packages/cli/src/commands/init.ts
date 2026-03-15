@@ -447,9 +447,9 @@ my-pga-project/
 
 ## Learn More
 
-- [GSEP Documentation](https://github.com/pga-ai/pga-platform)
+- [GSEP Documentation](https://github.com/LuisvelMarketer/pga-platform)
 - [API Reference](https://gsepcore.com/docs)
-- [Examples](https://github.com/pga-ai/pga-platform/tree/main/examples)
+- [Examples](https://github.com/LuisvelMarketer/pga-platform/tree/main/examples)
 
 ## License
 

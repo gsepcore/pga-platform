@@ -34,7 +34,7 @@ See [examples/quick-start.ts](./examples/quick-start.ts) for complete working ex
 
 ```bash
 # Clone the repository (for local testing)
-git clone https://github.com/pga-ai/pga-platform.git
+git clone https://github.com/LuisvelMarketer/pga-platform.git
 cd pga-platform
 
 # Install dependencies
@@ -559,7 +559,7 @@ export DATABASE_URL='postgresql://user:password@localhost:5432/dbname'
    - Add your own genes!
 
 4. **Join the Community**
-   - Star the repo: https://github.com/pga-ai/pga-platform
+   - Star the repo: https://github.com/LuisvelMarketer/pga-platform
    - Report issues
    - Contribute improvements
 
@@ -569,7 +569,7 @@ export DATABASE_URL='postgresql://user:password@localhost:5432/dbname'
 
 - **Documentation:** [README.md](./README.md)
 - **Examples:** [examples/](./examples/)
-- **Issues:** https://github.com/pga-ai/pga-platform/issues
+- **Issues:** https://github.com/LuisvelMarketer/pga-platform/issues
 - **Discussions:** GitHub Discussions (coming soon)
 
 ---

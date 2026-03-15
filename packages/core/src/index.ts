@@ -649,6 +649,20 @@ export { GSEPActivityFooter } from './core/GSEPActivityFooter.js';
 export type { GSEPActivity } from './core/GSEPActivityFooter.js';
 export type { GSEPVisibility, GSEPStatus, GSEPChatResult } from './types/index.js';
 
+// ─── Configuration Presets ──────────────────────────────
+
+export {
+    PRESET_MINIMAL,
+    PRESET_STANDARD,
+    PRESET_CONSCIOUS,
+    PRESET_FULL,
+    getPreset,
+    withPreset,
+    getAvailablePresets,
+    countEnabledFlags,
+} from './presets/ConfigPresets.js';
+export type { PresetName } from './presets/ConfigPresets.js';
+
 // ─── Token Utilities ────────────────────────────────────
 
 export { estimateTokenCount, tokenEfficiency, compressionRatio } from './utils/tokens.js';
