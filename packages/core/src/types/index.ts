@@ -215,6 +215,12 @@ export interface AutonomousConfig {
     /** Enable Strategic Autonomy — goal-based decisions (default: false) */
     enableStrategicAutonomy?: boolean;
 
+    /** Enable Thinking Engine — chain-of-thought + self-reflection (default: false) */
+    enableThinkingEngine?: boolean;
+
+    /** Enable Model Router intelligence — use routing decisions for model selection (default: false) */
+    enableModelRouting?: boolean;
+
     /** Agent purpose statement — falls back to C0 identity if not set */
     agentPurpose?: string;
 }

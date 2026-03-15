@@ -51,6 +51,7 @@ import { EnhancedSelfModel, type IntegratedHealth, type CapabilityEntry, type Ev
 import { PurposeSurvival, type OperatingMode, type SurvivalStrategy, type GenomeSnapshot } from './evolution/PurposeSurvival.js';
 import { StrategicAutonomy, type EvolutionPriority } from './advanced-ai/StrategicAutonomy.js';
 import { computeAgentVitals, type AgentVitals } from './advanced-ai/AgentVitals.js';
+import { ThinkingEngine } from './advanced-ai/ThinkingEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
@@ -406,6 +407,7 @@ export class GenomeInstance {
     private enhancedSelfModel?: EnhancedSelfModel;
     private purposeSurvival?: PurposeSurvival;
     private strategicAutonomy?: StrategicAutonomy;
+    private thinkingEngine?: ThinkingEngine;
     private gsepIdentitySection: GSEPIdentitySection;
     private gsepActivityFooter: GSEPActivityFooter;
     private interactionCount: number = 0;
@@ -544,6 +546,11 @@ export class GenomeInstance {
                 () => this.purposeSurvival?.getMode() ?? 'stable',
             );
             this.assembler.setCalibratedAutonomy(this.strategicAutonomy);
+        }
+
+        // Thinking Engine: chain-of-thought + self-reflection
+        if (genome.config.autonomous?.enableThinkingEngine) {
+            this.thinkingEngine = new ThinkingEngine();
         }
 
         // C3 Content Firewall — enabled by default
@@ -704,6 +711,53 @@ Ready to see what we can do together? 😊`,
         let error: string | undefined;
 
         try {
+            // ── PRE-LLM: Strategic Autonomy refusal check ──
+            // If the agent has purpose-awareness, check if this task should be refused
+            if (this.strategicAutonomy && context.taskType) {
+                const refusal = this.strategicAutonomy.shouldRefuse(context.taskType, userMessage);
+                if (refusal.refuse) {
+                    this.metrics.logAudit({
+                        level: 'info',
+                        component: 'genome',
+                        operation: 'strategic-refusal',
+                        message: `Task refused: ${refusal.reason}`,
+                        userId: context.userId,
+                        genomeId: this.genome.id,
+                    });
+                    return `I can't proceed with this request. ${refusal.reason}`;
+                }
+            }
+
+            // ── PRE-LLM: Metacognition pre-response analysis ──
+            // Assess confidence and identify gaps BEFORE generating a response.
+            // The analysis runs here so it's available in PromptAssembler (via setMetacognition)
+            // when assemblePrompt() is called below. The result also feeds post-response learning.
+            if (this.metacognition) {
+                this.metacognition.analyzePreResponse(userMessage);
+            }
+
+            // ── PRE-LLM: Model Router intelligence ──
+            // Use routing decision to inform model selection (logged, future: actual routing)
+            if (this.genome.config.autonomous?.enableModelRouting) {
+                const routingDecision = await this.modelRouter.routeTask({
+                    userMessage,
+                    context: context.taskType,
+                    genomeId: this.genome.id,
+                });
+                this.metrics.logAudit({
+                    level: 'info',
+                    component: 'model-router',
+                    operation: 'route',
+                    message: `Routed to ${routingDecision.selectedModel}: ${routingDecision.reason}`,
+                    genomeId: this.genome.id,
+                    metadata: {
+                        selectedModel: routingDecision.selectedModel,
+                        estimatedCost: routingDecision.estimatedCost,
+                        confidence: routingDecision.confidence,
+                    },
+                });
+            }
+
             // Assemble prompt with intelligence boost (memory + proactive suggestions)
             let prompt = await this.assemblePrompt(context, userMessage);
 
@@ -711,6 +765,18 @@ Ready to see what we can do together? 😊`,
             if (this.ragEngine) {
                 const ragContext = await this.ragEngine.augment(userMessage, prompt);
                 prompt = ragContext.augmentedPrompt;
+            }
+
+            // ── PRE-LLM: PatternMemory predictions → ProactiveSuggestions boost ──
+            // Feed behavioral predictions into the prompt for proactive intelligence
+            if (this.patternMemory) {
+                const predictions = this.patternMemory.getPredictions();
+                if (predictions.length > 0) {
+                    const predictionLines = predictions.slice(0, 3).map(
+                        p => `- ${p.prediction} (${Math.round(p.confidence * 100)}% confidence)`
+                    );
+                    prompt += `\n\n---\n\n## Behavioral Predictions\nBased on observed patterns, the user may:\n${predictionLines.join('\n')}\nConsider these predictions to proactively address the user's needs.`;
+                }
             }
 
             // Canary routing: apply canary variant if active for this user
@@ -775,7 +841,37 @@ Ready to see what we can do together? 😊`,
             });
 
             // Estimate response quality for fitness tracking
-            const quality = this.estimateQuality(userMessage, response.content);
+            let quality = this.estimateQuality(userMessage, response.content);
+
+            // ── POST-LLM: ThinkingEngine self-reflection ──
+            // Self-reflect on response quality and record meta-learning patterns
+            if (this.thinkingEngine) {
+                const reflection = await this.thinkingEngine.selfReflect(
+                    userMessage,
+                    response.content,
+                );
+
+                // Use reflection quality score to refine fitness estimate
+                quality = quality * 0.7 + reflection.qualityScore * 0.3;
+
+                // Record meta-learning pattern based on task type
+                if (context.taskType) {
+                    this.thinkingEngine.recordPattern(
+                        context.taskType,
+                        reflection.qualityScore > 0.5,
+                        reflection.qualityScore,
+                    );
+                }
+            }
+
+            // ── POST-LLM: Model Router performance feedback ──
+            if (this.genome.config.autonomous?.enableModelRouting) {
+                this.modelRouter.recordPerformance(this.llm.model ?? 'unknown', {
+                    success: true,
+                    cost: (inputTokens + outputTokens) / 1_000_000,
+                    latency: Date.now() - startTime,
+                });
+            }
 
             // Record canary metrics if active
             if (activeCanaryId) {
@@ -849,6 +945,7 @@ Ready to see what we can do together? 😊`,
                     userMessage,
                     assistantResponse: response.content,
                     toolCalls: [],
+                    taskType: context.taskType,
                     timestamp: new Date(),
                 });
 
@@ -1001,6 +1098,8 @@ Ready to see what we can do together? 😊`,
         if (this.analyticMemory) activeCapabilities.push('Knowledge graph — connects information across sessions');
         if (this.ragEngine) activeCapabilities.push('Knowledge retrieval — searches relevant documents');
         if (this.reasoningEngine) activeCapabilities.push('Advanced reasoning — multi-step problem solving');
+        if (this.thinkingEngine) activeCapabilities.push('Chain-of-thought — self-reflects on response quality');
+        if (this.genome.config.autonomous?.enableModelRouting) activeCapabilities.push('Intelligent routing — optimizes model selection per task');
 
         return {
             genomeName: this.genome.name,
