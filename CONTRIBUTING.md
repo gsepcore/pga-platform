@@ -305,7 +305,7 @@ New to open source? Look for issues labeled [`good first issue`](https://github.
 
 GSEP is built and maintained by [Luis Alfredo Velasquez Duran](https://github.com/LuisvelMarketer) as an independent open-source project. Sponsorship helps ensure continued development, maintenance, and new features.
 
-<a href="https://github.com/sponsors/LuisvelMarketer">
+<a href="https://github.com/sponsors/gsepcore">
   <img src="https://img.shields.io/badge/Become_a_Sponsor-%E2%9D%A4-pink?style=for-the-badge&logo=githubsponsors" alt="Become a Sponsor">
 </a>
 

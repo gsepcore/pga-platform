@@ -498,7 +498,7 @@ Want to see your avatar here? Check [CONTRIBUTING.md](./CONTRIBUTING.md) to get 
 
 GSEP is open source and free to use. If you or your company benefit from GSEP, consider sponsoring the project to support continued development.
 
-<a href="https://github.com/sponsors/LuisvelMarketer">
+<a href="https://github.com/sponsors/gsepcore">
   <img src="https://img.shields.io/badge/Sponsor_GSEP-%E2%9D%A4-pink?style=for-the-badge&logo=githubsponsors" alt="Sponsor GSEP">
 </a>
 
