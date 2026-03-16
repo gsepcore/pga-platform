@@ -43,7 +43,7 @@ const ctas = [
   },
   {
     label: "Discord",
-    href: "https://discord.gg/pga",
+    href: "https://discord.gg/7rtUa6aU",
     icon: "💬",
     color: "#5865F2",
   },

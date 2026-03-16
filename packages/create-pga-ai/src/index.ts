@@ -124,7 +124,7 @@ function displaySuccessMessage(projectName: string, config: any) {
             chalk.gray(`  • Living Agent: ${config.livingAgent ? 'Yes (10 cognitive layers!)' : 'No'}\n`) +
             chalk.gray(`  • Template: ${config.template}\n\n`) +
             chalk.white('Documentation: ') + chalk.cyan('https://gsepcore.com/docs\n') +
-            chalk.white('Discord: ') + chalk.cyan('https://discord.gg/pga'),
+            chalk.white('Discord: ') + chalk.cyan('https://discord.gg/7rtUa6aU'),
             {
                 padding: 1,
                 margin: 1,

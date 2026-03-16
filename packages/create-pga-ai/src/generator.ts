@@ -171,7 +171,7 @@ Created with [GSEP Platform](https://gsepcore.com) — Genomic Self-Evolving Pro
 
 - [GSEP Documentation](https://gsepcore.com/docs)
 - [API Reference](https://gsepcore.com/api)
-- [Discord Community](https://discord.gg/pga)
+- [Discord Community](https://discord.gg/7rtUa6aU)
 
 ## 🛠️ Development
 

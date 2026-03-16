@@ -31,7 +31,7 @@ const ctaCards = [
   {
     icon: "💬",
     title: "Join Discord",
-    url: "https://discord.gg/gsep",
+    url: "https://discord.gg/7rtUa6aU",
     color: THEME.purple,
     startFrame: 260,
   },
