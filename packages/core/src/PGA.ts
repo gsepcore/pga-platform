@@ -922,7 +922,7 @@ Ready to see what we can do together? 😊`,
             }
 
             // Use Reasoning if enabled
-            let response: { content: string };
+            let response: { content: string; usage?: { inputTokens: number; outputTokens: number; totalCost?: number } };
             if (this.reasoningEngine) {
                 const reasoningResult = await this.reasoningEngine.reason(
                     userMessage,
@@ -940,9 +940,11 @@ Ready to see what we can do together? 😊`,
                 );
             }
 
-            // Calculate tokens (rough estimate)
-            const inputTokens = Math.ceil((prompt.length + userMessage.length) / 4);
-            const outputTokens = Math.ceil(response.content.length / 4);
+            // Use real token counts from LLM API when available, fallback to estimate
+            const inputTokens = response.usage?.inputTokens
+                ?? Math.ceil((prompt.length + userMessage.length) / 4);
+            const outputTokens = response.usage?.outputTokens
+                ?? Math.ceil(response.content.length / 4);
 
             // Record metrics
             this.metrics.recordRequest({
@@ -2494,6 +2496,47 @@ Ready to see what we can do together? 😊`,
 
         // 4. Error/refusal indicators
         if (/sorry.*can't|i don't know|as an ai|i cannot/i.test(response)) score -= 0.15;
+
+        // 5. Response relevance — shared key terms between question and answer
+        const questionWords = new Set(
+            userMessage.toLowerCase().split(/\W+/).filter(w => w.length > 3),
+        );
+        if (questionWords.size > 0) {
+            const responseWords = response.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+            const overlap = responseWords.filter(w => questionWords.has(w)).length;
+            const relevanceRatio = Math.min(overlap / questionWords.size, 1);
+            if (relevanceRatio > 0.3) score += 0.05;
+            if (relevanceRatio > 0.6) score += 0.05;
+        }
+
+        // 6. Explanation depth — response contains reasoning
+        if (/because|therefore|since|this means|the reason|due to/i.test(response) && len > 100) {
+            score += 0.05;
+        }
+
+        // 7. Proportional response — length relative to question complexity
+        const questionLen = userMessage.length;
+        const ratio = len / Math.max(questionLen, 1);
+        if (ratio > 1 && ratio < 20) score += 0.05;
+        if (ratio > 50) score -= 0.05;
+
+        // 8. Completeness — clean ending and balanced code blocks
+        const lastChar = response.trim().slice(-1);
+        if (/[.!?)\]`\d]/.test(lastChar)) score += 0.03;
+        const codeBlockCount = (response.match(/```/g) || []).length;
+        if (codeBlockCount > 0 && codeBlockCount % 2 !== 0) score -= 0.1;
+
+        // 9. Actionable for task-oriented queries
+        const isTaskOriented = /how|explain|help|show|create|build|fix|setup|install/i.test(userMessage);
+        if (isTaskOriented && /\d\.\s|step\s\d|first.*then|```/i.test(response)) score += 0.05;
+
+        // 10. Penalize repetitive content
+        const sentences = response.split(/[.!?]+/).filter(s => s.trim().length > 10);
+        if (sentences.length > 3) {
+            const uniqueSentences = new Set(sentences.map(s => s.trim().toLowerCase()));
+            const repetitionRatio = 1 - (uniqueSentences.size / sentences.length);
+            if (repetitionRatio > 0.3) score -= 0.1;
+        }
 
         return Math.max(0, Math.min(1, score));
     }

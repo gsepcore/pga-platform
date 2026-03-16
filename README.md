@@ -81,7 +81,9 @@ const llm = new ClaudeAdapter({
 
 const gsep = new PGA({
   llm,
-  storage: new InMemoryStorageAdapter(),  // or PostgresAdapter for production
+  storage: new InMemoryStorageAdapter(),  // For development/demos (data lost on restart)
+  // For production, use PostgreSQL (data persists, auto-creates 9 tables):
+  // storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL }),
 });
 await gsep.initialize();
 

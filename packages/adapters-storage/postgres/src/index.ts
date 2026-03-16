@@ -793,3 +793,15 @@ export class PostgresAdapter implements StorageAdapter {
         await this.pool.end();
     }
 }
+
+/**
+ * Create a PostgreSQL storage adapter from a connection URL.
+ *
+ * Convenience wrapper for quick setup:
+ * ```typescript
+ * const storage = createPostgresStorage('postgresql://localhost:5432/gsep');
+ * ```
+ */
+export function createPostgresStorage(connectionUrl: string): PostgresAdapter {
+    return new PostgresAdapter({ connectionString: connectionUrl });
+}

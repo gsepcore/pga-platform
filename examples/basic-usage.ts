@@ -16,6 +16,21 @@
 
 import { PGA, InMemoryStorageAdapter } from '../packages/core/src/index.js';
 
+// ═══════════════════════════════════════════════════════════
+// Storage Options:
+//
+// Option A: InMemory (default — for demos and development)
+//   import { InMemoryStorageAdapter } from '@pga-ai/core';
+//   const storage = new InMemoryStorageAdapter();
+//
+// Option B: PostgreSQL (production — data persists across restarts)
+//   import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+//   const storage = new PostgresAdapter({
+//       connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/gsep',
+//   });
+//   await storage.initialize(); // Auto-creates 9 tables on first run
+// ═══════════════════════════════════════════════════════════
+
 async function main() {
     // ═══════════════════════════════════════════════════════
     // Step 1: Initialize GSEP
