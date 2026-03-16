@@ -1,5 +1,5 @@
 /**
- * WrappedAgent — The main wrapper class returned by PGA.wrap() (GSEP)
+ * WrappedAgent — The main wrapper class returned by GSEP.wrap()
  *
  * Turns any LLMAdapter or async function into a self-evolving agent
  * with zero migration cost.
@@ -225,7 +225,7 @@ export class WrappedAgent {
 
     private ensureInitialized(): void {
         if (!this._initialized) {
-            throw new Error('WrappedAgent not initialized. Use PGA.wrap() to create wrapped agents.');
+            throw new Error('WrappedAgent not initialized. Use GSEP.wrap() to create wrapped agents.');
         }
     }
 }

@@ -1,5 +1,5 @@
 /**
- * WrapOptions — Type definitions for PGA.wrap() API (GSEP)
+ * WrapOptions — Type definitions for GSEP.wrap() API
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

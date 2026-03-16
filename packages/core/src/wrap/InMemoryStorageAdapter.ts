@@ -1,7 +1,7 @@
 /**
  * InMemoryStorageAdapter — Full StorageAdapter implementation using in-memory Maps
  *
- * Zero-config storage for PGA.wrap() and testing (GSEP).
+ * Zero-config storage for GSEP.wrap() and testing.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026

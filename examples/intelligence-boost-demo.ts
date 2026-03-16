@@ -48,14 +48,14 @@ async function main() {
     console.log('✓ GSEP initialized\n');
 
     // Add Layer 0 (Core Identity)
-    await genome.addAllele({
-        layer: 0,
-        gene: 'core-identity',
-        variant: 'default',
-        content: `You are an intelligent coding assistant with GSEP — Genomic Self-Evolving Prompts.
+    await genome.addAllele(
+        0,
+        'core-identity',
+        'default',
+        `You are an intelligent coding assistant with GSEP — Genomic Self-Evolving Prompts.
 
 You have perfect memory, proactive intelligence, and you learn from every interaction.`,
-    });
+    );
 
     const userId = 'demo-user-123';
 

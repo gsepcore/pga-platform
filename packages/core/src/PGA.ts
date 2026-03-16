@@ -370,7 +370,7 @@ export class PGA {
     ): Promise<WrappedAgent> {
         if (typeof target === 'function') {
             if (!options.name) {
-                throw new Error('PGA.wrap(): name is required when wrapping a function');
+                throw new Error('GSEP.wrap(): name is required when wrapping a function');
             }
             return WrappedAgent.fromFunction(target, options as FunctionWrapOptions);
         }
