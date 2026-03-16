@@ -84,7 +84,7 @@ generate "s17" "What's the performance impact? ... User satisfaction: up twenty-
 generate "s18" "GSEP is open source and sustainable. ... The core engine, adapters, and CLI are MIT licensed. Free forever. Use it anywhere. ... Gene Registry is Business Source License. Free to use. Converts to Apache 2.0 in 2029. ... GSEP Cloud and Enterprise features are proprietary. ... Solo devs and small teams: one hundred percent free. Scale companies: contribute."
 
 # S19 — Get Started
-generate "s19" "Ready to get started? ... Read the documentation at pga-core dot com slash docs. Star us on GitHub. Join our Discord community. Or install now with npm install at-pga-ai-slash-core. ... Your agent, but alive. It starts now."
+generate "s19" "Ready to get started? ... Read the documentation at gsep-core dot com slash docs. Star us on GitHub. Join our Discord community. Or install now with npm install at-pga-ai-slash-core. ... Your agent, but alive. It starts now."
 
 # S20 — Closing
 generate "s20" "Your agent... but alive. ... Genomic Self-Evolving Prompts. Version zero point eight. Patented. MIT licensed. Production ready. ... Created by Luis Alfredo Velasquez Duran. ... Let your agent evolve."

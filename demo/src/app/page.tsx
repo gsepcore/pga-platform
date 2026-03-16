@@ -158,7 +158,7 @@ export default function DemoPage() {
           }}
         >
           <span style={{ color: "var(--green)" }}>●</span>
-          v0.8.0 &middot; Patent Pending &middot; MIT Licensed
+          v0.8.0 &middot; Patented &middot; MIT Licensed
         </div>
         <h1
           style={{
@@ -556,7 +556,7 @@ export default function DemoPage() {
           }}
         >
           <p>
-            GSEP — Genomic Self-Evolving Prompts &middot; Patent Pending &middot;{" "}
+            GSEP — Genomic Self-Evolving Prompts &middot; Patented &middot;{" "}
             <a href="https://gsepcore.com">gsepcore.com</a>
           </p>
           <p style={{ marginTop: 6, opacity: 0.6 }}>

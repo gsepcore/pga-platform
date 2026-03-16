@@ -2,27 +2,27 @@
 # https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
 # Default owner for everything
-* @LuisvelMarketer
+* @gsepcore
 
 # Core package - requires review
-/packages/core/ @LuisvelMarketer
+/packages/core/ @gsepcore
 
 # Gene Bank system - critical component
-/packages/core/src/gene-bank/ @LuisvelMarketer
+/packages/core/src/gene-bank/ @gsepcore
 
 # Infrastructure & CI/CD
-/.github/ @LuisvelMarketer
-/.github/workflows/ @LuisvelMarketer
+/.github/ @gsepcore
+/.github/workflows/ @gsepcore
 
 # Documentation
-/docs/ @LuisvelMarketer
-*.md @LuisvelMarketer
+/docs/ @gsepcore
+*.md @gsepcore
 
 # Configuration files
-package.json @LuisvelMarketer
-tsconfig.json @LuisvelMarketer
-.gitignore @LuisvelMarketer
+package.json @gsepcore
+tsconfig.json @gsepcore
+.gitignore @gsepcore
 
 # Security-sensitive files
-/SECURITY.md @LuisvelMarketer
-/.github/dependabot.yml @LuisvelMarketer
+/SECURITY.md @gsepcore
+/.github/dependabot.yml @gsepcore

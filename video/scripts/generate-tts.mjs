@@ -95,7 +95,7 @@ const narrations = [
   },
   {
     id: "S19",
-    text: `Ready to get started? ... Read the documentation at pga-core dot com slash docs. Star us on GitHub. Join our Discord community. Or install now with npm install at-pga-ai-slash-core. ... Your agent, but alive. It starts now.`,
+    text: `Ready to get started? ... Read the documentation at gsep-core dot com slash docs. Star us on GitHub. Join our Discord community. Or install now with npm install at-pga-ai-slash-core. ... Your agent, but alive. It starts now.`,
   },
   {
     id: "S20",

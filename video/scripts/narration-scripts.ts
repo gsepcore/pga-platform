@@ -252,7 +252,7 @@ Scale companies: contribute.`,
     title: "Get Started",
     durationSec: 45,
     text: `Ready to get started?
-... Read the documentation at pga-core dot com slash docs.
+... Read the documentation at gsep-core dot com slash docs.
 Star us on GitHub.
 Join our Discord community.
 Or install now with npm install at-pga-ai-slash-core.
