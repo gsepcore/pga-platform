@@ -526,6 +526,7 @@ GSEP is open source and free to use. If you or your company benefit from GSEP, c
 ## 📬 Contact
 
 - **Website**: [gsepcore.com](https://gsepcore.com)
+- **Discord**: [discord.gg/7rtUa6aU](https://discord.gg/7rtUa6aU)
 - **Email**: contact@gsepcore.com
 
 ---
