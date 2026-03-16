@@ -53,8 +53,7 @@ export class CalibrationManager {
     private cache = new Map<string, CalibrationHistory>();
 
     constructor(private storage: StorageAdapter) {
-        // Storage adapter ready for persistence implementation
-        void this.storage; // Storage persistence planned for v1.0
+        // Storage adapter used for calibration history persistence
     }
 
     /**
@@ -139,12 +138,31 @@ export class CalibrationManager {
             ? Math.max(0, 0.2 - (1 - currentThreshold))
             : 0;
 
-        // Calculate optimal threshold and apply to cache
-        this.calculateOptimalThreshold(
+        // Calculate optimal threshold
+        const optimalThreshold = this.calculateOptimalThreshold(
             falsePositiveRate,
             falseNegativeRate,
             currentThreshold,
         );
+
+        // Persist to storage if method available
+        if (this.storage.saveCalibrationPoint) {
+            await this.storage.saveCalibrationPoint({
+                contextKey: this.getContextKey(context),
+                layer: context.layer,
+                operator: context.operator,
+                taskType: context.taskType,
+                threshold: currentThreshold,
+                totalCandidates: metrics.totalCandidates,
+                passedSandbox: metrics.passedSandbox,
+                deployedSuccessfully: metrics.deployedSuccessfully,
+                rolledBack: metrics.rolledBack,
+                falsePositiveRate,
+                falseNegativeRate,
+                optimalThreshold,
+                timestamp: new Date(),
+            });
+        }
 
         // Invalidate cache
         this.cache.delete(this.getContextKey(context));
@@ -186,10 +204,54 @@ export class CalibrationManager {
         operator?: string;
         taskType?: string;
     }): Promise<CalibrationHistory | null> {
-        // Planned for v1.0: query pga_calibration_history table
-        void context;
+        if (!this.storage.getCalibrationHistory) {
+            return null;
+        }
 
-        return null;
+        const contextKey = this.getContextKey(context);
+        const rows = await this.storage.getCalibrationHistory(contextKey, 100);
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        const points: CalibrationPoint[] = rows.map(row => ({
+            timestamp: row.timestamp,
+            context: {
+                layer: row.layer as 0 | 1 | 2 | undefined,
+                operator: row.operator ?? undefined,
+                taskType: row.taskType ?? undefined,
+            },
+            threshold: row.threshold,
+            metrics: {
+                totalCandidates: row.totalCandidates,
+                passedSandbox: row.passedSandbox,
+                deployedSuccessfully: row.deployedSuccessfully,
+                rolledBack: row.rolledBack,
+            },
+            performance: {
+                falsePositiveRate: row.falsePositiveRate,
+                falseNegativeRate: row.falseNegativeRate,
+                optimalThreshold: row.optimalThreshold,
+            },
+        }));
+
+        // Compute recommended threshold from recent points
+        const recentPoints = points.slice(0, 20);
+        const avgOptimal = recentPoints.reduce(
+            (sum, p) => sum + p.performance.optimalThreshold, 0,
+        ) / recentPoints.length;
+
+        // More data points = higher confidence (max at 50 points)
+        const confidence = Math.min(1, points.length / 50);
+
+        return {
+            context,
+            points,
+            currentThreshold: rows[0].threshold,
+            recommendedThreshold: avgOptimal,
+            confidence,
+        };
     }
 
     /**

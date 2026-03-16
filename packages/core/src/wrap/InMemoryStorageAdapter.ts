@@ -20,6 +20,12 @@ export class InMemoryStorageAdapter implements StorageAdapter {
     private facts = new Map<string, SemanticFact>();
     private factIndex = new Map<string, string[]>(); // userId:genomeId -> factIds
     private geneRegistry: GeneRegistryEntry[] = [];
+    private calibrationPoints: Array<{
+        contextKey: string; layer?: 0 | 1 | 2; operator?: string; taskType?: string;
+        threshold: number; totalCandidates: number; passedSandbox: number;
+        deployedSuccessfully: number; rolledBack: number; falsePositiveRate: number;
+        falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
+    }> = [];
 
     async initialize(): Promise<void> {
         // No-op for in-memory storage
@@ -225,5 +231,29 @@ export class InMemoryStorageAdapter implements StorageAdapter {
         const entries = await this.queryGeneRegistry(familyId, gene);
         if (entries.length === 0) return null;
         return entries.sort((a, b) => b.fitness - a.fitness)[0];
+    }
+
+    // ─── Calibration History (Dynamic Threshold Tuning) ─────
+
+    async saveCalibrationPoint(point: {
+        contextKey: string; layer?: 0 | 1 | 2; operator?: string; taskType?: string;
+        threshold: number; totalCandidates: number; passedSandbox: number;
+        deployedSuccessfully: number; rolledBack: number; falsePositiveRate: number;
+        falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
+    }): Promise<void> {
+        this.calibrationPoints.push(structuredClone(point));
+    }
+
+    async getCalibrationHistory(contextKey: string, limit = 50): Promise<Array<{
+        contextKey: string; layer?: number; operator?: string; taskType?: string;
+        threshold: number; totalCandidates: number; passedSandbox: number;
+        deployedSuccessfully: number; rolledBack: number; falsePositiveRate: number;
+        falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
+    }>> {
+        return this.calibrationPoints
+            .filter(p => p.contextKey === contextKey)
+            .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
+            .slice(0, limit)
+            .map(p => structuredClone(p));
     }
 }

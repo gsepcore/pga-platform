@@ -334,24 +334,47 @@ export class GeneMatcher {
         return (countScore + performanceScore) / 2;
     }
 
+    /** Common stopwords to filter from semantic matching */
+    private static readonly STOPWORDS = new Set([
+        'the', 'this', 'that', 'with', 'from', 'have', 'been', 'were', 'will',
+        'would', 'could', 'should', 'about', 'which', 'their', 'there', 'then',
+        'than', 'them', 'they', 'what', 'when', 'where', 'your', 'into', 'also',
+        'more', 'some', 'very', 'just', 'like', 'each', 'make', 'does', 'over',
+        'such', 'only', 'most', 'other', 'after', 'before', 'being', 'under',
+    ]);
+
     /**
-     * Score semantic match (simple keyword-based for now)
-     * Planned for v1.0: embeddings-based semantic matching
+     * Score semantic match using weighted keyword matching
+     *
+     * Filters stopwords and weights longer terms higher (more specific).
+     * Embeddings-based matching planned for v2.0 (requires vector DB).
      */
     private scoreSemanticMatch(gene: CognitiveGene, context: MatchContext): number {
         if (!context.currentContext) return 0;
 
         const contextLower = context.currentContext.toLowerCase();
-        const instruction = gene.content.instruction.toLowerCase();
-        const description = gene.description.toLowerCase();
+        const geneText = (gene.content.instruction + ' ' + gene.description).toLowerCase();
 
-        // Check if key terms appear
-        const terms = contextLower.split(/\s+/).filter(t => t.length > 3);
-        const instructionMatches = terms.filter(t =>
-            instruction.includes(t) || description.includes(t)
-        ).length;
+        // Extract meaningful terms: filter stopwords and short tokens
+        const terms = contextLower
+            .split(/\s+/)
+            .filter(t => t.length > 3 && !GeneMatcher.STOPWORDS.has(t));
 
-        return Math.min(1, instructionMatches / Math.max(1, terms.length));
+        if (terms.length === 0) return 0;
+
+        // Weight each term by length (longer = more specific)
+        let totalWeight = 0;
+        let matchedWeight = 0;
+
+        for (const term of terms) {
+            const weight = Math.min(3, term.length / 4); // cap at 3x for very long terms
+            totalWeight += weight;
+            if (geneText.includes(term)) {
+                matchedWeight += weight;
+            }
+        }
+
+        return totalWeight > 0 ? Math.min(1, matchedWeight / totalWeight) : 0;
     }
 
     // ========================================================================

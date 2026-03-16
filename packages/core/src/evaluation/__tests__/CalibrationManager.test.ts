@@ -4,7 +4,7 @@
  * Tests for GSEP's dynamic threshold calibration system:
  * - Default threshold computation by layer, operator, and taskType
  * - Cache behavior (hit / miss / invalidation)
- * - Calibration history loading (currently returns null stub)
+ * - Calibration history loading and persistence via StorageAdapter
  * - Recording calibration points with various metric combinations
  * - Optimal threshold calculation (FPR / FNR adjustments)
  * - Context key generation
@@ -43,6 +43,8 @@ function createMockStorage(): StorageAdapter {
         deleteFact: vi.fn(),
         deleteUserFacts: vi.fn(),
         cleanExpiredFacts: vi.fn(),
+        saveCalibrationPoint: vi.fn().mockResolvedValue(undefined),
+        getCalibrationHistory: vi.fn().mockResolvedValue([]),
     } as unknown as StorageAdapter;
 }
 
@@ -304,6 +306,128 @@ describe('CalibrationManager', () => {
             const report = await manager.getCalibrationReport({ operator: 'safety_reinforcement' });
 
             expect(report).toContain('85.0%');
+        });
+    });
+
+    // ─── Storage Persistence ─────────────────────────────────
+
+    describe('storage persistence', () => {
+        it('should persist calibration point via storage.saveCalibrationPoint', async () => {
+            await manager.recordCalibrationPoint(
+                { layer: 1, operator: 'compress_instructions' },
+                {
+                    totalCandidates: 20,
+                    passedSandbox: 10,
+                    deployedSuccessfully: 8,
+                    rolledBack: 2,
+                },
+                0.65,
+            );
+
+            expect(mockStorage.saveCalibrationPoint).toHaveBeenCalledTimes(1);
+            expect(mockStorage.saveCalibrationPoint).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    contextKey: '1_compress_instructions_any',
+                    layer: 1,
+                    operator: 'compress_instructions',
+                    threshold: 0.65,
+                    totalCandidates: 20,
+                    passedSandbox: 10,
+                    rolledBack: 2,
+                    falsePositiveRate: 0.2,
+                }),
+            );
+        });
+
+        it('should load history from storage and return calibrated threshold', async () => {
+            // Mock storage returns 15 calibration points (>= 10 required)
+            const mockPoints = Array.from({ length: 15 }, (_, i) => ({
+                contextKey: '1_any_any',
+                layer: 1,
+                operator: undefined,
+                taskType: undefined,
+                threshold: 0.75,
+                totalCandidates: 10,
+                passedSandbox: 8,
+                deployedSuccessfully: 7,
+                rolledBack: 1,
+                falsePositiveRate: 0.125,
+                falseNegativeRate: 0,
+                optimalThreshold: 0.80,
+                timestamp: new Date(Date.now() - i * 3600000),
+            }));
+
+            (mockStorage.getCalibrationHistory as ReturnType<typeof vi.fn>)
+                .mockResolvedValue(mockPoints);
+
+            const result = await manager.getCalibratedThreshold({ layer: 1 });
+
+            expect(result.source).toBe('calibrated');
+            expect(result.threshold).toBeCloseTo(0.80);
+            expect(result.confidence).toBeCloseTo(15 / 50);
+        });
+
+        it('should return default when storage has fewer than 10 data points', async () => {
+            const mockPoints = Array.from({ length: 5 }, (_, i) => ({
+                contextKey: '2_any_any',
+                layer: 2,
+                threshold: 0.60,
+                totalCandidates: 5,
+                passedSandbox: 5,
+                deployedSuccessfully: 5,
+                rolledBack: 0,
+                falsePositiveRate: 0,
+                falseNegativeRate: 0,
+                optimalThreshold: 0.60,
+                timestamp: new Date(Date.now() - i * 3600000),
+            }));
+
+            (mockStorage.getCalibrationHistory as ReturnType<typeof vi.fn>)
+                .mockResolvedValue(mockPoints);
+
+            const result = await manager.getCalibratedThreshold({ layer: 2 });
+
+            expect(result.source).toBe('default');
+            expect(result.threshold).toBe(0.60);
+        });
+
+        it('should return default when storage has no getCalibrationHistory method', async () => {
+            // Create storage without calibration methods
+            const bareStorage = createMockStorage();
+            delete (bareStorage as Record<string, unknown>).getCalibrationHistory;
+            delete (bareStorage as Record<string, unknown>).saveCalibrationPoint;
+
+            const bareManager = new CalibrationManager(bareStorage);
+            const result = await bareManager.getCalibratedThreshold({ layer: 1 });
+
+            expect(result.source).toBe('default');
+            expect(result.threshold).toBe(0.75);
+        });
+
+        it('should return cached on second call after calibrated load', async () => {
+            const mockPoints = Array.from({ length: 12 }, (_, i) => ({
+                contextKey: '1_any_any',
+                layer: 1,
+                threshold: 0.75,
+                totalCandidates: 10,
+                passedSandbox: 8,
+                deployedSuccessfully: 7,
+                rolledBack: 1,
+                falsePositiveRate: 0.125,
+                falseNegativeRate: 0,
+                optimalThreshold: 0.80,
+                timestamp: new Date(Date.now() - i * 3600000),
+            }));
+
+            (mockStorage.getCalibrationHistory as ReturnType<typeof vi.fn>)
+                .mockResolvedValue(mockPoints);
+
+            const result1 = await manager.getCalibratedThreshold({ layer: 1 });
+            expect(result1.source).toBe('calibrated');
+
+            const result2 = await manager.getCalibratedThreshold({ layer: 1 });
+            expect(result2.source).toBe('cached');
+            expect(result2.threshold).toBe(result1.threshold);
         });
     });
 });

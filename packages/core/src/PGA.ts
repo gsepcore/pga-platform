@@ -57,6 +57,7 @@ import { AutonomousLoop } from './advanced-ai/AutonomousLoop.js';
 import { GrowthJournal } from './memory/GrowthJournal.js';
 import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
+import { GenomeKernel } from './core/GenomeKernel.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
 import type { GSEPStatus, GSEPChatResult } from './types/index.js';
@@ -418,6 +419,7 @@ export class GenomeInstance {
     private curiosityEngine?: CuriosityEngine;
     private gsepIdentitySection: GSEPIdentitySection;
     private gsepActivityFooter: GSEPActivityFooter;
+    private genomeKernel?: GenomeKernel;
     private interactionCount: number = 0;
 
     constructor(
@@ -600,6 +602,44 @@ export class GenomeInstance {
         if (visibility !== 'silent') {
             this.assembler.setGSEPIdentity(this.gsepIdentitySection, this.buildIdentityContext());
         }
+
+        // GenomeKernel Shadow — C0 integrity protector (non-blocking)
+        try {
+            this.genomeKernel = new GenomeKernel(this.toGenomeV2(), {
+                strictMode: false, // Shadow mode: log violations, don't throw
+                autoRollback: false, // Legacy genome manages its own rollback
+                onSecurityEvent: (event) => {
+                    this.metrics.logAudit({
+                        level: event.level === 'critical' ? 'error' : event.level,
+                        component: 'genome-kernel',
+                        operation: event.event,
+                        message: `[C0 Shadow] ${event.event}`,
+                        genomeId: this.genome.id,
+                        metadata: event.details,
+                    });
+                },
+                onIntegrityViolation: (violation) => {
+                    this.metrics.logAudit({
+                        level: 'error',
+                        component: 'genome-kernel',
+                        operation: 'c0_integrity_violation',
+                        message: `C0 integrity violation: expected ${violation.expected.substring(0, 16)}..., got ${violation.actual.substring(0, 16)}...`,
+                        genomeId: this.genome.id,
+                    });
+                },
+                onQuarantine: (genomeId, reason) => {
+                    this.metrics.logAudit({
+                        level: 'error',
+                        component: 'genome-kernel',
+                        operation: 'quarantine',
+                        message: `Genome quarantined: ${reason}`,
+                        genomeId,
+                    });
+                },
+            });
+        } catch {
+            // Shadow mode: if GenomeKernel fails to initialize, continue without it
+        }
     }
 
     /**
@@ -736,6 +776,16 @@ Ready to see what we can do together? 😊`,
                 `[GSEP] Cannot chat: no LLM adapter configured. `
                 + `The agent needs an AI model to generate responses.`,
             );
+        }
+
+        // ── C0 Integrity Shadow Check ──
+        // Verify immutable core hasn't been tampered with before processing
+        if (this.genomeKernel) {
+            try {
+                this.genomeKernel.verifyIntegrity();
+            } catch {
+                // Shadow mode: log but don't block chat
+            }
         }
 
         const requestId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -1590,6 +1640,15 @@ Ready to see what we can do together? 😊`,
 
         try {
 
+        // ── C0 Shadow: snapshot before mutation ──
+        if (this.genomeKernel) {
+            try {
+                this.genomeKernel.createSnapshot(`pre-mutation:${opts.gene}`);
+            } catch {
+                // Shadow mode: continue without snapshot
+            }
+        }
+
         // ═══════════════════════════════════════════════════════
         // MUTATION PIPELINE WITH MULTI-GATE VALIDATION
         // ═══════════════════════════════════════════════════════
@@ -1705,6 +1764,18 @@ Ready to see what we can do together? 😊`,
                     stability: gateResult.gates.stability,
                 },
             };
+
+            // ── C0 Shadow: re-sync after mutation ──
+            if (result.applied && this.genomeKernel) {
+                try {
+                    this.genomeKernel = new GenomeKernel(this.toGenomeV2(), {
+                        strictMode: false,
+                        autoRollback: false,
+                    });
+                } catch {
+                    // Shadow mode: continue without re-sync
+                }
+            }
 
             // Log mutation attempt
             this.metrics.logAudit({
@@ -2019,6 +2090,29 @@ Ready to see what we can do together? 😊`,
                 generationCount,
             },
             warnings,
+        };
+    }
+
+    /**
+     * Get C0 integrity status from GenomeKernel shadow
+     *
+     * Returns null if GenomeKernel shadow is not active.
+     */
+    getIntegrityStatus(): {
+        active: boolean;
+        quarantined: boolean;
+        c0Hash: string;
+        violations: number;
+        snapshotCount: number;
+    } | null {
+        if (!this.genomeKernel) return null;
+
+        return {
+            active: true,
+            quarantined: this.genomeKernel.isQuarantined(),
+            c0Hash: this.genomeKernel.getC0Hash(),
+            violations: this.genomeKernel.getViolationCount(),
+            snapshotCount: this.genomeKernel.getSnapshots().length,
         };
     }
 

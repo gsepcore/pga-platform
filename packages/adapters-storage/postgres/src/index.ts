@@ -785,6 +785,61 @@ export class PostgresAdapter implements StorageAdapter {
         };
     }
 
+    // ─── Calibration History (Dynamic Threshold Tuning) ─────
+
+    async saveCalibrationPoint(point: {
+        contextKey: string; layer?: 0 | 1 | 2; operator?: string; taskType?: string;
+        threshold: number; totalCandidates: number; passedSandbox: number;
+        deployedSuccessfully: number; rolledBack: number; falsePositiveRate: number;
+        falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
+    }): Promise<void> {
+        await this.pool.query(
+            `INSERT INTO pga_calibration_history (
+                context_key, layer, operator, task_type, threshold,
+                total_candidates, passed_sandbox, deployed_successfully,
+                rolled_back, false_positive_rate, false_negative_rate,
+                optimal_threshold, timestamp
+            ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`,
+            [
+                point.contextKey, point.layer ?? null, point.operator ?? null,
+                point.taskType ?? null, point.threshold, point.totalCandidates,
+                point.passedSandbox, point.deployedSuccessfully, point.rolledBack,
+                point.falsePositiveRate, point.falseNegativeRate,
+                point.optimalThreshold, point.timestamp,
+            ],
+        );
+    }
+
+    async getCalibrationHistory(contextKey: string, limit = 50): Promise<Array<{
+        contextKey: string; layer?: number; operator?: string; taskType?: string;
+        threshold: number; totalCandidates: number; passedSandbox: number;
+        deployedSuccessfully: number; rolledBack: number; falsePositiveRate: number;
+        falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
+    }>> {
+        const result = await this.pool.query(
+            `SELECT * FROM pga_calibration_history
+             WHERE context_key = $1
+             ORDER BY timestamp DESC
+             LIMIT $2`,
+            [contextKey, limit],
+        );
+        return result.rows.map((row: Record<string, unknown>) => ({
+            contextKey: row.context_key as string,
+            layer: row.layer as number | undefined,
+            operator: row.operator as string | undefined,
+            taskType: row.task_type as string | undefined,
+            threshold: parseFloat(row.threshold as string),
+            totalCandidates: row.total_candidates as number,
+            passedSandbox: row.passed_sandbox as number,
+            deployedSuccessfully: row.deployed_successfully as number,
+            rolledBack: row.rolled_back as number,
+            falsePositiveRate: parseFloat(row.false_positive_rate as string),
+            falseNegativeRate: parseFloat(row.false_negative_rate as string),
+            optimalThreshold: parseFloat(row.optimal_threshold as string),
+            timestamp: new Date(row.timestamp as string),
+        }));
+    }
+
     /**
      * Close database connection
      */

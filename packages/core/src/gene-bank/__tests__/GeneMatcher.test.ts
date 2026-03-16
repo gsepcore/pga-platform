@@ -660,4 +660,81 @@ describe('GeneMatcher', () => {
             expect(config.maxResults).toBe(3);
         });
     });
+
+    // ========================================================================
+    // Semantic Matching (improved with stopwords + term weighting)
+    // ========================================================================
+
+    describe('scoreSemanticMatch', () => {
+        it('should weight longer terms higher than short ones', async () => {
+            const matcher = new GeneMatcher({ minMatchScore: 0 });
+
+            // Gene with "typescript" in instruction
+            const gene = createTestGene({
+                domain: 'coding',
+                content: {
+                    instruction: 'Use typescript generics for type-safe implementations',
+                    examples: [],
+                    requiredCapabilities: [],
+                    applicableContexts: [],
+                    contraindications: [],
+                    metadata: {},
+                },
+            });
+
+            // Context with matching long term "typescript"
+            const longTermContext: MatchContext = {
+                task: 'code task',
+                domain: 'coding',
+                currentContext: 'typescript generics pattern',
+            };
+
+            // Context with only short/stopword terms
+            const shortTermContext: MatchContext = {
+                task: 'code task',
+                domain: 'coding',
+                currentContext: 'the code with type safe',
+            };
+
+            const longResults = await matcher.findMatches(longTermContext, [gene]);
+            const shortResults = await matcher.findMatches(shortTermContext, [gene]);
+
+            // Both should match, but long terms context gets higher semantic score
+            expect(longResults.length).toBeGreaterThanOrEqual(1);
+            expect(shortResults.length).toBeGreaterThanOrEqual(1);
+
+            const longSemantic = longResults[0]?.scoreBreakdown.semanticScore ?? 0;
+            const shortSemantic = shortResults[0]?.scoreBreakdown.semanticScore ?? 0;
+            expect(longSemantic).toBeGreaterThanOrEqual(shortSemantic);
+        });
+
+        it('should filter stopwords from context', async () => {
+            const matcher = new GeneMatcher({ minMatchScore: 0 });
+
+            const gene = createTestGene({
+                domain: 'general',
+                description: 'only stopwords here',
+                content: {
+                    instruction: 'this that with from about which',
+                    examples: [],
+                    requiredCapabilities: [],
+                    applicableContexts: [],
+                    contraindications: [],
+                    metadata: {},
+                },
+            });
+
+            // Context is entirely stopwords — should result in 0 semantic score
+            const context: MatchContext = {
+                task: 'test',
+                domain: 'general',
+                currentContext: 'this that with from about which their there',
+            };
+
+            const results = await matcher.findMatches(context, [gene]);
+            if (results.length > 0) {
+                expect(results[0].scoreBreakdown.semanticScore).toBe(0);
+            }
+        });
+    });
 });

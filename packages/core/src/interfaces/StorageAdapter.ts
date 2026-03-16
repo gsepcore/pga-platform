@@ -159,4 +159,44 @@ export interface StorageAdapter {
      * Get the highest-fitness variant of a gene from the registry
      */
     getBestRegistryGene?(familyId: string, gene: string): Promise<GeneRegistryEntry | null>;
+
+    // ─── Calibration History (Dynamic Threshold Tuning) ─────
+
+    /**
+     * Save a calibration data point for threshold tuning
+     */
+    saveCalibrationPoint?(point: {
+        contextKey: string;
+        layer?: 0 | 1 | 2;
+        operator?: string;
+        taskType?: string;
+        threshold: number;
+        totalCandidates: number;
+        passedSandbox: number;
+        deployedSuccessfully: number;
+        rolledBack: number;
+        falsePositiveRate: number;
+        falseNegativeRate: number;
+        optimalThreshold: number;
+        timestamp: Date;
+    }): Promise<void>;
+
+    /**
+     * Get calibration history for a context key, ordered by timestamp DESC
+     */
+    getCalibrationHistory?(contextKey: string, limit?: number): Promise<Array<{
+        contextKey: string;
+        layer?: number;
+        operator?: string;
+        taskType?: string;
+        threshold: number;
+        totalCandidates: number;
+        passedSandbox: number;
+        deployedSuccessfully: number;
+        rolledBack: number;
+        falsePositiveRate: number;
+        falseNegativeRate: number;
+        optimalThreshold: number;
+        timestamp: Date;
+    }>>;
 }
