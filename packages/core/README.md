@@ -77,21 +77,25 @@ That's it! Your agent now evolves automatically.
 
 ## Core Concepts
 
-### Three-Layer Architecture
+### Four-Layer Chromosome Architecture
 
 ```
 ┌─────────────────────────────────────────┐
-│  Layer 0: Immutable DNA                 │
+│  C0: Immutable DNA                      │
 │  Security, Ethics, Core Identity        │
-│  🚫 NEVER mutates                       │
+│  🚫 NEVER mutates (SHA-256 protected)  │
 ├─────────────────────────────────────────┤
-│  Layer 1: Operative Genes               │
+│  C1: Operative Genes                    │
 │  Tool Usage, Coding Patterns            │
-│  🐢 SLOW mutation (high validation)    │
+│  🐢 SLOW mutation (sandbox-tested)     │
 ├─────────────────────────────────────────┤
-│  Layer 2: Epigenomes                    │
+│  C2: Epigenomes                         │
 │  User Preferences, Communication Style  │
 │  ⚡ FAST mutation (daily adaptation)    │
+├─────────────────────────────────────────┤
+│  C3: Content Firewall                   │
+│  Input/Output Security, Prompt Defense  │
+│  🛡️ 53 threat patterns, trust policies │
 └─────────────────────────────────────────┘
 ```
 

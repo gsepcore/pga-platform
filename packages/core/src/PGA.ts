@@ -648,7 +648,7 @@ What this means for you:
    → Each interaction makes me better at helping you
 
 🛡️ **Built-in Safety**
-   → Three-layer genomic architecture (Immutable Core + Adaptive Layers)
+   → Four-layer genomic architecture (Immutable Core + Adaptive Layers + Content Firewall)
    → Automatic rollback if performance drops
    → Sandbox-tested improvements before deployment
 

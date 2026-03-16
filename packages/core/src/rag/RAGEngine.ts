@@ -250,8 +250,6 @@ export class RAGEngine {
     // ─── Private Methods ───────────────────────────────────────
 
     private async generateEmbedding(text: string): Promise<number[]> {
-        // This would use OpenAI, Anthropic, or other embedding API
-        // For now, we'll use a placeholder that delegates to the adapter
         return await this.config.vectorStore.generateEmbedding(text);
     }
 
