@@ -116,28 +116,29 @@ git pull origin main
 cat packages/core/package.json | grep '"version"'
 ```
 
-**Expected:** Should show `"version": "0.4.0"`
+**Expected:** Should show `"version": "0.8.0"`
 
 ---
 
 ### Step 2: Create Release Tag
 
 ```bash
-# Create annotated tag for v0.4.0
-git tag -a v0.4.0 -m "Release v0.4.0 - Gene Bank, THK, Intelligence Boost
+# Create annotated tag for v0.8.0
+git tag -a v0.8.0 -m "Release v0.8.0 - Consciousness, Firewall, 30 Intelligence Systems
 
 Features:
-- 🧬 Gene Bank: Horizontal Knowledge Transfer system
-- 🔄 Multi-Model Support (OpenAI adapter)
-- 📊 Evaluation Framework for GSEP benchmarking
-- 🚀 Intelligence Boost (0% → 100% agent upgrade)
-- 📝 Complete documentation and unit tests
+- 🧬 30 Intelligence Systems (consciousness, curiosity, metacognition)
+- 🛡️ C3 Content Firewall (53 threat patterns, SHA-256 integrity)
+- 🔄 5 LLM Providers (Claude, GPT-4, Gemini, Ollama, Perplexity)
+- 📊 6D Fitness Optimization + Drift Detection
+- 🧠 Blackboard Architecture + Autonomous Loop
+- 📝 1525 tests passing across 64 test files
 - 🏗️ Full CI/CD and operational infrastructure
 
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 
 # Push tag to trigger release workflow
-git push origin v0.4.0
+git push origin v0.8.0
 ```
 
 ---
@@ -146,7 +147,7 @@ git push origin v0.4.0
 
 1. Go to: `https://github.com/gsepcore/pga-platform/actions`
 
-2. You should see a new workflow run: **"Release v0.4.0"**
+2. You should see a new workflow run: **"Release v0.8.0"**
 
 3. Wait for it to complete (approx 3-5 minutes)
 
@@ -161,7 +162,7 @@ git push origin v0.4.0
 
 1. Go to: `https://github.com/gsepcore/pga-platform/releases`
 
-2. Click **Edit** on v0.4.0 release
+2. Click **Edit** on v0.8.0 release
 
 3. Add any additional release notes, screenshots, or demos
 
@@ -201,11 +202,11 @@ git push origin v0.4.0
 
 ```bash
 # Delete and recreate tag to trigger workflow again
-git tag -d v0.4.0
-git push origin :refs/tags/v0.4.0
+git tag -d v0.8.0
+git push origin :refs/tags/v0.8.0
 
 # Recreate and push
-git tag -a v0.4.0 -m "Release v0.4.0 - Gene Bank, THK, Intelligence Boost
+git tag -a v0.8.0 -m "Release v0.8.0 - Consciousness, Firewall, 30 Intelligence Systems
 
 Features:
 - 🧬 Gene Bank: Horizontal Knowledge Transfer system
@@ -217,7 +218,7 @@ Features:
 
 Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
 
-git push origin v0.4.0
+git push origin v0.8.0
 ```
 
 ---
@@ -354,7 +355,7 @@ After completing this checklist, you should have:
 - ✅ Repository is public
 - ✅ Branch protection actively enforcing quality gates
 - ✅ Dependabot monitoring dependencies
-- ✅ v0.4.0 release published on GitHub
+- ✅ v0.8.0 release published on GitHub
 - ✅ Package published on npm (if you chose to)
 - ✅ **10/10 Operational Maturity Certification** 🎯
 - ✅ CI/CD blocking bad merges

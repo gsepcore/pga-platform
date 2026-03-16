@@ -22,6 +22,80 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// ─── Row Types (PostgreSQL result mapping) ───────────────────
+
+interface GenomeRow {
+    id: string;
+    name: string;
+    config: Record<string, unknown>;
+    created_at: Date;
+    updated_at: Date;
+}
+
+interface AlleleRow {
+    genome_id: string;
+    layer: number;
+    gene: string;
+    variant: string;
+    content: string;
+    fitness: string;
+    sample_count: number;
+    parent_variant: string | null;
+    generation: number;
+    status: string;
+    sandbox_tested: boolean;
+    sandbox_score: string | null;
+    recent_scores: number[];
+    created_at: Date;
+}
+
+interface MutationRow {
+    genome_id: string;
+    layer: number;
+    gene: string;
+    variant: string;
+    mutation_type: string;
+    parent_variant: string | null;
+    trigger_reason: string;
+    fitness_delta: string;
+    deployed: boolean;
+    details: Record<string, unknown>;
+    timestamp: Date;
+}
+
+interface InteractionRow {
+    genome_id: string;
+    user_id: string;
+    user_message: string;
+    assistant_response: string;
+    tool_calls: unknown[];
+    score: string | null;
+    timestamp: Date;
+}
+
+interface UserDNARow {
+    user_id: string;
+    genome_id: string;
+    traits: Record<string, unknown>;
+    confidence: Record<string, unknown>;
+    generation: number;
+    last_evolved: Date;
+}
+
+interface SemanticFactRow {
+    id: string;
+    fact: string;
+    category: string;
+    confidence: string;
+    source_turn: number;
+    source_interaction_id: string;
+    extracted_at: Date;
+    expiry: Date | null;
+    verified: boolean;
+    created_at: Date;
+    updated_at: Date;
+}
+
 export interface PostgresAdapterConfig {
     /**
      * PostgreSQL connection string
@@ -170,7 +244,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Load genome from database
      */
     async loadGenome(genomeId: string): Promise<Genome | null> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<GenomeRow>(
             'SELECT * FROM pga_genomes WHERE id = $1',
             [genomeId],
         );
@@ -182,7 +256,7 @@ export class PostgresAdapter implements StorageAdapter {
         const row = result.rows[0];
 
         // Load alleles
-        const allelesResult = await this.pool.query(
+        const allelesResult = await this.pool.query<AlleleRow>(
             'SELECT * FROM pga_alleles WHERE genome_id = $1 ORDER BY layer, gene, fitness DESC',
             [genomeId],
         );
@@ -198,7 +272,7 @@ export class PostgresAdapter implements StorageAdapter {
                 content: alleleRow.content,
                 fitness: parseFloat(alleleRow.fitness),
                 sampleCount: alleleRow.sample_count,
-                parentVariant: alleleRow.parent_variant,
+                parentVariant: alleleRow.parent_variant ?? undefined,
                 generation: alleleRow.generation,
                 status: alleleRow.status as 'active' | 'retired',
                 sandboxTested: alleleRow.sandbox_tested,
@@ -215,7 +289,7 @@ export class PostgresAdapter implements StorageAdapter {
         return {
             id: row.id,
             name: row.name,
-            config: row.config,
+            config: row.config as unknown as Genome['config'],
             layers: {
                 layer0,
                 layer1,
@@ -230,7 +304,7 @@ export class PostgresAdapter implements StorageAdapter {
      * List all genomes
      */
     async listGenomes(): Promise<Genome[]> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<Pick<GenomeRow, 'id'>>(
             'SELECT id FROM pga_genomes ORDER BY created_at DESC',
         );
 
@@ -282,7 +356,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Load user DNA profile
      */
     async loadDNA(userId: string, genomeId: string): Promise<UserDNA | null> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<UserDNARow>(
             'SELECT * FROM pga_user_dna WHERE user_id = $1 AND genome_id = $2',
             [userId, genomeId],
         );
@@ -296,8 +370,8 @@ export class PostgresAdapter implements StorageAdapter {
         return {
             userId: row.user_id,
             genomeId: row.genome_id,
-            traits: row.traits,
-            confidence: row.confidence,
+            traits: row.traits as unknown as UserDNA['traits'],
+            confidence: row.confidence as unknown as UserDNA['confidence'],
             generation: row.generation,
             lastEvolved: row.last_evolved,
         };
@@ -355,7 +429,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Get mutation history for a genome
      */
     async getMutationHistory(genomeId: string, limit: number = 100): Promise<MutationLog[]> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<MutationRow>(
             `SELECT * FROM pga_mutations
              WHERE genome_id = $1
              ORDER BY timestamp DESC
@@ -368,7 +442,7 @@ export class PostgresAdapter implements StorageAdapter {
             layer: row.layer,
             gene: row.gene,
             variant: row.variant,
-            mutationType: row.mutation_type,
+            mutationType: row.mutation_type as MutationLog['mutationType'],
             parentVariant: row.parent_variant,
             triggerReason: row.trigger_reason,
             fitnessDelta: parseFloat(row.fitness_delta),
@@ -383,7 +457,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Get mutation history for a specific gene
      */
     async getGeneMutationHistory(genomeId: string, gene: string, limit: number = 50): Promise<MutationLog[]> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<MutationRow>(
             `SELECT * FROM pga_mutations
              WHERE genome_id = $1 AND gene = $2
              ORDER BY timestamp DESC
@@ -396,7 +470,7 @@ export class PostgresAdapter implements StorageAdapter {
             layer: row.layer,
             gene: row.gene,
             variant: row.variant,
-            mutationType: row.mutation_type,
+            mutationType: row.mutation_type as MutationLog['mutationType'],
             parentVariant: row.parent_variant,
             triggerReason: row.trigger_reason,
             fitnessDelta: parseFloat(row.fitness_delta),
@@ -411,7 +485,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Get recent interactions
      */
     async getRecentInteractions(genomeId: string, userId: string, limit: number = 20): Promise<unknown[]> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<InteractionRow>(
             `SELECT * FROM pga_interactions
              WHERE genome_id = $1 AND user_id = $2
              ORDER BY timestamp DESC
@@ -559,12 +633,12 @@ export class PostgresAdapter implements StorageAdapter {
                AND (expiry IS NULL OR expiry > NOW())
                ORDER BY verified DESC, confidence DESC, extracted_at DESC`;
 
-        const result = await this.pool.query(query, [userId, genomeId]);
+        const result = await this.pool.query<SemanticFactRow>(query, [userId, genomeId]);
 
         return result.rows.map((row) => ({
             id: row.id,
             fact: row.fact,
-            category: row.category,
+            category: row.category as SemanticFact['category'],
             confidence: parseFloat(row.confidence),
             sourceTurn: row.source_turn,
             sourceInteractionId: row.source_interaction_id,
@@ -580,7 +654,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Get specific fact by ID
      */
     async getFact(factId: string): Promise<SemanticFact | null> {
-        const result = await this.pool.query(
+        const result = await this.pool.query<SemanticFactRow>(
             'SELECT * FROM semantic_facts WHERE id = $1',
             [factId],
         );
@@ -593,7 +667,7 @@ export class PostgresAdapter implements StorageAdapter {
         return {
             id: row.id,
             fact: row.fact,
-            category: row.category,
+            category: row.category as SemanticFact['category'],
             confidence: parseFloat(row.confidence),
             sourceTurn: row.source_turn,
             sourceInteractionId: row.source_interaction_id,
@@ -610,7 +684,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async updateFact(factId: string, updates: Partial<SemanticFact>): Promise<void> {
         const setClauses: string[] = [];
-        const values: any[] = [];
+        const values: unknown[] = [];
         let paramIndex = 1;
 
         if (updates.fact !== undefined) {

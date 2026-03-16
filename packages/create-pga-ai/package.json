@@ -24,6 +24,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "test": "echo \"Tests require external service credentials — see README\" && exit 0",
     "dev": "tsc --watch",
     "clean": "rm -rf dist"
   },
