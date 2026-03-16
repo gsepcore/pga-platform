@@ -381,8 +381,8 @@ await healthcareBank.installBundle('patient-communication');
 
 ## 💡 Innovation Opportunities
 
-### **Patent-Worthy Features:**
-1. **Gene Recombination Algorithm** - Novel method for combining AI behavioral patterns
+### **Key Innovations:**
+1. **Gene Recombination Algorithm** - Combining AI behavioral patterns
 2. **Semantic Gene Matching** - Embedding-based discovery for cognitive patterns
 3. **Auto-Optimization System** - Self-improving gene evolution via feedback loops
 4. **Marketplace Verification** - Automated quality assessment for AI patterns
