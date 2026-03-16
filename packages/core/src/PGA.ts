@@ -771,11 +771,20 @@ Ready to see what we can do together? 😊`,
     /**
      * Chat with GSEP optimization + Intelligence Boost + Auto Monitoring
      */
+    /** Maximum user input length (characters). Prevents excessive processing costs. */
+    private static readonly MAX_INPUT_LENGTH = 100_000;
+
     async chat(userMessage: string, context: SelectionContext): Promise<string> {
         if (!this.llm) {
             throw new Error(
                 `[GSEP] Cannot chat: no LLM adapter configured. `
                 + `The agent needs an AI model to generate responses.`,
+            );
+        }
+
+        if (userMessage.length > GenomeInstance.MAX_INPUT_LENGTH) {
+            throw new Error(
+                `[GSEP] Input too long: ${userMessage.length} characters exceeds maximum of ${GenomeInstance.MAX_INPUT_LENGTH}.`,
             );
         }
 
