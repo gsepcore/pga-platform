@@ -170,7 +170,7 @@ npx tsx examples/hero-demo.ts --dry-run
 ```
 🧬 GSEP — Your AI Agent, But Alive
 
-GitHub:  github.com/LuisvelMarketer/pga-platform
+GitHub:  github.com/gsepcore/pga-platform
 License: MIT (free forever)
 ```
 

@@ -6,12 +6,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LuisvelMarketer/pga-platform",
+    "url": "https://github.com/gsepcore/pga-platform",
     "directory": "packages/create-pga-ai"
   },
   "homepage": "https://gsepcore.com",
   "bugs": {
-    "url": "https://github.com/LuisvelMarketer/pga-platform/issues"
+    "url": "https://github.com/gsepcore/pga-platform/issues"
   },
   "type": "module",
   "bin": {

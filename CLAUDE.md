@@ -235,7 +235,7 @@ npx tsx examples/intelligence-boost-demo.ts
 - [x] Demo video recorded (Remotion video + YouTube embed)
 - [x] Landing page live (gsepcore.com)
 - [ ] First 10 beta users onboarded
-- [x] GitHub URLs updated to LuisvelMarketer/pga-platform (2026-03-12)
+- [x] GitHub URLs updated to gsepcore/pga-platform (2026-03-12)
 - [x] GSEP branding applied across all packages (2026-03-12)
 - [x] 30 intelligence systems wired and tested (2026-03-12)
 - [x] Configuration presets (minimal/standard/conscious/full) added (2026-03-12)

@@ -418,7 +418,7 @@ To contribute to the CLI:
 
 ```bash
 # Clone repository
-git clone https://github.com/LuisvelMarketer/pga-platform
+git clone https://github.com/gsepcore/pga-platform
 
 # Navigate to CLI package
 cd packages/cli
@@ -446,4 +446,4 @@ MIT
 
 - [GSEP Core](../../core/README.md)
 - [Documentation](https://gsepcore.com/docs)
-- [GitHub](https://github.com/LuisvelMarketer/pga-platform)
+- [GitHub](https://github.com/gsepcore/pga-platform)

@@ -528,7 +528,7 @@ Let's talk.
 
 Luis Alfredo Velasquez Durán
 Email: [your-email]
-GitHub: github.com/LuisvelMarketer/pga-platform
+GitHub: github.com/gsepcore/pga-platform
 Location: Germany
 
 ---

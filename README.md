@@ -9,7 +9,7 @@
 ![GSEP](https://img.shields.io/badge/GSEP-Genomic%20Self--Evolving%20Prompts-blue?style=for-the-badge)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE.md)
 [![npm version](https://img.shields.io/npm/v/@pga-ai/core?style=for-the-badge)](https://www.npmjs.com/package/@pga-ai/core)
-[![CI](https://img.shields.io/github/actions/workflow/status/LuisvelMarketer/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/LuisvelMarketer/pga-platform/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
 
@@ -17,7 +17,7 @@
 
 Created by **Luis Alfredo Velasquez Duran** | Germany, 2025–2026
 
-[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/LuisvelMarketer/pga-platform)
+[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/gsepcore/pga-platform)
 
 </div>
 
@@ -45,11 +45,11 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 
 Every star helps more developers discover GSEP. If this project is useful to you, please leave a star — it takes 1 second and means a lot.
 
-<a href="https://github.com/LuisvelMarketer/pga-platform/stargazers">
-  <img src="https://img.shields.io/github/stars/LuisvelMarketer/pga-platform?style=for-the-badge&logo=github&label=Stars&color=gold" alt="GitHub Stars">
+<a href="https://github.com/gsepcore/pga-platform/stargazers">
+  <img src="https://img.shields.io/github/stars/gsepcore/pga-platform?style=for-the-badge&logo=github&label=Stars&color=gold" alt="GitHub Stars">
 </a>
-<a href="https://github.com/LuisvelMarketer/pga-platform/network/members">
-  <img src="https://img.shields.io/github/forks/LuisvelMarketer/pga-platform?style=for-the-badge&logo=github&label=Forks&color=blue" alt="GitHub Forks">
+<a href="https://github.com/gsepcore/pga-platform/network/members">
+  <img src="https://img.shields.io/github/forks/gsepcore/pga-platform?style=for-the-badge&logo=github&label=Forks&color=blue" alt="GitHub Forks">
 </a>
 
 ---
@@ -471,7 +471,7 @@ console.log(runner.formatMarkdownReport(result));  // Markdown report
 We welcome contributions from the community! Whether it's a bug fix, new feature, documentation improvement, or a new LLM adapter — every contribution matters.
 
 ```bash
-git clone https://github.com/LuisvelMarketer/pga-platform
+git clone https://github.com/gsepcore/pga-platform
 cd pga-platform
 npm install
 npm run build
@@ -486,8 +486,8 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide, code standards, and
 
 Thanks to everyone who has contributed to GSEP. Every PR, issue, and idea makes this project better.
 
-<a href="https://github.com/LuisvelMarketer/pga-platform/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=LuisvelMarketer/pga-platform" alt="Contributors" />
+<a href="https://github.com/gsepcore/pga-platform/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=gsepcore/pga-platform" alt="Contributors" />
 </a>
 
 Want to see your avatar here? Check [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
@@ -536,7 +536,7 @@ GSEP is open source and free to use. If you or your company benefit from GSEP, c
 
 <br>
 
-If you find GSEP useful, please ⭐ [star this repo](https://github.com/LuisvelMarketer/pga-platform) — it helps others discover the project!
+If you find GSEP useful, please ⭐ [star this repo](https://github.com/gsepcore/pga-platform) — it helps others discover the project!
 
 © 2025–2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
 

@@ -385,9 +385,9 @@ my-pga-project/
 
 ## Learn More
 
-- [GSEP Documentation](https://github.com/LuisvelMarketer/pga-platform)
+- [GSEP Documentation](https://github.com/gsepcore/pga-platform)
 - [API Reference](https://gsepcore.com/docs)
-- [Examples](https://github.com/LuisvelMarketer/pga-platform/tree/main/examples)
+- [Examples](https://github.com/gsepcore/pga-platform/tree/main/examples)
 
 ## License
 

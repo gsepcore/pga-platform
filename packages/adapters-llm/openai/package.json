@@ -27,11 +27,11 @@
   "homepage": "https://gsepcore.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LuisvelMarketer/pga-platform",
+    "url": "https://github.com/gsepcore/pga-platform",
     "directory": "packages/adapters-llm/openai"
   },
   "bugs": {
-    "url": "https://github.com/LuisvelMarketer/pga-platform/issues"
+    "url": "https://github.com/gsepcore/pga-platform/issues"
   },
   "files": [
     "dist"

@@ -391,8 +391,8 @@ GSEP transforms prompt engineering from a manual craft to an autonomous science.
 
 ### 12.2 Implementation
 
-- Repository: [github.com/LuisvelMarketer/pga-platform](https://github.com/LuisvelMarketer/pga-platform)
-- Documentation: [GSEP Platform Docs](https://github.com/LuisvelMarketer/pga-platform/tree/main/packages/core)
+- Repository: [github.com/gsepcore/pga-platform](https://github.com/gsepcore/pga-platform)
+- Documentation: [GSEP Platform Docs](https://github.com/gsepcore/pga-platform/tree/main/packages/core)
 - License: MIT
 
 ### 12.3 Citation
@@ -403,7 +403,7 @@ GSEP transforms prompt engineering from a manual craft to an autonomous science.
   title = {GSEP: Genomic Self-Evolving Prompts for AI Agents},
   year = {2025},
   publisher = {GitHub},
-  url = {https://github.com/LuisvelMarketer/pga-platform}
+  url = {https://github.com/gsepcore/pga-platform}
 }
 ```
 
