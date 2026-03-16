@@ -2,8 +2,8 @@
  * GSEP CLI - Export Command
  */
 
-export async function exportGenome(genomeId: string, options: any): Promise<void> {
-    console.log('Export genome command - coming soon');
-    console.log('Genome ID:', genomeId);
-    console.log('Options:', options);
+export async function exportGenome(_genomeId: string, _options: Record<string, unknown>): Promise<void> {
+    console.error('Error: The "export" command is not yet available.');
+    console.error('Track progress: https://github.com/gsepcore/pga-platform/issues');
+    process.exit(1);
 }

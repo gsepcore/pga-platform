@@ -2,8 +2,8 @@
  * GSEP CLI - Benchmark Command
  */
 
-export async function benchmark(genomeId: string | undefined, options: any): Promise<void> {
-    console.log('Benchmark command - coming soon');
-    console.log('Genome ID:', genomeId);
-    console.log('Options:', options);
+export async function benchmark(_genomeId: string | undefined, _options: Record<string, unknown>): Promise<void> {
+    console.error('Error: The "benchmark" command is not yet available.');
+    console.error('Track progress: https://github.com/gsepcore/pga-platform/issues');
+    process.exit(1);
 }

@@ -87,7 +87,6 @@ export class PostgresAdapter implements StorageAdapter {
             const schema = readFileSync(schemaPath, 'utf-8');
 
             await this.pool.query(schema);
-            console.log('[GSEP] PostgreSQL schema initialized');
         } catch (error) {
             throw new Error(
                 `Failed to initialize PostgreSQL schema: ${error instanceof Error ? error.message : 'Unknown error'}`,

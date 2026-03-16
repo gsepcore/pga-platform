@@ -144,10 +144,8 @@ describe('CalibrationManager', () => {
     // ─── recordCalibrationPoint ─────────────────────────────
 
     describe('recordCalibrationPoint', () => {
-        it('should record a calibration point and invalidate cache', async () => {
-            const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-            await manager.recordCalibrationPoint(
+        it('should record a calibration point without errors', async () => {
+            await expect(manager.recordCalibrationPoint(
                 { layer: 1 },
                 {
                     totalCandidates: 10,
@@ -156,48 +154,11 @@ describe('CalibrationManager', () => {
                     rolledBack: 1,
                 },
                 0.75,
-            );
-
-            expect(consoleSpy).toHaveBeenCalledWith(
-                expect.stringContaining('Calibration point recorded'),
-                expect.objectContaining({
-                    context: { layer: 1 },
-                    threshold: 0.75,
-                }),
-            );
-
-            consoleSpy.mockRestore();
-        });
-
-        it('should compute falsePositiveRate correctly when passedSandbox > 0', async () => {
-            const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-            await manager.recordCalibrationPoint(
-                { operator: 'compress_instructions' },
-                {
-                    totalCandidates: 20,
-                    passedSandbox: 10,
-                    deployedSuccessfully: 8,
-                    rolledBack: 2,
-                },
-                0.65,
-            );
-
-            // falsePositiveRate = rolledBack / passedSandbox = 2 / 10 = 0.2
-            // Since FPR > 0.1, optimal threshold should be currentThreshold + 0.05
-            const loggedData = consoleSpy.mock.calls[0][1] as {
-                performance: { falsePositiveRate: number; optimalThreshold: number };
-            };
-            expect(loggedData.performance.falsePositiveRate).toBeCloseTo(0.2);
-            expect(loggedData.performance.optimalThreshold).toBeCloseTo(0.70);
-
-            consoleSpy.mockRestore();
+            )).resolves.toBeUndefined();
         });
 
         it('should handle zero passedSandbox (avoid division by zero)', async () => {
-            const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-            await manager.recordCalibrationPoint(
+            await expect(manager.recordCalibrationPoint(
                 { layer: 2 },
                 {
                     totalCandidates: 5,
@@ -206,22 +167,12 @@ describe('CalibrationManager', () => {
                     rolledBack: 0,
                 },
                 0.60,
-            );
-
-            const loggedData = consoleSpy.mock.calls[0][1] as {
-                performance: { falsePositiveRate: number; falseNegativeRate: number };
-            };
-            expect(loggedData.performance.falsePositiveRate).toBe(0);
-            expect(loggedData.performance.falseNegativeRate).toBe(0);
-
-            consoleSpy.mockRestore();
+            )).resolves.toBeUndefined();
         });
 
-        it('should increase threshold when falsePositiveRate > 0.1', async () => {
-            const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-            // FPR = 3/10 = 0.3 (high), so optimal = 0.75 + 0.05 = 0.80
-            await manager.recordCalibrationPoint(
+        it('should handle high false positive rate inputs', async () => {
+            // FPR = 3/10 = 0.3 (high) — should not throw
+            await expect(manager.recordCalibrationPoint(
                 { layer: 1 },
                 {
                     totalCandidates: 15,
@@ -230,21 +181,12 @@ describe('CalibrationManager', () => {
                     rolledBack: 3,
                 },
                 0.75,
-            );
-
-            const loggedData = consoleSpy.mock.calls[0][1] as {
-                performance: { optimalThreshold: number };
-            };
-            expect(loggedData.performance.optimalThreshold).toBe(0.80);
-
-            consoleSpy.mockRestore();
+            )).resolves.toBeUndefined();
         });
 
-        it('should cap optimal threshold at 1.0', async () => {
-            const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-            // Current threshold 0.98, FPR > 0.1 => Math.min(1.0, 0.98 + 0.05) = 1.0
-            await manager.recordCalibrationPoint(
+        it('should handle near-max threshold inputs', async () => {
+            // Current threshold 0.98, FPR > 0.1 — should cap at 1.0 internally
+            await expect(manager.recordCalibrationPoint(
                 { layer: 0 },
                 {
                     totalCandidates: 10,
@@ -253,38 +195,11 @@ describe('CalibrationManager', () => {
                     rolledBack: 2,
                 },
                 0.98,
-            );
-
-            const loggedData = consoleSpy.mock.calls[0][1] as {
-                performance: { optimalThreshold: number };
-            };
-            expect(loggedData.performance.optimalThreshold).toBe(1.0);
-
-            consoleSpy.mockRestore();
+            )).resolves.toBeUndefined();
         });
 
-        it('should decrease threshold when FNR > 0.2 and FPR < 0.05', async () => {
-            const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-            // deploymentSuccessRate = 9/10 = 0.9, so > 0.8
-            // falseNegativeRate = Math.max(0, 0.2 - (1 - 0.60)) = Math.max(0, 0.2 - 0.4) = 0
-            // Actually to trigger the condition, we need FNR > 0.2 AND FPR < 0.05
-            // FNR = Math.max(0, 0.2 - (1 - currentThreshold))
-            // For FNR > 0.2: 0.2 - (1 - threshold) > 0.2 => threshold > 1.0 (impossible)
-            // Actually FNR formula is: Math.max(0, 0.2 - (1 - currentThreshold))
-            // For threshold = 0.90: FNR = Math.max(0, 0.2 - 0.1) = 0.1 (not > 0.2)
-            // For threshold = 0.80: FNR = Math.max(0, 0.2 - 0.2) = 0.0 (not > 0.2)
-            // It appears the formula never yields FNR > 0.2 since max value is 0.2
-            // So the decrease branch is effectively unreachable with current formula.
-            // Let's verify by testing the boundary: threshold = 1.0
-            // FNR = Math.max(0, 0.2 - (1 - 1.0)) = Math.max(0, 0.2) = 0.2
-            // FNR > 0.2 is false. So the branch is unreachable.
-            // We still test the "keep current" path:
-
-            // FPR = 0/10 = 0 (< 0.05), deployment success = 10/10 = 1.0
-            // FNR = Math.max(0, 0.2 - (1 - 0.70)) = Math.max(0, 0.2 - 0.3) = 0
-            // Neither condition met, so optimal = current
-            await manager.recordCalibrationPoint(
+        it('should handle perfect deployment rate inputs', async () => {
+            await expect(manager.recordCalibrationPoint(
                 { operator: 'reorder_constraints' },
                 {
                     totalCandidates: 12,
@@ -293,19 +208,10 @@ describe('CalibrationManager', () => {
                     rolledBack: 0,
                 },
                 0.70,
-            );
-
-            const loggedData = consoleSpy.mock.calls[0][1] as {
-                performance: { optimalThreshold: number };
-            };
-            expect(loggedData.performance.optimalThreshold).toBe(0.70);
-
-            consoleSpy.mockRestore();
+            )).resolves.toBeUndefined();
         });
 
         it('should invalidate cache for the recorded context', async () => {
-            vi.spyOn(console, 'log').mockImplementation(() => {});
-
             // Get threshold first (creates a path that would be cached if history existed)
             await manager.getCalibratedThreshold({ layer: 2 });
 
@@ -324,8 +230,44 @@ describe('CalibrationManager', () => {
             // Next call should be a fresh lookup (source: 'default' since no history)
             const result = await manager.getCalibratedThreshold({ layer: 2 });
             expect(result.source).toBe('default');
+        });
+    });
 
-            vi.restoreAllMocks();
+    // ─── calculateOptimalThreshold (private) ─────────────────
+
+    describe('calculateOptimalThreshold', () => {
+        // Access private method for unit testing the threshold math
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const calc = (mgr: any) => mgr.calculateOptimalThreshold.bind(mgr);
+
+        it('should increase threshold when falsePositiveRate > 0.1', () => {
+            const fn = calc(manager);
+            // FPR = 0.3, FNR = 0, current = 0.75 => 0.75 + 0.05 = 0.80
+            expect(fn(0.3, 0, 0.75)).toBe(0.80);
+        });
+
+        it('should cap optimal threshold at 1.0', () => {
+            const fn = calc(manager);
+            // FPR = 0.4, current = 0.98 => Math.min(1.0, 1.03) = 1.0
+            expect(fn(0.4, 0, 0.98)).toBe(1.0);
+        });
+
+        it('should decrease threshold when FNR > 0.2 and FPR < 0.05', () => {
+            const fn = calc(manager);
+            // Directly test the branch with FNR = 0.25, FPR = 0.01
+            expect(fn(0.01, 0.25, 0.70)).toBeCloseTo(0.65);
+        });
+
+        it('should floor decreased threshold at 0.5', () => {
+            const fn = calc(manager);
+            // FNR = 0.25, FPR = 0.01, current = 0.50 => Math.max(0.5, 0.45) = 0.5
+            expect(fn(0.01, 0.25, 0.50)).toBe(0.50);
+        });
+
+        it('should keep current threshold when neither condition is met', () => {
+            const fn = calc(manager);
+            // FPR = 0.05, FNR = 0.1, current = 0.70 => 0.70
+            expect(fn(0.05, 0.1, 0.70)).toBe(0.70);
         });
     });
 

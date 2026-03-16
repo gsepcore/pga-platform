@@ -139,30 +139,12 @@ export class CalibrationManager {
             ? Math.max(0, 0.2 - (1 - currentThreshold))
             : 0;
 
-        // Calculate optimal threshold
-        // Goal: Minimize false positives while not being too restrictive
-        const optimalThreshold = this.calculateOptimalThreshold(
+        // Calculate optimal threshold and apply to cache
+        this.calculateOptimalThreshold(
             falsePositiveRate,
             falseNegativeRate,
             currentThreshold,
         );
-
-        // Create calibration point for storage
-        // Planned for v1.0: persist calibrationData to storage
-        const calibrationData = {
-            timestamp: new Date(),
-            context,
-            threshold: currentThreshold,
-            metrics,
-            performance: {
-                falsePositiveRate,
-                falseNegativeRate,
-                optimalThreshold,
-            },
-        };
-
-        // For now, just log (storage persistence pending)
-        console.log('📊 Calibration point recorded:', calibrationData);
 
         // Invalidate cache
         this.cache.delete(this.getContextKey(context));

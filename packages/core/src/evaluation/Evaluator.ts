@@ -367,13 +367,8 @@ export class Evaluator {
         tasks: EvaluationTask[],
         userId: string,
     ): Promise<ComparisonResult> {
-        console.log('🔬 Running benchmark: GSEP vs Baseline...\n');
-
         // Run both benchmarks
-        console.log('📊 Testing WITH GSEP...');
         const withPGA = await this.evaluate(genomeWithPGA, tasks, userId);
-
-        console.log('📊 Testing WITHOUT GSEP (baseline)...');
         const withoutPGA = await this.evaluate(genomeBaseline, tasks, userId);
 
         // Calculate improvements (guard against division by zero)
