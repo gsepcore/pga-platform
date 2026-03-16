@@ -34,7 +34,8 @@
     "url": "https://github.com/gsepcore/pga-platform/issues"
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "dependencies": {
     "@pga-ai/core": "*",

@@ -27,7 +27,8 @@
   },
   "files": [
     "dist",
-    "templates"
+    "templates",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc",

@@ -24,7 +24,8 @@
   },
   "files": [
     "dist",
-    "sql"
+    "sql",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsc --build",

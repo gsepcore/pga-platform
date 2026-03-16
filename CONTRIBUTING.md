@@ -3,6 +3,7 @@
 Thank you for your interest in contributing to GSEP (Genomic Self-Evolving Prompts)! Every contribution helps make AI agents smarter, more adaptive, and more resilient.
 
 ## Table of Contents
+- [Contributor License Agreement (CLA)](#contributor-license-agreement-cla)
 - [Code of Conduct](#code-of-conduct)
 - [Ways to Contribute](#ways-to-contribute)
 - [Getting Started](#getting-started)
@@ -13,6 +14,21 @@ Thank you for your interest in contributing to GSEP (Genomic Self-Evolving Promp
 - [Release Process](#release-process)
 - [Contributors](#contributors)
 - [Sponsors](#sponsors)
+
+## Contributor License Agreement (CLA)
+
+By submitting a pull request, you agree that:
+
+1. **Your contribution is your original work**, or you have the right to submit it.
+2. **You grant GSEP a perpetual, worldwide, non-exclusive, royalty-free license** to use, reproduce, modify, and distribute your contribution as part of the project.
+3. **You understand** that your contribution will be licensed under the same license as the component you are contributing to (MIT for core and adapters, BSL 1.1 for Gene Registry).
+4. **You will not** submit code that infringes on third-party patents, copyrights, or trade secrets.
+
+This CLA is necessary to protect the project, its users, and its contributors. No separate signing process is required — submitting a PR constitutes your agreement.
+
+For questions about the CLA, contact: legal@gsepcore.com
+
+---
 
 ## Code of Conduct
 

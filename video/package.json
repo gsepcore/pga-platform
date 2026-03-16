@@ -2,6 +2,8 @@
   "name": "gsep-demo-video",
   "version": "1.0.0",
   "description": "GSEP Platform Demo Video — Remotion",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
+  "license": "MIT",
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion render src/index.ts GSEPDemo out/gsep-demo.mp4 --codec=h264",
