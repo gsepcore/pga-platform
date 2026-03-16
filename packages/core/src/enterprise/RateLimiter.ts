@@ -70,6 +70,7 @@ export class RateLimiter {
     };
     private records: Map<string, RequestRecord[]> = new Map();
     private tokenBuckets: Map<string, { tokens: number; lastRefill: number }> = new Map();
+    private cleanupInterval: ReturnType<typeof setInterval>;
 
     constructor(config: RateLimitConfig) {
         this.config = {
@@ -82,7 +83,16 @@ export class RateLimiter {
         };
 
         // Cleanup old records periodically
-        setInterval(() => this.cleanup(), this.config.windowMs);
+        this.cleanupInterval = setInterval(() => this.cleanup(), this.config.windowMs);
+    }
+
+    /**
+     * Stop the cleanup interval and release resources
+     */
+    destroy(): void {
+        clearInterval(this.cleanupInterval);
+        this.records.clear();
+        this.tokenBuckets.clear();
     }
 
     /**

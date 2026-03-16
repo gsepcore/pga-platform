@@ -420,6 +420,7 @@ export class GenomeInstance {
     private gsepIdentitySection: GSEPIdentitySection;
     private gsepActivityFooter: GSEPActivityFooter;
     private genomeKernel?: GenomeKernel;
+    private contentFirewall?: ContentFirewall;
     private interactionCount: number = 0;
 
     constructor(
@@ -589,8 +590,8 @@ export class GenomeInstance {
 
         // C3 Content Firewall — enabled by default
         if (genome.config.firewall?.enabled !== false) {
-            const firewall = new ContentFirewall();
-            this.assembler.setFirewall(firewall);
+            this.contentFirewall = new ContentFirewall();
+            this.assembler.setFirewall(this.contentFirewall);
         }
 
         // GSEP Identity & Activity Footer
@@ -778,13 +779,20 @@ Ready to see what we can do together? 😊`,
             );
         }
 
-        // ── C0 Integrity Shadow Check ──
+        // ── C0 Integrity Check ──
         // Verify immutable core hasn't been tampered with before processing
         if (this.genomeKernel) {
             try {
                 this.genomeKernel.verifyIntegrity();
-            } catch {
-                // Shadow mode: log but don't block chat
+            } catch (integrityError) {
+                const msg = integrityError instanceof Error ? integrityError.message : 'Unknown integrity violation';
+                this.metrics.logAudit({
+                    level: 'error',
+                    component: 'genome-kernel',
+                    operation: 'c0-integrity-check',
+                    message: `C0 integrity violation detected: ${msg}`,
+                    genomeId: this.genome.id,
+                });
             }
         }
 
@@ -971,11 +979,28 @@ Ready to see what we can do together? 😊`,
                 }
             }
 
+            // ── C3 Firewall: scan user input before sending to LLM ──
+            let sanitizedUserMessage = userMessage;
+            if (this.contentFirewall) {
+                const inputScan = this.contentFirewall.scan(userMessage, 'user-input');
+                if (!inputScan.allowed) {
+                    this.metrics.logAudit({
+                        level: 'warning',
+                        component: 'firewall',
+                        operation: 'user-input-scan',
+                        message: `User input blocked: ${inputScan.detections.map(d => d.patternId).join(', ')}`,
+                        genomeId: this.genome.id,
+                        userId: context.userId,
+                    });
+                }
+                sanitizedUserMessage = inputScan.sanitizedContent;
+            }
+
             // Use Reasoning if enabled
             let response: { content: string; usage?: { inputTokens: number; outputTokens: number; totalCost?: number } };
             if (this.reasoningEngine) {
                 const reasoningResult = await this.reasoningEngine.reason(
-                    userMessage,
+                    sanitizedUserMessage,
                     prompt,
                     this.genome.config.reasoning?.defaultStrategy
                 );
@@ -985,7 +1010,7 @@ Ready to see what we can do together? 😊`,
                 response = await this.llm.chat(
                     [
                         { role: 'system', content: prompt },
-                        { role: 'user', content: userMessage },
+                        { role: 'user', content: sanitizedUserMessage },
                     ],
                 );
             }

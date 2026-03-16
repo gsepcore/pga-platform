@@ -27,8 +27,22 @@ export class InMemoryStorageAdapter implements StorageAdapter {
         falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
     }> = [];
 
+    /** Maximum entries per unbounded collection (FIFO eviction) */
+    private readonly maxEntries: number;
+
+    constructor(options?: { maxEntries?: number }) {
+        this.maxEntries = options?.maxEntries ?? 10_000;
+    }
+
     async initialize(): Promise<void> {
         // No-op for in-memory storage
+    }
+
+    /** Trim array to maxEntries using FIFO eviction */
+    private trimArray<T>(arr: T[]): void {
+        if (arr.length > this.maxEntries) {
+            arr.splice(0, arr.length - this.maxEntries);
+        }
     }
 
     // ─── Genome Operations ──────────────────────────────────
@@ -65,6 +79,7 @@ export class InMemoryStorageAdapter implements StorageAdapter {
 
     async logMutation(mutation: MutationLog): Promise<void> {
         this.mutations.push(structuredClone(mutation));
+        this.trimArray(this.mutations);
     }
 
     async getMutationHistory(genomeId: string, limit = 100): Promise<MutationLog[]> {
@@ -91,6 +106,7 @@ export class InMemoryStorageAdapter implements StorageAdapter {
         timestamp: Date;
     }): Promise<void> {
         this.interactions.push({ ...interaction });
+        this.trimArray(this.interactions);
     }
 
     async getRecentInteractions(genomeId: string, userId: string, limit = 20): Promise<unknown[]> {
@@ -109,6 +125,7 @@ export class InMemoryStorageAdapter implements StorageAdapter {
         timestamp: Date;
     }): Promise<void> {
         this.feedbackRecords.push({ ...feedback });
+        this.trimArray(this.feedbackRecords);
     }
 
     // ─── Analytics ──────────────────────────────────────────
@@ -217,6 +234,7 @@ export class InMemoryStorageAdapter implements StorageAdapter {
 
     async saveToGeneRegistry(entry: GeneRegistryEntry): Promise<void> {
         this.geneRegistry.push(structuredClone(entry));
+        this.trimArray(this.geneRegistry);
     }
 
     async queryGeneRegistry(familyId: string, gene?: string, minFitness = 0): Promise<GeneRegistryEntry[]> {
@@ -242,6 +260,7 @@ export class InMemoryStorageAdapter implements StorageAdapter {
         falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
     }): Promise<void> {
         this.calibrationPoints.push(structuredClone(point));
+        this.trimArray(this.calibrationPoints);
     }
 
     async getCalibrationHistory(contextKey: string, limit = 50): Promise<Array<{

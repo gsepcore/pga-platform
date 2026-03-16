@@ -60,3 +60,14 @@ CLAUDE.md
 
 # Claude Code local settings (may contain API keys)
 .claude/
+
+# Business strategy & marketing (not for public repo)
+PGA-PITCH-DECK.md
+pov-report-anthropic.md
+pov-report-openai.md
+EXPANSION-STRATEGY.md
+CERTIFICATION_10_10.md
+SCIENTIFIC-VALIDATION.md
+BENCHMARKS.md
+auto-convert-pdf.py
+convert-html-to-pdf.sh

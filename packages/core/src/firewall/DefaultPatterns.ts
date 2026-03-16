@@ -629,6 +629,7 @@ export const DEFAULT_TRUST_POLICIES: TrustPolicy[] = [
     // UNTRUSTED — full scan + quarantine
     { source: 'plugin', trustLevel: 'untrusted', scanLevel: 'full', tagContent: true, quarantineOnDetection: true },
     { source: 'gene-bank', trustLevel: 'untrusted', scanLevel: 'full', tagContent: true, quarantineOnDetection: true },
+    { source: 'user-input', trustLevel: 'untrusted', scanLevel: 'full', tagContent: true, quarantineOnDetection: false },
 ];
 
 // ─── Default Sanitization Rules ─────────────────────────────

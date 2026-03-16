@@ -121,9 +121,9 @@ export class OpenAIAdapter implements LLMAdapter {
     }
 
     /**
-     * Chat with streaming
+     * Stream a response from OpenAI
      */
-    async *chatStream(
+    async *stream(
         messages: Message[],
         options?: ChatOptions,
     ): AsyncGenerator<ChatChunk, void, unknown> {
