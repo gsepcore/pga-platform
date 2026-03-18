@@ -5,6 +5,10 @@
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/gsepcore"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/gsepcore/pga-platform",
