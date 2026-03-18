@@ -44,10 +44,10 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 ### See it in action
 
 <a href="https://www.youtube.com/watch?v=cTPJqrL2IyE">
-  <img src="https://img.youtube.com/vi/cTPJqrL2IyE/maxresdefault.jpg" alt="GSEP Demo" width="600">
+  <img src="assets/gsep-demo.gif" alt="GSEP Demo — prompts evolving in real time" width="600">
 </a>
 
-*Click to watch 60s demo on YouTube*
+*Click for full demo on YouTube*
 
 </div>
 
