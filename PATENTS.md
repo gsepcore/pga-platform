@@ -27,7 +27,7 @@ This public repository, including its full git history, serves as a timestamped 
 ## Licensing
 
 - **Open source components** (MIT): Royalty-free use
-- **BSL components** (Gene Registry): See [LICENSE.md](./LICENSE.md)
+- **BSL components** (Gene Registry): See [LICENSING](./docs/LICENSING.md)
 - **Commercial products**: Contact licensing@gsepcore.com
 
 ---

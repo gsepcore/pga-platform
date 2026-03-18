@@ -1,21 +1,6 @@
-GSEP Platform License Agreement
+MIT License
 
-Copyright (c) 2025-2026 Luis Alfredo Velasquez Duran. All rights reserved.
-
-NOTICE: This repository contains multiple packages with different licenses.
-See LICENSE.md for the full multi-tier licensing details.
-
-================================================================================
-
-OPEN SOURCE COMPONENTS (MIT License):
-
-The following packages are licensed under the MIT License:
-- @pga-ai/core
-- @pga-ai/adapters-llm-anthropic
-- @pga-ai/adapters-llm-openai
-- @pga-ai/adapters-storage-postgres
-
-MIT License:
+Copyright (c) 2025-2026 Luis Alfredo Velasquez Duran
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,46 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-================================================================================
-
-COMMERCIAL COMPONENTS (Proprietary License):
-
-The following components require a commercial license:
-- GSEP Cloud (SaaS platform)
-- Enterprise features
-- Gene Registry (BSL 1.1, converts to Apache 2.0 in 2029)
-
-These components are proprietary and confidential. Unauthorized copying,
-distribution, or use is strictly prohibited.
-
-For commercial licensing inquiries, contact: licensing@gsepcore.com
-
-================================================================================
-
-PATENT NOTICE:
-
-The GSEP (Genomic Self-Evolving Prompts) system and methodology are patented
-inventions created by Luis Alfredo Velasquez Duran.
-
-Patent Status: Patentado
-Jurisdiction: International (PCT)
-Priority Date: 2025
-
-Any use of the patented technology must comply with applicable patent laws.
-
-================================================================================
-
-TRADEMARK NOTICE:
-
-"GSEP", "Genomic Self-Evolving Prompts", "Living OS for AI Agents", and the
-GSEP logo are trademarks of Luis Alfredo Velasquez Duran.
-
-Unauthorized use of these trademarks is prohibited.
-
-================================================================================
-
-For questions about licensing, contact:
-Luis Alfredo Velasquez Duran
-Email: contact@gsepcore.com
-Website: https://gsepcore.com

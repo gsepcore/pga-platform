@@ -6,8 +6,7 @@
 
 # 🧬 GSEP — Make Your AI Agent Self-Evolving
 
-![GSEP](https://img.shields.io/badge/GSEP-Genomic%20Self--Evolving%20Prompts-blue?style=for-the-badge)
-[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE.md)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/@pga-ai/core?style=for-the-badge)](https://www.npmjs.com/package/@pga-ai/core)
 [![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
@@ -40,18 +39,17 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 └──────────────────┘               └──────────────────┘
 ```
 
----
+<div align="center">
 
-## ⭐ Star This Repo
+### See it in action
 
-Every star helps more developers discover GSEP. If this project is useful to you, please leave a star — it takes 1 second and means a lot.
-
-<a href="https://github.com/gsepcore/pga-platform/stargazers">
-  <img src="https://img.shields.io/github/stars/gsepcore/pga-platform?style=for-the-badge&logo=github&label=Stars&color=gold" alt="GitHub Stars">
+<a href="https://www.youtube.com/watch?v=cTPJqrL2IyE">
+  <img src="https://img.youtube.com/vi/cTPJqrL2IyE/maxresdefault.jpg" alt="GSEP Demo" width="600">
 </a>
-<a href="https://github.com/gsepcore/pga-platform/network/members">
-  <img src="https://img.shields.io/github/forks/gsepcore/pga-platform?style=for-the-badge&logo=github&label=Forks&color=blue" alt="GitHub Forks">
-</a>
+
+*Click to watch 60s demo on YouTube*
+
+</div>
 
 ---
 
@@ -214,7 +212,29 @@ const genome = await gsep.createGenome({
 });
 ```
 
-### Full Living Agent
+### With persistent storage (production)
+
+```typescript
+import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+
+const gsep = new PGA({
+  llm,
+  storage: new PostgresAdapter({
+    connectionString: process.env.DATABASE_URL!,
+  }),
+});
+```
+
+### Environment variables
+
+```bash
+# .env
+ANTHROPIC_API_KEY=sk-ant-...        # or OPENAI_API_KEY
+DATABASE_URL=postgresql://...        # optional, for persistence
+```
+
+<details>
+<summary><strong>Full Living Agent config (all features)</strong></summary>
 
 ```typescript
 const genome = await gsep.createGenome({
@@ -250,26 +270,7 @@ const genome = await gsep.createGenome({
 });
 ```
 
-### With persistent storage (production)
-
-```typescript
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
-
-const gsep = new PGA({
-  llm,
-  storage: new PostgresAdapter({
-    connectionString: process.env.DATABASE_URL!,
-  }),
-});
-```
-
-### Environment variables
-
-```bash
-# .env
-ANTHROPIC_API_KEY=sk-ant-...        # or OPENAI_API_KEY
-DATABASE_URL=postgresql://...        # optional, for persistence
-```
+</details>
 
 ---
 
@@ -292,6 +293,25 @@ app.post('/chat', async (req, res) => {
   res.json({ reply: response });
 });
 ```
+
+### Any agent with a chat loop
+
+```typescript
+import { genome } from './gsep-setup.js';
+
+// Whatever your loop looks like — just swap the LLM call
+while (true) {
+  const input = await getUserInput();
+  const response = await genome.chat(input, {
+    userId: currentUser.id,
+    taskType: 'general',
+  });
+  displayResponse(response);
+}
+```
+
+<details>
+<summary><strong>More integration examples (Discord, LangChain)</strong></summary>
 
 ### Discord/Slack bot
 
@@ -320,21 +340,7 @@ const response = await genome.chat(question, {
 });
 ```
 
-### Any agent with a chat loop
-
-```typescript
-import { genome } from './gsep-setup.js';
-
-// Whatever your loop looks like — just swap the LLM call
-while (true) {
-  const input = await getUserInput();
-  const response = await genome.chat(input, {
-    userId: currentUser.id,
-    taskType: 'general',
-  });
-  displayResponse(response);
-}
-```
+</details>
 
 ---
 
@@ -383,31 +389,16 @@ Only `chat()` is required. `stream()` and `estimateCost()` are optional.
 
 ## 🧪 What GSEP adds to your agent
 
-### Autonomous Evolution
-Your agent's prompts improve every 10 interactions without manual intervention.
+- **Autonomous Evolution** — Prompts improve every N interactions without manual tuning
+- **Drift Detection** — Auto-corrects when performance degrades
+- **SelfModel (Metacognition)** — Agent knows its strengths/weaknesses
+- **Pattern Memory** — Predicts user needs before they ask
+- **Gene Bank + THK** — Multiple agents share successful prompt patterns
+- **Living Agent (v0.6.0)** — 10 cognitive layers: emotional detection, calibrated autonomy, personal narrative, analytic memory
+- **Three Pillars of Life (v0.7.0)** — Enhanced self-model, purpose survival (THRIVING→CRITICAL state machine), strategic autonomy
 
-### Drift Detection
-If your agent starts performing worse, GSEP detects it and auto-corrects.
-
-### SelfModel (Metacognition)
-Your agent knows its strengths and weaknesses and injects that awareness into responses.
-
-### Pattern Memory
-Tracks behavioral patterns to predict user needs before they ask.
-
-### Gene Bank + THK (Horizontal Knowledge Transfer)
-Multiple agents share successful prompt patterns — when one agent learns something, all agents benefit.
-
-### Living Agent (v0.6.0)
-10 cognitive layers including emotional detection, calibrated autonomy, personal narrative tracking, and analytic memory.
-
-### Three Pillars of Life (v0.7.0)
-
-- **Enhanced Self-Model** — Purpose-aware self-awareness with capability tracking, evolution trajectory, and integrated health scoring
-- **Purpose Survival** — State machine (THRIVING > STABLE > STRESSED > SURVIVAL > CRITICAL) with threat detection, genome snapshots, and purpose fidelity gates
-- **Strategic Autonomy** — Goal-based decisions, evolution prioritization, adaptive mutation rates, and task refusal for dangerous operations
-
-### Content Firewall — C3 (v0.8.0)
+<details>
+<summary><strong>Content Firewall — C3 (v0.8.0)</strong></summary>
 
 Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 is the 4th chromosome layer — it scans **all** external content before it enters the system prompt.
 
@@ -419,7 +410,10 @@ Defense-in-depth against prompt injection, skill poisoning, and supply-chain att
 - **Zero dependencies** — Uses only Node.js `crypto`
 - Enabled by default, opt-out with `firewall: { enabled: false }`
 
-### Proof of Value Runner (v0.7.0)
+</details>
+
+<details>
+<summary><strong>Proof of Value Runner (v0.7.0)</strong></summary>
 
 Measure GSEP's impact objectively. Runs multiple evolution cycles and reports the fitness curve:
 
@@ -456,6 +450,8 @@ console.log(runner.formatConsoleReport(result));   // ASCII table + curve
 console.log(runner.formatMarkdownReport(result));  // Markdown report
 ```
 
+</details>
+
 ---
 
 ## 🛡️ Intellectual Property
@@ -465,7 +461,7 @@ console.log(runner.formatMarkdownReport(result));  // Markdown report
 - 3 Patent Applications (US, EU, PCT) — 34 claims
 - 4 Trademark Applications (US & EU)
 
-**License**: MIT (core) | BSL 1.1 (Gene Registry) | Proprietary (Cloud)
+**License**: MIT (core) | BSL 1.1 (Gene Registry) | Proprietary (Cloud) — See [full licensing details](docs/LICENSING.md)
 
 ---
 
@@ -510,8 +506,6 @@ GSEP is open source and free to use. If you or your company benefit from GSEP, c
 - Get your logo displayed here and in the docs
 - Priority support and feature requests
 - Support independent open-source development
-
-### Sponsor Tiers
 
 | Tier | Amount | Perks |
 |------|--------|-------|
