@@ -12,12 +12,13 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
+[![Product Hunt](https://img.shields.io/badge/Product%20Hunt-Live%20Now-orange?style=for-the-badge&logo=producthunt)](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
 
 **Drop-in upgrade that makes any AI agent learn, adapt, and evolve autonomously.**
 
 Created by **Luis Alfredo Velasquez Duran** | Germany, 2025–2026
 
-[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/gsepcore/pga-platform)
+[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/gsepcore/pga-platform) · [Product Hunt](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
 
 </div>
 
