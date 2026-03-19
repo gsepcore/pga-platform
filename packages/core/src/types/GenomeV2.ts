@@ -550,7 +550,8 @@ export type ContentSource =
     | 'emotional-model' | 'calibrated-autonomy'
     | 'personal-narrative' | 'analytic-memory'
     | 'rag-engine' | 'plugin' | 'gene-bank'
-    | 'gsep-identity' | 'user-input';
+    | 'gsep-identity' | 'user-input'
+    | 'agent-output';
 
 export interface SanitizationRule {
     id: string;

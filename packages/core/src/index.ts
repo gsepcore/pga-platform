@@ -641,6 +641,17 @@ export {
     CONTENT_TRUST_PREAMBLE,
 } from './firewall/DefaultPatterns.js';
 
+// ─── Behavioral Immune System (v0.9.0) ──────────────────
+export { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
+export type {
+    ImmuneVerdict,
+    OutputThreat,
+    OutputThreatType,
+    ImmuneStatus,
+    ImmuneMemoryEntry,
+    BISConfig,
+} from './immune/BehavioralImmuneSystem.js';
+
 // ─── GSEP Visibility (v0.8.0) ──────────────────────────
 
 export { GSEPIdentitySection } from './core/GSEPIdentitySection.js';

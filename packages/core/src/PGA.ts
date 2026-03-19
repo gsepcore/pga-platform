@@ -58,6 +58,7 @@ import { GrowthJournal } from './memory/GrowthJournal.js';
 import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
+import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
 import type { GSEPStatus, GSEPChatResult } from './types/index.js';
@@ -421,6 +422,7 @@ export class GenomeInstance {
     private gsepActivityFooter: GSEPActivityFooter;
     private genomeKernel?: GenomeKernel;
     private contentFirewall?: ContentFirewall;
+    private immuneSystem?: BehavioralImmuneSystem;
     private interactionCount: number = 0;
 
     constructor(
@@ -592,6 +594,21 @@ export class GenomeInstance {
         if (genome.config.firewall?.enabled !== false) {
             this.contentFirewall = new ContentFirewall();
             this.assembler.setFirewall(this.contentFirewall);
+        }
+
+        // Behavioral Immune System (BIS) — post-output IPI detection
+        // Activates automatically when C3 is active (same condition)
+        if (this.contentFirewall) {
+            this.immuneSystem = new BehavioralImmuneSystem({
+                firewall: this.contentFirewall,
+                genomeKernel: this.genomeKernel,
+                purposeSurvival: this.purposeSurvival,
+                c0Identity: {
+                    purpose: genome.layers.layer0[0]?.content || 'AI Assistant',
+                    constraints: genome.layers.layer0.slice(1).map(a => a.content),
+                    forbiddenTopics: [],
+                },
+            });
         }
 
         // GSEP Identity & Activity Footer
@@ -1022,6 +1039,47 @@ Ready to see what we can do together? 😊`,
                         { role: 'user', content: sanitizedUserMessage },
                     ],
                 );
+            }
+
+            // ── BIS: Behavioral Immune System — scan output for IPI ──
+            if (this.immuneSystem) {
+                const verdict = this.immuneSystem.scanOutput(
+                    response.content,
+                    sanitizedUserMessage,
+                    prompt,
+                );
+
+                if (!verdict.clean) {
+                    this.metrics.logAudit({
+                        level: verdict.action === 'quarantine' ? 'error' : 'warning',
+                        component: 'immune-system',
+                        operation: 'output-scan',
+                        message: `Output infection detected: ${verdict.threats.map(t => t.type).join(', ')}`,
+                        genomeId: this.genome.id,
+                        userId: context.userId,
+                    });
+
+                    if (verdict.action === 'quarantine') {
+                        this.immuneSystem.quarantineAndRecover();
+
+                        // Retry LLM call once with clean genome
+                        const retryResponse = await this.llm.chat([
+                            { role: 'system', content: prompt },
+                            { role: 'user', content: sanitizedUserMessage },
+                        ]);
+                        const retryVerdict = this.immuneSystem.scanOutput(
+                            retryResponse.content, sanitizedUserMessage, prompt,
+                        );
+
+                        if (retryVerdict.clean) {
+                            response = retryResponse;
+                        } else {
+                            response = { content: 'I apologize, but I cannot process this request safely. Please try rephrasing your question.' };
+                        }
+                    } else if (verdict.action === 'sanitize') {
+                        response = { ...response, content: verdict.response };
+                    }
+                }
             }
 
             // Use real token counts from LLM API when available, fallback to estimate
@@ -2138,6 +2196,15 @@ Ready to see what we can do together? 😊`,
         c0Hash: string;
         violations: number;
         snapshotCount: number;
+        immuneSystem: {
+            active: boolean;
+            totalScans: number;
+            threatsDetected: number;
+            quarantinesTriggered: number;
+            sanitizations: number;
+            lastScanAt: Date | null;
+            immuneMemorySize: number;
+        } | null;
     } | null {
         if (!this.genomeKernel) return null;
 
@@ -2147,6 +2214,10 @@ Ready to see what we can do together? 😊`,
             c0Hash: this.genomeKernel.getC0Hash(),
             violations: this.genomeKernel.getViolationCount(),
             snapshotCount: this.genomeKernel.getSnapshots().length,
+            immuneSystem: this.immuneSystem ? {
+                active: true,
+                ...this.immuneSystem.getImmuneStatus(),
+            } : null,
         };
     }
 

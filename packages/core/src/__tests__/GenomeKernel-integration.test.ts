@@ -158,6 +158,15 @@ describe('GenomeKernel Shadow Integration', () => {
                 c0Hash: expect.stringMatching(/^[a-f0-9]{64}$/),
                 violations: 0,
                 snapshotCount: 0,
+                immuneSystem: {
+                    active: true,
+                    totalScans: 0,
+                    threatsDetected: 0,
+                    quarantinesTriggered: 0,
+                    sanitizations: 0,
+                    lastScanAt: null,
+                    immuneMemorySize: 0,
+                },
             });
         });
 
