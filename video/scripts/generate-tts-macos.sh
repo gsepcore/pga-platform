@@ -39,7 +39,7 @@ generate "s02" "GSEP is a drop-in upgrade for any AI agent. ... No expensive ret
 generate "s03" "Traditional AI agents suffer from four critical problems. ... Static prompts. Manual tuning. Blind degradation. Isolated knowledge. ... Each problem compounds, making agents unreliable at scale. ... GSEP solves all four, automatically."
 
 # S04 — Chromosomes
-generate "s04" "GSEP uses a four-chromosome architecture. ... C-zero is immutable DNA, with SHA-256 protection. It defines core identity, ethics, and security rules that never change. ... C-one contains operative genes that evolve slowly through validation. Tool usage, coding patterns, and reasoning strategies get better over time. ... C-two adapts quickly to each user's preferences. Communication style, formatting, and behavior adjust per user, daily. ... C-three is the content firewall, with 53 security patterns. It defends against prompt injection, role hijacking, and data exfiltration. ... Together, they create a layered, intelligent system."
+generate "s04" "GSEP uses a five-chromosome architecture. ... C-zero is immutable DNA, with SHA-256 protection. It defines core identity, ethics, and security rules that never change. ... C-one contains operative genes that evolve slowly through validation. Tool usage, coding patterns, and reasoning strategies get better over time. ... C-two adapts quickly to each user's preferences. Communication style, formatting, and behavior adjust per user, daily. ... C-three is the content firewall, with 53 security patterns. It defends against prompt injection, role hijacking, and data exfiltration. ... C-four is the behavioral immune system. Six deterministic checks detect if the agent's own response was manipulated, with auto-quarantine and self-healing. ... Together, they create a layered, intelligent system."
 
 # S05 — Evolution Cycle
 generate "s05" "GSEP follows a four-phase evolution cycle. ... First, transcription. Every interaction is logged with quality metrics. Success rate, token efficiency, latency, and user satisfaction are tracked. ... Then, variation. The system generates mutations using eight operators. From synonym replacement and instruction rephrasing, to prompt expansion and compression. ... Next, simulation. Candidates are tested in a sandbox environment. Each mutation runs against historical scenarios to measure improvement. ... Finally, selection. Only improvements that pass all four gates are deployed. Statistical significance, safety checks, rollback capability, and fitness gain. ... Canary deployment rolls out changes gradually, with automatic rollback if performance drops."
@@ -87,7 +87,7 @@ generate "s18" "GSEP is open source and sustainable. ... The core engine, adapte
 generate "s19" "Ready to get started? ... Read the documentation at gsep-core dot com slash docs. Star us on GitHub. Join our Discord community. Or install now with npm install at-pga-ai-slash-core. ... Your agent, but alive. It starts now."
 
 # S20 — Closing
-generate "s20" "Your agent... but alive. ... Genomic Self-Evolving Prompts. Version zero point eight. Patented. MIT licensed. Production ready. ... Created by Luis Alfredo Velasquez Duran. ... Let your agent evolve."
+generate "s20" "Your agent... but alive. ... Genomic Self-Evolving Prompts. Version zero point nine. Patented. MIT licensed. Production ready. ... Created by Luis Alfredo Velasquez Duran. ... Let your agent evolve."
 
 echo ""
 echo "Done! Generated 20 voiceover files."

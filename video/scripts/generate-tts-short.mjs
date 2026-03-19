@@ -43,8 +43,8 @@ const scenes = [
   },
   {
     id: "short-s04",
-    title: "4-Chromosome Architecture",
-    text: `At the heart of GSEP is a four-chromosome architecture. C-zero is immutable DNA, protected by SHA-256. It holds core identity, ethics, and security rules that never change. C-one contains operative genes that evolve slowly through validation: tool usage patterns, reasoning strategies, coding behaviors. C-two is the epigenome, fast-adapting to each user's preferences. Communication style, formatting, response length, all personalized daily. C-three is the content firewall with 53 security patterns, defending against prompt injection, role hijacking, and data exfiltration.`,
+    title: "5-Chromosome Architecture",
+    text: `At the heart of GSEP is a five-chromosome architecture. C-zero is immutable DNA, protected by SHA-256. It holds core identity, ethics, and security rules that never change. C-one contains operative genes that evolve slowly through validation: tool usage patterns, reasoning strategies, coding behaviors. C-two is the epigenome, fast-adapting to each user's preferences. Communication style, formatting, response length, all personalized daily. C-three is the content firewall with 53 security patterns, defending against prompt injection, role hijacking, and data exfiltration. And C-four is the behavioral immune system: six deterministic checks detect if the agent's own response was manipulated, with auto-quarantine and self-healing.`,
   },
   {
     id: "short-s05",
@@ -84,7 +84,7 @@ const scenes = [
   {
     id: "short-s12",
     title: "Closing",
-    text: `Genomic Self-Evolving Prompts. Patented. Production ready. Let your agent evolve.`,
+    text: `Genomic Self-Evolving Prompts. Version zero point nine. Patented. Production ready. Let your agent evolve.`,
   },
 ];
 

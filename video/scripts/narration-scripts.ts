@@ -264,7 +264,7 @@ Or install now with npm install at-pga-ai-slash-core.
     title: "Closing",
     durationSec: 30,
     text: `Your agent... but alive.
-... Genomic Self-Evolving Prompts. Version zero point eight.
+... Genomic Self-Evolving Prompts. Version zero point nine.
 Patented. MIT licensed. Production ready.
 ... Created by Luis Alfredo Velasquez Duran.
 ... Let your agent evolve.`,

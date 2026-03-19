@@ -35,7 +35,7 @@ const narrations = [
   },
   {
     id: "S04",
-    text: `GSEP uses a four-chromosome architecture. ... C-zero is immutable DNA, with SHA-256 protection. It defines core identity, ethics, and security rules that never change. ... C-one contains operative genes that evolve slowly through validation. Tool usage, coding patterns, and reasoning strategies get better over time. ... C-two adapts quickly to each user's preferences. Communication style, formatting, and behavior adjust per user, daily. ... C-three is the content firewall, with 53 security patterns. It defends against prompt injection, role hijacking, and data exfiltration. ... Together, they create a layered, intelligent system.`,
+    text: `GSEP uses a five-chromosome architecture. ... C-zero is immutable DNA, with SHA-256 protection. It defines core identity, ethics, and security rules that never change. ... C-one contains operative genes that evolve slowly through validation. Tool usage, coding patterns, and reasoning strategies get better over time. ... C-two adapts quickly to each user's preferences. Communication style, formatting, and behavior adjust per user, daily. ... C-three is the content firewall, with 53 security patterns. It defends against prompt injection, role hijacking, and data exfiltration. ... C-four is the behavioral immune system. Six deterministic checks detect if the agent's own response was manipulated, with auto-quarantine and self-healing. ... Together, they create a layered, intelligent system.`,
   },
   {
     id: "S05",
@@ -99,7 +99,7 @@ const narrations = [
   },
   {
     id: "S20",
-    text: `Your agent... but alive. ... Genomic Self-Evolving Prompts. Version zero point eight. Patented. MIT licensed. Production ready. ... Created by Luis Alfredo Velasquez Duran. ... Let your agent evolve.`,
+    text: `Your agent... but alive. ... Genomic Self-Evolving Prompts. Version zero point nine. Patented. MIT licensed. Production ready. ... Created by Luis Alfredo Velasquez Duran. ... Let your agent evolve.`,
   },
 ];
 
