@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSEP Product Hunt Banner — 1270x760</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1270px;
+    height: 760px;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #000;
+  }
+
+  .canvas {
+    width: 1270px;
+    height: 760px;
+    position: relative;
+    overflow: hidden;
+    background: #050508;
+  }
+
+  /* ── Grid background (subtle) ── */
+  .grid-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 1;
+    background-image:
+      linear-gradient(rgba(139, 92, 246, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139, 92, 246, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* ── Ambient glows ── */
+  .glow-purple {
+    position: absolute;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+    top: -200px;
+    right: -100px;
+    z-index: 2;
+  }
+
+  .glow-cyan {
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.08) 0%, transparent 70%);
+    bottom: -100px;
+    left: -50px;
+    z-index: 2;
+  }
+
+  .glow-green {
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34, 197, 94, 0.06) 0%, transparent 70%);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+  }
+
+  /* ── Left: Text Content ── */
+  .left-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 580px;
+    height: 100%;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 50px 60px 70px;
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .brand-row .dna-emoji {
+    font-size: 28px;
+    line-height: 1;
+  }
+
+  .brand-row .brand-text {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 6px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .brand-row .version-badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.4);
+    font-size: 12px;
+    font-weight: 700;
+    color: #c4b5fd;
+    letter-spacing: 1px;
+  }
+
+  .main-title {
+    font-size: 52px;
+    font-weight: 200;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.12;
+    margin-bottom: 20px;
+  }
+
+  .main-title strong {
+    font-weight: 900;
+    background: linear-gradient(135deg, #a78bfa 0%, #06b6d4 60%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 17px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.5);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .feature-item .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .feature-item .icon.purple { background: rgba(139, 92, 246, 0.2); }
+  .feature-item .icon.cyan   { background: rgba(6, 182, 212, 0.2); }
+  .feature-item .icon.green  { background: rgba(34, 197, 94, 0.2); }
+  .feature-item .icon.amber  { background: rgba(245, 158, 11, 0.2); }
+
+  .feature-item .label {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.3px;
+    line-height: 1.3;
+  }
+
+  .feature-item .sublabel {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* ── Right: Visual ── */
+  .right-panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 690px;
+    height: 100%;
+    z-index: 10;
+  }
+
+  /* Code window mockup */
+  .code-window {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-45%, -50%);
+    width: 560px;
+    background: rgba(13, 17, 23, 0.95);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow:
+      0 0 80px rgba(139, 92, 246, 0.1),
+      0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .code-titlebar {
+    height: 40px;
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .code-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+
+  .code-dot.red   { background: #ff5f57; }
+  .code-dot.amber { background: #febc2e; }
+  .code-dot.green { background: #28c840; }
+
+  .code-filename {
+    margin-left: 12px;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.4);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-body {
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: #e6edf3;
+  }
+
+  .code-body .kw { color: #ff7b72; }
+  .code-body .fn { color: #d2a8ff; }
+  .code-body .str { color: #a5d6ff; }
+  .code-body .cm { color: #8b949e; }
+  .code-body .num { color: #79c0ff; }
+  .code-body .type { color: #7ee787; }
+  .code-body .op { color: #ff7b72; }
+  .code-body .prop { color: #ffa657; }
+  .code-body .dim { opacity: 0.4; }
+
+  /* Floating DNA behind code window */
+  .dna-float {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 600px;
+    z-index: 5;
+    opacity: 0.15;
+  }
+
+  .dna-float svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.2));
+  }
+
+  /* ── Bottom strip ── */
+  .bottom-strip {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 70px;
+    z-index: 20;
+  }
+
+  .bottom-strip .left-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .bottom-strip span {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    color: rgba(255, 255, 255, 0.2);
+    text-transform: uppercase;
+  }
+
+  .bottom-strip .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  /* ── Vignette ── */
+  .vignette {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 15;
+    background: radial-gradient(ellipse at 65% 50%, transparent 35%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+  }
+
+  /* ── Noise ── */
+  .noise {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ── Micro particles ── */
+  .micro {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 6;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- Grid background -->
+  <div class="grid-bg"></div>
+
+  <!-- Ambient glows -->
+  <div class="glow-purple"></div>
+  <div class="glow-cyan"></div>
+  <div class="glow-green"></div>
+
+  <!-- Micro particles -->
+  <div class="micro" style="width:2px;height:2px;background:#8b5cf6;top:100px;left:650px;opacity:0.4;box-shadow:0 0 4px #8b5cf6;"></div>
+  <div class="micro" style="width:1.5px;height:1.5px;background:#06b6d4;top:200px;left:1150px;opacity:0.3;box-shadow:0 0 3px #06b6d4;"></div>
+  <div class="micro" style="width:2px;height:2px;background:#fff;top:350px;left:620px;opacity:0.12;"></div>
+  <div class="micro" style="width:1.5px;height:1.5px;background:#22c55e;top:550px;left:700px;opacity:0.25;box-shadow:0 0 3px #22c55e;"></div>
+  <div class="micro" style="width:2px;height:2px;background:#8b5cf6;top:650px;left:1100px;opacity:0.2;box-shadow:0 0 4px #8b5cf6;"></div>
+
+  <!-- Left panel: text -->
+  <div class="left-panel">
+    <div class="brand-row">
+      <span class="dna-emoji">&#x1F9EC;</span>
+      <span class="brand-text">GSEP</span>
+      <span class="version-badge">v0.8.0</span>
+    </div>
+
+    <div class="main-title">Your AI Agent,<br>But <strong>Alive</strong></div>
+
+    <div class="subtitle">
+      Genomic Self-Evolving Prompts — AI agents that<br>
+      automatically improve through biological evolution.
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="icon purple">&#x1F9EC;</div>
+        <div>
+          <div class="label">5 Chromosomes</div>
+          <div class="sublabel">C0 immutable + C1/C2/C3/C4</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="icon cyan">&#x1F9E0;</div>
+        <div>
+          <div class="label">30 AI Systems</div>
+          <div class="sublabel">Consciousness + memory</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="icon green">&#x1F504;</div>
+        <div>
+          <div class="label">Auto-Evolution</div>
+          <div class="sublabel">6D fitness optimization</div>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="icon amber">&#x1F512;</div>
+        <div>
+          <div class="label">Patentado</div>
+          <div class="sublabel">SHA-256 integrity</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel: code window -->
+  <div class="right-panel">
+
+    <!-- Faint DNA behind -->
+    <div class="dna-float">
+      <svg viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="sa" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0"/>
+            <stop offset="30%" stop-color="#8b5cf6" stop-opacity="0.6"/>
+            <stop offset="70%" stop-color="#8b5cf6" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="sb" x1="100%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4" stop-opacity="0"/>
+            <stop offset="30%" stop-color="#06b6d4" stop-opacity="0.5"/>
+            <stop offset="70%" stop-color="#06b6d4" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="M 120,10 C 240,50 240,100 120,140 C 0,180 0,230 120,270 C 240,310 240,360 120,400 C 0,440 0,490 120,530"
+              fill="none" stroke="url(#sa)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M 280,10 C 160,50 160,100 280,140 C 400,180 400,230 280,270 C 160,310 160,360 280,400 C 400,440 400,490 280,530"
+              fill="none" stroke="url(#sb)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- Code window -->
+    <div class="code-window">
+      <div class="code-titlebar">
+        <div class="code-dot red"></div>
+        <div class="code-dot amber"></div>
+        <div class="code-dot green"></div>
+        <span class="code-filename">my-agent.ts</span>
+      </div>
+      <div class="code-body">
+        <span class="kw">import</span> { PGA } <span class="kw">from</span> <span class="str">'@pga-ai/core'</span>;<br>
+        <br>
+        <span class="cm">// Create an agent that evolves itself</span><br>
+        <span class="kw">const</span> agent = PGA.<span class="fn">wrap</span>(<span class="str">'my-assistant'</span>, {<br>
+        &nbsp;&nbsp;<span class="prop">provider</span>: <span class="str">'anthropic'</span>,<br>
+        &nbsp;&nbsp;<span class="prop">model</span>: <span class="str">'claude-sonnet-4-5-20250929'</span>,<br>
+        &nbsp;&nbsp;<span class="prop">preset</span>: <span class="str">'conscious'</span>,<br>
+        });<br>
+        <br>
+        <span class="cm">// Chat — it learns &amp; evolves automatically</span><br>
+        <span class="kw">const</span> reply = <span class="kw">await</span> agent.<span class="fn">chat</span>(<br>
+        &nbsp;&nbsp;<span class="str">'Help me design an API'</span>,<br>
+        &nbsp;&nbsp;{ <span class="prop">userId</span>: <span class="str">'user-42'</span> }<br>
+        );<br>
+        <br>
+        <span class="cm">// The agent remembers, adapts, improves</span><br>
+        <span class="cm">// Its prompts evolve through natural selection</span><br>
+        console.<span class="fn">log</span>(reply); <span class="cm">// &#x1F9EC; Alive</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vignette -->
+  <div class="vignette"></div>
+
+  <!-- Noise -->
+  <div class="noise"></div>
+
+  <!-- Bottom strip -->
+  <div class="bottom-strip">
+    <div class="left-meta">
+      <span>Open Source</span>
+      <div class="dot"></div>
+      <span>MIT Licensed</span>
+      <div class="dot"></div>
+      <span>1555 Tests</span>
+    </div>
+    <span>gsepcore.com</span>
+  </div>
+
+</div>
+</body>
+</html>

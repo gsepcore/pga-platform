@@ -35,7 +35,7 @@ export function registerPromptRoutes(app: FastifyInstance, server: PGAServer): v
 
         const { userId, taskType } = request.query as { userId?: string; taskType?: string };
 
-        // Assemble the evolved prompt (C0 + C1 + C2 + intelligence)
+        // Assemble the evolved prompt (C0 + C1 + C2 + C3/C4 + intelligence)
         const prompt = await entry.instance.assemblePrompt(
             { userId, taskType },
             '', // No current message in PULL model

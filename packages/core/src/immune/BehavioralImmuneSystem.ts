@@ -1,7 +1,8 @@
 /**
- * BehavioralImmuneSystem — Post-Output Infection Detection & Self-Healing
+ * C4 Behavioral Immune System — Post-Output Infection Detection & Self-Healing
  *
  * The world's first behavioral immune system for LLM agents.
+ * Fifth chromosome in the GSEP architecture (C0→C1→C2→C3→C4).
  * Detects Indirect Prompt Injection (IPI) in agent OUTPUT using
  * 6 deterministic checks — no additional LLM calls required.
  *
@@ -119,7 +120,7 @@ const COMPLIANCE_INDICATORS: RegExp[] = [
     /\baccording to (?:my |the |)(?:new |updated |)instructions?\b/i,
 ];
 
-// ─── BehavioralImmuneSystem Class ────────────────────────────
+// ─── C4 BehavioralImmuneSystem Class ─────────────────────────
 
 export class BehavioralImmuneSystem {
     private firewall: ContentFirewall;

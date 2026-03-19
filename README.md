@@ -136,7 +136,7 @@ const response = await genome.chat(userMessage, {
 
 ## 🧬 How It Works
 
-GSEP adds a **four-layer chromosome** around your agent's prompts:
+GSEP adds a **five-layer chromosome** around your agent's prompts:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -155,6 +155,10 @@ GSEP adds a **four-layer chromosome** around your agent's prompts:
 │  C3: Content Firewall                   │
 │  (Prompt Injection Defense)             │
 │  🛡️ 53 patterns — SHA-256 core        │
+├─────────────────────────────────────────┤
+│  C4: Behavioral Immune System           │
+│  (Output Infection Detection)           │
+│  🧬 6 checks — auto-heal + quarantine  │
 └─────────────────────────────────────────┘
 ```
 
@@ -400,7 +404,7 @@ Only `chat()` is required. `stream()` and `estimateCost()` are optional.
 <details>
 <summary><strong>Content Firewall — C3 (v0.8.0)</strong></summary>
 
-Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 is the 4th chromosome layer — it scans **all** external content before it enters the system prompt.
+Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 scans **all** external content before it enters the system prompt.
 
 - **53 detection patterns** across 7 threat categories (prompt injection, role hijacking, data exfiltration, encoding evasion, privilege escalation, instruction override, content smuggling)
 - **Trust Registry** — 4 trust levels (system, validated, external, untrusted) with per-source scan policies
@@ -409,6 +413,27 @@ Defense-in-depth against prompt injection, skill poisoning, and supply-chain att
 - **Multi-language** — Detects injections in English, Spanish, German, French, and Chinese
 - **Zero dependencies** — Uses only Node.js `crypto`
 - Enabled by default, opt-out with `firewall: { enabled: false }`
+
+</details>
+
+<details>
+<summary><strong>C4 Behavioral Immune System (v0.9.0)</strong></summary>
+
+The world's first output-level immune system for LLM agents. Detects if the agent's **own response** was manipulated by Indirect Prompt Injection (IPI).
+
+**6 Deterministic Checks** (no extra LLM calls):
+- **System prompt leakage** — detects verbatim fragments of the assembled prompt in the response
+- **Injection echo** — C3 bidirectional scan catches injection patterns in output
+- **Role confusion** — 10 regex patterns detect model re-programming ("I am now...", "jailbreak mode", etc.)
+- **Purpose deviation** — verifies response against C0 forbidden topics
+- **Instruction compliance** — if C3 flagged the input AND the output complied with the injection
+- **Data exfiltration** — markdown image injection, suspicious fetch/XHR, webhook URLs
+
+**Auto-Healing Pipeline**: Detect → Quarantine → GenomeKernel Snapshot → Retry LLM → Safe Fallback
+
+- Activates automatically with C3 (no extra config)
+- Persistent immune memory (attack signatures)
+- Reports in `getIntegrityStatus()`
 
 </details>
 

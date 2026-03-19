@@ -49,6 +49,15 @@ const CHROMOSOMES: ChromosomeLayer[] = [
     icon: "🛡️",
     tag: "DEFENSE-IN-DEPTH",
   },
+  {
+    id: "c4",
+    label: "C4: Immune System",
+    sublabel: "Output Defense",
+    description: "6 deterministic checks — auto-quarantine & self-healing",
+    color: THEME.lime,
+    icon: "🧬",
+    tag: "IMMUNE",
+  },
 ];
 
 interface ChromosomeStackProps {

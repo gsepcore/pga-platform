@@ -593,7 +593,7 @@ while (true) {
    - Clear monetization path
 
 5. ✅ **Operationally indispensable**
-   - Prevents degradation (immune system)
+   - Prevents degradation (C4 immune system)
    - Optimizes continuously (drift detection)
    - Shares knowledge (gene registry)
    - Validates rigorously (8-stage gates)

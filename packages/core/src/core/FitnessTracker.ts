@@ -1,10 +1,10 @@
 /**
- * FitnessTracker — Tracks allele performance and triggers immune system
+ * FitnessTracker — Tracks allele performance and triggers C4 immune system
  * Created by Luis Alfredo Velasquez Duran (Germany, 2025)
  *
  * Responsibilities:
  * - Record performance scores for alleles (EMA update)
- * - Track recent scores window for immune system
+ * - Track recent scores window for C4 immune system
  * - Auto-rollback variants with sudden fitness drops
  * - Update contextual fitness (model-specific, task-specific)
  */
@@ -60,14 +60,14 @@ export class FitnessTracker {
         // Save genome
         await this.storage.saveGenome(this.genome);
 
-        // Check immune system (fire-and-forget with logging)
+        // Check C4 immune system (fire-and-forget with logging)
         this.checkImmune(layer, gene, variant, recentScores, allele.fitness).catch(() => {
             // Immune check is non-critical; genome is already saved above
         });
     }
 
     /**
-     * Immune system: rollback variant if recent performance drops significantly
+     * C4 Immune system: rollback variant if recent performance drops significantly
      */
     private async checkImmune(
         layer: Layer,

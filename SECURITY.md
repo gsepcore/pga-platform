@@ -85,6 +85,11 @@ When using GSEP Platform:
 - **Mitigation:** C3 Content Firewall validates and sanitizes all inputs
 - **Best Practice:** Enable the Content Firewall in production environments
 
+### Indirect Prompt Injection (Output)
+- **Risk:** Agent's own response could be manipulated by IPI embedded in context
+- **Mitigation:** C4 Behavioral Immune System scans all output with 6 deterministic checks, auto-quarantine, and self-healing pipeline
+- **Best Practice:** C4 activates automatically with C3 — no extra configuration needed
+
 ### Data Privacy
 - **Risk:** Sensitive data in prompts sent to external LLM APIs
 - **Mitigation:** Sanitize data before sending to LLMs

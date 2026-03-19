@@ -43,7 +43,7 @@ export const narrations: SceneNarration[] = [
     id: "S04",
     title: "Chromosomes",
     durationSec: 60,
-    text: `GSEP uses a four-chromosome architecture.
+    text: `GSEP uses a five-chromosome architecture.
 ... C-zero is immutable DNA, with SHA-256 protection.
 It defines core identity, ethics, and security rules that never change.
 ... C-one contains operative genes that evolve slowly through validation.
@@ -52,6 +52,7 @@ Tool usage, coding patterns, and reasoning strategies get better over time.
 Communication style, formatting, and behavior adjust per user, daily.
 ... C-three is the content firewall, with 53 security patterns.
 It defends against prompt injection, role hijacking, and data exfiltration.
+... C-four is the behavioral immune system — six deterministic checks detect if the agent's own response was manipulated, with auto-quarantine and self-healing.
 ... Together, they create a layered, intelligent system.`,
   },
   {

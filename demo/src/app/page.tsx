@@ -8,7 +8,7 @@ const chapters = [
   { id: "S01", time: "0:00", seconds: 0, title: "Hook", desc: "What if your AI agent could evolve?" },
   { id: "S02", time: "0:25", seconds: 25, title: "Core Pitch", desc: "Drop-in upgrade for any agent" },
   { id: "S03", time: "0:55", seconds: 55, title: "The Problem", desc: "4 critical pain points" },
-  { id: "S04", time: "1:20", seconds: 80, title: "4 Chromosomes", desc: "C0-C3 layered architecture" },
+  { id: "S04", time: "1:20", seconds: 80, title: "5 Chromosomes", desc: "C0-C4 layered architecture" },
   { id: "S05", time: "2:20", seconds: 140, title: "Evolution Cycle", desc: "Transcription → Selection" },
   { id: "S06", time: "3:35", seconds: 215, title: "6D Fitness", desc: "Multi-objective optimization" },
   { id: "S07", time: "4:25", seconds: 265, title: "Drift Detection", desc: "Proactive auto-healing" },
@@ -387,8 +387,8 @@ export default function DemoPage() {
           {[
             {
               icon: "🔒",
-              title: "4-Chromosome Architecture",
-              desc: "C0 immutable DNA, C1 operative, C2 epigenome, C3 firewall",
+              title: "5-Chromosome Architecture",
+              desc: "C0 immutable DNA, C1 operative, C2 epigenome, C3 firewall, C4 behavioral immune system",
               color: "var(--purple)",
             },
             {

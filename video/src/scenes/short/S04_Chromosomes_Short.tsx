@@ -6,10 +6,10 @@ import { ChromosomeStack } from "../../components/ChromosomeStack";
 import { Background } from "../../components/Background";
 
 /**
- * S04_Chromosomes_Short — 50 seconds (1500 frames @ 30fps)
+ * S04_Chromosomes_Short — 60 seconds (1800 frames @ 30fps)
  *
- * Condensed walkthrough of the 4-chromosome architecture:
- *   C0 Immutable DNA, C1 Operative Genes, C2 Epigenomes, C3 Content Firewall.
+ * Condensed walkthrough of the 5-chromosome architecture:
+ *   C0 Immutable DNA, C1 Operative Genes, C2 Epigenomes, C3 Content Firewall, C4 Immune System.
  */
 
 interface DetailSection {
@@ -94,15 +94,35 @@ const SECTIONS: {
       factInterval: 30,
     },
   },
+  {
+    highlightIndex: 4,
+    startFrame: 1300,
+    endFrame: 1550,
+    detail: {
+      title: "C4: Immune System",
+      color: THEME.lime,
+      facts: [
+        "6 deterministic checks",
+        "No extra LLM calls",
+        "Auto-quarantine pipeline",
+        "Persistent immune memory",
+        "Detects prompt leakage",
+        "Self-healing recovery",
+      ],
+      factStartFrame: 1330,
+      factInterval: 25,
+    },
+  },
 ];
 
 const narrationLines = [
-  { text: "At the heart of GSEP is a four-chromosome architecture.", startFrame: 0, endFrame: 120 },
+  { text: "At the heart of GSEP is a five-chromosome architecture.", startFrame: 0, endFrame: 120 },
   { text: "C0 is immutable DNA, protected by SHA-256.", startFrame: 120, endFrame: 450 },
   { text: "C1 contains operative genes that evolve slowly through validation.", startFrame: 450, endFrame: 750 },
   { text: "C2 is the epigenome, fast-adapting to each user's preferences.", startFrame: 750, endFrame: 1050 },
   { text: "C3 is the content firewall with 53 security patterns.", startFrame: 1050, endFrame: 1300 },
-  { text: "Together, they create a layered, intelligent system.", startFrame: 1300, endFrame: 1500 },
+  { text: "C4 is the behavioral immune system — six deterministic checks detect if the agent's own response was manipulated, with auto-quarantine and self-healing.", startFrame: 1300, endFrame: 1550 },
+  { text: "Together, they create a layered, intelligent system.", startFrame: 1550, endFrame: 1800 },
 ];
 
 const S04_Chromosomes_Short: React.FC = () => {
@@ -131,14 +151,14 @@ const S04_Chromosomes_Short: React.FC = () => {
   );
   const highlightIndex = activeSection ? activeSection.highlightIndex : -1;
 
-  // --- Summary (1300-1500) ---
-  const summaryOpacity = interpolate(frame, [1300, 1340], [0, 1], {
+  // --- Summary (1550-1800) ---
+  const summaryOpacity = interpolate(frame, [1550, 1590], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
   const summaryScale = spring({
     fps,
-    frame: frame - 1300,
+    frame: frame - 1550,
     config: { damping: 14, stiffness: 80 },
   });
 
@@ -172,7 +192,7 @@ const S04_Chromosomes_Short: React.FC = () => {
                 marginBottom: 16,
               }}
             >
-              The 4-Chromosome Architecture
+              The 5-Chromosome Architecture
             </h1>
             <div
               style={{
@@ -182,13 +202,13 @@ const S04_Chromosomes_Short: React.FC = () => {
                 color: THEME.textMuted,
               }}
             >
-              Heart of GSEP &mdash; Four layers of evolving intelligence
+              Heart of GSEP &mdash; Five layers of evolving intelligence
             </div>
           </div>
         )}
 
-        {/* ---- Chromosome Detail Sections (120-1300) ---- */}
-        {frame >= 120 && frame < 1300 && (
+        {/* ---- Chromosome Detail Sections (120-1550) ---- */}
+        {frame >= 120 && frame < 1550 && (
           <div
             style={{
               display: "flex",
@@ -219,8 +239,8 @@ const S04_Chromosomes_Short: React.FC = () => {
           </div>
         )}
 
-        {/* ---- Summary (1300-1500) ---- */}
-        {frame >= 1300 && (
+        {/* ---- Summary (1550-1800) ---- */}
+        {frame >= 1550 && (
           <div
             style={{
               flex: 1,
@@ -254,15 +274,15 @@ const S04_Chromosomes_Short: React.FC = () => {
                   display: "flex",
                   justifyContent: "center",
                   gap: 20,
-                  opacity: interpolate(frame, [1360, 1400], [0, 1], {
+                  opacity: interpolate(frame, [1610, 1650], [0, 1], {
                     extrapolateLeft: "clamp",
                     extrapolateRight: "clamp",
                   }),
                 }}
               >
-                {["Immutable", "Validated", "Adaptive", "Defended"].map(
+                {["Immutable", "Validated", "Adaptive", "Defended", "Immune"].map(
                   (label, i) => {
-                    const colors = [THEME.red, THEME.accent, THEME.green, THEME.emerald];
+                    const colors = [THEME.red, THEME.accent, THEME.green, THEME.emerald, THEME.lime];
                     return (
                       <span
                         key={label}

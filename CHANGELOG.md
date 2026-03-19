@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.9.0] - 2026-03-19
+
+### C4 Behavioral Immune System
+
+Fifth chromosome layer — post-output IPI detection and self-healing. The world's first behavioral immune system for LLM agents.
+
+### Added
+- **BehavioralImmuneSystem** engine — scans agent output for signs of Indirect Prompt Injection
+- **6 deterministic output checks** (no extra LLM calls): system prompt leakage, injection echo, role confusion, purpose deviation, instruction compliance, data exfiltration
+- **Auto-quarantine pipeline** — GenomeKernel evidence snapshots + LLM retry + safe fallback
+- **Persistent immune memory** — attack signatures stored across scans (max 100 entries)
+- **Bidirectional C3 scanning** — `agent-output` ContentSource added to C3 firewall
+- 26 immune-specific tests covering all checks and graceful degradation
+- Integrated into `chat()` flow — activates automatically when C3 is active
+
+### Changed
+- **PGA.ts** — auto-initializes `BehavioralImmuneSystem` in `GenomeInstance` constructor
+- **getIntegrityStatus()** — now includes `immuneSystem` stats (scans, threats, quarantines)
+- Architecture designation updated from 4-chromosome to **5-chromosome** (C0→C1→C2→C3→C4)
+- README, video scenes, landing page, and all marketing updated to reflect C4
+
+---
+
 ## [0.8.0] - 2026-03-06
 
 ### C3 Content Firewall
@@ -150,6 +173,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 
 | Version | Date | Description |
 |---------|------|-------------|
+| **0.9.0** | 2026-03-19 | C4 Behavioral Immune System — output IPI detection |
 | **0.8.0** | 2026-03-06 | C3 Content Firewall — prompt injection defense |
 | **0.7.0** | 2026-03-04 | Three Pillars of Life + evolution rewrite |
 | **0.6.0** | 2026-02-28 | Living Agent — 10 cognitive layers |

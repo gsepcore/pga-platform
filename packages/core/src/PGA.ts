@@ -596,7 +596,7 @@ export class GenomeInstance {
             this.assembler.setFirewall(this.contentFirewall);
         }
 
-        // Behavioral Immune System (BIS) — post-output IPI detection
+        // C4 Behavioral Immune System — post-output IPI detection
         // Activates automatically when C3 is active (same condition)
         if (this.contentFirewall) {
             this.immuneSystem = new BehavioralImmuneSystem({
@@ -1041,7 +1041,7 @@ Ready to see what we can do together? 😊`,
                 );
             }
 
-            // ── BIS: Behavioral Immune System — scan output for IPI ──
+            // ── C4: Behavioral Immune System — scan output for IPI ──
             if (this.immuneSystem) {
                 const verdict = this.immuneSystem.scanOutput(
                     response.content,
@@ -1052,7 +1052,7 @@ Ready to see what we can do together? 😊`,
                 if (!verdict.clean) {
                     this.metrics.logAudit({
                         level: verdict.action === 'quarantine' ? 'error' : 'warning',
-                        component: 'immune-system',
+                        component: 'c4-immune-system',
                         operation: 'output-scan',
                         message: `Output infection detected: ${verdict.threats.map(t => t.type).join(', ')}`,
                         genomeId: this.genome.id,

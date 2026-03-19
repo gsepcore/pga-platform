@@ -81,10 +81,12 @@ npx tsx examples/hero-demo.ts --dry-run
 **Screen**: Show a diagram (can be ASCII art in terminal or overlay graphic).
 
 **Voiceover**:
-> "Under the hood, GSEP uses a 3-layer chromosome system.
+> "Under the hood, GSEP uses a 5-layer chromosome system.
 > Layer 0 is your immutable DNA — ethics, identity, safety — locked with SHA-256.
 > Layer 1 is your operative behavior — it mutates slowly, with an 8-stage safety gate.
 > Layer 2 is per-user preferences — adapts fast, daily.
+> C3 is the content firewall — 53 patterns block prompt injection at the input.
+> C4 is the behavioral immune system — 6 checks detect if the output was manipulated, with auto-quarantine and self-healing.
 >
 > Every 10 interactions, GSEP runs an evolution cycle:
 > transcribe, mutate, test in sandbox, keep only improvements."
@@ -100,6 +102,12 @@ npx tsx examples/hero-demo.ts --dry-run
 ├────────────────────────────────────┤
 │  C2: Epigenomes          ⚡       │
 │  Per-user preferences (daily)      │
+├────────────────────────────────────┤
+│  C3: Content Firewall    🛡️       │
+│  Input defense (53 patterns)       │
+├────────────────────────────────────┤
+│  C4: Immune System       🧬       │
+│  Output defense (6 checks)         │
 └────────────────────────────────────┘
 ```
 

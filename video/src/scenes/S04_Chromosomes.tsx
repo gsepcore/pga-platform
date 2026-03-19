@@ -69,7 +69,20 @@ const S04_Chromosomes: React.FC = () => {
         "Protects brand reputation",
       ],
     };
-  } else if (frame >= 1450 && frame < 1600) {
+  } else if (frame >= 1450 && frame < 1750) {
+    highlightIndex = 4;
+    detailsData = {
+      title: "C4: Immune System",
+      facts: [
+        "🧬 6 deterministic checks",
+        "⚡ No extra LLM calls",
+        "🔒 Auto-quarantine pipeline",
+        "🧠 Persistent immune memory",
+        "🔍 Detects prompt leakage",
+        "💚 Self-healing recovery",
+      ],
+    };
+  } else if (frame >= 1750 && frame < 1900) {
     highlightIndex = -1;
   }
 
@@ -77,8 +90,8 @@ const S04_Chromosomes: React.FC = () => {
   const detailOpacity = interpolate(
     frame,
     [
-      highlightIndex === 0 ? 200 : highlightIndex === 1 ? 520 : highlightIndex === 2 ? 870 : 1170,
-      highlightIndex === 0 ? 260 : highlightIndex === 1 ? 580 : highlightIndex === 2 ? 930 : 1230,
+      highlightIndex === 0 ? 200 : highlightIndex === 1 ? 520 : highlightIndex === 2 ? 870 : highlightIndex === 3 ? 1170 : 1470,
+      highlightIndex === 0 ? 260 : highlightIndex === 1 ? 580 : highlightIndex === 2 ? 930 : highlightIndex === 3 ? 1230 : 1530,
     ],
     [0, 1],
     {
@@ -87,19 +100,20 @@ const S04_Chromosomes: React.FC = () => {
     }
   );
 
-  // Summary text (1600-1800)
-  const summaryOpacity = interpolate(frame, [1600, 1680], [0, 1], {
+  // Summary text (1900-2100)
+  const summaryOpacity = interpolate(frame, [1900, 1980], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
   const narrationLines = [
-    { text: "GSEP uses a 4-chromosome architecture.", startFrame: 0, endFrame: 180 },
+    { text: "GSEP uses a 5-chromosome architecture.", startFrame: 0, endFrame: 180 },
     { text: "C0 is immutable DNA with SHA-256 protection.", startFrame: 180, endFrame: 500 },
     { text: "C1 contains operative genes that evolve slowly through validation.", startFrame: 500, endFrame: 850 },
     { text: "C2 adapts quickly to each user's preferences.", startFrame: 850, endFrame: 1150 },
     { text: "C3 is the content firewall with 53 security patterns.", startFrame: 1150, endFrame: 1450 },
-    { text: "Together, they create a layered, intelligent system.", startFrame: 1450, endFrame: 1800 },
+    { text: "C4 is the behavioral immune system — six deterministic checks detect if the agent's own response was manipulated, with auto-quarantine and self-healing.", startFrame: 1450, endFrame: 1750 },
+    { text: "Together, they create a layered, intelligent system.", startFrame: 1750, endFrame: 2100 },
   ];
 
   return (
@@ -124,7 +138,7 @@ const S04_Chromosomes: React.FC = () => {
                 margin: 0,
               }}
             >
-              The 4-Chromosome Architecture
+              The 5-Chromosome Architecture
             </h1>
           </div>
         )}
@@ -156,13 +170,13 @@ const S04_Chromosomes: React.FC = () => {
                 color: THEME.textMuted,
               }}
             >
-              Four layers of evolving intelligence
+              Five layers of evolving intelligence
             </div>
           </div>
         )}
 
         {/* ChromosomeStack and Details */}
-        {frame >= 180 && frame < 1600 && (
+        {frame >= 180 && frame < 1900 && (
           <div
             style={{
               display: "flex",
@@ -210,8 +224,8 @@ const S04_Chromosomes: React.FC = () => {
                       opacity: interpolate(
                         frame,
                         [
-                          (highlightIndex === 0 ? 220 : highlightIndex === 1 ? 540 : highlightIndex === 2 ? 890 : 1190) + i * 30,
-                          (highlightIndex === 0 ? 260 : highlightIndex === 1 ? 580 : highlightIndex === 2 ? 930 : 1230) + i * 30,
+                          (highlightIndex === 0 ? 220 : highlightIndex === 1 ? 540 : highlightIndex === 2 ? 890 : highlightIndex === 3 ? 1190 : 1490) + i * 30,
+                          (highlightIndex === 0 ? 260 : highlightIndex === 1 ? 580 : highlightIndex === 2 ? 930 : highlightIndex === 3 ? 1230 : 1530) + i * 30,
                         ],
                         [0, 1],
                         {
@@ -230,7 +244,7 @@ const S04_Chromosomes: React.FC = () => {
         )}
 
         {/* Summary Text */}
-        {frame >= 1600 && (
+        {frame >= 1900 && (
           <div
             style={{
               opacity: summaryOpacity,

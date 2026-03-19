@@ -14,7 +14,7 @@ GSEP Platform is protected by **three patent applications** covering novel metho
 |--------|--------------|
 | **Genomic Prompt Evolution Method** | United States |
 | **Cross-Agent Genetic Inheritance** | European Union |
-| **Three-Layer Immutable Architecture** | International (PCT) |
+| **Five-Layer Chromosome Architecture** | International (PCT) |
 
 ---
 

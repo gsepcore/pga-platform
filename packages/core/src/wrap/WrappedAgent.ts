@@ -111,7 +111,7 @@ export class WrappedAgent {
      *
      * Accepts the standard LLMAdapter message format.
      * Internally delegates to GenomeInstance.chat() which handles:
-     * - Prompt assembly from C0+C1+C2
+     * - Prompt assembly from C0+C1+C2 (+ C3/C4 runtime)
      * - Canary deployment routing
      * - Fitness calculation & drift recording
      * - Continuous evolution loop

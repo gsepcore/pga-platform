@@ -110,7 +110,7 @@ SOFTWARE.
 The following inventions are protected by patent applications:
 1. **Method for Genomic Evolution of AI Prompts** (US Patent Application)
 2. **Cross-Agent Genetic Inheritance System** (EU Patent Application)
-3. **Three-Layer Immutable Prompt Architecture** (International PCT)
+3. **Five-Layer Chromosome Architecture** (International PCT)
 
 See [PATENTS.md](./PATENTS.md) for detailed information.
 

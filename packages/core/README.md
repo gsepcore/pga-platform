@@ -77,7 +77,7 @@ That's it! Your agent now evolves automatically.
 
 ## Core Concepts
 
-### Four-Layer Chromosome Architecture
+### Five-Layer Chromosome Architecture
 
 ```
 ┌─────────────────────────────────────────┐
@@ -94,8 +94,12 @@ That's it! Your agent now evolves automatically.
 │  ⚡ FAST mutation (daily adaptation)    │
 ├─────────────────────────────────────────┤
 │  C3: Content Firewall                   │
-│  Input/Output Security, Prompt Defense  │
+│  Input Security, Prompt Defense         │
 │  🛡️ 53 threat patterns, trust policies │
+├─────────────────────────────────────────┤
+│  C4: Behavioral Immune System           │
+│  Output Infection Detection             │
+│  🧬 6 checks — auto-heal + quarantine  │
 └─────────────────────────────────────────┘
 ```
 

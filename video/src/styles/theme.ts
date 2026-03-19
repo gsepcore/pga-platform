@@ -12,6 +12,7 @@ export const THEME = {
   orange: '#f97316',
   amber: '#f59e0b',
   emerald: '#10b981',
+  lime: '#84cc16',
   white: '#ffffff',
 } as const;
 

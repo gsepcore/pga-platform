@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "GSEP Demo — Genomic Self-Evolving Prompts",
   description:
-    "Watch how GSEP transforms static AI agents into living, learning systems. 4-chromosome architecture, 6D fitness, drift detection, and 10 cognitive layers.",
+    "Watch how GSEP transforms static AI agents into living, learning systems. 5-chromosome architecture, 6D fitness, drift detection, and 10 cognitive layers.",
   keywords: [
     "GSEP",
     "AI agent",
