@@ -1835,17 +1835,59 @@ Ready to see what we can do together? 😊`,
         );
 
             // Step 4: Make promotion decision
-            const result = gateResult.finalDecision === 'promote' ? {
-                applied: true,
-                reason: gateResult.reason,
-                improvement: mutationCandidate.fitness - currentAllele.fitness,
-                gateResults: {
-                    quality: gateResult.gates.quality,
-                    sandbox: gateResult.gates.sandbox,
-                    economic: gateResult.gates.economic,
-                    stability: gateResult.gates.stability,
-                },
-            } : gateResult.finalDecision === 'canary' ? await (async () => {
+            const result = gateResult.finalDecision === 'promote' ? await (async () => {
+                // Retire current active allele
+                currentAllele.status = 'retired';
+
+                // Create promoted allele with lineage tracking
+                const promotedAllele = {
+                    gene: opts.gene,
+                    variant: mutationCandidate.variant,
+                    content: mutationCandidate.content,
+                    fitness: mutationCandidate.fitness,
+                    sampleCount: 0,
+                    generation: (currentAllele.generation || 0) + 1,
+                    parentVariant: currentAllele.variant,
+                    status: 'active' as const,
+                    createdAt: new Date(),
+                };
+
+                // Persist to genome with transaction safety (rollback on failure)
+                this.genome.layers[layerKey].push(promotedAllele);
+                try {
+                    await this.storage.saveGenome(this.genome);
+                } catch (err) {
+                    // Rollback in-memory state on storage failure
+                    currentAllele.status = 'active';
+                    const idx = this.genome.layers[layerKey].indexOf(promotedAllele);
+                    if (idx !== -1) this.genome.layers[layerKey].splice(idx, 1);
+                    throw err;
+                }
+
+                // Log mutation as deployed
+                await this.storage.logMutation({
+                    genomeId: this.genome.id,
+                    layer: opts.layer,
+                    gene: opts.gene,
+                    variant: mutationCandidate.variant,
+                    mutationType: 'targeted',
+                    parentVariant: currentAllele.variant,
+                    deployed: true,
+                    createdAt: new Date(),
+                });
+
+                return {
+                    applied: true,
+                    reason: gateResult.reason,
+                    improvement: mutationCandidate.fitness - currentAllele.fitness,
+                    gateResults: {
+                        quality: gateResult.gates.quality,
+                        sandbox: gateResult.gates.sandbox,
+                        economic: gateResult.gates.economic,
+                        stability: gateResult.gates.stability,
+                    },
+                };
+            })() : gateResult.finalDecision === 'canary' ? await (async () => {
                 // Start canary deployment for real-world validation
                 const canaryAllele = {
                     gene: opts.gene,
@@ -2856,12 +2898,18 @@ Ready to see what we can do together? 😊`,
                 const decision = await this.canaryManager.evaluateCanary(deployment.id);
 
                 if (decision.action === 'promote') {
-                    // Apply canary variant as new active allele
-                    const layerKey = `layer${deployment.layer}` as 'layer0' | 'layer1' | 'layer2';
-                    const canaryContent = this.genome.layers[layerKey]
-                        ?.find(a => a.variant === deployment.canaryVariant)?.content;
+                    // Read canary content from deployment (not genome.layers)
+                    const canaryContent = deployment.canaryContent;
 
                     if (canaryContent) {
+                        // Retire current active allele for this gene before promoting
+                        const layerKey = `layer${deployment.layer}` as 'layer0' | 'layer1' | 'layer2';
+                        const activeAllele = this.genome.layers[layerKey]
+                            .find(a => a.gene === deployment.gene && a.status === 'active');
+                        if (activeAllele) {
+                            activeAllele.status = 'retired';
+                        }
+
                         await this.addAllele(
                             deployment.layer,
                             deployment.gene,

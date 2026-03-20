@@ -48,6 +48,7 @@ export interface CanaryDeployment {
     // Variants
     stableVariant: string;              // Current production variant
     canaryVariant: string;              // New variant being tested
+    canaryContent: string;              // Mutated content for promotion lookup
 
     // Traffic allocation
     trafficPercent: number;             // Current % to canary
@@ -129,6 +130,7 @@ export class CanaryDeploymentManager {
             gene: options.gene,
             stableVariant: options.stableAllele.variant,
             canaryVariant: options.canaryAllele.variant,
+            canaryContent: options.canaryAllele.content,
             trafficPercent: this.config.initialTrafficPercent!,
             targetPercent: this.config.initialTrafficPercent!,
             status: 'active',
