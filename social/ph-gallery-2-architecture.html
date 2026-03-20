@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSEP Architecture — 1270x760</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1270px; height: 760px; overflow: hidden; font-family: 'Inter', sans-serif; background: #000; }
+
+  .canvas {
+    width: 1270px; height: 760px; position: relative; overflow: hidden;
+    background: #050508;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+
+  .grid-bg {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .heading {
+    position: relative; z-index: 10; text-align: center; margin-bottom: 50px;
+  }
+
+  .heading h2 {
+    font-size: 38px; font-weight: 200; color: #fff; letter-spacing: -0.5px;
+  }
+  .heading h2 strong {
+    font-weight: 900;
+    background: linear-gradient(135deg, #a78bfa, #06b6d4, #34d399);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .heading p {
+    font-size: 16px; color: rgba(255,255,255,0.4); margin-top: 10px; font-weight: 300;
+  }
+
+  .chromosomes {
+    position: relative; z-index: 10;
+    display: flex; gap: 20px; align-items: stretch;
+  }
+
+  .chromo {
+    width: 270px; border-radius: 16px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+  }
+
+  .chromo-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .chromo-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  .chromo.c0 .chromo-icon { background: rgba(239,68,68,0.2); }
+  .chromo.c1 .chromo-icon { background: rgba(59,130,246,0.2); }
+  .chromo.c2 .chromo-icon { background: rgba(34,197,94,0.2); }
+  .chromo.c3 .chromo-icon { background: rgba(245,158,11,0.2); }
+
+  .chromo.c0 { border-color: rgba(239,68,68,0.15); }
+  .chromo.c1 { border-color: rgba(59,130,246,0.15); }
+  .chromo.c2 { border-color: rgba(34,197,94,0.15); }
+  .chromo.c3 { border-color: rgba(245,158,11,0.15); }
+
+  .chromo-header .label-group { display: flex; flex-direction: column; }
+  .chromo-header .name {
+    font-size: 15px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+  }
+  .chromo-header .tag {
+    font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-top: 2px;
+  }
+  .chromo.c0 .tag { color: #f87171; }
+  .chromo.c1 .tag { color: #60a5fa; }
+  .chromo.c2 .tag { color: #4ade80; }
+  .chromo.c3 .tag { color: #fbbf24; }
+
+  .chromo-body { padding: 18px 24px 22px; }
+  .chromo-body p {
+    font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.6; margin-bottom: 14px;
+  }
+
+  .chromo-traits { display: flex; flex-direction: column; gap: 8px; }
+  .trait {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 400;
+  }
+  .trait-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .chromo.c0 .trait-dot { background: #f87171; }
+  .chromo.c1 .trait-dot { background: #60a5fa; }
+  .chromo.c2 .trait-dot { background: #4ade80; }
+  .chromo.c3 .trait-dot { background: #fbbf24; }
+
+  .mutation-speed {
+    margin-top: 16px; padding: 8px 12px; border-radius: 8px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px; text-align: center;
+  }
+  .chromo.c0 .mutation-speed { background: rgba(239,68,68,0.1); color: #f87171; }
+  .chromo.c1 .mutation-speed { background: rgba(59,130,246,0.1); color: #60a5fa; }
+  .chromo.c2 .mutation-speed { background: rgba(34,197,94,0.1); color: #4ade80; }
+  .chromo.c3 .mutation-speed { background: rgba(245,158,11,0.1); color: #fbbf24; }
+
+  .bottom-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
+    background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 20;
+  }
+  .bottom-bar span {
+    font-size: 12px; font-weight: 400; letter-spacing: 2px;
+    color: rgba(255,255,255,0.2); text-transform: uppercase;
+  }
+
+  .vignette {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 5;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+  }
+  .noise {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="grid-bg"></div>
+  <div class="vignette"></div>
+  <div class="noise"></div>
+
+  <div class="heading">
+    <h2>Prompts as <strong>4 Chromosomes</strong></h2>
+    <p>Each layer evolves at a different speed with different safety constraints</p>
+  </div>
+
+  <div class="chromosomes">
+    <!-- C0 -->
+    <div class="chromo c0">
+      <div class="chromo-header">
+        <div class="chromo-icon">&#x1F512;</div>
+        <div class="label-group">
+          <span class="name">C0 — Immutable DNA</span>
+          <span class="tag">Never mutates</span>
+        </div>
+      </div>
+      <div class="chromo-body">
+        <p>Core identity, ethics, and security constraints. Protected by SHA-256 integrity hash.</p>
+        <div class="chromo-traits">
+          <div class="trait"><div class="trait-dot"></div>Agent identity & purpose</div>
+          <div class="trait"><div class="trait-dot"></div>Ethical boundaries</div>
+          <div class="trait"><div class="trait-dot"></div>Security constraints</div>
+        </div>
+        <div class="mutation-speed">IMMUTABLE — SHA-256 PROTECTED</div>
+      </div>
+    </div>
+
+    <!-- C1 -->
+    <div class="chromo c1">
+      <div class="chromo-header">
+        <div class="chromo-icon">&#x1F9E0;</div>
+        <div class="label-group">
+          <span class="name">C1 — Operative Genes</span>
+          <span class="tag">Slow mutation</span>
+        </div>
+      </div>
+      <div class="chromo-body">
+        <p>Tool usage, coding patterns, domain expertise. Validated through 8-stage promotion gate.</p>
+        <div class="chromo-traits">
+          <div class="trait"><div class="trait-dot"></div>Domain knowledge</div>
+          <div class="trait"><div class="trait-dot"></div>Tool & API patterns</div>
+          <div class="trait"><div class="trait-dot"></div>Reasoning strategies</div>
+        </div>
+        <div class="mutation-speed">SLOW — SANDBOX TESTED</div>
+      </div>
+    </div>
+
+    <!-- C2 -->
+    <div class="chromo c2">
+      <div class="chromo-header">
+        <div class="chromo-icon">&#x1F464;</div>
+        <div class="label-group">
+          <span class="name">C2 — Epigenomes</span>
+          <span class="tag">Fast mutation</span>
+        </div>
+      </div>
+      <div class="chromo-body">
+        <p>Per-user preferences, communication style. Adapts automatically based on interactions.</p>
+        <div class="chromo-traits">
+          <div class="trait"><div class="trait-dot"></div>User preferences</div>
+          <div class="trait"><div class="trait-dot"></div>Communication style</div>
+          <div class="trait"><div class="trait-dot"></div>Behavioral patterns</div>
+        </div>
+        <div class="mutation-speed">FAST — PER-USER DAILY</div>
+      </div>
+    </div>
+
+    <!-- C3 -->
+    <div class="chromo c3">
+      <div class="chromo-header">
+        <div class="chromo-icon">&#x1F6E1;</div>
+        <div class="label-group">
+          <span class="name">C3 — Content Firewall</span>
+          <span class="tag">Active defense</span>
+        </div>
+      </div>
+      <div class="chromo-body">
+        <p>Scans all content flowing through the agent. 57 threat detection patterns.</p>
+        <div class="chromo-traits">
+          <div class="trait"><div class="trait-dot"></div>Prompt injection defense</div>
+          <div class="trait"><div class="trait-dot"></div>Data exfiltration guard</div>
+          <div class="trait"><div class="trait-dot"></div>Content policy enforcement</div>
+        </div>
+        <div class="mutation-speed">ACTIVE — 53 THREAT PATTERNS</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <span>GSEP &mdash; Genomic Self-Evolving Prompts &mdash; gsepcore.com</span>
+  </div>
+</div>
+</body>
+</html>

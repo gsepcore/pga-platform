@@ -95,7 +95,7 @@ That's it! Your agent now evolves automatically.
 ├─────────────────────────────────────────┤
 │  C3: Content Firewall                   │
 │  Input Security, Prompt Defense         │
-│  🛡️ 53 threat patterns, trust policies │
+│  🛡️ 57 threat patterns, trust policies │
 ├─────────────────────────────────────────┤
 │  C4: Behavioral Immune System           │
 │  Output Infection Detection             │

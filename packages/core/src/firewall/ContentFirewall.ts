@@ -58,10 +58,16 @@ export class ContentFirewall {
     private detectionsBySource: Map<ContentSource, number> = new Map();
     private detectionsByPattern: Map<string, { detections: number; falsePositives: number }> = new Map();
 
+    /** Whether integrity check passed on init. False = core patterns may be tampered. */
+    readonly integrityValid: boolean;
+
     constructor(c3?: Chromosome3) {
         this.c3 = c3 ?? ContentFirewall.buildDefaultC3();
         this.compilePatterns();
         this.buildTrustPolicyMap();
+
+        // Auto-verify core pattern integrity on initialization
+        this.integrityValid = this.verifyIntegrity();
     }
 
     // ─── Main Scan Entry Point ──────────────────────────────

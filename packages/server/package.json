@@ -17,6 +17,7 @@
   "bugs": {
     "url": "https://github.com/gsepcore/pga-platform/issues"
   },
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -45,7 +46,7 @@
     "@fastify/rate-limit": "^10.2.0"
   },
   "devDependencies": {
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   },
   "publishConfig": {

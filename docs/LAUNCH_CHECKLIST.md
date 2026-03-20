@@ -128,7 +128,7 @@ git tag -a v0.8.0 -m "Release v0.8.0 - Consciousness, Firewall, 30 Intelligence 
 
 Features:
 - 🧬 30 Intelligence Systems (consciousness, curiosity, metacognition)
-- 🛡️ C3 Content Firewall (53 threat patterns, SHA-256 integrity)
+- 🛡️ C3 Content Firewall (57 threat patterns, SHA-256 integrity)
 - 🔄 5 LLM Providers (Claude, GPT-4, Gemini, Ollama, Perplexity)
 - 📊 6D Fitness Optimization + Drift Detection
 - 🧠 Blackboard Architecture + Autonomous Loop

@@ -424,6 +424,7 @@ export class GenomeInstance {
     private contentFirewall?: ContentFirewall;
     private immuneSystem?: BehavioralImmuneSystem;
     private interactionCount: number = 0;
+    private evolutionInProgress: boolean = false;
 
     constructor(
         private genome: Genome,
@@ -1208,19 +1209,28 @@ Ready to see what we can do together? 😊`,
                 this.purposeSurvival.evaluateThreats();
             }
 
-            // Continuous Evolution Loop
+            // Continuous Evolution Loop (guarded against concurrent execution)
             this.interactionCount++;
             const autoConfig = this.genome.config.autonomous;
-            if (autoConfig?.continuousEvolution && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0) {
-                this.runEvolutionCycle().catch(err =>
-                    this.metrics.logAudit({
-                        level: 'warning',
-                        component: 'genome',
-                        operation: 'auto-evolve',
-                        message: `Auto-evolution failed: ${err instanceof Error ? err.message : String(err)}`,
-                        genomeId: this.genome.id,
-                    })
-                );
+            if (
+                !this.evolutionInProgress
+                && autoConfig?.continuousEvolution
+                && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0
+            ) {
+                this.evolutionInProgress = true;
+                this.runEvolutionCycle()
+                    .catch(err =>
+                        this.metrics.logAudit({
+                            level: 'warning',
+                            component: 'genome',
+                            operation: 'auto-evolve',
+                            message: `Auto-evolution failed: ${err instanceof Error ? err.message : String(err)}`,
+                            genomeId: this.genome.id,
+                        })
+                    )
+                    .finally(() => {
+                        this.evolutionInProgress = false;
+                    });
             }
 
             // If userId provided, enable intelligence features
@@ -1607,19 +1617,28 @@ Ready to see what we can do together? 😊`,
             this.purposeSurvival.evaluateThreats();
         }
 
-        // 7. Continuous Evolution Loop
+        // 7. Continuous Evolution Loop (guarded against concurrent execution)
         this.interactionCount++;
         const autoConfig = this.genome.config.autonomous;
-        if (autoConfig?.continuousEvolution && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0) {
-            this.runEvolutionCycle().catch(err =>
-                this.metrics.logAudit({
-                    level: 'warning',
-                    component: 'genome',
-                    operation: 'auto-evolve',
-                    message: `Auto-evolution failed: ${err instanceof Error ? err.message : String(err)}`,
-                    genomeId: this.genome.id,
-                })
-            );
+        if (
+            !this.evolutionInProgress
+            && autoConfig?.continuousEvolution
+            && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0
+        ) {
+            this.evolutionInProgress = true;
+            this.runEvolutionCycle()
+                .catch(err =>
+                    this.metrics.logAudit({
+                        level: 'warning',
+                        component: 'genome',
+                        operation: 'auto-evolve',
+                        message: `Auto-evolution failed: ${err instanceof Error ? err.message : String(err)}`,
+                        genomeId: this.genome.id,
+                    })
+                )
+                .finally(() => {
+                    this.evolutionInProgress = false;
+                });
         }
 
         // 8. Record feedback if provided
@@ -1673,11 +1692,18 @@ Ready to see what we can do together? 😊`,
             createdAt: new Date(),
         };
 
-        // Add to genome layers
-        this.genome.layers[`layer${layer}` as 'layer0' | 'layer1' | 'layer2'].push(newAllele);
+        // Add to genome layers with transaction safety (rollback on save failure)
+        const layerKey = `layer${layer}` as 'layer0' | 'layer1' | 'layer2';
+        this.genome.layers[layerKey].push(newAllele);
 
-        // Save to storage
-        await this.storage.saveGenome(this.genome);
+        try {
+            await this.storage.saveGenome(this.genome);
+        } catch (err) {
+            // Rollback in-memory state on storage failure
+            const idx = this.genome.layers[layerKey].indexOf(newAllele);
+            if (idx !== -1) this.genome.layers[layerKey].splice(idx, 1);
+            throw err;
+        }
 
         // Log mutation
         await this.storage.logMutation({

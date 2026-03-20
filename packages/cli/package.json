@@ -17,6 +17,7 @@
   "bugs": {
     "url": "https://github.com/gsepcore/pga-platform/issues"
   },
+  "sideEffects": false,
   "type": "module",
   "bin": {
     "pga": "./dist/index.js"

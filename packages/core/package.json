@@ -36,6 +36,7 @@
     "token-optimization",
     "collective-intelligence"
   ],
+  "sideEffects": false,
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
