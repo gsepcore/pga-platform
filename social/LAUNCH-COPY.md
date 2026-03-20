@@ -1,4 +1,4 @@
-para # GSEP Launch Copy — 16 March 2026
+# GSEP Launch Copy — 16 March 2026
 
 All copy ready to paste. Times in CET.
 
