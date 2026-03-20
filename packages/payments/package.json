@@ -1,7 +1,7 @@
 {
-  "name": "@pga-ai/server",
-  "version": "0.8.0",
-  "description": "GSEP Evolution Server — Secure Pull/Push API for external agents",
+  "name": "@pga-ai/payments",
+  "version": "0.9.0",
+  "description": "GSEP Payments — Stripe subscriptions, Connect payouts, gene marketplace checkout",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
   "homepage": "https://gsepcore.com",
@@ -12,10 +12,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/gsepcore/pga-platform",
-    "directory": "packages/server"
-  },
-  "bugs": {
-    "url": "https://github.com/gsepcore/pga-platform/issues"
+    "directory": "packages/payments"
   },
   "type": "module",
   "main": "./dist/index.js",
@@ -39,13 +36,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pga-ai/core": "*",
-    "@pga-ai/payments": "*",
-    "fastify": "^5.3.3",
-    "@fastify/rate-limit": "^10.2.0"
+    "stripe": "^17.7.0"
   },
   "devDependencies": {
-    "typescript": "^5.4.5",
+    "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   },
   "publishConfig": {

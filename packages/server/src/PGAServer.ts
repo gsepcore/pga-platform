@@ -25,6 +25,7 @@ import { registerHealthRoutes } from './routes/health.js';
 import { registerGenomeRoutes } from './routes/genomes.js';
 import { registerPromptRoutes } from './routes/prompts.js';
 import { registerReportRoutes } from './routes/reports.js';
+import { registerPaymentRoutes } from './routes/payments.js';
 
 // ─── Config Types ──────────────────────────────────────────
 
@@ -43,6 +44,8 @@ export interface PGAServerConfig {
     logger?: boolean;
     /** Rate limiting config */
     rateLimit?: { max: number; timeWindow: string };
+    /** Stripe payments instance (optional — enables payment routes) */
+    payments?: import('@pga-ai/payments').StripePayments;
 }
 
 export interface RegisterGenomeOptions {
@@ -121,6 +124,11 @@ export class PGAServer {
         registerGenomeRoutes(this.app, this);
         registerPromptRoutes(this.app, this);
         registerReportRoutes(this.app, this);
+
+        // Register payment routes (optional — only if StripePayments provided)
+        if (this.config.payments) {
+            registerPaymentRoutes(this.app, this, this.config.payments);
+        }
 
         await this.app.listen({ port: listenPort, host: this.config.host ?? '127.0.0.1' });
         this.startTime = Date.now();

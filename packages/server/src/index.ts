@@ -11,3 +11,11 @@
 export { PGAServer } from './PGAServer.js';
 export type { PGAServerConfig, RegisterGenomeOptions, GenomeEntry } from './PGAServer.js';
 export { HMACVerifier } from './auth/HMACVerifier.js';
+
+// Re-export payment types for convenience
+export type {
+    StripePayments,
+    StripePaymentsConfig,
+    PaymentStorage,
+    PlanId,
+} from '@pga-ai/payments';
