@@ -15,6 +15,13 @@ jobs:
           fetch-depth: 0  # Full history for complete mirror
 
       - name: Push to mirror
+        env:
+          MIRROR_PAT: ${{ secrets.MIRROR_PAT }}
         run: |
-          git remote add mirror https://x-access-token:${{ secrets.MIRROR_PAT }}@github.com/gsepcore/pga-platform-mirror.git
+          if [ -z "$MIRROR_PAT" ]; then
+            echo "::warning::MIRROR_PAT secret not configured — skipping mirror sync"
+            exit 0
+          fi
+          git remote add mirror "https://x-access-token:${MIRROR_PAT}@github.com/gsepcore/pga-platform-mirror.git"
           git push mirror main --force
+          echo "Mirror sync completed successfully"
