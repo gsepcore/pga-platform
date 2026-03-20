@@ -53,7 +53,7 @@ Aprende preferencias del usuario, optimiza uso de tokens, y se auto-corrige cuan
     body: `C0: Identidad inmutable. Bloqueada con SHA-256. Ética y seguridad que NUNCA cambian.
 C1: Genes operativos. Uso de herramientas y razonamiento que evolucionan lento mediante validación.
 C2: Epigenoma. Preferencias del usuario que se adaptan rápido — personalización diaria.
-C3: Firewall de Contenido. 53 patrones bloqueando inyección de prompts en la ENTRADA.
+C3: Firewall de Contenido. 57 patrones bloqueando inyección de prompts en la ENTRADA.
 C4: Sistema Inmune. 6 verificaciones detectando manipulación en la SALIDA.
 Defensa de entrada más defensa de salida. Seguridad full-stack para agentes de IA.`,
     cta: `Open source. gsepcore.com. Tu agente, pero vivo.`,
