@@ -35,7 +35,7 @@ See [examples/quick-start.ts](./examples/quick-start.ts) for complete working ex
 ```bash
 # Clone the repository (for local testing)
 git clone https://github.com/gsepcore/gsep.git
-cd pga-platform
+cd gsep
 
 # Install dependencies
 npm install

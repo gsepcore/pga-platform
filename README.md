@@ -539,7 +539,7 @@ We welcome contributions from the community! Whether it's a bug fix, new feature
 
 ```bash
 git clone https://github.com/gsepcore/gsep
-cd pga-platform
+cd gsep
 npm install
 npm run build
 npm test

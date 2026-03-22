@@ -66,7 +66,7 @@ There are many ways to contribute, not just code:
 ```bash
 # Clone the repository
 git clone https://github.com/gsepcore/gsep.git
-cd pga-platform
+cd gsep
 
 # Install dependencies
 npm install
@@ -80,7 +80,7 @@ npm run build
 
 ### Project Structure
 ```
-pga-platform/
+gsep/
 ├── packages/
 │   ├── core/                          # @gsep/core (MIT License)
 │   │   ├── src/                       # Source code

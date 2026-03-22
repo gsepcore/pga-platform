@@ -288,7 +288,7 @@ const review = await reviewer.chat(prDiff, {
 ## 📦 Complete File Structure
 
 ```
-pga-platform/
+gsep/
 ├── LICENSE.md                          ✅ NEW - Multi-tier licensing
 ├── PATENTS.md                          ✅ NEW - Patent documentation
 ├── RFC-001-GENOME-CONTRACT-V2.md      ✅ NEW - Technical spec (750 lines)
