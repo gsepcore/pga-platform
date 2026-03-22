@@ -143,7 +143,7 @@ const response = await agent.chat('Your user message here');
 // That's it. Your agent now evolves.
 ```
 
-**GitHub**: [github.com/gsepcore/pga-platform](https://github.com/gsepcore/pga-platform)
+**GitHub**: [github.com/gsepcore/gsep](https://github.com/gsepcore/gsep)
 **Docs**: [gsepcore.com](https://gsepcore.com)
 **Discord**: [discord.gg/7rtUa6aU](https://discord.gg/7rtUa6aU)
 

@@ -45,15 +45,15 @@ There are many ways to contribute, not just code:
 
 | Contribution | Description |
 |---|---|
-| **Bug Reports** | Found a bug? [Open an issue](https://github.com/gsepcore/pga-platform/issues/new) |
-| **Feature Requests** | Have an idea? Start a [Discussion](https://github.com/gsepcore/pga-platform/discussions) |
+| **Bug Reports** | Found a bug? [Open an issue](https://github.com/gsepcore/gsep/issues/new) |
+| **Feature Requests** | Have an idea? Start a [Discussion](https://github.com/gsepcore/gsep/discussions) |
 | **Code** | Fix bugs, add features, improve performance |
 | **Documentation** | Improve README, guides, JSDoc comments |
 | **LLM Adapters** | Add support for new LLM providers |
 | **Storage Adapters** | Add new persistence backends (Redis, DynamoDB, etc.) |
 | **Tests** | Improve test coverage, add edge cases |
 | **Translations** | Help translate docs to other languages |
-| **Star the repo** | ⭐ [Star us on GitHub](https://github.com/gsepcore/pga-platform) — it helps more than you think! |
+| **Star the repo** | ⭐ [Star us on GitHub](https://github.com/gsepcore/gsep) — it helps more than you think! |
 
 ## Getting Started
 
@@ -65,7 +65,7 @@ There are many ways to contribute, not just code:
 ### Initial Setup
 ```bash
 # Clone the repository
-git clone https://github.com/gsepcore/pga-platform.git
+git clone https://github.com/gsepcore/gsep.git
 cd pga-platform
 
 # Install dependencies
@@ -287,8 +287,8 @@ We follow [Semantic Versioning](https://semver.org/):
 ## Getting Help
 
 - **Website**: [gsepcore.com](https://gsepcore.com)
-- **Discussions**: [GitHub Discussions](https://github.com/gsepcore/pga-platform/discussions)
-- **Issues**: [GitHub Issues](https://github.com/gsepcore/pga-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/gsepcore/gsep/discussions)
+- **Issues**: [GitHub Issues](https://github.com/gsepcore/gsep/issues)
 - **Email**: contact@gsepcore.com
 
 ---
@@ -297,8 +297,8 @@ We follow [Semantic Versioning](https://semver.org/):
 
 Every person who contributes to GSEP is recognized here. Thank you for making AI evolution open and accessible.
 
-<a href="https://github.com/gsepcore/pga-platform/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=gsepcore/pga-platform" alt="GSEP Contributors" />
+<a href="https://github.com/gsepcore/gsep/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=gsepcore/gsep" alt="GSEP Contributors" />
 </a>
 
 ### How You Get Recognized
@@ -313,7 +313,7 @@ Every person who contributes to GSEP is recognized here. Thank you for making AI
 
 ### First-Time Contributors
 
-New to open source? Look for issues labeled [`good first issue`](https://github.com/gsepcore/pga-platform/labels/good%20first%20issue) — they are specifically designed to help you get started.
+New to open source? Look for issues labeled [`good first issue`](https://github.com/gsepcore/gsep/labels/good%20first%20issue) — they are specifically designed to help you get started.
 
 ---
 

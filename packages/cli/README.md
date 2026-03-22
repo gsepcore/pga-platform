@@ -143,7 +143,7 @@ npm run dev
 
 ```bash
 # Clone repository
-git clone https://github.com/gsepcore/pga-platform
+git clone https://github.com/gsepcore/gsep
 
 # Navigate to CLI package
 cd packages/cli
@@ -171,4 +171,4 @@ MIT
 
 - [GSEP Core](../../README.md)
 - [Documentation](https://gsepcore.com)
-- [GitHub](https://github.com/gsepcore/pga-platform)
+- [GitHub](https://github.com/gsepcore/gsep)

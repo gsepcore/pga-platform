@@ -205,4 +205,4 @@ MIT
 
 - [GSEP Core Documentation](../../core/README.md)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
-- [GitHub Repository](https://github.com/gsepcore/pga-platform)
+- [GitHub Repository](https://github.com/gsepcore/gsep)

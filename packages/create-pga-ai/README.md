@@ -261,7 +261,7 @@ node --version  # Should be v18 or higher
 - **Documentation:** [https://gsepcore.com/docs](https://gsepcore.com/docs)
 - **API Reference:** [https://gsepcore.com/api](https://gsepcore.com/api)
 - **Discord Community:** [https://discord.gg/7rtUa6aU](https://discord.gg/7rtUa6aU)
-- **GitHub:** [https://github.com/gsepcore/pga-platform](https://github.com/gsepcore/pga-platform)
+- **GitHub:** [https://github.com/gsepcore/gsep](https://github.com/gsepcore/gsep)
 
 ## License
 

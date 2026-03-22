@@ -11,11 +11,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gsepcore/pga-platform",
+    "url": "https://github.com/gsepcore/gsep",
     "directory": "packages/adapters-storage/postgres"
   },
   "bugs": {
-    "url": "https://github.com/gsepcore/pga-platform/issues"
+    "url": "https://github.com/gsepcore/gsep/issues"
   },
   "type": "module",
   "main": "./dist/index.js",

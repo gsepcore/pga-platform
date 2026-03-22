@@ -12,7 +12,7 @@ Goal: 50+ GitHub stars in 24 hours → trigger GitHub Trending.
 - [ ] Open all tabs: Reddit (3 subreddits), dev.to, LinkedIn, X
 - [ ] Have the Article #1 ready as dev.to draft (paste from `content/article-01-prompt-degradation.md`)
 - [ ] Have all Reddit posts ready as drafts (copy from `content/reddit-posts.md`)
-- [ ] Test that `github.com/gsepcore/pga-platform` loads correctly
+- [ ] Test that `github.com/gsepcore/gsep` loads correctly
 - [ ] Check that gsepcore.com is up
 
 ### 08:00 — dev.to ARTICLE GOES LIVE
@@ -41,7 +41,7 @@ The solution: GSEP — an open-source SDK that makes AI agent prompts evolve lik
 MIT licensed. Built in Germany.
 
 Full technical deep-dive: [link to dev.to article]
-GitHub: github.com/gsepcore/pga-platform
+GitHub: github.com/gsepcore/gsep
 
 I'd love your feedback — what's your biggest pain point maintaining AI agents?
 
@@ -110,7 +110,7 @@ npm install @gsep/core
 Tweet 6:
 Full technical deep-dive: [dev.to article link]
 
-GitHub: github.com/gsepcore/pga-platform
+GitHub: github.com/gsepcore/gsep
 Discord: discord.gg/7rtUa6aU
 
 Built solo in Germany 🇩🇪 over 18 months.

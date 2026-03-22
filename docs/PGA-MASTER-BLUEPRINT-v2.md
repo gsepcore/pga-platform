@@ -1302,7 +1302,7 @@ En 5 años, cuando alguien diga "AI agent", la siguiente pregunta será:
 📧 **Contacto:**
 Luis Alfredo Velasquez Durán
 Email: [tu-email]
-GitHub: https://github.com/gsepcore/pga-platform
+GitHub: https://github.com/gsepcore/gsep
 Location: Alemania
 
 ---

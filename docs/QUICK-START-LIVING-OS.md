@@ -385,7 +385,7 @@ kernel.createSnapshot('before-major-change');
 - 📊 Review [IMPLEMENTATION-COMPLETE.md](IMPLEMENTATION-COMPLETE.md) for overview
 
 **Issues?**
-- GitHub: https://github.com/gsepcore/pga-platform/issues
+- GitHub: https://github.com/gsepcore/gsep/issues
 
 ---
 

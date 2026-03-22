@@ -8,7 +8,7 @@
 
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/@gsep/core?style=for-the-badge)](https://www.npmjs.com/package/@gsep/core)
-[![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/gsep/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/gsep/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
 [![Product Hunt](https://img.shields.io/badge/Product%20Hunt-Live%20Now-orange?style=for-the-badge&logo=producthunt)](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
@@ -17,7 +17,7 @@
 
 Created by **Luis Alfredo Velasquez Duran** | Germany, 2025–2026
 
-[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/gsepcore/pga-platform) · [Product Hunt](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
+[Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/gsepcore/gsep) · [Product Hunt](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
 
 </div>
 
@@ -538,7 +538,7 @@ C0 is cryptographically immutable (SHA-256). C1 mutates slowly through an 8-stag
 We welcome contributions from the community! Whether it's a bug fix, new feature, documentation improvement, or a new LLM adapter — every contribution matters.
 
 ```bash
-git clone https://github.com/gsepcore/pga-platform
+git clone https://github.com/gsepcore/gsep
 cd pga-platform
 npm install
 npm run build
@@ -553,8 +553,8 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide, code standards, and
 
 Thanks to everyone who has contributed to GSEP. Every PR, issue, and idea makes this project better.
 
-<a href="https://github.com/gsepcore/pga-platform/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=gsepcore/pga-platform" alt="Contributors" />
+<a href="https://github.com/gsepcore/gsep/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=gsepcore/gsep" alt="Contributors" />
 </a>
 
 Want to see your avatar here? Check [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
@@ -602,7 +602,7 @@ GSEP is open source and free to use. If you or your company benefit from GSEP, c
 
 <br>
 
-If you find GSEP useful, please ⭐ [star this repo](https://github.com/gsepcore/pga-platform) — it helps others discover the project!
+If you find GSEP useful, please ⭐ [star this repo](https://github.com/gsepcore/gsep) — it helps others discover the project!
 
 © 2025–2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
 

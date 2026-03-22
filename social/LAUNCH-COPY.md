@@ -25,7 +25,7 @@ Show HN: GSEP – Treat your AI agent's prompts like DNA with 4 chromosomes
 
 ### Link:
 ```
-https://github.com/gsepcore/pga-platform
+https://github.com/gsepcore/gsep
 ```
 
 ### First Comment (post IMMEDIATELY after submitting):
@@ -84,7 +84,7 @@ I'm happy to answer questions about the evolutionary algorithms, the chromosome
 architecture, fitness functions, or why I chose biological metaphors over
 gradient-based approaches (like DSPy).
 
-Repo: https://github.com/gsepcore/pga-platform
+Repo: https://github.com/gsepcore/gsep
 Docs: https://gsepcore.com
 ```
 
@@ -147,7 +147,7 @@ modules you can enable. We'd love feedback from the community on what to
 prioritize next.
 
 Try it: npm install @gsep/core
-Repo: https://github.com/gsepcore/pga-platform
+Repo: https://github.com/gsepcore/gsep
 ```
 
 ---
@@ -168,7 +168,7 @@ Open source. MIT licensed. Works with Claude, GPT-4, Gemini, Ollama.
 
 npm install @gsep/core
 
-https://github.com/gsepcore/pga-platform
+https://github.com/gsepcore/gsep
 ```
 
 ### Thread (reply to launch tweet):
@@ -217,7 +217,7 @@ const reply = await agent.chat('Help me', { userId: 'u1' });
 ```
 GSEP is open source (MIT) — we believe evolution should be accessible.
 
-Star it: https://github.com/gsepcore/pga-platform
+Star it: https://github.com/gsepcore/gsep
 Try it: npm install @gsep/core
 Site: https://gsepcore.com
 
@@ -266,7 +266,7 @@ After 8 months of development and rigorous testing, GSEP v0.8.0 is live.
 I'd love feedback from the AI engineering community. What features would make
 this useful for your agents?
 
-GitHub: https://github.com/gsepcore/pga-platform
+GitHub: https://github.com/gsepcore/gsep
 Website: https://gsepcore.com
 Get started: npm install @gsep/core
 

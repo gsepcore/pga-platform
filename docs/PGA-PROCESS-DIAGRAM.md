@@ -382,7 +382,7 @@ npm install @gsep/core
 
 ## 📞 CONTACTO & RECURSOS
 
-- **GitHub:** github.com/gsepcore/pga-platform
+- **GitHub:** github.com/gsepcore/gsep
 - **Docs:** docs.gsepcore.com
 - **Demo:** demo.gsepcore.com
 - **Email:** hello@gsepcore.com

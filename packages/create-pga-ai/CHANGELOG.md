@@ -47,4 +47,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Ready-to-use LLM adapters
   - Environment-based configuration
 
-[0.1.0]: https://github.com/gsepcore/pga-platform/releases/tag/create-gsep-v0.1.0
+[0.1.0]: https://github.com/gsepcore/gsep/releases/tag/create-gsep-v0.1.0

@@ -51,7 +51,7 @@ Results in testing: +16% quality, +25% satisfaction, -45% human interventions.
 
 Works with Claude, GPT-4, Gemini, Ollama (local), Perplexity. MIT licensed.
 
-GitHub: github.com/gsepcore/pga-platform
+GitHub: github.com/gsepcore/gsep
 
 Happy to answer questions about the architecture or trade-offs.
 ```
@@ -78,7 +78,7 @@ npm install @gsep/core @gsep/adapters-llm-ollama
 
 MIT license. 1600+ tests. TypeScript.
 
-GitHub: github.com/gsepcore/pga-platform
+GitHub: github.com/gsepcore/gsep
 
 Built this solo over 18 months. Would love feedback from this community on the local model integration.
 ```
@@ -107,7 +107,7 @@ Storage: in-memory for testing, PostgreSQL for production (stores genome state, 
 MIT licensed. TypeScript. 1600+ tests.
 
 npm install @gsep/core
-GitHub: github.com/gsepcore/pga-platform
+GitHub: github.com/gsepcore/gsep
 
 Happy to answer questions!
 ```
@@ -147,7 +147,7 @@ Works with any LLM (Claude, GPT-4, Gemini, Ollama, Perplexity).
 
 Technical stack: TypeScript, 1600+ tests, MIT licensed.
 
-GitHub: https://github.com/gsepcore/pga-platform
+GitHub: https://github.com/gsepcore/gsep
 
 I've been building this solo for 18 months in Germany. Happy to discuss the architecture and trade-offs.
 ```

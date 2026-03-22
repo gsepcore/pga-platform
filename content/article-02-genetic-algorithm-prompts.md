@@ -12,7 +12,7 @@ Not metaphorically. Literally. With mutations, fitness scoring, natural selectio
 
 ## The Architecture
 
-I built [GSEP](https://github.com/gsepcore/pga-platform) (Genomic Self-Evolving Prompts) — an open-source SDK that wraps any AI agent with an evolution layer.
+I built [GSEP](https://github.com/gsepcore/gsep) (Genomic Self-Evolving Prompts) — an open-source SDK that wraps any AI agent with an evolution layer.
 
 Here's how it works:
 
@@ -129,7 +129,7 @@ Running a proof-of-value benchmark:
 -45% human intervention rate
 ```
 
-These aren't cherry-picked. The [proof-of-value runner](https://github.com/gsepcore/pga-platform/tree/main/examples) is built into the SDK — you can verify on your own agent.
+These aren't cherry-picked. The [proof-of-value runner](https://github.com/gsepcore/gsep/tree/main/examples) is built into the SDK — you can verify on your own agent.
 
 ## How to Use It
 
@@ -162,7 +162,7 @@ The Gene Bank — a marketplace where agents can share successful gene variants 
 
 ## Try It
 
-- **GitHub**: [github.com/gsepcore/pga-platform](https://github.com/gsepcore/pga-platform) (MIT License)
+- **GitHub**: [github.com/gsepcore/gsep](https://github.com/gsepcore/gsep) (MIT License)
 - **Docs**: [gsepcore.com](https://gsepcore.com)
 - **Discord**: [discord.gg/7rtUa6aU](https://discord.gg/7rtUa6aU)
 

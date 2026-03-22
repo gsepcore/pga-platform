@@ -821,4 +821,4 @@ See working examples: [examples/](../examples/)
 
 ## Support
 
-Questions? Open an issue: https://github.com/gsepcore/pga-platform/issues
+Questions? Open an issue: https://github.com/gsepcore/gsep/issues

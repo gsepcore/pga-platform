@@ -57,7 +57,7 @@ ls -la .github/ISSUE_TEMPLATE/ .github/pull_request_template.md
 
 ### Step 1: Change Visibility
 
-1. Go to: `https://github.com/gsepcore/pga-platform/settings`
+1. Go to: `https://github.com/gsepcore/gsep/settings`
 
 2. Scroll to bottom → **"Danger Zone"**
 
@@ -65,7 +65,7 @@ ls -la .github/ISSUE_TEMPLATE/ .github/pull_request_template.md
 
 4. Select **"Make public"**
 
-5. Type repository name to confirm: `gsepcore/pga-platform`
+5. Type repository name to confirm: `gsepcore/gsep`
 
 6. Click **"I understand, change repository visibility"**
 
@@ -73,7 +73,7 @@ ls -la .github/ISSUE_TEMPLATE/ .github/pull_request_template.md
 
 ### Step 2: Verify Branch Protection is Active
 
-1. Go to: `https://github.com/gsepcore/pga-platform/settings/branches`
+1. Go to: `https://github.com/gsepcore/gsep/settings/branches`
 
 2. Verify the `main` branch rule shows:
    - ✅ Require pull request reviews (1 approval)
@@ -89,7 +89,7 @@ ls -la .github/ISSUE_TEMPLATE/ .github/pull_request_template.md
 
 ### Step 3: Verify Dependabot is Active
 
-1. Go to: `https://github.com/gsepcore/pga-platform/settings/security_analysis`
+1. Go to: `https://github.com/gsepcore/gsep/settings/security_analysis`
 
 2. Verify these are enabled:
    - ✅ Dependabot alerts
@@ -97,7 +97,7 @@ ls -la .github/ISSUE_TEMPLATE/ .github/pull_request_template.md
    - ✅ Dependabot version updates
 
 3. Check for any existing alerts:
-   - Go to: `https://github.com/gsepcore/pga-platform/security/dependabot`
+   - Go to: `https://github.com/gsepcore/gsep/security/dependabot`
 
 **Expected:** Dependabot is active. You may see some alerts/PRs being created.
 
@@ -145,7 +145,7 @@ git push origin v0.8.0
 
 ### Step 3: Monitor Release Workflow
 
-1. Go to: `https://github.com/gsepcore/pga-platform/actions`
+1. Go to: `https://github.com/gsepcore/gsep/actions`
 
 2. You should see a new workflow run: **"Release v0.8.0"**
 
@@ -160,7 +160,7 @@ git push origin v0.8.0
 
 ### Step 4: Update GitHub Release (Optional)
 
-1. Go to: `https://github.com/gsepcore/pga-platform/releases`
+1. Go to: `https://github.com/gsepcore/gsep/releases`
 
 2. Click **Edit** on v0.8.0 release
 
@@ -186,7 +186,7 @@ git push origin v0.8.0
 
 ### Step 2: Add NPM_TOKEN Secret to GitHub
 
-1. Go to: `https://github.com/gsepcore/pga-platform/settings/secrets/actions`
+1. Go to: `https://github.com/gsepcore/gsep/settings/secrets/actions`
 
 2. Click **"New repository secret"**
 
@@ -311,7 +311,7 @@ Add status badges to README.md:
 ```markdown
 # GSEP Platform
 
-[![CI](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
+[![CI](https://github.com/gsepcore/gsep/actions/workflows/ci.yml/badge.svg)](https://github.com/gsepcore/gsep/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![npm version](https://badge.fury.io/js/@pga%2Fcore.svg)](https://www.npmjs.com/package/@gsep/core)
 ```
@@ -367,9 +367,9 @@ After completing this checklist, you should have:
 
 If you encounter any issues during launch:
 
-1. Check GitHub Actions logs: `https://github.com/gsepcore/pga-platform/actions`
-2. Review branch protection settings: `https://github.com/gsepcore/pga-platform/settings/branches`
-3. Check Dependabot status: `https://github.com/gsepcore/pga-platform/security/dependabot`
+1. Check GitHub Actions logs: `https://github.com/gsepcore/gsep/actions`
+2. Review branch protection settings: `https://github.com/gsepcore/gsep/settings/branches`
+3. Check Dependabot status: `https://github.com/gsepcore/gsep/security/dependabot`
 
 ---
 

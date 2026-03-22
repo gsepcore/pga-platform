@@ -37,7 +37,7 @@ const ctas = [
   },
   {
     label: "GitHub",
-    href: "https://github.com/gsepcore/pga-platform",
+    href: "https://github.com/gsepcore/gsep",
     icon: "⭐",
     color: "#8b949e",
   },
@@ -116,7 +116,7 @@ export default function DemoPage() {
           </a>
           <nav style={{ display: "flex", gap: 24, fontSize: 14 }}>
             <a href="https://gsepcore.com/docs">Docs</a>
-            <a href="https://github.com/gsepcore/pga-platform">GitHub</a>
+            <a href="https://github.com/gsepcore/gsep">GitHub</a>
             <a
               href="https://gsepcore.com"
               style={{
