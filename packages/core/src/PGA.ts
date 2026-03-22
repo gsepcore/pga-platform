@@ -60,6 +60,8 @@ import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
 import { PGAEventEmitter } from './realtime/EventEmitter.js';
+import { DashboardServer } from './dashboard/DashboardServer.js';
+import { DashboardTokenHelper } from './dashboard/DashboardToken.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
 import type { GSEPStatus, GSEPChatResult } from './types/index.js';
@@ -682,6 +684,53 @@ export class GenomeInstance {
      */
     getEventEmitter(): PGAEventEmitter {
         return this.events;
+    }
+
+    private dashboardServer?: DashboardServer;
+
+    /**
+     * Start the GSEP real-time dashboard
+     *
+     * One line to see your agent evolving in real-time:
+     * ```typescript
+     * await genome.startDashboard();
+     * // → 🧬 GSEP Dashboard: http://localhost:4200
+     * ```
+     */
+    async startDashboard(options?: { port?: number }): Promise<string> {
+        const port = options?.port ?? 4200;
+
+        if (this.dashboardServer) {
+            await this.dashboardServer.stop();
+        }
+
+        this.dashboardServer = new DashboardServer({
+            secret: `gsep-${this.genome.id}`,
+            events: this.events,
+            port,
+        });
+
+        await this.dashboardServer.start();
+
+        const token = DashboardTokenHelper.create(
+            `gsep-${this.genome.id}`,
+            { userId: 'owner', genomeId: this.genome.id, expiresIn: '30d' },
+        );
+
+        const url = `http://localhost:${port}/gsep/dashboard?token=${token}`;
+        // eslint-disable-next-line no-console
+        console.log(`\n🧬 GSEP Dashboard: ${url}\n`);
+        return url;
+    }
+
+    /**
+     * Stop the dashboard server
+     */
+    async stopDashboard(): Promise<void> {
+        if (this.dashboardServer) {
+            await this.dashboardServer.stop();
+            this.dashboardServer = undefined;
+        }
     }
 
     /**
