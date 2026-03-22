@@ -697,8 +697,9 @@ export class GenomeInstance {
      * // → 🧬 GSEP Dashboard: http://localhost:4200
      * ```
      */
-    async startDashboard(options?: { port?: number }): Promise<string> {
+    async startDashboard(options?: { port?: number; host?: string }): Promise<string> {
         const port = options?.port ?? 4200;
+        const host = options?.host ?? 'localhost';
 
         if (this.dashboardServer) {
             await this.dashboardServer.stop();
@@ -708,6 +709,7 @@ export class GenomeInstance {
             secret: `gsep-${this.genome.id}`,
             events: this.events,
             port,
+            host: host === 'localhost' ? '127.0.0.1' : host,
         });
 
         await this.dashboardServer.start();
@@ -717,7 +719,8 @@ export class GenomeInstance {
             { userId: 'owner', genomeId: this.genome.id, expiresIn: '30d' },
         );
 
-        const url = `http://localhost:${port}/gsep/dashboard?token=${token}`;
+        const displayHost = host === '0.0.0.0' ? 'localhost' : host;
+        const url = `http://${displayHost}:${port}/gsep/dashboard?token=${token}`;
         // eslint-disable-next-line no-console
         console.log(`\n🧬 GSEP Dashboard: ${url}\n`);
         return url;
