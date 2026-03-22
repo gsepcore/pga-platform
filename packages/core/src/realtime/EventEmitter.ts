@@ -298,7 +298,6 @@ export class PGAEventEmitter {
         predicate?: (event: PGAEvent<T>) => boolean
     ): Promise<PGAEvent<T>> {
         return new Promise((resolve, reject) => {
-            let subscriptionId: string;
             let timeoutId: NodeJS.Timeout | undefined;
 
             const handler = (event: PGAEvent<T>) => {
@@ -314,7 +313,7 @@ export class PGAEventEmitter {
                 resolve(event);
             };
 
-            subscriptionId = this.once(type, handler);
+            const subscriptionId = this.once(type, handler);
 
             if (timeout) {
                 timeoutId = setTimeout(() => {

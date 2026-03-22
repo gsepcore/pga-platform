@@ -471,7 +471,7 @@ export class ModelRouter {
         totalRoutings: number;
         strategy: string;
     } {
-        const modelPerformance: Record<string, any> = {};
+        const modelPerformance: Record<string, { successRate: number; avgCost: number; avgLatency: number; samples: number }> = {};
         let totalSamples = 0;
 
         for (const [modelId, history] of this.performanceHistory.entries()) {

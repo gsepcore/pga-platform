@@ -70,7 +70,7 @@ interface HealthEvidence {
 export class SemanticRestructuringOperator implements IMutationOperator {
     name: MutationType = 'semantic_restructuring';
     description = 'Intelligence-driven gene rewriting using LLM + performance data';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     constructor(private llm: LLMAdapter) {}
 

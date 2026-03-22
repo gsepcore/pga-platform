@@ -194,14 +194,14 @@ export class EnhancedSelfModel extends SelfModel {
             .map(a => a.gene);
 
         // Simple alignment: genes that don't seem related to purpose
-        let alignedCount = 0;
+        let _alignedCount = 0;
         for (const gene of activeGenes) {
             const geneWords = gene.toLowerCase().split(/[-_\s]+/);
             const isAligned = geneWords.some(gw =>
                 purposeWords.some(pw => pw.includes(gw) || gw.includes(pw))
             );
             if (isAligned) {
-                alignedCount++;
+                _alignedCount++;
             } else {
                 // Not necessarily a drift — agent can have auxiliary genes
             }

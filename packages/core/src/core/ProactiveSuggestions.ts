@@ -11,7 +11,7 @@
  */
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
-import type { UserDNA } from '../types/index.js';
+import type { Interaction, UserDNA } from '../types/index.js';
 
 export interface ProactiveSuggestion {
     type: 'improvement' | 'warning' | 'opportunity' | 'reminder';
@@ -40,7 +40,7 @@ export class ProactiveSuggestions {
         if (!dna) return [];
 
         // Get recent interactions
-        const interactions = await this.storage.getRecentInteractions?.(genomeId, userId, 20) || [];
+        const interactions = (await this.storage.getRecentInteractions?.(genomeId, userId, 20) || []) as Interaction[];
 
         // 1. Detect repeated errors
         const errorSuggestion = this.detectRepeatedErrors(interactions);
@@ -98,7 +98,7 @@ export class ProactiveSuggestions {
 
     // ─── Detection Methods ──────────────────────────────────
 
-    private detectRepeatedErrors(interactions: any[]): ProactiveSuggestion | null {
+    private detectRepeatedErrors(interactions: Interaction[]): ProactiveSuggestion | null {
         const errors = new Map<string, number>();
 
         for (const int of interactions) {
@@ -132,7 +132,7 @@ export class ProactiveSuggestions {
         return null;
     }
 
-    private suggestOptimizations(interactions: any[], currentMessage: string): ProactiveSuggestion | null {
+    private suggestOptimizations(interactions: Interaction[], currentMessage: string): ProactiveSuggestion | null {
         const lower = currentMessage.toLowerCase();
 
         // Detect performance-related queries
@@ -170,7 +170,7 @@ export class ProactiveSuggestions {
         return null;
     }
 
-    private detectIncompleteTasks(interactions: any[]): ProactiveSuggestion[] {
+    private detectIncompleteTasks(interactions: Interaction[]): ProactiveSuggestion[] {
         const suggestions: ProactiveSuggestion[] = [];
 
         // Check for unresolved issues in last 5 interactions

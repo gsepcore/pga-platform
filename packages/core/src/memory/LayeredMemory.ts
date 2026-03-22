@@ -37,7 +37,7 @@ export interface MediumTermMemory {
 export interface LongTermMemory {
     userProfile: UserProfile;
     semanticFacts: SemanticFact[];
-    permanentPreferences: Record<string, any>;
+    permanentPreferences: Record<string, unknown>;
     estimatedTokens: number;
 }
 
@@ -117,6 +117,13 @@ export interface LayeredMemoryConfig {
         enableExpiration: boolean; // Enable auto-deletion of expired data
         allowUserDeletion: boolean; // Allow users to delete their data
     };
+}
+
+/** Shape of facts extracted from LLM responses */
+interface ExtractedFact {
+    fact: string;
+    category: SemanticFact['category'];
+    confidence: number;
 }
 
 // ─── Layered Memory Manager ────────────────────────────────
@@ -435,7 +442,7 @@ export class LayeredMemory {
         const facts = await this.storage.getFacts(userId, genomeId, includeExpired);
 
         const userProfile: UserProfile = { userId };
-        const permanentPreferences: Record<string, any> = {};
+        const permanentPreferences: Record<string, unknown> = {};
 
         const profileString = JSON.stringify({ userProfile, facts, permanentPreferences });
 
@@ -528,13 +535,13 @@ If no permanent facts found, return: {"facts": []}
             const extractedFacts = parsed.facts || [];
 
             // Filter by confidence threshold
-            const validFacts = extractedFacts.filter(
-                (f: any) => f.confidence >= this.config.longTerm.minConfidence
+            const validFacts = (extractedFacts as ExtractedFact[]).filter(
+                (f) => f.confidence >= this.config.longTerm.minConfidence
             );
 
             // Calculate average confidence
             const avgConfidence = validFacts.length > 0
-                ? validFacts.reduce((sum: number, f: any) => sum + f.confidence, 0) / validFacts.length
+                ? validFacts.reduce((sum: number, f: ExtractedFact) => sum + f.confidence, 0) / validFacts.length
                 : 0;
 
             if (validFacts.length === 0) {
@@ -561,7 +568,7 @@ If no permanent facts found, return: {"facts": []}
             const ttlMs = this.config.longTerm.defaultTTLDays * 24 * 60 * 60 * 1000;
             const expiry = new Date(now.getTime() + ttlMs);
 
-            const newFacts: SemanticFact[] = validFacts.map((f: any) => ({
+            const newFacts: SemanticFact[] = validFacts.map((f: ExtractedFact) => ({
                 id: `${cacheKey}-${currentTurn}-${Date.now()}`,
                 fact: f.fact,
                 category: f.category,

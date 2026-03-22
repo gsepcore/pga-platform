@@ -25,7 +25,7 @@ export interface VectorStoreAdapter {
         options: {
             topK: number;
             minScore?: number;
-            filter?: Record<string, any>;
+            filter?: Record<string, unknown>;
         }
     ): Promise<RAGSearchResult[]>;
 
@@ -71,7 +71,7 @@ export class InMemoryVectorStore implements VectorStoreAdapter {
 
     async search(
         queryEmbedding: number[],
-        options: { topK: number; minScore?: number; filter?: Record<string, any> }
+        options: { topK: number; minScore?: number; filter?: Record<string, unknown> }
     ): Promise<RAGSearchResult[]> {
         const results: RAGSearchResult[] = [];
 
@@ -163,7 +163,7 @@ export class InMemoryVectorStore implements VectorStoreAdapter {
         return dotProduct / (normA * normB);
     }
 
-    private matchesFilter(metadata: Record<string, any>, filter: Record<string, any>): boolean {
+    private matchesFilter(metadata: Record<string, unknown>, filter: Record<string, unknown>): boolean {
         for (const [key, value] of Object.entries(filter)) {
             if (metadata[key] !== value) {
                 return false;

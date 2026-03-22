@@ -49,7 +49,7 @@ interface CapabilityEvidence {
 export class CrossoverMutationOperator implements IMutationOperator {
     name: MutationType = 'crossover_mutation';
     description = 'Intra-genome crossover: fuse successful gene techniques into struggling genes';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     constructor(private llm?: LLMAdapter) {}
 

@@ -84,7 +84,7 @@ interface TrajectoryEvidence {
 export class BreakthroughOperator implements IMutationOperator {
     name: MutationType = 'breakthrough';
     description = 'Emergency gene redesign using comprehensive intelligence data';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     constructor(private llm: LLMAdapter) {}
 

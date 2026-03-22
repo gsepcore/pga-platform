@@ -74,6 +74,25 @@ export interface DiscordPayload {
     }>;
 }
 
+export interface EmailPayload {
+    subject: string;
+    text: string;
+    html: string;
+}
+
+export interface GenericAlertPayload {
+    alert: {
+        id: string;
+        title: string;
+        description: string;
+        severity: string;
+        type: string;
+        timestamp: string;
+        resolved: boolean;
+        metrics?: Record<string, unknown>;
+    };
+}
+
 /**
  * Alert Webhooks Manager
  *
@@ -173,7 +192,7 @@ export class AlertWebhooks {
     private formatPayload(
         alert: Alert,
         type: WebhookConfig['type']
-    ): SlackPayload | DiscordPayload | Record<string, any> {
+    ): SlackPayload | DiscordPayload | EmailPayload | GenericAlertPayload {
         switch (type) {
             case 'slack':
                 return this.formatSlackPayload(alert);
@@ -262,7 +281,7 @@ export class AlertWebhooks {
     /**
      * Format Email payload
      */
-    private formatEmailPayload(alert: Alert): Record<string, any> {
+    private formatEmailPayload(alert: Alert): EmailPayload {
         return {
             subject: `[${alert.severity.toUpperCase()}] ${alert.title}`,
             text: `
@@ -291,7 +310,7 @@ ${alert.metrics ? `<h3>Metrics:</h3><pre>${escapeHtml(JSON.stringify(alert.metri
     /**
      * Format generic payload
      */
-    private formatGenericPayload(alert: Alert): Record<string, any> {
+    private formatGenericPayload(alert: Alert): GenericAlertPayload {
         return {
             alert: {
                 id: alert.id,

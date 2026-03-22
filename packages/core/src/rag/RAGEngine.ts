@@ -23,7 +23,7 @@ import type { MetricsCollector } from '../monitoring/MetricsCollector.js';
 export interface RAGDocument {
     id: string;
     content: string;
-    metadata: Record<string, any>;
+    metadata: Record<string, unknown>;
     embedding?: number[];
 }
 

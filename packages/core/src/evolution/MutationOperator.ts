@@ -83,7 +83,7 @@ export interface IMutationOperator {
 export class CompressInstructionsOperator implements IMutationOperator {
     name: MutationType = 'compress_instructions';
     description = 'Reduce token count while preserving meaning';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
@@ -194,7 +194,7 @@ export class CompressInstructionsOperator implements IMutationOperator {
 export class ReorderConstraintsOperator implements IMutationOperator {
     name: MutationType = 'reorder_constraints';
     description = 'Optimize constraint ordering for LLM processing';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
@@ -268,7 +268,7 @@ export class ReorderConstraintsOperator implements IMutationOperator {
 export class SafetyReinforcementOperator implements IMutationOperator {
     name: MutationType = 'safety_reinforcement';
     description = 'Strengthen security and safety boundaries';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
@@ -340,7 +340,7 @@ export class SafetyReinforcementOperator implements IMutationOperator {
 export class ToolSelectionBiasOperator implements IMutationOperator {
     name: MutationType = 'tool_selection_bias';
     description = 'Adjust tool usage patterns based on performance';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
@@ -423,7 +423,7 @@ export class ToolSelectionBiasOperator implements IMutationOperator {
 export class TokenCompressionOperator implements IMutationOperator {
     name: MutationType = 'compress_instructions';
     description = 'LLM-powered token compression preserving functional behavior';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     constructor(private llm?: LLMAdapter) {}
 

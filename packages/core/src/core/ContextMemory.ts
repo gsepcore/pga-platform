@@ -15,6 +15,7 @@
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
+import type { Interaction } from '../types/index.js';
 import { LayeredMemory, type LayeredMemoryConfig } from '../memory/LayeredMemory.js';
 
 export interface ConversationContext {
@@ -78,7 +79,7 @@ export class ContextMemory {
      */
     async buildContext(userId: string, genomeId: string): Promise<ConversationContext> {
         // Get recent interactions
-        const interactions = await this.storage.getRecentInteractions?.(genomeId, userId, 50) || [];
+        const interactions = (await this.storage.getRecentInteractions?.(genomeId, userId, 50) || []) as Interaction[];
 
         // Extract projects mentioned
         const projects = this.extractProjects(interactions);
@@ -90,7 +91,7 @@ export class ContextMemory {
         const patterns = this.extractPatterns(interactions);
 
         // Get recent messages (last 10)
-        const recentMessages: MessageMemory[] = interactions.slice(0, 10).map((int: any) => ({
+        const recentMessages: MessageMemory[] = interactions.slice(0, 10).map((int: Interaction) => ({
             timestamp: int.timestamp,
             userMessage: int.userMessage,
             assistantResponse: int.assistantResponse,
@@ -192,7 +193,7 @@ export class ContextMemory {
 
     // ─── Private Helpers ────────────────────────────────────
 
-    private extractProjects(interactions: any[]): ProjectContext[] {
+    private extractProjects(interactions: Interaction[]): ProjectContext[] {
         const projects = new Map<string, ProjectContext>();
 
         for (const int of interactions) {
@@ -224,7 +225,7 @@ export class ContextMemory {
         return Array.from(projects.values());
     }
 
-    private extractTechnicalPreferences(interactions: any[]): TechnicalPreferences {
+    private extractTechnicalPreferences(interactions: Interaction[]): TechnicalPreferences {
         const languages = new Set<string>();
         const frameworks = new Set<string>();
         const tools = new Set<string>();
@@ -265,7 +266,7 @@ export class ContextMemory {
         };
     }
 
-    private extractPatterns(interactions: any[]): CommonPatterns {
+    private extractPatterns(interactions: Interaction[]): CommonPatterns {
         const topics = new Map<string, number>();
         const errors = new Set<string>();
 

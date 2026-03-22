@@ -58,7 +58,7 @@ interface PredictionEvidence {
 export class PatternExtractionOperator implements IMutationOperator {
     name: MutationType = 'pattern_extraction';
     description = 'Crystallize learned behavioral patterns into gene content';
-    targetChromosome: 'c1' = 'c1';
+    targetChromosome = 'c1' as const;
 
     constructor(
         private llm: LLMAdapter,

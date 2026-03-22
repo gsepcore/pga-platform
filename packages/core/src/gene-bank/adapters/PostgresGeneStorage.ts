@@ -14,7 +14,7 @@ import type { GeneStorageAdapter, GeneSearchFilters } from '../GeneBank';
  * Compatible with pg, postgres.js, or any SQL client
  */
 export interface PostgresConnection {
-    query(sql: string, params?: any[]): Promise<{ rows: any[] }>;
+    query(sql: string, params?: unknown[]): Promise<{ rows: Record<string, unknown>[] }>;
 }
 
 /**
@@ -92,6 +92,34 @@ export interface PostgresConnection {
  * ```
  */
 
+/** Database row shape from cognitive_genes table */
+interface CognitiveGeneRow {
+    id: string;
+    version: string;
+    name: string;
+    description: string;
+    type: CognitiveGene['type'];
+    domain: string;
+    fitness: CognitiveGene['fitness'];
+    parent_gene_id: string | null;
+    generation: number;
+    ancestors: string[];
+    mutation_history: CognitiveGene['lineage']['mutationHistory'];
+    instruction: string;
+    examples: CognitiveGene['content']['examples'];
+    required_capabilities: CognitiveGene['content']['requiredCapabilities'];
+    applicable_contexts: CognitiveGene['content']['applicableContexts'];
+    contraindications: CognitiveGene['content']['contraindications'];
+    content_metadata: CognitiveGene['content']['metadata'];
+    tenant_id: string;
+    created_by: string;
+    scope: CognitiveGene['tenant']['scope'];
+    verified: boolean;
+    created_at: Date;
+    updated_at: Date;
+    tags: string[];
+}
+
 /**
  * PostgreSQL Gene Storage Adapter
  */
@@ -164,7 +192,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
             return null;
         }
 
-        return this.rowToGene(result.rows[0]);
+        return this.rowToGene(result.rows[0] as unknown as CognitiveGeneRow);
     }
 
     /**
@@ -241,7 +269,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
      */
     async search(filters: GeneSearchFilters): Promise<CognitiveGene[]> {
         const conditions: string[] = [];
-        const params: any[] = [];
+        const params: unknown[] = [];
         let paramIndex = 1;
 
         // Tenant filter
@@ -332,7 +360,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
         params.push(limit, offset);
 
         const result = await this.connection.query(sql, params);
-        return result.rows.map(row => this.rowToGene(row));
+        return result.rows.map(row => this.rowToGene(row as unknown as CognitiveGeneRow));
     }
 
     /**
@@ -346,7 +374,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
         const params = scope ? [tenantId, scope] : [tenantId];
 
         const result = await this.connection.query(sql, params);
-        return result.rows.map(row => this.rowToGene(row));
+        return result.rows.map(row => this.rowToGene(row as unknown as CognitiveGeneRow));
     }
 
     /**
@@ -372,7 +400,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
         `;
 
         const result = await this.connection.query(sql, [geneId]);
-        return result.rows.map(row => this.rowToGene(row));
+        return result.rows.map(row => this.rowToGene(row as unknown as CognitiveGeneRow));
     }
 
     /**
@@ -398,7 +426,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
             [geneId]
         );
 
-        const { count, avg_performance } = adoptionsResult.rows[0];
+        const { count, avg_performance } = adoptionsResult.rows[0] as { count: number; avg_performance: number };
 
         await this.connection.query(
             `
@@ -422,7 +450,7 @@ export class PostgresGeneStorage implements GeneStorageAdapter {
     /**
      * Convert database row to CognitiveGene
      */
-    private rowToGene(row: any): CognitiveGene {
+    private rowToGene(row: CognitiveGeneRow): CognitiveGene {
         return {
             id: row.id,
             version: row.version,
