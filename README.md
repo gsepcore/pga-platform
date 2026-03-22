@@ -136,40 +136,20 @@ const response = await genome.chat(userMessage, {
 
 ## 🧬 How It Works
 
-GSEP adds a **five-layer chromosome** around your agent's prompts:
-
-```
-┌─────────────────────────────────────────┐
-│  C0: Immutable DNA                      │
-│  (Security, Ethics, Core Identity)      │
-│  🔒 NEVER mutates — SHA-256 protected  │
-├─────────────────────────────────────────┤
-│  C1: Operative Genes                    │
-│  (Tool Usage, Coding Patterns)          │
-│  🐢 SLOW mutation (sandbox-tested)     │
-├─────────────────────────────────────────┤
-│  C2: Epigenomes                         │
-│  (User Preferences, Style)              │
-│  ⚡ FAST mutation (adapts daily)       │
-├─────────────────────────────────────────┤
-│  C3: Content Firewall                   │
-│  (Prompt Injection Defense)             │
-│  🛡️ 53 patterns — SHA-256 core        │
-├─────────────────────────────────────────┤
-│  C4: Behavioral Immune System           │
-│  (Output Infection Detection)           │
-│  🧬 6 checks — auto-heal + quarantine  │
-└─────────────────────────────────────────┘
-```
-
 Every interaction flows through a **four-phase evolution cycle**:
 
 ```
-1. TRANSCRIPTION → Log the interaction
-2. VARIATION     → Generate prompt mutations
-3. SIMULATION    → Test in sandbox (safe)
-4. SELECTION     → Deploy only improvements
+User message → genome.chat()
+      ↓
+1. TRANSCRIPTION — Log interaction + extract context
+2. VARIATION     — Generate candidate prompt mutations
+3. SIMULATION    — Test mutations in sandbox (safe, no side effects)
+4. SELECTION     — Deploy only if fitness improves
+      ↓
+Improved prompt ← stored in genome
 ```
+
+Mutations are safe: tested before deployment, rolled back on regression, and C0 (core identity) never mutates.
 
 ---
 
@@ -391,18 +371,20 @@ Only `chat()` is required. `stream()` and `estimateCost()` are optional.
 
 ---
 
-## 🧪 What GSEP adds to your agent
+## 🧪 Capabilities
+
+### Core (enabled by default)
 
 - **Autonomous Evolution** — Prompts improve every N interactions without manual tuning
-- **Drift Detection** — Auto-corrects when performance degrades
-- **SelfModel (Metacognition)** — Agent knows its strengths/weaknesses
-- **Pattern Memory** — Predicts user needs before they ask
-- **Gene Bank + THK** — Multiple agents share successful prompt patterns
-- **Living Agent (v0.6.0)** — 10 cognitive layers: emotional detection, calibrated autonomy, personal narrative, analytic memory
-- **Three Pillars of Life (v0.7.0)** — Enhanced self-model, purpose survival (THRIVING→CRITICAL state machine), strategic autonomy
+- **Drift Detection** — Auto-corrects when agent performance degrades
+- **SelfModel** — Agent tracks its own strengths and weaknesses
+- **Pattern Memory** — Learns behavioral patterns to predict user needs
+- **Gene Bank + THK** — Agents share successful prompt mutations across genomes
+
+### Security (enabled by default)
 
 <details>
-<summary><strong>Content Firewall — C3 (v0.8.0)</strong></summary>
+<summary><strong>C3 Content Firewall (v0.8.0)</strong></summary>
 
 Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 scans **all** external content before it enters the system prompt.
 
@@ -419,7 +401,7 @@ Defense-in-depth against prompt injection, skill poisoning, and supply-chain att
 <details>
 <summary><strong>C4 Behavioral Immune System (v0.9.0)</strong></summary>
 
-The world's first output-level immune system for LLM agents. Detects if the agent's **own response** was manipulated by Indirect Prompt Injection (IPI).
+Output-level immune system for LLM agents. Detects if the agent's **own response** was manipulated by Indirect Prompt Injection (IPI).
 
 **6 Deterministic Checks** (no extra LLM calls):
 - **System prompt leakage** — detects verbatim fragments of the assembled prompt in the response
@@ -434,6 +416,30 @@ The world's first output-level immune system for LLM agents. Detects if the agen
 - Activates automatically with C3 (no extra config)
 - Persistent immune memory (attack signatures)
 - Reports in `getIntegrityStatus()`
+
+</details>
+
+### Advanced (opt-in)
+
+<details>
+<summary><strong>Living Agent — 10 cognitive layers (v0.6.0)</strong></summary>
+
+Emotional detection, calibrated autonomy, personal narrative, analytic memory, and more. Each capability is an individual flag in `AutonomousConfig`:
+
+- `enableMetacognition` — Confidence analysis per response
+- `enableEmotionalModel` — Detects user emotional state
+- `enableCalibratedAutonomy` — Learns when to act vs ask
+- `enablePersonalNarrative` — Tracks relationship history
+- `enableAnalyticMemory` — Knowledge graph with temporal decay
+
+</details>
+
+<details>
+<summary><strong>Three Pillars of Life (v0.7.0)</strong></summary>
+
+- **Enhanced Self-Model** — Purpose-aware self-awareness with capability tracking and evolution trajectory
+- **Purpose Survival** — State machine (THRIVING → STABLE → STRESSED → SURVIVAL → CRITICAL) with threat detection and genome snapshots
+- **Strategic Autonomy** — Goal-based decisions, evolution prioritization, adaptive mutation rates, and task refusal for dangerous operations
 
 </details>
 
@@ -474,6 +480,43 @@ const result = await runner.run(genome, {
 console.log(runner.formatConsoleReport(result));   // ASCII table + curve
 console.log(runner.formatMarkdownReport(result));  // Markdown report
 ```
+
+</details>
+
+---
+
+## 🏗️ Architecture
+
+<details>
+<summary><strong>Five-layer chromosome model</strong></summary>
+
+GSEP wraps your agent's prompts in a five-layer chromosome structure:
+
+```
+┌─────────────────────────────────────────┐
+│  C0: Immutable DNA                      │
+│  (Security, Ethics, Core Identity)      │
+│  🔒 NEVER mutates — SHA-256 protected  │
+├─────────────────────────────────────────┤
+│  C1: Operative Genes                    │
+│  (Tool Usage, Coding Patterns)          │
+│  🐢 SLOW mutation (sandbox-tested)     │
+├─────────────────────────────────────────┤
+│  C2: Epigenomes                         │
+│  (User Preferences, Style)              │
+│  ⚡ FAST mutation (adapts daily)       │
+├─────────────────────────────────────────┤
+│  C3: Content Firewall                   │
+│  (Prompt Injection Defense)             │
+│  🛡️ 53 patterns — SHA-256 core        │
+├─────────────────────────────────────────┤
+│  C4: Behavioral Immune System           │
+│  (Output Infection Detection)           │
+│  🧬 6 checks — auto-heal + quarantine  │
+└─────────────────────────────────────────┘
+```
+
+C0 is cryptographically immutable (SHA-256). C1 mutates slowly through an 8-stage promotion gate. C2 adapts fast based on user interactions. C3 and C4 provide input/output security.
 
 </details>
 
