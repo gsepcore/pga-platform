@@ -1,0 +1,4 @@
+# Cloudflare Pages redirects
+# Explicit routes served as static files (bypass SPA fallback)
+/survival /survival/index.html 200
+/survival/ /survival/index.html 200
