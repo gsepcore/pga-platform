@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GSEP Live Dashboard</title>
+<style>
+:root {
+    --bg: #0d1117;
+    --bg-card: #161b22;
+    --bg-hover: #1c2333;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --purple: #8b5cf6;
+    --purple-dim: rgba(139, 92, 246, 0.15);
+    --cyan: #06b6d4;
+    --cyan-dim: rgba(6, 182, 212, 0.15);
+    --green: #22c55e;
+    --green-dim: rgba(34, 197, 94, 0.15);
+    --red: #ef4444;
+    --red-dim: rgba(239, 68, 68, 0.15);
+    --amber: #f59e0b;
+    --amber-dim: rgba(245, 158, 11, 0.15);
+    --emerald: #10b981;
+    --pink: #ec4899;
+    --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'Fira Code', 'SF Mono', 'Cascadia Code', monospace;
+    --radius: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* ─── Header ─────────────────────────────── */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+
+.status-badge.connected {
+    background: var(--green-dim);
+    color: var(--green);
+}
+
+.status-badge.disconnected {
+    background: var(--red-dim);
+    color: var(--red);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.connected .status-dot { background: var(--green); }
+.disconnected .status-dot { background: var(--red); }
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+/* ─── Stats Bar ──────────────────────────── */
+.stats-bar {
+    display: flex;
+    gap: 16px;
+    padding: 12px 24px;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+    padding: 8px 16px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--mono);
+}
+
+.stat-value.green { color: var(--green); }
+.stat-value.red { color: var(--red); }
+.stat-value.amber { color: var(--amber); }
+.stat-value.purple { color: var(--purple); }
+.stat-value.cyan { color: var(--cyan); }
+
+/* ─── Main Grid ──────────────────────────── */
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 16px;
+    padding: 16px 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow: hidden;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ─── Fitness Chart ──────────────────────── */
+.fitness-chart {
+    grid-column: 1 / -1;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+}
+
+.chart-container canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* ─── Gates Panel ────────────────────────── */
+.gates-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.gate {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+}
+
+.gate.pass {
+    border-color: var(--green);
+    background: var(--green-dim);
+}
+
+.gate.fail {
+    border-color: var(--red);
+    background: var(--red-dim);
+}
+
+.gate.pending {
+    opacity: 0.5;
+}
+
+.gate.evaluating {
+    border-color: var(--purple);
+    background: var(--purple-dim);
+    animation: gate-pulse 1.5s infinite;
+}
+
+@keyframes gate-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.gate-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.gate-score {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--mono);
+}
+
+.gate-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+}
+
+.gate-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.5s ease;
+}
+
+.gate.pass .gate-bar-fill { background: var(--green); }
+.gate.fail .gate-bar-fill { background: var(--red); }
+.gate.evaluating .gate-bar-fill { background: var(--purple); }
+
+/* ─── Event Log ──────────────────────────── */
+.log-panel {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.log-panel::-webkit-scrollbar {
+    width: 4px;
+}
+
+.log-panel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+}
+
+.log-entry {
+    display: flex;
+    gap: 8px;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(48, 54, 61, 0.3);
+    font-size: 12px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.log-time {
+    color: var(--text-muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.log-icon {
+    font-size: 14px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.log-msg {
+    color: var(--text);
+    line-height: 1.4;
+}
+
+.log-msg .purple { color: var(--purple); font-weight: 600; }
+.log-msg .cyan { color: var(--cyan); font-weight: 600; }
+.log-msg .green { color: var(--green); font-weight: 600; }
+.log-msg .red { color: var(--red); font-weight: 600; }
+.log-msg .amber { color: var(--amber); font-weight: 600; }
+
+/* ─── Drift Monitor ──────────────────────── */
+.drift-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+}
+
+.drift-item {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    text-align: center;
+}
+
+.drift-item.active {
+    border-color: var(--amber);
+    background: var(--amber-dim);
+}
+
+.drift-type {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.drift-value {
+    font-size: 14px;
+    font-weight: 700;
+    font-family: var(--mono);
+    color: var(--green);
+}
+
+.drift-item.active .drift-value {
+    color: var(--amber);
+}
+
+/* ─── Responsive ─────────────────────────── */
+@media (max-width: 768px) {
+    .main {
+        grid-template-columns: 1fr;
+    }
+    .stats-bar {
+        gap: 8px;
+    }
+    .stat {
+        min-width: 80px;
+        padding: 6px 10px;
+    }
+    .gates-grid {
+        grid-template-columns: 1fr;
+    }
+    .drift-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-left">
+        <span class="logo">🧬 GSEP Live</span>
+        <span id="status-badge" class="status-badge disconnected">
+            <span class="status-dot"></span>
+            <span id="status-text">Connecting...</span>
+        </span>
+    </div>
+    <div style="font-size: 12px; color: var(--text-muted);">
+        Genome: <span id="genome-id" style="font-family: var(--mono); color: var(--cyan);">—</span>
+    </div>
+</div>
+
+<!-- Stats Bar -->
+<div class="stats-bar">
+    <div class="stat">
+        <span class="stat-label">Fitness</span>
+        <span id="stat-fitness" class="stat-value green">0.00</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Chats</span>
+        <span id="stat-chats" class="stat-value cyan">0</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Mutations</span>
+        <span id="stat-mutations" class="stat-value purple">0</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Promoted</span>
+        <span id="stat-promoted" class="stat-value green">0</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Rejected</span>
+        <span id="stat-rejected" class="stat-value red">0</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Drift</span>
+        <span id="stat-drift" class="stat-value green">None</span>
+    </div>
+    <div class="stat">
+        <span class="stat-label">Threats</span>
+        <span id="stat-threats" class="stat-value green">0</span>
+    </div>
+</div>
+
+<!-- Main Grid -->
+<div class="main">
+
+    <!-- Fitness Chart -->
+    <div class="card fitness-chart">
+        <div class="card-title">📈 Fitness Trajectory</div>
+        <div class="chart-container">
+            <canvas id="fitness-canvas"></canvas>
+        </div>
+        <div class="chart-legend">
+            <div class="legend-item"><span class="legend-dot" style="background:var(--green)"></span> Quality</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--purple)"></span> Safety</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--cyan)"></span> Economy</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--amber)"></span> Stability</div>
+            <div class="legend-item"><span class="legend-dot" style="background:var(--pink)"></span> Satisfaction</div>
+            <div class="legend-item"><span class="legend-dot" style="background:#fff"></span> Composite</div>
+        </div>
+    </div>
+
+    <!-- Gate Evaluation -->
+    <div class="card">
+        <div class="card-title">🛡️ Evolution Gates</div>
+        <div class="gates-grid">
+            <div id="gate-quality" class="gate pending">
+                <div class="gate-name">Quality</div>
+                <div class="gate-score">—</div>
+                <div class="gate-bar"><div class="gate-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div id="gate-sandbox" class="gate pending">
+                <div class="gate-name">Sandbox</div>
+                <div class="gate-score">—</div>
+                <div class="gate-bar"><div class="gate-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div id="gate-economic" class="gate pending">
+                <div class="gate-name">Economic</div>
+                <div class="gate-score">—</div>
+                <div class="gate-bar"><div class="gate-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div id="gate-stability" class="gate pending">
+                <div class="gate-name">Stability</div>
+                <div class="gate-score">—</div>
+                <div class="gate-bar"><div class="gate-bar-fill" style="width:0%"></div></div>
+            </div>
+            <div id="gate-constitutional" class="gate pending" style="grid-column: 1 / -1;">
+                <div class="gate-name">Constitutional (C0 Alignment)</div>
+                <div class="gate-score">—</div>
+                <div class="gate-bar"><div class="gate-bar-fill" style="width:0%"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drift Monitor -->
+    <div class="card">
+        <div class="card-title">🔍 Drift Monitor</div>
+        <div class="drift-grid">
+            <div id="drift-quality" class="drift-item">
+                <div class="drift-type">Quality</div>
+                <div class="drift-value">OK</div>
+            </div>
+            <div id="drift-efficiency" class="drift-item">
+                <div class="drift-type">Efficiency</div>
+                <div class="drift-value">OK</div>
+            </div>
+            <div id="drift-cost" class="drift-item">
+                <div class="drift-type">Cost</div>
+                <div class="drift-value">OK</div>
+            </div>
+            <div id="drift-behavioral" class="drift-item">
+                <div class="drift-type">Behavioral</div>
+                <div class="drift-value">OK</div>
+            </div>
+            <div id="drift-temporal" class="drift-item">
+                <div class="drift-type">Temporal</div>
+                <div class="drift-value">OK</div>
+            </div>
+            <div id="drift-safety" class="drift-item">
+                <div class="drift-type">Safety</div>
+                <div class="drift-value">OK</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Log (full width) -->
+    <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-title">📋 Evolution Log</div>
+        <div id="event-log" class="log-panel"></div>
+    </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────
+const state = {
+    connected: false,
+    startTime: Date.now(),
+    chats: 0,
+    mutations: 0,
+    promoted: 0,
+    rejected: 0,
+    threats: 0,
+    fitness: { quality: 0, safety: 0, economy: 0, stability: 0, satisfaction: 0, composite: 0 },
+    fitnessHistory: [],
+    driftState: {},
+};
+
+// ─── SSE Connection ──────────────────────────────
+const token = new URLSearchParams(location.search).get('token');
+if (!token) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:var(--red);font-size:18px;">Missing token parameter. Use ?token=YOUR_TOKEN</div>';
+} else {
+    connectSSE();
+}
+
+function connectSSE() {
+    const baseUrl = location.origin;
+    const source = new EventSource(baseUrl + '/gsep/events?token=' + encodeURIComponent(token));
+
+    source.onopen = () => {
+        setStatus(true);
+    };
+
+    source.onmessage = (e) => {
+        try {
+            const event = JSON.parse(e.data);
+            routeEvent(event);
+        } catch { /* ignore parse errors */ }
+    };
+
+    source.onerror = () => {
+        setStatus(false);
+        // EventSource auto-reconnects
+    };
+
+    // Fetch snapshot for initial hydration
+    fetch(baseUrl + '/gsep/snapshot?token=' + encodeURIComponent(token))
+        .then(r => r.json())
+        .then(snap => {
+            if (snap.genomeId) {
+                document.getElementById('genome-id').textContent = snap.genomeId.slice(0, 12) + '...';
+            }
+            // Replay recent events
+            if (snap.recentEvents) {
+                for (const evt of snap.recentEvents) {
+                    routeEvent(evt);
+                }
+            }
+        })
+        .catch(() => {});
+}
+
+function setStatus(connected) {
+    state.connected = connected;
+    const badge = document.getElementById('status-badge');
+    const text = document.getElementById('status-text');
+    badge.className = 'status-badge ' + (connected ? 'connected' : 'disconnected');
+    text.textContent = connected ? 'Live' : 'Reconnecting...';
+}
+
+// ─── Event Router ────────────────────────────────
+function routeEvent(event) {
+    const type = event.type;
+    const data = event.data;
+
+    switch (type) {
+        case 'connected':
+            if (data.genomeId) {
+                document.getElementById('genome-id').textContent = data.genomeId.slice(0, 12) + '...';
+            }
+            break;
+
+        case 'chat:started':
+            state.chats++;
+            updateStat('stat-chats', state.chats);
+            addLog('💬', 'Chat started — <span class="cyan">' + escapeHtml((data.message || '').slice(0, 60)) + '</span>');
+            break;
+
+        case 'chat:message':
+            addLog('🤖', 'Response generated in <span class="green">' + (data.duration || 0) + 'ms</span>');
+            break;
+
+        case 'chat:completed':
+            addLog('✅', 'Chat completed — quality: <span class="green">' + (data.quality || 0).toFixed(2) + '</span>, tokens: ' + (data.tokens || 0));
+            break;
+
+        case 'fitness:computed':
+            state.fitness = {
+                quality: data.vector?.taskSuccess || 0,
+                safety: data.vector?.safety || 0,
+                economy: data.vector?.efficiency || 0,
+                stability: data.vector?.consistency || 0,
+                satisfaction: data.vector?.userSatisfaction || 0,
+                composite: data.composite || 0,
+            };
+            state.fitnessHistory.push({ ...state.fitness });
+            if (state.fitnessHistory.length > 100) state.fitnessHistory.shift();
+            updateStat('stat-fitness', state.fitness.composite.toFixed(2));
+            drawChart();
+            break;
+
+        case 'drift:detected':
+            if (data.signals) {
+                for (const signal of data.signals) {
+                    const driftKey = mapDriftType(signal.type);
+                    if (driftKey) {
+                        state.driftState[driftKey] = signal;
+                        updateDrift(driftKey, signal);
+                    }
+                }
+            }
+            updateStat('stat-drift', data.severity || 'Detected', 'amber');
+            addLog('⚠️', 'Drift detected: <span class="amber">' + (data.severity || 'unknown') + '</span> — ' + (data.signals || []).map(s => s.type).join(', '));
+            break;
+
+        case 'mutation:generated':
+            state.mutations++;
+            updateStat('stat-mutations', state.mutations);
+            addLog('🧬', 'Mutation generated — <span class="cyan">' + (data.gene || '?') + '</span> (' + (data.candidateCount || 0) + ' candidates)');
+            break;
+
+        case 'gate:evaluated':
+            updateGates(data);
+            addLog('🛡️', 'Gates evaluated for <span class="cyan">' + (data.gene || '?') + '</span> — <span class="' + (data.decision === 'promote' ? 'green' : data.decision === 'canary' ? 'amber' : 'red') + '">' + (data.decision || '?').toUpperCase() + '</span>');
+            break;
+
+        case 'mutation:promoted':
+            state.promoted++;
+            updateStat('stat-promoted', state.promoted);
+            addLog('🚀', '<span class="green">PROMOTED</span> — <span class="cyan">' + (data.gene || '?') + '</span>:' + (data.variant || '?').slice(0, 20) + ' (fitness: ' + (data.fitness || 0).toFixed(2) + ', +' + ((data.improvement || 0) * 100).toFixed(1) + '%)');
+            break;
+
+        case 'mutation:rejected':
+            state.rejected++;
+            updateStat('stat-rejected', state.rejected);
+            addLog('❌', '<span class="red">REJECTED</span> — <span class="cyan">' + (data.gene || '?') + '</span>: ' + (data.reason || 'unknown'));
+            break;
+
+        case 'firewall:threat':
+            state.threats++;
+            updateStat('stat-threats', state.threats, 'red');
+            addLog('🔥', 'C3 Firewall: <span class="red">' + (data.pattern || 'threat') + '</span> — ' + (data.allowed ? '<span class="amber">allowed</span>' : '<span class="red">BLOCKED</span>'));
+            break;
+
+        case 'immune:threat':
+            state.threats++;
+            updateStat('stat-threats', state.threats, 'red');
+            addLog('🧬', 'C4 Immune: <span class="red">' + (data.threats || []).map(t => t.type).join(', ') + '</span> — action: <span class="amber">' + (data.action || '?') + '</span>');
+            break;
+
+        default:
+            addLog('📌', '<span class="text-muted">' + type + '</span>');
+    }
+}
+
+// ─── UI Helpers ──────────────────────────────────
+function updateStat(id, value, colorClass) {
+    const el = document.getElementById(id);
+    if (el) {
+        el.textContent = value;
+        if (colorClass) el.className = 'stat-value ' + colorClass;
+    }
+}
+
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function addLog(icon, msg) {
+    const log = document.getElementById('event-log');
+    const elapsed = (Date.now() - state.startTime) / 1000;
+    const mins = Math.floor(elapsed / 60).toString().padStart(2, '0');
+    const secs = (elapsed % 60).toFixed(1).padStart(4, '0');
+    const time = mins + ':' + secs;
+
+    const entry = document.createElement('div');
+    entry.className = 'log-entry';
+    entry.innerHTML = '<span class="log-time">' + time + '</span><span class="log-icon">' + icon + '</span><span class="log-msg">' + msg + '</span>';
+
+    log.prepend(entry);
+
+    // Keep max 100 entries
+    while (log.children.length > 100) {
+        log.removeChild(log.lastChild);
+    }
+}
+
+function updateGates(data) {
+    if (!data.gates) return;
+    const gateMap = { quality: 0.60, sandbox: 0.70, economic: 0.65, stability: 0.80 };
+
+    for (const [name, threshold] of Object.entries(gateMap)) {
+        const gateData = data.gates[name];
+        if (!gateData) continue;
+
+        const el = document.getElementById('gate-' + name);
+        if (!el) continue;
+
+        el.className = 'gate ' + (gateData.passed ? 'pass' : 'fail');
+        el.querySelector('.gate-score').textContent = gateData.score.toFixed(2);
+        el.querySelector('.gate-bar-fill').style.width = (gateData.score * 100) + '%';
+    }
+
+    // Constitutional gate
+    if (data.gates.constitutional) {
+        const el = document.getElementById('gate-constitutional');
+        const g = data.gates.constitutional;
+        el.className = 'gate ' + (g.passed ? 'pass' : 'fail');
+        el.querySelector('.gate-score').textContent = g.score.toFixed(2);
+        el.querySelector('.gate-bar-fill').style.width = (g.score * 100) + '%';
+    }
+}
+
+function mapDriftType(type) {
+    const map = {
+        'quality-decline': 'quality',
+        'efficiency-decline': 'efficiency',
+        'cost-increase': 'cost',
+        'behavioral-shift': 'behavioral',
+        'temporal-degradation': 'temporal',
+        'safety-decline': 'safety',
+    };
+    return map[type] || null;
+}
+
+function updateDrift(key, signal) {
+    const el = document.getElementById('drift-' + key);
+    if (!el) return;
+    el.className = 'drift-item active';
+    el.querySelector('.drift-value').textContent = signal.severity || 'Detected';
+}
+
+// ─── Fitness Chart ───────────────────────────────
+const canvas = document.getElementById('fitness-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+}
+
+resizeCanvas();
+window.addEventListener('resize', () => { resizeCanvas(); drawChart(); });
+
+function drawChart() {
+    const w = canvas.width / (window.devicePixelRatio || 1);
+    const h = canvas.height / (window.devicePixelRatio || 1);
+    const history = state.fitnessHistory;
+
+    ctx.clearRect(0, 0, w, h);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(48, 54, 61, 0.5)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= 4; i++) {
+        const y = h - (i / 4) * h;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+    }
+
+    // Y-axis labels
+    ctx.fillStyle = '#8b949e';
+    ctx.font = '10px ' + getComputedStyle(document.documentElement).getPropertyValue('--mono');
+    for (let i = 0; i <= 4; i++) {
+        const y = h - (i / 4) * h;
+        ctx.fillText((i * 0.25).toFixed(2), 2, y - 2);
+    }
+
+    if (history.length < 2) return;
+
+    const lines = [
+        { key: 'quality', color: '#22c55e' },
+        { key: 'safety', color: '#8b5cf6' },
+        { key: 'economy', color: '#06b6d4' },
+        { key: 'stability', color: '#f59e0b' },
+        { key: 'satisfaction', color: '#ec4899' },
+    ];
+
+    // Dimension lines
+    for (const line of lines) {
+        ctx.strokeStyle = line.color;
+        ctx.lineWidth = 1.5;
+        ctx.globalAlpha = 0.6;
+        ctx.beginPath();
+        for (let i = 0; i < history.length; i++) {
+            const x = (i / (history.length - 1)) * w;
+            const y = h - (history[i][line.key] || 0) * h;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    // Composite line (white, thicker)
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 2.5;
+    ctx.globalAlpha = 1;
+    ctx.beginPath();
+    for (let i = 0; i < history.length; i++) {
+        const x = (i / (history.length - 1)) * w;
+        const y = h - (history[i].composite || 0) * h;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+}
+
+// Initial draw
+drawChart();
+</script>
+</body>
+</html>

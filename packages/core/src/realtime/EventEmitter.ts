@@ -13,6 +13,8 @@ export type PGAEventType =
     | 'mutation:proposed'
     | 'mutation:applied'
     | 'mutation:rejected'
+    | 'mutation:generated'
+    | 'mutation:promoted'
     | 'chat:started'
     | 'chat:message'
     | 'chat:completed'
@@ -20,7 +22,12 @@ export type PGAEventType =
     | 'alert:triggered'
     | 'health:changed'
     | 'user:created'
-    | 'user:updated';
+    | 'user:updated'
+    | 'fitness:computed'
+    | 'drift:detected'
+    | 'gate:evaluated'
+    | 'firewall:threat'
+    | 'immune:threat';
 
 export interface PGAEvent<T = unknown> {
     type: PGAEventType;
@@ -77,6 +84,93 @@ export interface AlertTriggeredEvent {
     type: string;
     title: string;
     description: string;
+}
+
+export interface ChatStartedEvent {
+    genomeId: string;
+    userId: string;
+    message: string;
+}
+
+export interface ChatCompletedEvent {
+    genomeId: string;
+    userId: string;
+    duration: number;
+    quality: number;
+    tokens: number;
+}
+
+export interface FitnessComputedEvent {
+    genomeId: string;
+    composite: number;
+    vector: {
+        taskSuccess: number;
+        efficiency: number;
+        adaptability: number;
+        consistency: number;
+        userSatisfaction: number;
+        safety: number;
+    };
+}
+
+export interface DriftDetectedEvent {
+    genomeId: string;
+    signals: Array<{
+        type: string;
+        severity: 'low' | 'medium' | 'high' | 'critical';
+        metric: string;
+        value: number;
+    }>;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+}
+
+export interface GateEvaluatedEvent {
+    genomeId: string;
+    gene: string;
+    variant: string;
+    decision: 'promote' | 'reject' | 'canary';
+    gates: {
+        quality: { passed: boolean; score: number };
+        sandbox: { passed: boolean; score: number };
+        economic: { passed: boolean; score: number };
+        stability: { passed: boolean; score: number };
+        constitutional?: { passed: boolean; score: number };
+    };
+    reason: string;
+}
+
+export interface FirewallThreatEvent {
+    genomeId: string;
+    pattern: string;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    allowed: boolean;
+    input: string;
+}
+
+export interface ImmuneThreatEvent {
+    genomeId: string;
+    threats: Array<{
+        type: string;
+        severity: string;
+        description: string;
+    }>;
+    action: 'quarantine' | 'heal' | 'pass';
+}
+
+export interface MutationGeneratedEvent {
+    genomeId: string;
+    gene: string;
+    layer: number;
+    candidateCount: number;
+}
+
+export interface MutationPromotedEvent {
+    genomeId: string;
+    gene: string;
+    variant: string;
+    layer: number;
+    fitness: number;
+    improvement: number;
 }
 
 export type EventHandler<T = unknown> = (event: PGAEvent<T>) => void | Promise<void>;

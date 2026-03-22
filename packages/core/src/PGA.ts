@@ -59,6 +59,7 @@ import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
+import { PGAEventEmitter } from './realtime/EventEmitter.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
 import type { GSEPStatus, GSEPChatResult } from './types/index.js';
@@ -423,6 +424,7 @@ export class GenomeInstance {
     private genomeKernel?: GenomeKernel;
     private contentFirewall?: ContentFirewall;
     private immuneSystem?: BehavioralImmuneSystem;
+    private events: PGAEventEmitter = new PGAEventEmitter();
     private interactionCount: number = 0;
     private evolutionInProgress: boolean = false;
 
@@ -676,6 +678,13 @@ export class GenomeInstance {
     }
 
     /**
+     * Get event emitter for real-time dashboard subscriptions
+     */
+    getEventEmitter(): PGAEventEmitter {
+        return this.events;
+    }
+
+    /**
      * Get welcome message for the agent to announce GSEP capabilities
      *
      * @param style - Message style: 'short' | 'detailed' | 'technical' | 'casual'
@@ -826,6 +835,13 @@ Ready to see what we can do together? 😊`,
         const requestId = `chat_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
         const startTime = Date.now();
         let error: string | undefined;
+
+        // Emit chat:started
+        this.events.emitSync('chat:started', {
+            genomeId: this.genome.id,
+            userId: context.userId ?? 'anonymous',
+            message: userMessage.slice(0, 200),
+        }, { genomeId: this.genome.id, userId: context.userId });
 
         try {
             // ── PRE-LLM: Blackboard — begin new consciousness cycle ──
@@ -1020,6 +1036,16 @@ Ready to see what we can do together? 😊`,
                         userId: context.userId,
                     });
                 }
+                // Emit firewall:threat for dashboard
+                if (inputScan.detections.length > 0) {
+                    this.events.emitSync('firewall:threat', {
+                        genomeId: this.genome.id,
+                        pattern: inputScan.detections.map(d => d.patternId).join(', '),
+                        severity: inputScan.allowed ? 'low' as const : 'high' as const,
+                        allowed: inputScan.allowed,
+                        input: userMessage.slice(0, 100),
+                    }, { genomeId: this.genome.id, userId: context.userId });
+                }
                 sanitizedUserMessage = inputScan.sanitizedContent;
             }
 
@@ -1060,6 +1086,17 @@ Ready to see what we can do together? 😊`,
                         userId: context.userId,
                     });
 
+                    // Emit immune:threat for dashboard
+                    this.events.emitSync('immune:threat', {
+                        genomeId: this.genome.id,
+                        threats: verdict.threats.map(t => ({
+                            type: t.type,
+                            severity: t.severity ?? 'medium',
+                            description: t.description ?? t.type,
+                        })),
+                        action: verdict.action as 'quarantine' | 'heal' | 'pass',
+                    }, { genomeId: this.genome.id, userId: context.userId });
+
                     if (verdict.action === 'quarantine') {
                         this.immuneSystem.quarantineAndRecover();
 
@@ -1088,6 +1125,14 @@ Ready to see what we can do together? 😊`,
                 ?? Math.ceil((prompt.length + userMessage.length) / 4);
             const outputTokens = response.usage?.outputTokens
                 ?? Math.ceil(response.content.length / 4);
+
+            // Emit chat:message with LLM response info
+            this.events.emitSync('chat:message', {
+                genomeId: this.genome.id,
+                userId: context.userId ?? 'anonymous',
+                message: userMessage.slice(0, 200),
+                duration: Date.now() - startTime,
+            }, { genomeId: this.genome.id, userId: context.userId });
 
             // Record metrics
             this.metrics.recordRequest({
@@ -1197,6 +1242,35 @@ Ready to see what we can do together? 😊`,
             const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
             this.driftAnalyzer.recordFitness(fitnessVector);
 
+            // Emit fitness:computed for dashboard
+            this.events.emitSync('fitness:computed', {
+                genomeId: this.genome.id,
+                composite: fitnessVector.composite,
+                vector: {
+                    taskSuccess: fitnessVector.successRate,
+                    efficiency: fitnessVector.tokenEfficiency,
+                    adaptability: fitnessVector.quality,
+                    consistency: 1 - fitnessVector.interventionRate,
+                    userSatisfaction: fitnessVector.successRate,
+                    safety: 1 - fitnessVector.interventionRate,
+                },
+            }, { genomeId: this.genome.id, userId: context.userId });
+
+            // Emit drift:detected if drifting
+            const driftCheck = this.driftAnalyzer.analyzeDrift();
+            if (driftCheck.isDrifting) {
+                this.events.emitSync('drift:detected', {
+                    genomeId: this.genome.id,
+                    signals: driftCheck.signals.map(s => ({
+                        type: s.type,
+                        severity: s.severity,
+                        metric: s.metric,
+                        value: s.currentValue,
+                    })),
+                    severity: driftCheck.overallSeverity ?? 'low',
+                }, { genomeId: this.genome.id, userId: context.userId });
+            }
+
             // Enhanced Self-Model: record capability per task×gene
             if (this.enhancedSelfModel && context.taskType) {
                 for (const allele of this.genome.layers.layer1.filter(a => a.status === 'active')) {
@@ -1262,6 +1336,15 @@ Ready to see what we can do together? 😊`,
                     }
                 }
             }
+
+            // Emit chat:completed for dashboard
+            this.events.emitSync('chat:completed', {
+                genomeId: this.genome.id,
+                userId: context.userId ?? 'anonymous',
+                duration: Date.now() - startTime,
+                quality,
+                tokens: inputTokens + outputTokens,
+            }, { genomeId: this.genome.id, userId: context.userId });
 
             return response.content;
         } catch (err) {
@@ -1828,11 +1911,37 @@ Ready to see what we can do together? 😊`,
             rollbackCount: 0,
         };
 
+        // Emit mutation:generated for dashboard
+        this.events.emitSync('mutation:generated', {
+            genomeId: this.genome.id,
+            gene: opts.gene,
+            layer: opts.layer,
+            candidateCount: opts.candidates,
+        }, { genomeId: this.genome.id });
+
         // Step 3: Evaluate against Evolution Guardrails
         const gateResult = await this.guardrailsManager.evaluateCandidate(
             mutationCandidate,
             this.genome.id,
         );
+
+        // Emit gate:evaluated for dashboard
+        this.events.emitSync('gate:evaluated', {
+            genomeId: this.genome.id,
+            gene: opts.gene,
+            variant: mutationCandidate.variant,
+            decision: gateResult.finalDecision,
+            gates: {
+                quality: { passed: gateResult.gates.quality.passed, score: gateResult.gates.quality.score },
+                sandbox: { passed: gateResult.gates.sandbox.passed, score: gateResult.gates.sandbox.score },
+                economic: { passed: gateResult.gates.economic.passed, score: gateResult.gates.economic.score },
+                stability: { passed: gateResult.gates.stability.passed, score: gateResult.gates.stability.score },
+                ...(gateResult.gates.constitutional ? {
+                    constitutional: { passed: gateResult.gates.constitutional.passed, score: gateResult.gates.constitutional.score },
+                } : {}),
+            },
+            reason: gateResult.reason,
+        }, { genomeId: this.genome.id });
 
             // Step 4: Make promotion decision
             const result = gateResult.finalDecision === 'promote' ? await (async () => {
@@ -1876,6 +1985,16 @@ Ready to see what we can do together? 😊`,
                     createdAt: new Date(),
                 });
 
+                // Emit mutation:promoted for dashboard
+                this.events.emitSync('mutation:promoted', {
+                    genomeId: this.genome.id,
+                    gene: opts.gene,
+                    variant: mutationCandidate.variant,
+                    layer: opts.layer,
+                    fitness: mutationCandidate.fitness,
+                    improvement: mutationCandidate.fitness - currentAllele.fitness,
+                }, { genomeId: this.genome.id });
+
                 return {
                     applied: true,
                     reason: gateResult.reason,
@@ -1914,16 +2033,28 @@ Ready to see what we can do together? 😊`,
                         stability: gateResult.gates.stability,
                     },
                 };
-            })() : {
-                applied: false,
-                reason: gateResult.reason,
-                gateResults: {
-                    quality: gateResult.gates.quality,
-                    sandbox: gateResult.gates.sandbox,
-                    economic: gateResult.gates.economic,
-                    stability: gateResult.gates.stability,
-                },
-            };
+            })() : (() => {
+                // Emit mutation:rejected for dashboard
+                this.events.emitSync('mutation:rejected', {
+                    genomeId: this.genome.id,
+                    layer: opts.layer,
+                    gene: opts.gene,
+                    variant: mutationCandidate.variant,
+                    fitness: mutationCandidate.fitness,
+                    reason: gateResult.reason,
+                }, { genomeId: this.genome.id });
+
+                return {
+                    applied: false,
+                    reason: gateResult.reason,
+                    gateResults: {
+                        quality: gateResult.gates.quality,
+                        sandbox: gateResult.gates.sandbox,
+                        economic: gateResult.gates.economic,
+                        stability: gateResult.gates.stability,
+                    },
+                };
+            })();
 
             // ── C0 Shadow: re-sync after mutation ──
             if (result.applied && this.genomeKernel) {

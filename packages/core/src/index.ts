@@ -293,6 +293,15 @@ export type {
     ChatMessageEvent,
     MetricsUpdatedEvent,
     AlertTriggeredEvent,
+    ChatStartedEvent,
+    ChatCompletedEvent,
+    FitnessComputedEvent,
+    DriftDetectedEvent,
+    GateEvaluatedEvent,
+    FirewallThreatEvent,
+    ImmuneThreatEvent,
+    MutationGeneratedEvent,
+    MutationPromotedEvent,
     EventHandler,
 } from './realtime/EventEmitter.js';
 
@@ -301,6 +310,14 @@ export type {
     StreamChunk,
     StreamOptions,
 } from './realtime/StreamingManager.js';
+
+// ─── Dashboard ──────────────────────────────────────────
+
+export { DashboardServer, DashboardTokenHelper } from './dashboard/index.js';
+export type {
+    DashboardServerConfig,
+    DashboardTokenPayload,
+} from './dashboard/index.js';
 
 // ─── Plugins ────────────────────────────────────────────
 
