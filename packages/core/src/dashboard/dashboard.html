@@ -405,6 +405,13 @@ body {
     </div>
 </div>
 
+<!-- VPS Help Banner (hidden by default, shows on connection failure) -->
+<div id="vps-help" style="display:none; padding: 12px 24px; background: var(--amber-dim); border-bottom: 1px solid var(--amber); font-size: 13px; color: var(--amber);">
+    <strong>Can't connect?</strong> If your agent runs on a remote server (VPS), connect via SSH tunnel:
+    <code style="background: rgba(0,0,0,0.3); padding: 2px 8px; border-radius: 4px; margin-left: 4px; font-family: var(--mono); font-size: 12px;">ssh -L 4200:localhost:4200 user@your-server</code>
+    <span style="margin-left: 8px; color: var(--text-muted);">Then open <strong>http://localhost:4200</strong> in your browser.</span>
+</div>
+
 <!-- Stats Bar -->
 <div class="stats-bar">
     <div class="stat">
@@ -555,6 +562,7 @@ function connectSSE() {
 
     source.onopen = () => {
         setStatus(true);
+        document.getElementById('vps-help').style.display = 'none';
     };
 
     source.onmessage = (e) => {
@@ -564,9 +572,14 @@ function connectSSE() {
         } catch { /* ignore parse errors */ }
     };
 
+    let errorCount = 0;
     source.onerror = () => {
         setStatus(false);
-        // EventSource auto-reconnects
+        errorCount++;
+        // Show VPS help after 3 failed attempts
+        if (errorCount >= 3) {
+            document.getElementById('vps-help').style.display = 'block';
+        }
     };
 
     // Fetch snapshot for initial hydration
