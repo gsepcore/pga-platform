@@ -1,198 +1,99 @@
-# 🧬 GSEP Examples
+# GSEP Examples
 
-This directory contains examples demonstrating different aspects of GSEP integration.
+26 runnable examples organized by complexity. Start with the hero demo, then explore by topic.
 
-## 📚 Available Examples
+---
 
-### 1. **basic-usage.ts** — Complete Integration Example
+## Quickstart (No API Key Needed)
 
-Full example showing:
-- GSEP initialization
-- Genome creation
-- **Welcome message** (agent announcement)
-- Layer configuration
-- Chat interactions
-- Feedback recording
-- Analytics viewing
+These examples use mock LLMs — zero cost, zero configuration.
 
-**Run:**
+| Example | What it shows | Command |
+|---------|--------------|---------|
+| [hero-demo.ts](./hero-demo.ts) | Full evolution pipeline: baseline, 3 cycles, quality measurement, fitness curve | `npx tsx examples/hero-demo.ts --dry-run` |
+| [proof-of-value.ts](./proof-of-value.ts) | Multi-cycle experiment with progressive improvement simulation | `npx tsx examples/proof-of-value.ts` |
+
+## Core Features
+
+| Example | What it shows | Est. cost | Command |
+|---------|--------------|-----------|---------|
+| [basic-usage.ts](./basic-usage.ts) | Initialize GSEP, create genome, chat, record feedback, view analytics | ~$0.02 | `ANTHROPIC_API_KEY=sk-... npx tsx examples/basic-usage.ts` |
+| [hero-demo.ts](./hero-demo.ts) | Same hero demo with real Claude/GPT evolution | ~$0.08 | `ANTHROPIC_API_KEY=sk-... npx tsx examples/hero-demo.ts anthropic` |
+| [evolution-boost-demo.ts](./evolution-boost-demo.ts) | Multi-cycle evolution with fitness tracking and mutation selection | ~$0.15 | `ANTHROPIC_API_KEY=sk-... npx tsx examples/evolution-boost-demo.ts` |
+| [intelligence-boost-demo.ts](./intelligence-boost-demo.ts) | SelfModel, pattern memory, drift detection, metacognition | ~$0.10 | `ANTHROPIC_API_KEY=sk-... npx tsx examples/intelligence-boost-demo.ts` |
+| [living-agent-demo.ts](./living-agent-demo.ts) | Metacognition, emotional model, calibrated autonomy, Three Pillars | ~$0.15 | `ANTHROPIC_API_KEY=sk-... npx tsx examples/living-agent-demo.ts` |
+| [welcome-messages.ts](./welcome-messages.ts) | 4 welcome message styles (short, detailed, technical, casual) | ~$0.01 | `ANTHROPIC_API_KEY=sk-... npx tsx examples/welcome-messages.ts` |
+
+## Evaluation and Benchmarks
+
+| Example | What it shows | Est. cost | Requirements |
+|---------|--------------|-----------|-------------|
+| [evaluation-demo.ts](./evaluation-demo.ts) | Evaluator framework: single benchmark, comparison, learning velocity | ~$0.20 | `ANTHROPIC_API_KEY` + `DATABASE_URL` |
+| [evaluation-suite.ts](./evaluation-suite.ts) | Full benchmark suite runner across all 4 versioned suites | ~$0.30 | `ANTHROPIC_API_KEY` + `DATABASE_URL` |
+| [proof-of-value-real-llm.ts](./proof-of-value-real-llm.ts) | Real LLM proof-of-value (Claude or GPT-4) | ~$0.08 | `ANTHROPIC_API_KEY` or `OPENAI_API_KEY` |
+| [validation-end-to-end.ts](./validation-end-to-end.ts) | Complete E2E validation of all GSEP subsystems | ~$0.10 | `ANTHROPIC_API_KEY` |
+
+Use `--save-report` on any benchmark example to export a markdown report.
+
+## Memory and Knowledge
+
+| Example | What it shows | Est. cost | Requirements |
+|---------|--------------|-----------|-------------|
+| [layered-memory-demo.ts](./layered-memory-demo.ts) | 3-layer memory architecture (C0 immutable, C1 slow, C2 fast) | ~$0.05 | `ANTHROPIC_API_KEY` |
+| [memory-compaction-demo.ts](./memory-compaction-demo.ts) | Automatic memory compression under token pressure | ~$0.08 | `ANTHROPIC_API_KEY` |
+| [gene-bank-demo.ts](./gene-bank-demo.ts) | Gene Bank + THK (cross-genome knowledge sharing) | ~$0.10 | `ANTHROPIC_API_KEY` |
+| [thk-real-world-example.ts](./thk-real-world-example.ts) | Real-world THK cross-genome knowledge transfer | ~$0.10 | `ANTHROPIC_API_KEY` + `DATABASE_URL` |
+
+## RAG and Reasoning
+
+| Example | What it shows | Est. cost | Requirements |
+|---------|--------------|-----------|-------------|
+| [rag-demo.ts](./rag-demo.ts) | RAG integration with GSEP evolution | ~$0.10 | `ANTHROPIC_API_KEY` |
+| [rag-evaluation.ts](./rag-evaluation.ts) | RAG quality evaluation with benchmarks | ~$0.15 | `ANTHROPIC_API_KEY` |
+| [reasoning-demo.ts](./reasoning-demo.ts) | Chain-of-thought reasoning with self-reflection | ~$0.10 | `ANTHROPIC_API_KEY` |
+| [reasoning-evaluation.ts](./reasoning-evaluation.ts) | Reasoning quality evaluation with benchmarks | ~$0.15 | `ANTHROPIC_API_KEY` |
+
+## Monitoring and Observability
+
+| Example | What it shows | Est. cost | Requirements |
+|---------|--------------|-----------|-------------|
+| [monitoring-demo.ts](./monitoring-demo.ts) | Basic drift detection and monitoring setup | ~$0.02 | `ANTHROPIC_API_KEY` |
+| [monitoring-demo-direct.ts](./monitoring-demo-direct.ts) | Direct monitoring API (without PGA wrapper) | ~$0.02 | `ANTHROPIC_API_KEY` |
+| [monitoring-complete-demo.ts](./monitoring-complete-demo.ts) | Full monitoring dashboard with alerts | ~$0.05 | `ANTHROPIC_API_KEY` |
+| [observability-demo.ts](./observability-demo.ts) | Real-time observability and metrics export | ~$0.05 | `ANTHROPIC_API_KEY` |
+
+## Production and Advanced
+
+| Example | What it shows | Est. cost | Requirements |
+|---------|--------------|-----------|-------------|
+| [postgres-quickstart.ts](./postgres-quickstart.ts) | PostgreSQL adapter setup (persistent storage) | Free | `DATABASE_URL` |
+| [pga-with-monitoring-production.ts](./pga-with-monitoring-production.ts) | Production-grade setup with monitoring and alerting | ~$0.05 | `ANTHROPIC_API_KEY` + `DATABASE_URL` |
+| [quick-start.ts](./quick-start.ts) | Minimal Gene Bank integration | ~$0.02 | `ANTHROPIC_API_KEY` |
+
+## Starter Templates
+
+Ready-to-fork project templates in [`examples/starter-templates/`](./starter-templates/):
+
+| Template | Description |
+|----------|-------------|
+| [code-review-assistant.ts](./starter-templates/code-review-assistant.ts) | Code review assistant with GSEP-powered evolution |
+| [customer-support-bot.ts](./starter-templates/customer-support-bot.ts) | Customer support bot with per-user adaptation |
+
+---
+
+## Running Examples
+
+All examples run with `npx tsx`:
+
 ```bash
-npx tsx examples/basic-usage.ts
+# Free (no API key)
+npx tsx examples/hero-demo.ts --dry-run
+
+# With Anthropic Claude
+ANTHROPIC_API_KEY=sk-ant-... npx tsx examples/<example>.ts
+
+# With OpenAI (where supported)
+OPENAI_API_KEY=sk-... npx tsx examples/<example>.ts openai
 ```
 
-### 2. **welcome-messages.ts** — Welcome Message Styles
-
-Demonstrates all 4 welcome message styles:
-- 📱 **SHORT**: Quick announcement (~50 words)
-- 📋 **DETAILED**: Full explanation (~150 words) — Default
-- ⚙️ **TECHNICAL**: Developer-oriented (~200 words)
-- 😊 **CASUAL**: Friendly and conversational (~120 words)
-
-**Run:**
-```bash
-npx tsx examples/welcome-messages.ts
-```
-
----
-
-## 🎯 Welcome Message Integration
-
-When a user installs GSEP in their agent, the agent should announce its new capabilities using `getWelcomeMessage()`:
-
-### Quick Integration
-
-```typescript
-import { PGA } from '@gsep/core';
-
-const pga = new PGA({ /* config */ });
-const genome = await pga.createGenome({ name: 'my-agent' });
-
-// Agent announces GSEP integration
-const announcement = genome.getWelcomeMessage('detailed');
-console.log(announcement);
-
-// Or send via chat
-await sendMessage(announcement);
-
-// Or speak it (TTS)
-await speak(announcement);
-```
-
-### Choose Your Style
-
-```typescript
-// For mobile apps or chatbots
-const short = genome.getWelcomeMessage('short');
-
-// For onboarding flows (RECOMMENDED)
-const detailed = genome.getWelcomeMessage('detailed');
-
-// For developer tools
-const technical = genome.getWelcomeMessage('technical');
-
-// For consumer apps
-const casual = genome.getWelcomeMessage('casual');
-```
-
----
-
-## 🚀 Use Cases
-
-### 1. **Chatbot First Message**
-
-```typescript
-async function initializeBot(userId: string) {
-    const genome = await pga.loadGenome('my-bot');
-
-    // Check if this is user's first interaction
-    const dna = await genome.getDNA(userId);
-
-    if (dna.generation === 0) {
-        // First time user - send welcome
-        const welcome = genome.getWelcomeMessage('casual');
-        await sendMessage(userId, welcome);
-    }
-}
-```
-
-### 2. **Voice Assistant Announcement**
-
-```typescript
-async function onPGAInstalled() {
-    const genome = await pga.createGenome({ name: 'voice-assistant' });
-
-    // Get welcome message
-    const announcement = genome.getWelcomeMessage('short');
-
-    // Convert to speech
-    await textToSpeech(announcement);
-
-    // Display on screen
-    await showNotification({
-        title: '🧬 New Capability Unlocked!',
-        body: announcement,
-    });
-}
-```
-
-### 3. **Web App Onboarding Modal**
-
-```typescript
-function OnboardingModal() {
-    const [genome, setGenome] = useState(null);
-
-    useEffect(() => {
-        async function init() {
-            const g = await pga.createGenome({ name: 'web-agent' });
-            setGenome(g);
-        }
-        init();
-    }, []);
-
-    return (
-        <Modal title="🧬 Your Agent Just Got Smarter!">
-            <div>
-                {genome?.getWelcomeMessage('detailed')}
-            </div>
-            <Button>Let's Get Started!</Button>
-        </Modal>
-    );
-}
-```
-
-### 4. **CLI Tool First Run**
-
-```typescript
-#!/usr/bin/env node
-
-async function firstRun() {
-    const genome = await pga.createGenome({ name: 'cli-tool' });
-
-    console.log(chalk.cyan(genome.getWelcomeMessage('technical')));
-
-    // Continue with CLI initialization...
-}
-```
-
----
-
-## 🎨 Customizing Messages
-
-You can also create your own custom welcome message:
-
-```typescript
-function getCustomWelcome(genome: GenomeInstance): string {
-    return `
-🧬 ${genome.name} is now GSEP-powered!
-
-Configuration:
-- Mutation Rate: ${genome.config.mutationRate}
-- Sandbox: ${genome.config.enableSandbox ? 'ON' : 'OFF'}
-- Epsilon: ${genome.config.epsilonExplore || 0.1}
-
-I'm ready to learn and evolve with you!
-    `.trim();
-}
-```
-
----
-
-## 📖 More Resources
-
-- [GSEP Documentation](https://docs.gsepcore.com)
-- [API Reference](https://docs.gsepcore.com/api)
-- [Best Practices](https://docs.gsepcore.com/guides/best-practices)
-
----
-
-## 💡 Tips
-
-1. **Show the welcome message on first run only** — Don't spam users every time
-2. **Match your app's tone** — Use the style that fits your brand
-3. **Make it dismissable** — Let users skip if they want
-4. **Track engagement** — See if users read/understand the message
-5. **A/B test different styles** — Find what resonates with your audience
-
----
-
-**Happy Evolving!** 🧬✨
+Use `--save-report` to export benchmark results as markdown.

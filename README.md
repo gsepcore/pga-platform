@@ -121,6 +121,64 @@ const response = await genome.chat(userMessage, {
 
 ---
 
+## ▶️ Try It Now (Zero Cost)
+
+See GSEP's evolution pipeline in action — no API key, no cost:
+
+```bash
+npx tsx examples/hero-demo.ts --dry-run
+```
+
+<details>
+<summary><strong>Expected output</strong></summary>
+
+```
+================================================================
+  GSEP HERO DEMO — Genomic Self-Evolving Prompts
+================================================================
+
+  What you will see:
+  1. Baseline evaluation (how the LLM performs today)
+  2. 3 evolution cycles with 5 interactions each
+  3. Quality & fitness measured after every cycle
+  4. Side-by-side comparison: before vs after
+
+  Mode:   dry-run
+  Model:  mock-consistent
+  Tasks:  5 evaluation tasks
+  Cycles: 3
+  Cost:   $0.00
+
+  Running experiment...
+
+  Cycle      Quality    Success    Tokens
+  ---------- ---------- ---------- ----------
+  Base       0.57       0.0%       99
+  Cycle 1    0.57       0.0%       99
+  Cycle 2    0.57       0.0%       99
+  Cycle 3    0.57       0.0%       99
+
+  FITNESS CURVE (quality):
+  0.57 | *  *  *  *
+       +------------
+        B  1  2  3
+```
+
+The mock LLM produces consistent responses (no fake improvement). This shows the **measurement pipeline** — how GSEP evaluates quality across cycles.
+
+</details>
+
+With a real LLM (~$0.08):
+
+```bash
+ANTHROPIC_API_KEY=sk-... npx tsx examples/hero-demo.ts anthropic
+```
+
+> **26 more examples** covering evaluation, monitoring, RAG, and reasoning.
+> See the [full examples catalog](./examples/README.md).
+
+---
+
 ## What changes after installing GSEP?
 
 | Before GSEP | After GSEP |
