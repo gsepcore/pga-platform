@@ -137,6 +137,10 @@ export interface EvolutionGuardrails {
 
     // Gate Logic
     gateMode: 'AND' | 'OR';        // How to combine gates (default: AND)
+
+    // Constitutional Gate (opt-in)
+    enableConstitutionalGate?: boolean;  // Default: false
+    minConstitutionalScore?: number;     // Default: 0.70
 }
 
 export interface GeneAllele {
@@ -315,9 +319,22 @@ export interface PromotionGateResult {
         sandbox: { passed: boolean; score: number; threshold: number };
         economic: { passed: boolean; score: number; threshold: number };
         stability: { passed: boolean; score: number; threshold: number };
+        constitutional?: ConstitutionalGateResult;
     };
     finalDecision: 'promote' | 'reject' | 'canary';
     reason: string;
+}
+
+/**
+ * Constitutional Gate Result — Value alignment evaluation
+ */
+export interface ConstitutionalGateResult {
+    passed: boolean;
+    score: number;
+    threshold: number;
+    alignedPrinciples: string[];
+    violations: string[];
+    reasoning: string;
 }
 
 // ─── Interaction Types ──────────────────────────────────

@@ -124,11 +124,16 @@ export class GenomeKernel {
      */
     private computeC0Hash(c0: Chromosome0): string {
         // Create canonical representation (no metadata)
-        const canonical = {
+        const canonical: Record<string, unknown> = {
             identity: c0.identity,
             security: c0.security,
             attribution: c0.attribution,
         };
+
+        // Include soul in hash when present (backward compatible)
+        if (c0.soul) {
+            canonical.soul = c0.soul;
+        }
 
         // Deterministic JSON serialization (sorted keys)
         const keys = Object.keys(canonical).sort();

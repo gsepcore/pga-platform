@@ -12,9 +12,18 @@
 
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 import type { UserDNA, UserTraits, Interaction } from '../types/index.js';
+import type { CoherenceValidator, CoherenceResult } from './CoherenceValidator.js';
 
 export class DNAProfile {
-    constructor(private storage: StorageAdapter) {}
+    private coherenceValidator?: CoherenceValidator;
+    private lastCoherenceResult?: CoherenceResult;
+
+    constructor(
+        private storage: StorageAdapter,
+        coherenceValidator?: CoherenceValidator,
+    ) {
+        this.coherenceValidator = coherenceValidator;
+    }
 
     /**
      * Get user DNA (creates default if doesn't exist)
@@ -40,6 +49,19 @@ export class DNAProfile {
 
         // Merge with current traits (incremental update)
         const updatedTraits = this.mergeTraits(currentDNA.traits, newTraits);
+
+        // Validate coherence before saving (if validator provided)
+        if (this.coherenceValidator) {
+            const result = this.coherenceValidator.validate(updatedTraits);
+            this.lastCoherenceResult = result;
+
+            if (!result.coherent) {
+                // Critical/high violations → don't save, return current DNA
+                return currentDNA;
+            }
+            // Low/medium violations auto-resolved — traits modified in-place
+        }
+
         const updatedConfidence = this.updateConfidence(currentDNA.confidence, newTraits);
 
         const updatedDNA: UserDNA = {
@@ -63,6 +85,13 @@ export class DNAProfile {
     async exportDNA(userId: string, genomeId: string): Promise<string> {
         const dna = await this.getDNA(userId, genomeId);
         return JSON.stringify(dna, null, 2);
+    }
+
+    /**
+     * Get last coherence validation result
+     */
+    getLastCoherenceResult(): CoherenceResult | undefined {
+        return this.lastCoherenceResult;
     }
 
     // ─── Private Methods ────────────────────────────────────

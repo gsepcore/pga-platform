@@ -101,6 +101,8 @@ export type {
     MutationCandidate,
 } from './evaluation/EvolutionGuardrails.js';
 
+export { ConstitutionalGate } from './evaluation/ConstitutionalGate.js';
+
 // ─── Monitoring ─────────────────────────────────────────
 
 export { MetricsCollector } from './monitoring/MetricsCollector.js';
@@ -347,6 +349,9 @@ export type {
 export { GenomeKernel, IntegrityViolationError, QuarantinedGenomeError } from './core/GenomeKernel.js';
 export type { GenomeKernelOptions } from './core/GenomeKernel.js';
 
+export { CoherenceValidator } from './core/CoherenceValidator.js';
+export type { CoherenceViolation, CoherenceResult } from './core/CoherenceValidator.js';
+
 export { DriftAnalyzer } from './evolution/DriftAnalyzer.js';
 export type {
     DriftAnalyzerConfig,
@@ -452,6 +457,7 @@ export type {
     EvolutionGuardrails,
     EconomicMetrics,
     PromotionGateResult,
+    ConstitutionalGateResult,
     CompressionConfig,
     AutonomousConfig,
     // Gene Registry Extended Types (v0.9.0)
@@ -472,6 +478,8 @@ export type {
     Chromosome1,
     Chromosome2,
     Chromosome3,
+    GenomeValues,
+    AgentPersonality,
     OperativeGene,
     GeneCategory,
     GeneOrigin,

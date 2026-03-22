@@ -1,11 +1,12 @@
 /**
  * Evolution Guardrails - Multi-Gate Promotion System
  *
- * Implements 4-gate validation for mutation promotion:
+ * Implements 5-gate validation for mutation promotion:
  * 1. Quality Gate: Fitness threshold
  * 2. Sandbox Gate: Safety validation
  * 3. Economic Gate: Cost efficiency
  * 4. Stability Gate: Rollback rate
+ * 5. Constitutional Gate: Value alignment (opt-in, LLM-powered)
  *
  * Living OS v1.0 Must-Have: Production-grade mutation control
  *
@@ -13,8 +14,9 @@
  * @since 2026-02-27
  */
 
-import type { EvolutionGuardrails, PromotionGateResult, EconomicMetrics } from '../types/index.js';
+import type { EvolutionGuardrails, PromotionGateResult, EconomicMetrics, ConstitutionalGateResult } from '../types/index.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
+import type { ConstitutionalGate } from './ConstitutionalGate.js';
 
 // ─── Candidate Evaluation ───────────────────────────────────
 
@@ -59,6 +61,7 @@ export class EvolutionGuardrailsManager {
     constructor(
         private storage: StorageAdapter,
         private guardrails?: EvolutionGuardrails,
+        private constitutionalGate?: ConstitutionalGate,
     ) {
         // Merge with defaults
         this.guardrails = {
@@ -90,26 +93,39 @@ export class EvolutionGuardrailsManager {
         // ═══ Gate 4: Stability ═══
         const stabilityGate = this.evaluateStabilityGate(candidate, gates);
 
+        // ═══ Gate 5: Constitutional (opt-in) ═══
+        let constitutionalResult: ConstitutionalGateResult | undefined;
+        if (this.constitutionalGate && gates.enableConstitutionalGate) {
+            constitutionalResult = await this.constitutionalGate.evaluate(candidate);
+        }
+
         // ═══ Final Decision ═══
-        const allGates = [qualityGate, sandboxGate, economicGate, stabilityGate];
-        const passedCount = allGates.filter(g => g.passed).length;
+        const baseGates: { passed: boolean }[] = [qualityGate, sandboxGate, economicGate, stabilityGate];
+        const gateNames = ['Quality', 'Sandbox', 'Economic', 'Stability'];
+        if (constitutionalResult) {
+            baseGates.push(constitutionalResult);
+            gateNames.push('Constitutional');
+        }
+
+        const totalGates = baseGates.length;
+        const passedCount = baseGates.filter(g => g.passed).length;
 
         let finalDecision: 'promote' | 'reject' | 'canary';
         let reason: string;
 
         if (gates.gateMode === 'AND') {
             // ALL gates must pass
-            if (passedCount === 4) {
+            if (passedCount === totalGates) {
                 finalDecision = 'promote';
-                reason = 'All gates passed - promoting to production';
-            } else if (passedCount >= 3) {
-                // 3/4 gates: canary deployment
+                reason = `All ${totalGates} gates passed - promoting to production`;
+            } else if (passedCount >= totalGates - 1) {
+                // N-1 gates: canary deployment
                 finalDecision = 'canary';
-                reason = `${passedCount}/4 gates passed - deploying to canary (5% traffic)`;
+                reason = `${passedCount}/${totalGates} gates passed - deploying to canary (5% traffic)`;
             } else {
                 finalDecision = 'reject';
-                const failedGates = allGates
-                    .map((g, i) => !g.passed ? ['Quality', 'Sandbox', 'Economic', 'Stability'][i] : null)
+                const failedGates = baseGates
+                    .map((g, i) => !g.passed ? gateNames[i] : null)
                     .filter(Boolean);
                 reason = `Failed gates: ${failedGates.join(', ')}`;
             }
@@ -117,7 +133,7 @@ export class EvolutionGuardrailsManager {
             // OR mode: Any gate passing is enough
             if (passedCount >= 1) {
                 finalDecision = 'promote';
-                reason = `${passedCount}/4 gates passed (OR mode)`;
+                reason = `${passedCount}/${totalGates} gates passed (OR mode)`;
             } else {
                 finalDecision = 'reject';
                 reason = 'All gates failed';
@@ -131,6 +147,7 @@ export class EvolutionGuardrailsManager {
                 sandbox: sandboxGate,
                 economic: economicGate,
                 stability: stabilityGate,
+                ...(constitutionalResult ? { constitutional: constitutionalResult } : {}),
             },
             finalDecision,
             reason,
@@ -318,7 +335,13 @@ export class EvolutionGuardrailsManager {
 
         lines.push(`### 4️⃣ Stability Gate`);
         lines.push(`- Min Samples: ${g.minStabilityWindow}`);
-        lines.push(`- Max Rollback Rate: ${(g.maxRollbackRate * 100).toFixed(0)}%`);
+        lines.push(`- Max Rollback Rate: ${(g.maxRollbackRate * 100).toFixed(0)}%\n`);
+
+        lines.push(`### 5️⃣ Constitutional Gate`);
+        lines.push(`- Enabled: ${g.enableConstitutionalGate ? 'Yes' : 'No'}`);
+        if (g.enableConstitutionalGate) {
+            lines.push(`- Min Alignment Score: ${((g.minConstitutionalScore ?? 0.70) * 100).toFixed(0)}%`);
+        }
 
         return lines.join('\n');
     }

@@ -83,11 +83,37 @@ export interface Chromosome0 {
         license: string; // License terms
     };
 
+    // Agent's soul — values, personality, reasoning principles
+    // Optional for backward compatibility. Included in SHA-256 hash when present.
+    soul?: GenomeValues;
+
     // Metadata (NOT included in hash)
     metadata: {
         version: string; // C0 schema version
         createdAt: Date;
     };
+}
+
+/**
+ * Genome Values — Agent's soul and identity principles
+ *
+ * Defines *who* the agent is beyond functional constraints.
+ * Inspired by constitutional AI principles: agents should have
+ * internalized values that guide mutation evolution, not just rules.
+ *
+ * Protected by C0 SHA-256 integrity — immutable once set.
+ */
+export interface GenomeValues {
+    coreValues: string[]; // ["Be helpful", "Prioritize safety", "Be honest"]
+    personality: AgentPersonality;
+    reasoningPrinciples: string[]; // How to reason about edge cases
+    ethicalFramework: string; // Approach to moral decisions
+}
+
+export interface AgentPersonality {
+    traits: string[]; // ["curious", "thorough", "empathetic"]
+    voiceAndTone: string; // "Professional but warm, direct but kind"
+    communicationPhilosophy: string; // "Clarity over cleverness"
 }
 
 /**

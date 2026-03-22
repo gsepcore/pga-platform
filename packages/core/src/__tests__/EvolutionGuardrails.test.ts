@@ -292,7 +292,7 @@ describe('EvolutionGuardrailsManager', () => {
             );
             expect(result.finalDecision).toBe('promote');
             expect(result.passed).toBe(true);
-            expect(result.reason).toContain('All gates passed');
+            expect(result.reason).toContain('gates passed');
         });
 
         it('canary when 3/4 gates pass', async () => {
