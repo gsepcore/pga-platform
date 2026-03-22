@@ -1,5 +1,5 @@
 {
-  "name": "@pga-ai/adapters-llm-openai",
+  "name": "@gsep/adapters-llm-openai",
   "version": "0.8.0",
   "description": "OpenAI adapter for GSEP",
   "main": "./dist/index.js",
@@ -43,7 +43,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@pga-ai/core": "*",
+    "@gsep/core": "*",
     "openai": "^4.77.3"
   },
   "devDependencies": {

@@ -7,7 +7,7 @@
 # 🧬 GSEP — Make Your AI Agent Self-Evolving
 
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
-[![npm version](https://img.shields.io/npm/v/@pga-ai/core?style=for-the-badge)](https://www.npmjs.com/package/@pga-ai/core)
+[![npm version](https://img.shields.io/npm/v/@gsep/core?style=for-the-badge)](https://www.npmjs.com/package/@gsep/core)
 [![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/pga-platform/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
@@ -59,19 +59,19 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 
 ```bash
 # Pick your LLM provider:
-npm install @pga-ai/core @pga-ai/adapters-llm-anthropic  # Claude
-npm install @pga-ai/core @pga-ai/adapters-llm-openai      # GPT-4
-npm install @pga-ai/core @pga-ai/adapters-llm-google       # Gemini
-npm install @pga-ai/core @pga-ai/adapters-llm-ollama       # Local models (Llama, Mistral, etc.)
-npm install @pga-ai/core @pga-ai/adapters-llm-perplexity   # Perplexity (web search)
+npm install @gsep/core @gsep/adapters-llm-anthropic  # Claude
+npm install @gsep/core @gsep/adapters-llm-openai      # GPT-4
+npm install @gsep/core @gsep/adapters-llm-google       # Gemini
+npm install @gsep/core @gsep/adapters-llm-ollama       # Local models (Llama, Mistral, etc.)
+npm install @gsep/core @gsep/adapters-llm-perplexity   # Perplexity (web search)
 ```
 
 ### Step 2: Initialize GSEP (once, at startup)
 
 ```typescript
 // gsep-setup.ts — add this file to your project
-import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
+import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 const llm = new ClaudeAdapter({
   apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -171,7 +171,7 @@ const response = await llm.chat(userMessage);
 ### Step 2: Remove packages and files
 
 ```bash
-npm uninstall @pga-ai/core @pga-ai/adapters-llm-anthropic @pga-ai/adapters-llm-openai @pga-ai/adapters-storage-postgres
+npm uninstall @gsep/core @gsep/adapters-llm-anthropic @gsep/adapters-llm-openai @gsep/adapters-storage-postgres
 rm gsep-setup.ts  # or wherever you placed the setup file
 ```
 
@@ -199,7 +199,7 @@ const genome = await gsep.createGenome({
 ### With persistent storage (production)
 
 ```typescript
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
 const gsep = new PGA({
   llm,
@@ -332,13 +332,13 @@ const response = await genome.chat(question, {
 
 | Package | Description |
 |---------|-------------|
-| [`@pga-ai/core`](./packages/core) | Core engine — evolution, memory, self-model (MIT) |
-| [`@pga-ai/adapters-llm-anthropic`](./packages/adapters-llm/anthropic) | Anthropic Claude |
-| [`@pga-ai/adapters-llm-openai`](./packages/adapters-llm/openai) | OpenAI GPT-4 |
-| [`@pga-ai/adapters-llm-google`](./packages/adapters-llm/google) | Google Gemini |
-| [`@pga-ai/adapters-llm-ollama`](./packages/adapters-llm/ollama) | Ollama (local models) |
-| [`@pga-ai/adapters-llm-perplexity`](./packages/adapters-llm/perplexity) | Perplexity (web search) |
-| [`@pga-ai/adapters-storage-postgres`](./packages/adapters-storage/postgres) | PostgreSQL persistence |
+| [`@gsep/core`](./packages/core) | Core engine — evolution, memory, self-model (MIT) |
+| [`@gsep/adapters-llm-anthropic`](./packages/adapters-llm/anthropic) | Anthropic Claude |
+| [`@gsep/adapters-llm-openai`](./packages/adapters-llm/openai) | OpenAI GPT-4 |
+| [`@gsep/adapters-llm-google`](./packages/adapters-llm/google) | Google Gemini |
+| [`@gsep/adapters-llm-ollama`](./packages/adapters-llm/ollama) | Ollama (local models) |
+| [`@gsep/adapters-llm-perplexity`](./packages/adapters-llm/perplexity) | Perplexity (web search) |
+| [`@gsep/adapters-storage-postgres`](./packages/adapters-storage/postgres) | PostgreSQL persistence |
 
 ---
 
@@ -347,7 +347,7 @@ const response = await genome.chat(question, {
 GSEP works with **any LLM**. If your provider isn't listed above, implement the `LLMAdapter` interface:
 
 ```typescript
-import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '@pga-ai/core';
+import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '@gsep/core';
 
 class MyLLMAdapter implements LLMAdapter {
   readonly name = 'my-provider';
@@ -466,7 +466,7 @@ VERDICT: [OK] IMPROVEMENT PROVEN (+16.0% quality)
 Use programmatically:
 
 ```typescript
-import { ProofOfValueRunner, PROOF_OF_VALUE_V1 } from '@pga-ai/core';
+import { ProofOfValueRunner, PROOF_OF_VALUE_V1 } from '@gsep/core';
 
 const runner = new ProofOfValueRunner();
 const result = await runner.run(genome, {

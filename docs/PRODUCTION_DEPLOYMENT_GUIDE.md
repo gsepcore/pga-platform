@@ -89,7 +89,7 @@ ON semantic_facts(genome_id, user_id, category);
 
 2. **Initialize Memory:**
 ```typescript
-import { LayeredMemory } from '@pga-ai/core';
+import { LayeredMemory } from '@gsep/core';
 
 const memory = new LayeredMemory({
     enabled: true,
@@ -141,7 +141,7 @@ const genome = await pga.createGenome({
 
 **Option A: Pinecone (Recommended for Scale)**
 ```typescript
-import { PineconeAdapter } from '@pga-ai/adapters-vectorstore-pinecone';
+import { PineconeAdapter } from '@gsep/adapters-vectorstore-pinecone';
 
 const vectorStore = new PineconeAdapter({
     apiKey: process.env.PINECONE_API_KEY,
@@ -152,7 +152,7 @@ const vectorStore = new PineconeAdapter({
 
 **Option B: Weaviate (Open Source)**
 ```typescript
-import { WeaviateAdapter } from '@pga-ai/adapters-vectorstore-weaviate';
+import { WeaviateAdapter } from '@gsep/adapters-vectorstore-weaviate';
 
 const vectorStore = new WeaviateAdapter({
     url: process.env.WEAVIATE_URL,
@@ -162,7 +162,7 @@ const vectorStore = new WeaviateAdapter({
 
 **Option C: Qdrant (Self-Hosted)**
 ```typescript
-import { QdrantAdapter } from '@pga-ai/adapters-vectorstore-qdrant';
+import { QdrantAdapter } from '@gsep/adapters-vectorstore-qdrant';
 
 const vectorStore = new QdrantAdapter({
     url: 'http://localhost:6333',
@@ -257,7 +257,7 @@ const response = await genome.chat('What is our return policy?', {
 
 1. **Initialize Reasoning Engine:**
 ```typescript
-import { ReasoningEngine } from '@pga-ai/core';
+import { ReasoningEngine } from '@gsep/core';
 
 const reasoningEngine = new ReasoningEngine(
     llmAdapter,
@@ -344,10 +344,10 @@ const genome = await pga.createGenome({
 **Complete GSEP Agent with All Features:**
 
 ```typescript
-import { PGA, LayeredMemory, RAGEngine, ReasoningEngine, MetricsCollector } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage/postgres';
-import { PineconeAdapter } from '@pga-ai/adapters-vectorstore-pinecone';
+import { PGA, LayeredMemory, RAGEngine, ReasoningEngine, MetricsCollector } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
+import { PostgresAdapter } from '@gsep/adapters-storage/postgres';
+import { PineconeAdapter } from '@gsep/adapters-vectorstore-pinecone';
 
 // 1. Setup Monitoring
 const metricsCollector = new MetricsCollector({
@@ -491,7 +491,7 @@ console.log('Tokens Saved (Memory):', response.metadata?.memory?.tokensSaved);
 **Setup Monitoring Dashboard:**
 
 ```typescript
-import { MonitoringDashboard } from '@pga-ai/core';
+import { MonitoringDashboard } from '@gsep/core';
 
 const dashboard = new MonitoringDashboard({
     metricsCollector,
@@ -652,7 +652,7 @@ const userMessage = sanitizeInput(req.body.message);
 ### 3. Rate Limiting
 
 ```typescript
-import { RateLimiter } from '@pga-ai/core';
+import { RateLimiter } from '@gsep/core';
 
 const rateLimiter = new RateLimiter({
     maxRequestsPerMinute: 60,
@@ -674,7 +674,7 @@ if (!allowed) {
 ### Retry Logic
 
 ```typescript
-import { RetryManager } from '@pga-ai/core';
+import { RetryManager } from '@gsep/core';
 
 const retryManager = new RetryManager({
     maxAttempts: 3,
@@ -691,7 +691,7 @@ const result = await retryManager.execute(async () => {
 ### Circuit Breaker
 
 ```typescript
-import { CircuitBreaker } from '@pga-ai/core';
+import { CircuitBreaker } from '@gsep/core';
 
 const circuitBreaker = new CircuitBreaker({
     failureThreshold: 5,      // Open after 5 failures

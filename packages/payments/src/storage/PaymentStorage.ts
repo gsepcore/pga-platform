@@ -1,7 +1,7 @@
 /**
  * PaymentStorage — Interface for payment data persistence
  *
- * Independent of @pga-ai/core StorageAdapter to avoid coupling.
+ * Independent of @gsep/core StorageAdapter to avoid coupling.
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026 — v0.9.0

@@ -1,4 +1,4 @@
-# @pga-ai/adapters-llm-perplexity
+# @gsep/adapters-llm-perplexity
 
 > Perplexity adapter for GSEP — web-search powered self-evolving agents
 
@@ -7,14 +7,14 @@ Your agent can search the web in real-time while evolving its prompts.
 ## Installation
 
 ```bash
-npm install @pga-ai/core @pga-ai/adapters-llm-perplexity
+npm install @gsep/core @gsep/adapters-llm-perplexity
 ```
 
 ## Usage
 
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { PerplexityAdapter } from '@pga-ai/adapters-llm-perplexity';
+import { PGA } from '@gsep/core';
+import { PerplexityAdapter } from '@gsep/adapters-llm-perplexity';
 
 const pga = new PGA({
   llm: new PerplexityAdapter({

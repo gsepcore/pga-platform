@@ -14,7 +14,7 @@ Enterprise-grade monitoring and observability for GSEP (Genomic Self-Evolving Pr
 ## Quick Start
 
 ```typescript
-import { MetricsCollector } from '@pga-ai/core';
+import { MetricsCollector } from '@gsep/core';
 
 const metrics = new MetricsCollector({
   alertThresholds: {

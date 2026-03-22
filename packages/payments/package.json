@@ -1,5 +1,5 @@
 {
-  "name": "@pga-ai/payments",
+  "name": "@gsep/payments",
   "version": "0.8.0",
   "description": "GSEP Payments — Stripe subscriptions, Connect payouts, gene marketplace checkout",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",

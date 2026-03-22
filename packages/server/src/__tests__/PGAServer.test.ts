@@ -10,7 +10,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { PGAServer } from '../PGAServer.js';
 import { HMACVerifier } from '../auth/HMACVerifier.js';
-import { InMemoryStorageAdapter } from '@pga-ai/core';
+import { InMemoryStorageAdapter } from '@gsep/core';
 
 // ─── Test Setup ──────────────────────────────────────────────
 

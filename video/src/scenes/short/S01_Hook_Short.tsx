@@ -295,7 +295,7 @@ const S01_Hook_Short: React.FC = () => {
               Three lines. That's it.
             </div>
             <CodeBlock
-              code={`import { GenomeKernel } from '@pga-ai/core';
+              code={`import { GenomeKernel } from '@gsep/core';
 
 const genome = new GenomeKernel({ model: 'claude-sonnet-4-5' });
 

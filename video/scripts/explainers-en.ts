@@ -152,7 +152,7 @@ export const explainers: ExplainerScript[] = [
       {
         title: "3-Step Setup",
         durationSec: 25,
-        narration: `Step 1: Install. npm install @pga-ai/core and your LLM adapter. We support @pga-ai/adapters-llm-anthropic for Claude, @pga-ai/adapters-llm-openai for GPT-4, @pga-ai/adapters-llm-google for Gemini, @pga-ai/adapters-llm-ollama for local models, and @pga-ai/adapters-llm-perplexity for web search. Step 2: Initialize. Create a PGA instance with your LLM and storage adapter. Create a genome with a name and system prompt. Step 3: Replace your LLM call with genome.chat(). Pass the user message and optional user ID. That's it. Your agent now evolves.`,
+        narration: `Step 1: Install. npm install @gsep/core and your LLM adapter. We support @gsep/adapters-llm-anthropic for Claude, @gsep/adapters-llm-openai for GPT-4, @gsep/adapters-llm-google for Gemini, @gsep/adapters-llm-ollama for local models, and @gsep/adapters-llm-perplexity for web search. Step 2: Initialize. Create a PGA instance with your LLM and storage adapter. Create a genome with a name and system prompt. Step 3: Replace your LLM call with genome.chat(). Pass the user message and optional user ID. That's it. Your agent now evolves.`,
       },
       {
         title: "Express API",

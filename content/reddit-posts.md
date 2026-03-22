@@ -74,7 +74,7 @@ Key technical details:
 - EMA-based fitness tracking
 - Content firewall (57 patterns, no LLM calls needed)
 
-npm install @pga-ai/core @pga-ai/adapters-llm-ollama
+npm install @gsep/core @gsep/adapters-llm-ollama
 
 MIT license. 1600+ tests. TypeScript.
 
@@ -106,7 +106,7 @@ Storage: in-memory for testing, PostgreSQL for production (stores genome state, 
 
 MIT licensed. TypeScript. 1600+ tests.
 
-npm install @pga-ai/core
+npm install @gsep/core
 GitHub: github.com/gsepcore/pga-platform
 
 Happy to answer questions!

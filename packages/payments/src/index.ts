@@ -1,5 +1,5 @@
 /**
- * @pga-ai/payments — GSEP Payment System
+ * @gsep/payments — GSEP Payment System
  *
  * Stripe subscriptions, Connect payouts, and gene marketplace checkout.
  *

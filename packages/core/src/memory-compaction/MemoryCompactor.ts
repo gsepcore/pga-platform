@@ -1,7 +1,7 @@
 /**
  * @file Memory Compactor
  * @description Main class for managing conversation memory and compaction
- * @module @pga-ai/core/memory-compaction
+ * @module @gsep/core/memory-compaction
  */
 
 import type {

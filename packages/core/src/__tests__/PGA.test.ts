@@ -116,7 +116,7 @@ describe('PGA', () => {
             } catch (e) {
                 const msg = (e as Error).message;
                 expect(msg).toContain('ClaudeAdapter');
-                expect(msg).toContain('@pga-ai/adapters-llm-anthropic');
+                expect(msg).toContain('@gsep/adapters-llm-anthropic');
                 expect(msg).toContain('pga doctor');
             }
         });

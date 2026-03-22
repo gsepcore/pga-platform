@@ -362,7 +362,7 @@ DÍA 30:
 
 ### Para Developers:
 ```bash
-npm install @pga-ai/core
+npm install @gsep/core
 # 3 líneas de código = Agente autónomo evolutivo
 ```
 

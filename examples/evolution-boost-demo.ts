@@ -24,7 +24,7 @@ import {
     type InteractionData,
     type GenomeV2,
     type FitnessVector,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Helper: Create Mock Genome

@@ -82,7 +82,7 @@ npm run build
 ```
 pga-platform/
 ├── packages/
-│   ├── core/                          # @pga-ai/core (MIT License)
+│   ├── core/                          # @gsep/core (MIT License)
 │   │   ├── src/                       # Source code
 │   │   │   ├── types/                 # TypeScript type definitions
 │   │   │   ├── core/                  # GenomeKernel, PGA orchestrator

@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * import { OllamaAdapter } from '@pga-ai/adapters-llm-ollama';
+ * import { OllamaAdapter } from '@gsep/adapters-llm-ollama';
  *
  * const adapter = new OllamaAdapter({
  *   model: 'llama3',
@@ -27,7 +27,7 @@ import type {
     ChatOptions,
     ChatResponse,
     ChatChunk,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 export interface OllamaAdapterConfig {
     /**

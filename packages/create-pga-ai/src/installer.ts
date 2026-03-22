@@ -15,19 +15,19 @@ export async function installDependencies(
 
     try {
         // Determine which packages to install
-        const packages = ['@pga-ai/core'];
+        const packages = ['@gsep/core'];
 
         // LLM adapters
         if (config.llmProvider === 'anthropic' || config.llmProvider === 'both') {
-            packages.push('@pga-ai/adapters-llm-anthropic');
+            packages.push('@gsep/adapters-llm-anthropic');
         }
         if (config.llmProvider === 'openai' || config.llmProvider === 'both') {
-            packages.push('@pga-ai/adapters-llm-openai');
+            packages.push('@gsep/adapters-llm-openai');
         }
 
         // Storage adapters
         if (config.storage === 'postgres') {
-            packages.push('@pga-ai/adapters-storage-postgres');
+            packages.push('@gsep/adapters-storage-postgres');
         }
 
         // Additional dependencies

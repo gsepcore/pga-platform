@@ -29,7 +29,7 @@
 
 **Terminal**:
 ```bash
-npm install @pga-ai/core
+npm install @gsep/core
 ```
 
 ---
@@ -170,7 +170,7 @@ const response = await genome.chat(userMessage, { userId });
 
 **Terminal**:
 ```bash
-npm install @pga-ai/core
+npm install @gsep/core
 npx tsx examples/hero-demo.ts --dry-run
 ```
 

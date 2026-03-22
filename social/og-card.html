@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSEP OG Card — 1200x630</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #000;
+  }
+
+  .canvas {
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    overflow: hidden;
+    background: #000000;
+  }
+
+  /* ── Central DNA Organism ── */
+  .organism {
+    position: absolute;
+    top: 46%;
+    left: 68%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 500px;
+    z-index: 5;
+  }
+
+  .organism svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 60px rgba(139, 92, 246, 0.3))
+            drop-shadow(0 0 120px rgba(6, 182, 212, 0.15));
+  }
+
+  /* ── Ambient glows ── */
+  .core-glow {
+    position: absolute;
+    top: 46%;
+    left: 68%;
+    transform: translate(-50%, -50%);
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(139, 92, 246, 0.18) 0%,
+      rgba(99, 102, 241, 0.08) 30%,
+      rgba(6, 182, 212, 0.04) 55%,
+      transparent 70%
+    );
+    z-index: 1;
+  }
+
+  .core-glow-inner {
+    position: absolute;
+    top: 46%;
+    left: 68%;
+    transform: translate(-50%, -50%);
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(139, 92, 246, 0.12) 40%,
+      transparent 70%
+    );
+    z-index: 2;
+  }
+
+  /* ── Horizon light beam ── */
+  .horizon {
+    position: absolute;
+    top: 46%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 5%,
+      rgba(139, 92, 246, 0.04) 20%,
+      rgba(139, 92, 246, 0.12) 45%,
+      rgba(6, 182, 212, 0.18) 60%,
+      rgba(139, 92, 246, 0.08) 75%,
+      transparent 95%
+    );
+    z-index: 3;
+    box-shadow: 0 0 60px 15px rgba(139, 92, 246, 0.04);
+  }
+
+  /* ── Left text block ── */
+  .text-block {
+    position: absolute;
+    top: 50%;
+    left: 60px;
+    transform: translateY(-50%);
+    z-index: 20;
+    max-width: 520px;
+  }
+
+  .top-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .top-brand .dna-emoji {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  .top-brand .brand-text {
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .title {
+    font-size: 54px;
+    font-weight: 200;
+    color: #ffffff;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+
+  .title strong {
+    font-weight: 900;
+    background: linear-gradient(135deg, #a78bfa 0%, #06b6d4 60%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .tagline {
+    font-size: 17px;
+    font-weight: 300;
+    letter-spacing: 1px;
+    color: rgba(139, 92, 246, 0.7);
+    margin-bottom: 28px;
+  }
+
+  .features {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .pill.purple { background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); color: #c4b5fd; }
+  .pill.cyan   { background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #67e8f9; }
+  .pill.green  { background: rgba(34, 197, 94, 0.2); border: 1px solid rgba(34, 197, 94, 0.4); color: #86efac; }
+  .pill.amber  { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+
+  /* ── Bottom bar ── */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.03);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 60px;
+    z-index: 20;
+  }
+
+  .bottom-bar span {
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.25);
+    text-transform: uppercase;
+  }
+
+  /* ── Vignette ── */
+  .vignette {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 15;
+    background: radial-gradient(ellipse at 68% 46%, transparent 30%, rgba(0,0,0,0.7) 100%);
+    pointer-events: none;
+  }
+
+  /* ── Noise ── */
+  .noise {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 50;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* ── Micro particles ── */
+  .micro {
+    position: absolute;
+    border-radius: 50%;
+    z-index: 6;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <!-- Glows -->
+  <div class="core-glow"></div>
+  <div class="core-glow-inner"></div>
+  <div class="horizon"></div>
+
+  <!-- DNA Organism (right side) -->
+  <div class="organism">
+    <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="strand-a" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0"/>
+          <stop offset="20%" stop-color="#8b5cf6" stop-opacity="0.8"/>
+          <stop offset="50%" stop-color="#a78bfa" stop-opacity="1"/>
+          <stop offset="80%" stop-color="#8b5cf6" stop-opacity="0.8"/>
+          <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="strand-b" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#06b6d4" stop-opacity="0"/>
+          <stop offset="20%" stop-color="#06b6d4" stop-opacity="0.7"/>
+          <stop offset="50%" stop-color="#22d3ee" stop-opacity="1"/>
+          <stop offset="80%" stop-color="#06b6d4" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="bridge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.4"/>
+          <stop offset="50%" stop-color="#34d399" stop-opacity="0.6"/>
+          <stop offset="100%" stop-color="#06b6d4" stop-opacity="0.4"/>
+        </linearGradient>
+        <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="3"/>
+          <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <filter id="big-glow" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur stdDeviation="8"/>
+          <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Strands -->
+      <path d="M 210,30 C 320,70 320,120 210,160 C 100,200 100,250 210,290 C 320,330 320,380 210,420 C 100,460 100,510 210,550"
+            fill="none" stroke="url(#strand-a)" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 390,30 C 280,70 280,120 390,160 C 500,200 500,250 390,290 C 280,330 280,380 390,420 C 500,460 500,510 390,550"
+            fill="none" stroke="url(#strand-b)" stroke-width="2.5" stroke-linecap="round"/>
+
+      <!-- Ghost strands -->
+      <path d="M 210,30 C 320,70 320,120 210,160 C 100,200 100,250 210,290 C 320,330 320,380 210,420 C 100,460 100,510 210,550"
+            fill="none" stroke="#8b5cf6" stroke-width="8" stroke-linecap="round" opacity="0.06"/>
+      <path d="M 390,30 C 280,70 280,120 390,160 C 500,200 500,250 390,290 C 280,330 280,380 390,420 C 500,460 500,510 390,550"
+            fill="none" stroke="#06b6d4" stroke-width="8" stroke-linecap="round" opacity="0.06"/>
+
+      <!-- Bridges -->
+      <line x1="260" y1="95" x2="340" y2="95" stroke="url(#bridge-grad)" stroke-width="1.5" opacity="0.5"/>
+      <line x1="210" y1="160" x2="390" y2="160" stroke="url(#bridge-grad)" stroke-width="1.5" opacity="0.7"/>
+      <line x1="155" y1="225" x2="445" y2="225" stroke="url(#bridge-grad)" stroke-width="1.5" opacity="0.5"/>
+      <line x1="210" y1="290" x2="390" y2="290" stroke="url(#bridge-grad)" stroke-width="1.8" opacity="0.8"/>
+      <line x1="260" y1="355" x2="340" y2="355" stroke="url(#bridge-grad)" stroke-width="1.5" opacity="0.5"/>
+      <line x1="210" y1="420" x2="390" y2="420" stroke="url(#bridge-grad)" stroke-width="1.5" opacity="0.7"/>
+      <line x1="155" y1="485" x2="445" y2="485" stroke="url(#bridge-grad)" stroke-width="1.5" opacity="0.5"/>
+
+      <!-- Nodes left (purple) -->
+      <circle cx="265" cy="95" r="4" fill="#8b5cf6" filter="url(#soft-glow)" opacity="0.9"/>
+      <circle cx="210" cy="160" r="5" fill="#a78bfa" filter="url(#soft-glow)"/>
+      <circle cx="155" cy="225" r="4" fill="#8b5cf6" filter="url(#soft-glow)" opacity="0.8"/>
+      <circle cx="210" cy="290" r="6" fill="#c4b5fd" filter="url(#big-glow)"/>
+      <circle cx="265" cy="355" r="4" fill="#8b5cf6" filter="url(#soft-glow)" opacity="0.9"/>
+      <circle cx="210" cy="420" r="5" fill="#a78bfa" filter="url(#soft-glow)"/>
+      <circle cx="155" cy="485" r="4" fill="#8b5cf6" filter="url(#soft-glow)" opacity="0.8"/>
+
+      <!-- Nodes right (cyan) -->
+      <circle cx="335" cy="95" r="4" fill="#06b6d4" filter="url(#soft-glow)" opacity="0.9"/>
+      <circle cx="390" cy="160" r="5" fill="#22d3ee" filter="url(#soft-glow)"/>
+      <circle cx="445" cy="225" r="4" fill="#06b6d4" filter="url(#soft-glow)" opacity="0.8"/>
+      <circle cx="390" cy="290" r="6" fill="#a5f3fc" filter="url(#big-glow)"/>
+      <circle cx="335" cy="355" r="4" fill="#06b6d4" filter="url(#soft-glow)" opacity="0.9"/>
+      <circle cx="390" cy="420" r="5" fill="#22d3ee" filter="url(#soft-glow)"/>
+      <circle cx="445" cy="485" r="4" fill="#06b6d4" filter="url(#soft-glow)" opacity="0.8"/>
+
+      <!-- Mutation nodes (green pulses) -->
+      <circle cx="300" cy="160" r="3" fill="#34d399" filter="url(#big-glow)" opacity="0.9">
+        <animate attributeName="r" values="2;5;2" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="300" cy="290" r="4" fill="#22c55e" filter="url(#big-glow)">
+        <animate attributeName="r" values="3;7;3" dur="2.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="300" cy="420" r="3" fill="#34d399" filter="url(#big-glow)" opacity="0.8">
+        <animate attributeName="r" values="2;5;2" dur="3.5s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.5;0.9;0.5" dur="3.5s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Consciousness ripples -->
+      <circle cx="300" cy="290" r="12" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1">
+        <animate attributeName="r" values="12;20;12" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.3;0;0.3" dur="4s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Orbit rings -->
+      <circle cx="300" cy="290" r="45" fill="none" stroke="rgba(139,92,246,0.06)" stroke-width="0.5" stroke-dasharray="3 8"/>
+      <circle cx="300" cy="290" r="70" fill="none" stroke="rgba(6,182,212,0.04)" stroke-width="0.5" stroke-dasharray="2 12"/>
+    </svg>
+  </div>
+
+  <!-- Micro particles -->
+  <div class="micro" style="width:2px;height:2px;background:#8b5cf6;top:60px;left:750px;opacity:0.4;box-shadow:0 0 4px #8b5cf6;"></div>
+  <div class="micro" style="width:1.5px;height:1.5px;background:#06b6d4;top:120px;left:1050px;opacity:0.3;box-shadow:0 0 3px #06b6d4;"></div>
+  <div class="micro" style="width:2px;height:2px;background:#fff;top:180px;left:1100px;opacity:0.15;"></div>
+  <div class="micro" style="width:1.5px;height:1.5px;background:#22c55e;top:450px;left:680px;opacity:0.3;box-shadow:0 0 3px #22c55e;"></div>
+  <div class="micro" style="width:2px;height:2px;background:#8b5cf6;top:380px;left:1130px;opacity:0.25;box-shadow:0 0 4px #8b5cf6;"></div>
+  <div class="micro" style="width:1px;height:1px;background:#fff;top:280px;left:650px;opacity:0.2;"></div>
+  <div class="micro" style="width:1.5px;height:1.5px;background:#06b6d4;top:500px;left:950px;opacity:0.2;box-shadow:0 0 3px #06b6d4;"></div>
+
+  <!-- Vignette -->
+  <div class="vignette"></div>
+
+  <!-- Noise -->
+  <div class="noise"></div>
+
+  <!-- Left text block -->
+  <div class="text-block">
+    <div class="top-brand">
+      <span class="dna-emoji">&#x1F9EC;</span>
+      <span class="brand-text">GSEP</span>
+    </div>
+
+    <div class="title">Your AI Agent,<br>But <strong>Alive</strong></div>
+
+    <div class="tagline">AI agents that evolve their own prompts through biological evolution</div>
+
+    <div class="features">
+      <span class="pill purple">30 Intelligence Systems</span>
+      <span class="pill cyan">5 LLM Providers</span>
+      <span class="pill green">Auto-Evolution</span>
+      <span class="pill amber">Patentado</span>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <span>Open Source &middot; MIT Licensed</span>
+    <span>gsepcore.com</span>
+  </div>
+
+</div>
+</body>
+</html>

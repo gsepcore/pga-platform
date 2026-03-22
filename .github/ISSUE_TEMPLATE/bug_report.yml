@@ -56,7 +56,7 @@ body:
     id: version
     attributes:
       label: GSEP Version
-      description: Which version of @pga-ai/core are you using?
+      description: Which version of @gsep/core are you using?
       placeholder: "0.8.0"
     validations:
       required: true

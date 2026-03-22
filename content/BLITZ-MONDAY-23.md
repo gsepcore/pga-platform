@@ -105,7 +105,7 @@ Works with ANY LLM:
 
 3 lines to install. MIT licensed. 1600+ tests.
 
-npm install @pga-ai/core
+npm install @gsep/core
 
 Tweet 6:
 Full technical deep-dive: [dev.to article link]

@@ -61,7 +61,7 @@ I spent 18 months building an open-source system that treats prompts as **living
 
 ```typescript
 // Instead of a static prompt:
-import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
+import { PGA, InMemoryStorageAdapter } from '@gsep/core';
 
 const gsep = new PGA({ llm: myAdapter, storage: new InMemoryStorageAdapter() });
 await gsep.initialize();
@@ -125,12 +125,12 @@ It's natural selection for prompts.
 It's MIT-licensed, works with any LLM (Claude, GPT-4, Gemini, Ollama, Perplexity), and installs in 3 lines:
 
 ```bash
-npm install @pga-ai/core @pga-ai/adapters-llm-anthropic
+npm install @gsep/core @gsep/adapters-llm-anthropic
 ```
 
 ```typescript
-import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
+import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 const gsep = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY }),

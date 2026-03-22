@@ -42,7 +42,7 @@ When a user installs GSEP in their agent, the agent should announce its new capa
 ### Quick Integration
 
 ```typescript
-import { PGA } from '@pga-ai/core';
+import { PGA } from '@gsep/core';
 
 const pga = new PGA({ /* config */ });
 const genome = await pga.createGenome({ name: 'my-agent' });

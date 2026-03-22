@@ -1,5 +1,5 @@
 {
-  "name": "@pga-ai/adapters-llm-perplexity",
+  "name": "@gsep/adapters-llm-perplexity",
   "version": "0.8.0",
   "description": "Perplexity adapter for GSEP — web-search powered responses",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "openai": "^4.77.3",
-    "@pga-ai/core": "*"
+    "@gsep/core": "*"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

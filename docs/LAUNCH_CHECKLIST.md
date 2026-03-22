@@ -227,11 +227,11 @@ git push origin v0.8.0
 
 1. Wait 2-3 minutes for publish to complete
 
-2. Check package page: `https://www.npmjs.com/package/@pga-ai/core`
+2. Check package page: `https://www.npmjs.com/package/@gsep/core`
 
 3. Try installing:
    ```bash
-   npm install @pga-ai/core
+   npm install @gsep/core
    ```
 
 **Expected:** Package appears on npm and can be installed.
@@ -313,7 +313,7 @@ Add status badges to README.md:
 
 [![CI](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/gsepcore/pga-platform/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![npm version](https://badge.fury.io/js/@pga%2Fcore.svg)](https://www.npmjs.com/package/@pga-ai/core)
+[![npm version](https://badge.fury.io/js/@pga%2Fcore.svg)](https://www.npmjs.com/package/@gsep/core)
 ```
 
 Commit and push:

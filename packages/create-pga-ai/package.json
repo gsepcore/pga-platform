@@ -1,5 +1,5 @@
 {
-  "name": "create-pga-ai",
+  "name": "create-gsep",
   "version": "0.8.0",
   "description": "Create GSEP agents with one command - Interactive installer for GSEP Platform",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
@@ -20,7 +20,7 @@
   "sideEffects": false,
   "type": "module",
   "bin": {
-    "create-pga-ai": "./dist/index.js"
+    "create-gsep": "./dist/index.js"
   },
   "files": [
     "dist",
@@ -35,7 +35,7 @@
   },
   "keywords": [
     "gsep",
-    "create-pga-ai",
+    "create-gsep",
     "installer",
     "cli",
     "generator",

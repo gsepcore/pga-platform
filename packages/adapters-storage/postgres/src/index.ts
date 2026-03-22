@@ -14,7 +14,7 @@ import type {
     MutationLog,
     SemanticFact,
     GeneRegistryEntry,
-} from '@pga-ai/core';
+} from '@gsep/core';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -119,7 +119,7 @@ export interface PostgresAdapterConfig {
  *
  * @example
  * ```typescript
- * import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+ * import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
  *
  * const adapter = new PostgresAdapter({
  *   connectionString: process.env.DATABASE_URL,

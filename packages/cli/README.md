@@ -1,4 +1,4 @@
-# @pga-ai/cli
+# @gsep/cli
 
 Interactive command-line interface for GSEP (Genomic Self-Evolving Prompts).
 
@@ -7,13 +7,13 @@ Interactive command-line interface for GSEP (Genomic Self-Evolving Prompts).
 ### Global Installation (Recommended)
 
 ```bash
-npm install -g @pga-ai/cli
+npm install -g @gsep/cli
 ```
 
 ### Local Installation
 
 ```bash
-npm install --save-dev @pga-ai/cli
+npm install --save-dev @gsep/cli
 ```
 
 ## Commands
@@ -58,7 +58,7 @@ pga doctor --fix    # Attempt to fix issues
 Simple GSEP setup for getting started quickly.
 
 ```typescript
-import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
+import { PGA, InMemoryStorageAdapter } from '@gsep/core';
 
 const pga = new PGA({
   storage: new InMemoryStorageAdapter(),
@@ -73,8 +73,8 @@ const genome = await pga.createGenome({ name: 'my-assistant' });
 Multi-model support with monitoring.
 
 ```typescript
-import { PGA, MetricsCollector } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
+import { PGA, MetricsCollector } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY! }),
@@ -87,9 +87,9 @@ const pga = new PGA({
 Production-ready with all features.
 
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+import { PGA } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY! }),

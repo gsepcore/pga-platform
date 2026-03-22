@@ -10,7 +10,7 @@
  *
  * @example
  * ```typescript
- * import { GeminiAdapter } from '@pga-ai/adapters-llm-google';
+ * import { GeminiAdapter } from '@gsep/adapters-llm-google';
  *
  * const adapter = new GeminiAdapter({
  *   apiKey: process.env.GOOGLE_API_KEY,
@@ -26,7 +26,7 @@ import type {
     ChatOptions,
     ChatResponse,
     ChatChunk,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 export interface GeminiAdapterConfig {
     /**

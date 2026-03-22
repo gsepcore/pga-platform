@@ -1,5 +1,5 @@
 /**
- * @pga-ai/server — GSEP Evolution Server
+ * @gsep/server — GSEP Evolution Server
  *
  * Secure Pull/Push API for external agents in any language.
  * GSEP never touches LLM traffic — only evolved prompts and metrics flow.
@@ -18,4 +18,4 @@ export type {
     StripePaymentsConfig,
     PaymentStorage,
     PlanId,
-} from '@pga-ai/payments';
+} from '@gsep/payments';

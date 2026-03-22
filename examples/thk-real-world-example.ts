@@ -24,7 +24,7 @@ import {
     type MutationContext as GeneMutationContext,
     type TenantInfo,
     createGeneId,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 // ============================================================================
 // SCENARIO SETUP

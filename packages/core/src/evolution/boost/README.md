@@ -49,7 +49,7 @@ Evolution Boost 2.0 adds **7 new components** on top of the existing system:
 The master controller that brings everything together.
 
 ```typescript
-import { EvolutionBoostEngine } from '@pga-ai/core';
+import { EvolutionBoostEngine } from '@gsep/core';
 
 const boostEngine = new EvolutionBoostEngine({
   mode: 'aggressive',        // 'conservative' | 'balanced' | 'aggressive'
@@ -94,7 +94,7 @@ console.log(`Branches explored: ${result.stats.branchesExplored}`);
 Explores multiple mutation branches simultaneously.
 
 ```typescript
-import { ParallelEvolutionEngine } from '@pga-ai/core';
+import { ParallelEvolutionEngine } from '@gsep/core';
 
 const parallelEngine = new ParallelEvolutionEngine(baseEngine, {
   branchCount: 10,                 // 10 parallel mutations
@@ -110,7 +110,7 @@ const result = await parallelEngine.evolveGeneration(context);
 Multi-objective optimization instead of single fitness score.
 
 ```typescript
-import { ParetoOptimizer } from '@pga-ai/core';
+import { ParetoOptimizer } from '@gsep/core';
 
 const optimizer = new ParetoOptimizer();
 
@@ -127,7 +127,7 @@ const best = optimizer.findBestForTradeoff(frontier, 'quality');
 Learns which operators work best and adapts over time.
 
 ```typescript
-import { MetaEvolutionEngine } from '@pga-ai/core';
+import { MetaEvolutionEngine } from '@gsep/core';
 
 const metaEngine = new MetaEvolutionEngine({
   learningRate: 0.1,
@@ -152,7 +152,7 @@ console.log(`Success rate: ${insights.overallSuccessRate}`);
 Intelligently combines genes from multiple parents.
 
 ```typescript
-import { GeneticRecombinator } from '@pga-ai/core';
+import { GeneticRecombinator } from '@gsep/core';
 
 const recombinator = new GeneticRecombinator(llm);
 
@@ -243,7 +243,7 @@ Evolution Boost adds 4 new operators on top:
 ## 🚀 Quick Start
 
 ```typescript
-import { EvolutionBoostEngine } from '@pga-ai/core';
+import { EvolutionBoostEngine } from '@gsep/core';
 
 // 1. Create boost engine
 const boostEngine = new EvolutionBoostEngine({
@@ -309,7 +309,7 @@ EvolutionBoostEngine (Orchestrator)
 
 ## 📝 License
 
-Part of @pga-ai/core (MIT License)
+Part of @gsep/core (MIT License)
 
 ---
 

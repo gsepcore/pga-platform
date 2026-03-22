@@ -5,7 +5,7 @@ Production-hardening features: Circuit Breakers, Retry Logic, and Error Recovery
 ## Circuit Breaker
 
 ```typescript
-import { CircuitBreaker } from '@pga-ai/core';
+import { CircuitBreaker } from '@gsep/core';
 
 const breaker = new CircuitBreaker({
   failureThreshold: 5,
@@ -20,7 +20,7 @@ const result = await breaker.execute(async () => {
 ## Retry Logic
 
 ```typescript
-import { RetryManager } from '@pga-ai/core';
+import { RetryManager } from '@gsep/core';
 
 const retry = new RetryManager({
   maxAttempts: 3,

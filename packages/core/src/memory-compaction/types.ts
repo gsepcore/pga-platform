@@ -1,7 +1,7 @@
 /**
  * @file Memory Compaction Types
  * @description Type definitions for memory compaction system
- * @module @pga-ai/core/memory-compaction
+ * @module @gsep/core/memory-compaction
  */
 
 /**

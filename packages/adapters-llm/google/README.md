@@ -1,18 +1,18 @@
-# @pga-ai/adapters-llm-google
+# @gsep/adapters-llm-google
 
 > Google Gemini adapter for GSEP (Genomic Self-Evolving Prompts)
 
 ## Installation
 
 ```bash
-npm install @pga-ai/core @pga-ai/adapters-llm-google
+npm install @gsep/core @gsep/adapters-llm-google
 ```
 
 ## Usage
 
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { GeminiAdapter } from '@pga-ai/adapters-llm-google';
+import { PGA } from '@gsep/core';
+import { GeminiAdapter } from '@gsep/adapters-llm-google';
 
 const pga = new PGA({
   llm: new GeminiAdapter({

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * create-pga-ai — Interactive GSEP Platform Installer
+ * create-gsep — Interactive GSEP Platform Installer
  *
  * One command to create a complete GSEP agent project:
  * npm create pga-ai@latest my-agent
@@ -48,7 +48,7 @@ function displayBanner() {
 
 // Main CLI
 program
-    .name('create-pga-ai')
+    .name('create-gsep')
     .description('Create a new GSEP agent project')
     .version('0.1.0')
     .argument('[project-name]', 'Project name')

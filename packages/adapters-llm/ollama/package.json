@@ -1,5 +1,5 @@
 {
-  "name": "@pga-ai/adapters-llm-ollama",
+  "name": "@gsep/adapters-llm-ollama",
   "version": "0.8.0",
   "description": "Ollama adapter for GSEP — use local LLMs with GSEP",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
@@ -37,7 +37,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@pga-ai/core": "*"
+    "@gsep/core": "*"
   },
   "devDependencies": {
     "typescript": "^5.6.0"

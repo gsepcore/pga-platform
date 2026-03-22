@@ -367,7 +367,7 @@ import {
   GeneAdopter,
   MetricsCollector,
   // ... types
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 // 1. Initialize components
 const metricsCollector = new MetricsCollector({ enabled: true });

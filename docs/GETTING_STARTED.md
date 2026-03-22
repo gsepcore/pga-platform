@@ -9,7 +9,7 @@ Complete guide for installing and using GSEP in your AI agents.
 ### Installation in 3 Lines
 
 ```typescript
-import { GeneBank, InMemoryGeneStorage } from '@pga-ai/core';
+import { GeneBank, InMemoryGeneStorage } from '@gsep/core';
 
 // That's it! Gene Bank ready to use
 const geneBank = new GeneBank(new InMemoryGeneStorage(), {
@@ -102,7 +102,7 @@ import {
 **Once published to npm:**
 
 ```bash
-npm install @pga-ai/core
+npm install @gsep/core
 ```
 
 ```typescript
@@ -111,7 +111,7 @@ import {
     ClaudeAdapter,
     GeneBank,
     InMemoryGeneStorage,
-} from '@pga-ai/core';
+} from '@gsep/core';
 ```
 
 ---
@@ -123,7 +123,7 @@ import {
 The simplest way to add GSEP to your agent:
 
 ```typescript
-import { GeneBank, InMemoryGeneStorage, createGeneId } from '@pga-ai/core';
+import { GeneBank, InMemoryGeneStorage, createGeneId } from '@gsep/core';
 
 // 1. Create Gene Bank (one line!)
 const geneBank = new GeneBank(new InMemoryGeneStorage(), {
@@ -160,7 +160,7 @@ import {
     ClaudeAdapter,
     GeneBank,
     InMemoryGeneStorage,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 // 1. Create Gene Bank
 const geneBank = new GeneBank(new InMemoryGeneStorage(), {
@@ -192,7 +192,7 @@ const response = await genome.chat('Hello!', { userId: 'user123' });
 ### Creating and Storing a Gene
 
 ```typescript
-import { createGeneId, type CognitiveGene } from '@pga-ai/core';
+import { createGeneId, type CognitiveGene } from '@gsep/core';
 
 // Create a gene that captures a behavioral pattern
 const errorRecoveryGene: CognitiveGene = {
@@ -325,7 +325,7 @@ GSEP supports multiple LLM providers out of the box:
 ### Using Claude (Anthropic)
 
 ```typescript
-import { ClaudeAdapter } from '@pga-ai/core';
+import { ClaudeAdapter } from '@gsep/core';
 
 const llm = new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_API_KEY!,
@@ -338,7 +338,7 @@ const llm = new ClaudeAdapter({
 ### Using GPT (OpenAI)
 
 ```typescript
-import { OpenAIAdapter } from '@pga-ai/core';
+import { OpenAIAdapter } from '@gsep/core';
 
 const llm = new OpenAIAdapter({
     apiKey: process.env.OPENAI_API_KEY!,
@@ -351,7 +351,7 @@ const llm = new OpenAIAdapter({
 ### Creating a Custom Adapter
 
 ```typescript
-import { LLMAdapter, CompletionParams, CompletionResult } from '@pga-ai/core';
+import { LLMAdapter, CompletionParams, CompletionResult } from '@gsep/core';
 
 class MyCustomAdapter implements LLMAdapter {
     async complete(params: CompletionParams): Promise<CompletionResult> {
@@ -391,7 +391,7 @@ const llm = new MyCustomAdapter();
 ### In-Memory Storage (Testing)
 
 ```typescript
-import { InMemoryGeneStorage } from '@pga-ai/core';
+import { InMemoryGeneStorage } from '@gsep/core';
 
 const storage = new InMemoryGeneStorage();
 // ✅ Fast, no setup required
@@ -401,7 +401,7 @@ const storage = new InMemoryGeneStorage();
 ### PostgreSQL Storage (Production)
 
 ```typescript
-import { PostgresGeneStorage } from '@pga-ai/core';
+import { PostgresGeneStorage } from '@gsep/core';
 import pg from 'pg';
 
 const pool = new pg.Pool({
@@ -423,7 +423,7 @@ See [PostgresGeneStorage.ts](./packages/core/src/gene-bank/adapters/PostgresGene
 Enable metrics collection to track your agent's performance:
 
 ```typescript
-import { MetricsCollector } from '@pga-ai/core';
+import { MetricsCollector } from '@gsep/core';
 
 const metrics = new MetricsCollector({
     enabled: true,

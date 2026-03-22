@@ -158,7 +158,7 @@ const S09_Integration_Short: React.FC = () => {
                   Step 1: Install
                 </div>
                 <CodeBlock
-                  code="npm install @pga-ai/core @pga-ai/adapters-llm-anthropic"
+                  code="npm install @gsep/core @gsep/adapters-llm-anthropic"
                   delay={50}
                   fontSize={18}
                 />
@@ -207,8 +207,8 @@ const S09_Integration_Short: React.FC = () => {
                   Step 2: Initialize
                 </div>
                 <CodeBlock
-                  code={`import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
+                  code={`import { PGA } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.API_KEY }),

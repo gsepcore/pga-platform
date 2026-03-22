@@ -11,7 +11,7 @@
 
 import type { FastifyInstance } from 'fastify';
 import type { PGAServer } from '../PGAServer.js';
-import type { StripePayments } from '@pga-ai/payments';
+import type { StripePayments } from '@gsep/payments';
 
 export function registerPaymentRoutes(
     app: FastifyInstance,

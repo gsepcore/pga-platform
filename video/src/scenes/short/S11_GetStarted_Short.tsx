@@ -16,7 +16,7 @@ const TOTAL = 600; // 20s x 30fps
 
 const narrationLines = [
   { text: "GSEP is open source. MIT licensed core, free forever.", startFrame: 0, endFrame: 200 },
-  { text: "Run npm install @pga-ai/core to get started.", startFrame: 200, endFrame: 350 },
+  { text: "Run npm install @gsep/core to get started.", startFrame: 200, endFrame: 350 },
   { text: "Read the docs. Star on GitHub. Join the Discord community.", startFrame: 350, endFrame: 500 },
   { text: "Your agent, but alive. It starts now.", startFrame: 500, endFrame: 600 },
 ];
@@ -196,7 +196,7 @@ const S11_GetStarted_Short: React.FC = () => {
               }}
             >
               <CodeBlock
-                code="npm install @pga-ai/core"
+                code="npm install @gsep/core"
                 delay={205}
                 fontSize={28}
                 lineDelay={5}

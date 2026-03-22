@@ -29,7 +29,7 @@ export const reels: ReelScript[] = [
 Without evolution, your agent degrades silently.
 GSEP detects drift across 5 dimensions and auto-heals before users notice.
 Zero manual tuning. Your agent fixes itself.`,
-    cta: `Link in bio. npm install @pga-ai/core. Let your agent evolve.`,
+    cta: `Link in bio. npm install @gsep/core. Let your agent evolve.`,
   },
   {
     id: "R02",
@@ -82,7 +82,7 @@ No extra LLM calls. Auto-quarantine. Self-healing.`,
 Communication style. Formatting preferences. Response length. Tone.
 It tracks successful interaction patterns and reinforces what works.
 Not just memory — evolution. Your agent doesn't just remember, it gets better at being useful to YOU.`,
-    cta: `Free forever. MIT license. npm install @pga-ai/core`,
+    cta: `Free forever. MIT license. npm install @gsep/core`,
   },
   {
     id: "R06",

@@ -390,8 +390,8 @@ Variable user queries in production
 ### Basic Setup
 
 ```typescript
-import { ReasoningEngine, MetricsCollector } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
+import { ReasoningEngine, MetricsCollector } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
 
 // Setup
 const metricsCollector = new MetricsCollector({ enabled: true });

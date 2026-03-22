@@ -65,7 +65,7 @@ export default function S11_Integration() {
               Step 1: Install
             </h2>
             <CodeBlock
-              code="npm install @pga-ai/core @pga-ai/adapters-llm-anthropic"
+              code="npm install @gsep/core @gsep/adapters-llm-anthropic"
               delay={10}
               fontSize={20}
             />
@@ -97,8 +97,8 @@ export default function S11_Integration() {
               Step 2: Initialize
             </h2>
             <CodeBlock
-              code={`import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
+              code={`import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY }),

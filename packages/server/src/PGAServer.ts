@@ -17,9 +17,9 @@
 
 import { timingSafeEqual } from 'node:crypto';
 import Fastify, { type FastifyInstance } from 'fastify';
-import { PGA, GenomeInstance, GenomeBuilder, InMemoryStorageAdapter } from '@pga-ai/core';
-import type { LLMAdapter, StorageAdapter, WrapOptions } from '@pga-ai/core';
-import type { GeneCategory } from '@pga-ai/core';
+import { PGA, GenomeInstance, GenomeBuilder, InMemoryStorageAdapter } from '@gsep/core';
+import type { LLMAdapter, StorageAdapter, WrapOptions } from '@gsep/core';
+import type { GeneCategory } from '@gsep/core';
 import { HMACVerifier } from './auth/HMACVerifier.js';
 import { registerHealthRoutes } from './routes/health.js';
 import { registerGenomeRoutes } from './routes/genomes.js';
@@ -45,7 +45,7 @@ export interface PGAServerConfig {
     /** Rate limiting config */
     rateLimit?: { max: number; timeWindow: string };
     /** Stripe payments instance (optional — enables payment routes) */
-    payments?: import('@pga-ai/payments').StripePayments;
+    payments?: import('@gsep/payments').StripePayments;
 }
 
 export interface RegisterGenomeOptions {

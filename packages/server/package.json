@@ -1,5 +1,5 @@
 {
-  "name": "@pga-ai/server",
+  "name": "@gsep/server",
   "version": "0.8.0",
   "description": "GSEP Evolution Server — Secure Pull/Push API for external agents",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
@@ -40,8 +40,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@pga-ai/core": "*",
-    "@pga-ai/payments": "*",
+    "@gsep/core": "*",
+    "@gsep/payments": "*",
     "fastify": "^5.3.3",
     "@fastify/rate-limit": "^10.2.0"
   },

@@ -99,8 +99,8 @@ async function createProjectStructure(
             start: 'node dist/index.js',
         },
         dependencies: {
-            '@pga-ai/core': '^0.8.0',
-            '@pga-ai/adapters-llm-anthropic': '^0.8.0',
+            '@gsep/core': '^0.8.0',
+            '@gsep/adapters-llm-anthropic': '^0.8.0',
         },
         devDependencies: {
             typescript: '^5.4.5',
@@ -111,11 +111,11 @@ async function createProjectStructure(
 
     // Add dependencies based on template
     if (template === 'advanced' || template === 'enterprise') {
-        packageJson.dependencies['@pga-ai/adapters-llm-openai'] = '^0.8.0';
+        packageJson.dependencies['@gsep/adapters-llm-openai'] = '^0.8.0';
     }
 
     if (template === 'enterprise') {
-        packageJson.dependencies['@pga-ai/adapters-storage-postgres'] = '^0.8.0';
+        packageJson.dependencies['@gsep/adapters-storage-postgres'] = '^0.8.0';
     }
 
     await fs.writeFile(
@@ -193,8 +193,8 @@ function getMainTemplate(template: string): string {
  * Basic GSEP Application
  */
 
-import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
+import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 async function main() {
     // Initialize GSEP
@@ -235,9 +235,9 @@ main().catch(console.error);
  * Includes monitoring and multi-model support
  */
 
-import { PGA, InMemoryStorageAdapter, MetricsCollector } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';
+import { PGA, InMemoryStorageAdapter, MetricsCollector } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+import { OpenAIAdapter } from '@gsep/adapters-llm-openai';
 
 async function main() {
     // Initialize GSEP with Claude
@@ -291,9 +291,9 @@ main().catch(console.error);
  * Production-ready with PostgreSQL, monitoring, and multi-model support
  */
 
-import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+import { PGA } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
 async function main() {
     // Initialize PostgreSQL storage

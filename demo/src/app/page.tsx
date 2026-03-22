@@ -48,8 +48,8 @@ const ctas = [
     color: "#5865F2",
   },
   {
-    label: "npm install @pga-ai/core",
-    href: "https://www.npmjs.com/package/@pga-ai/core",
+    label: "npm install @gsep/core",
+    href: "https://www.npmjs.com/package/@gsep/core",
     icon: "⚡",
     color: "#22c55e",
   },
@@ -525,7 +525,7 @@ export default function DemoPage() {
             color: "var(--green)",
           }}
         >
-          <span style={{ color: "var(--text-muted)" }}>$</span> npm install @pga-ai/core
+          <span style={{ color: "var(--text-muted)" }}>$</span> npm install @gsep/core
         </div>
         <p
           style={{

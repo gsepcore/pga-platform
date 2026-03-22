@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `create-pga-ai` will be documented in this file.
+All notable changes to `create-gsep` will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-02-27
 
 ### Added
-- 🎉 Initial release of create-pga-ai
+- 🎉 Initial release of create-gsep
 - Interactive CLI installer with beautiful UI (figlet banner, boxen, chalk colors, ora spinners)
 - Support for multiple LLM providers (Anthropic Claude, OpenAI GPT, or both)
 - Multiple storage backends (PostgreSQL for production, in-memory for development)
@@ -47,4 +47,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Ready-to-use LLM adapters
   - Environment-based configuration
 
-[0.1.0]: https://github.com/gsepcore/pga-platform/releases/tag/create-pga-ai-v0.1.0
+[0.1.0]: https://github.com/gsepcore/pga-platform/releases/tag/create-gsep-v0.1.0

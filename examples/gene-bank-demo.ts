@@ -31,7 +31,7 @@ import {
 
     // Observability
     MetricsCollector,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 // ============================================================================
 // MOCK IMPLEMENTATIONS (For Demo Purposes)

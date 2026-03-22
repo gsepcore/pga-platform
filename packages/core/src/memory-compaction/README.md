@@ -22,7 +22,7 @@ AI agents with long conversations face critical challenges:
 ## 🚀 Quick Start
 
 ```typescript
-import { MemoryCompactor } from '@pga-ai/core';
+import { MemoryCompactor } from '@gsep/core';
 
 // Create compactor
 const compactor = new MemoryCompactor({
@@ -372,7 +372,7 @@ compactor.strategies.set('my-strategy', new MyCustomStrategy());
 Memory Compaction works seamlessly with GSEP's evolution system:
 
 ```typescript
-import { PGA, MemoryCompactor } from '@pga-ai/core';
+import { PGA, MemoryCompactor } from '@gsep/core';
 
 const pga = new PGA({ /* config */ });
 const compactor = new MemoryCompactor();

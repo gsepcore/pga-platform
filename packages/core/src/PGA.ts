@@ -135,15 +135,15 @@ export class PGA {
             throw new Error(
                 `[GSEP] LLM adapter is required.\n\n`
                 + `GSEP needs an AI model to function. Please provide an LLM adapter:\n\n`
-                + `  import { PGA } from '@pga-ai/core';\n`
-                + `  import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';\n\n`
+                + `  import { PGA } from '@gsep/core';\n`
+                + `  import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\n\n`
                 + `  const pga = new PGA({\n`
                 + `    llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY }),\n`
                 + `    storage: yourStorageAdapter,\n`
                 + `  });\n\n`
                 + `Supported adapters:\n`
-                + `  - @pga-ai/adapters-llm-anthropic (Claude)\n`
-                + `  - @pga-ai/adapters-llm-openai (GPT-4)\n\n`
+                + `  - @gsep/adapters-llm-anthropic (Claude)\n`
+                + `  - @gsep/adapters-llm-openai (GPT-4)\n\n`
                 + `Run 'pga doctor' for full diagnostics.`,
             );
         }
@@ -152,12 +152,12 @@ export class PGA {
             throw new Error(
                 `[GSEP] Storage adapter is required.\n\n`
                 + `GSEP needs a storage adapter to persist genomes. Please provide one:\n\n`
-                + `  import { InMemoryStorage } from '@pga-ai/core';\n\n`
+                + `  import { InMemoryStorage } from '@gsep/core';\n\n`
                 + `  const pga = new PGA({\n`
                 + `    llm: yourLLMAdapter,\n`
                 + `    storage: new InMemoryStorage(),\n`
                 + `  });\n\n`
-                + `For production, use: @pga-ai/adapters-storage-postgres`,
+                + `For production, use: @gsep/adapters-storage-postgres`,
             );
         }
 

@@ -69,7 +69,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 - **ProofOfValueRunner** — objective measurement of GSEP's impact with fitness curve reporting
 - **LLM-powered mutation operators** — 4 mutation types rewritten with intelligence-fed evolution
 - **PGA.wrap()** — universal self-evolving agent middleware for any LLM call
-- **@pga-ai/server** — secure Pull/Push evolution server for external agents (HMAC auth, rate limiting)
+- **@gsep/server** — secure Pull/Push evolution server for external agents (HMAC auth, rate limiting)
 - `reportExternalMetrics()` on `GenomeInstance` for external agent metric ingestion
 
 ---
@@ -132,7 +132,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 - **RAG Engine** — vector search with semantic embeddings, knowledge-grounded responses
 - **Reasoning Engine** — 5 strategies (Direct, CoT, Self-Consistency, Tree-of-Thought, Reflection)
 - **Monitoring system** — real-time drift detection, performance metrics, alerting
-- OpenAI GPT-4 adapter (`@pga-ai/adapters-llm-openai`)
+- OpenAI GPT-4 adapter (`@gsep/adapters-llm-openai`)
 - Evaluation framework for objective benchmarking
 - Plugin system architecture
 - Circuit breaker and retry logic
@@ -162,8 +162,8 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 - Fitness tracking with EMA (Exponential Moving Average)
 - Immune system with auto-rollback on >20% performance drop
 - Sandbox testing before deployment
-- Anthropic Claude adapter (`@pga-ai/adapters-llm-anthropic`)
-- PostgreSQL storage adapter (`@pga-ai/adapters-storage-postgres`)
+- Anthropic Claude adapter (`@gsep/adapters-llm-anthropic`)
+- PostgreSQL storage adapter (`@gsep/adapters-storage-postgres`)
 - Welcome message system (4 styles)
 - Monorepo structure with Turborepo
 
@@ -201,7 +201,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 
 ## License
 
-- **@pga-ai/core**: MIT License
+- **@gsep/core**: MIT License
 - **Gene Registry**: BSL 1.1 (converts to Apache 2.0 in 2029)
 - **GSEP Cloud**: Proprietary
 

@@ -20,7 +20,7 @@ import type { SharingScope } from '../CognitiveGene';
  *
  * @example
  * ```typescript
- * import { GeneBank, InMemoryGeneStorage } from '@pga-ai/core';
+ * import { GeneBank, InMemoryGeneStorage } from '@gsep/core';
  *
  * const storage = new InMemoryGeneStorage();
  * const geneBank = new GeneBank(storage, {

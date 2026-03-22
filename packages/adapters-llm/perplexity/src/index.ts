@@ -12,7 +12,7 @@
  *
  * @example
  * ```typescript
- * import { PerplexityAdapter } from '@pga-ai/adapters-llm-perplexity';
+ * import { PerplexityAdapter } from '@gsep/adapters-llm-perplexity';
  *
  * const adapter = new PerplexityAdapter({
  *   apiKey: process.env.PERPLEXITY_API_KEY,
@@ -28,7 +28,7 @@ import type {
     ChatOptions,
     ChatResponse,
     ChatChunk,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 export interface PerplexityAdapterConfig {
     /**

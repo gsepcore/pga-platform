@@ -16,7 +16,7 @@ Extensible plugin architecture for community tools and integrations.
 ### Create a Plugin
 
 ```typescript
-import { Plugin } from '@pga-ai/core';
+import { Plugin } from '@gsep/core';
 
 const myPlugin: Plugin = {
   metadata: {
@@ -46,7 +46,7 @@ const myPlugin: Plugin = {
 ### Register Plugin
 
 ```typescript
-import { PluginManager } from '@pga-ai/core';
+import { PluginManager } from '@gsep/core';
 
 const plugins = new PluginManager();
 
@@ -463,7 +463,7 @@ const loggingPlugin: Plugin = {
 ## Integration with GSEP
 
 ```typescript
-import { PGA, PluginManager } from '@pga-ai/core';
+import { PGA, PluginManager } from '@gsep/core';
 
 const plugins = new PluginManager();
 
@@ -589,7 +589,7 @@ Example package.json:
   "main": "dist/index.js",
   "keywords": ["pga", "plugin", "slack", "notifications"],
   "peerDependencies": {
-    "@pga-ai/core": "^0.1.0"
+    "@gsep/core": "^0.1.0"
   }
 }
 ```

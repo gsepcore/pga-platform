@@ -1,4 +1,4 @@
-# @pga-ai/adapters-llm-ollama
+# @gsep/adapters-llm-ollama
 
 > Ollama adapter for GSEP — use local LLMs with self-evolving prompts
 
@@ -7,7 +7,7 @@ No API keys needed. Run any open-source model locally.
 ## Installation
 
 ```bash
-npm install @pga-ai/core @pga-ai/adapters-llm-ollama
+npm install @gsep/core @gsep/adapters-llm-ollama
 ```
 
 ## Prerequisites
@@ -23,8 +23,8 @@ ollama serve
 ## Usage
 
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { OllamaAdapter } from '@pga-ai/adapters-llm-ollama';
+import { PGA } from '@gsep/core';
+import { OllamaAdapter } from '@gsep/adapters-llm-ollama';
 
 const pga = new PGA({
   llm: new OllamaAdapter({

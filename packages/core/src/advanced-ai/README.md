@@ -13,7 +13,7 @@ Advanced reasoning techniques: Chain-of-Thought, Self-Reflection, and Meta-Learn
 ## Chain-of-Thought
 
 ```typescript
-import { ThinkingEngine } from '@pga-ai/core';
+import { ThinkingEngine } from '@gsep/core';
 
 const thinking = new ThinkingEngine();
 

@@ -283,7 +283,7 @@ Empresas como bancos o aseguradoras pueden comprar:
 - 🎯 **Hito:** 100 desarrolladores en waitlist
 
 ### Fase 2: Expansión (Mes 4-8) - Q2-Q3 2025
-- 🚀 Lanzamiento público de @pga-ai/core
+- 🚀 Lanzamiento público de @gsep/core
 - 🚀 GSEP Cloud Dashboard (Beta)
 - 🚀 Primeras 10 empresas beta testing
 - 🚀 SDK para LangChain, AutoGPT
@@ -408,7 +408,7 @@ Empresas como bancos o aseguradoras pueden comprar:
 2. **Documentación God-Mode:** Tutoriales, videos, ejemplos listos (boilerplates)
 3. **Open-source el Core SDK:** Mientras GSEP Cloud es paid
 
-**Métrica de éxito:** 5,000 instalaciones de @pga-ai/core en NPM.
+**Métrica de éxito:** 5,000 instalaciones de @gsep/core en NPM.
 
 ### 9.3 Fase "Enterprise Pilot" (Mes 13-18)
 
@@ -751,9 +751,9 @@ const result = await chain.call({ input: "Hello!" });
 
 **Después (GSEP - compatible con LangChain):**
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage/postgres';
+import { PGA } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
+import { PostgresAdapter } from '@gsep/adapters-storage/postgres';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_KEY }),
@@ -784,11 +784,11 @@ const result = await genome.chat('Hello!', { userId: 'user123' });
 
 **Ejemplo de plugin:**
 ```bash
-npm install @pga-ai/langchain-adapter
+npm install @gsep/langchain-adapter
 ```
 
 ```typescript
-import { PGALangChainAdapter } from '@pga-ai/langchain-adapter';
+import { PGALangChainAdapter } from '@gsep/langchain-adapter';
 
 const adapter = new PGALangChainAdapter({
   genome: myGenome,
@@ -1273,7 +1273,7 @@ Luis, con este **GSEP Master Blueprint v2.0** tienes en tus manos:
 
 ### 🚀 Próximos Pasos Inmediatos
 
-1. **Semana 1-2:** Completar MVP de @pga-ai/core (lo que estamos haciendo ahora)
+1. **Semana 1-2:** Completar MVP de @gsep/core (lo que estamos haciendo ahora)
 2. **Semana 3-4:** Correr experimento Alpha con 100 prompts reales
 3. **Mes 2:** Documentar resultados + case study
 4. **Mes 3:** Pitch a primeros 10 VCs con este blueprint

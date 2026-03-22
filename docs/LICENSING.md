@@ -11,10 +11,10 @@ GSEP Platform uses a **multi-tier licensing model** to balance open-source commu
 
 | Package/Component | License | Usage |
 |-------------------|---------|-------|
-| `@pga-ai/core` | **MIT License** | Free, open source, commercial use allowed |
-| `@pga-ai/adapters-llm-*` | **MIT License** | Free, open source, commercial use allowed |
-| `@pga-ai/adapters-storage-*` | **MIT License** | Free, open source, commercial use allowed |
-| `@pga-ai/cli` | **MIT License** | Free, open source, commercial use allowed |
+| `@gsep/core` | **MIT License** | Free, open source, commercial use allowed |
+| `@gsep/adapters-llm-*` | **MIT License** | Free, open source, commercial use allowed |
+| `@gsep/adapters-storage-*` | **MIT License** | Free, open source, commercial use allowed |
+| `@gsep/cli` | **MIT License** | Free, open source, commercial use allowed |
 | **Gene Registry** | **BSL 1.1** | Business Source License (see below) |
 | **GSEP Cloud (SaaS)** | **Proprietary** | Commercial license required |
 | **Enterprise Features** | **Proprietary** | Commercial license required |
@@ -23,7 +23,7 @@ GSEP Platform uses a **multi-tier licensing model** to balance open-source commu
 
 ## 1. Open Source Components (MIT License)
 
-### Packages: `@pga-ai/core`, `@pga-ai/adapters-*`, `@pga-ai/cli`
+### Packages: `@gsep/core`, `@gsep/adapters-*`, `@gsep/cli`
 
 ```
 MIT License

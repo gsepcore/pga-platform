@@ -1,11 +1,11 @@
 /**
  * @file Memory Compaction Module
  * @description Intelligent memory management and conversation compaction for GSEP agents
- * @module @pga-ai/core/memory-compaction
+ * @module @gsep/core/memory-compaction
  *
  * @example
  * ```typescript
- * import { MemoryCompactor } from '@pga-ai/core';
+ * import { MemoryCompactor } from '@gsep/core';
  *
  * const compactor = new MemoryCompactor({
  *   maxTokens: 100000,

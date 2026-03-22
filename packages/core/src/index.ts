@@ -1,5 +1,5 @@
 /**
- * @pga-ai/core — Genomic Self-Evolving Prompts
+ * @gsep/core — Genomic Self-Evolving Prompts
  *
  * World's first autonomous prompt evolution system for AI agents
  *
@@ -9,23 +9,23 @@
  *
  * @example
  * ```typescript
- * import { PGA } from '@pga-ai/core';
- * import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
- * import { PostgresAdapter } from '@pga-ai/adapters-storage/postgres';
+ * import { GSEP } from '@gsep/core';
+ * import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+ * import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
  *
- * const pga = new PGA({
+ * const gsep = new GSEP({
  *   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_KEY }),
  *   storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL }),
  * });
  *
- * const genome = await pga.createGenome({ name: 'my-assistant' });
+ * const genome = await gsep.createGenome({ name: 'my-assistant' });
  * const response = await genome.chat('Hello!', { userId: 'user123' });
  * ```
  */
 
 // ─── Main Exports ───────────────────────────────────────
 
-export { PGA, GenomeInstance } from './PGA.js';
+export { PGA, PGA as GSEP, GenomeInstance } from './PGA.js';
 export type { PGAConfig } from './PGA.js';
 
 // ─── Wrap (Universal Middleware) ────────────────────────

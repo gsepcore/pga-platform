@@ -13,7 +13,7 @@
  * @version 2.0.0
  */
 
-import type { GenomeV2, Chromosome0, Chromosome1, Chromosome2 } from '@pga-ai/core';
+import type { GenomeV2, Chromosome0, Chromosome1, Chromosome2 } from '@gsep/core';
 
 // ─── Template Configuration ─────────────────────────────────
 
@@ -440,7 +440,7 @@ Check:
  *
  * @example
  * ```typescript
- * import { createCodeReviewAssistant } from '@pga-ai/templates';
+ * import { createCodeReviewAssistant } from '@gsep/templates';
  *
  * const reviewer = await createCodeReviewAssistant(pga, {
  *   languages: ['typescript', 'python'],
@@ -511,15 +511,15 @@ export const USAGE_EXAMPLE = `
 
 ## 1. Install GSEP
 \`\`\`bash
-npm install @pga-ai/core @pga-ai/adapters-llm-anthropic @pga-ai/adapters-storage-postgres
+npm install @gsep/core @gsep/adapters-llm-anthropic @gsep/adapters-storage-postgres
 \`\`\`
 
 ## 2. Create Reviewer
 \`\`\`typescript
-import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
-import { createCodeReviewAssistant } from '@pga-ai/templates';
+import { PGA } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
+import { createCodeReviewAssistant } from '@gsep/templates';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY! }),

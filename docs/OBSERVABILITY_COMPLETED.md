@@ -353,13 +353,13 @@ Error rate is 33.3%, exceeding threshold of 10.0%
 
 ### Build
 ```bash
-npx turbo run build --filter=@pga-ai/core --force
+npx turbo run build --filter=@gsep/core --force
 ```
 ✅ **Build exitoso** (0 errores TypeScript)
 
 ### Tests
 ```bash
-npx turbo run test --filter=@pga-ai/core
+npx turbo run test --filter=@gsep/core
 ```
 ✅ **103/103 tests pasando**
 

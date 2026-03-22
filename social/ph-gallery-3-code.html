@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSEP Quickstart — 1270x760</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1270px; height: 760px; overflow: hidden; font-family: 'Inter', sans-serif; background: #000; }
+
+  .canvas {
+    width: 1270px; height: 760px; position: relative; overflow: hidden;
+    background: #050508;
+    display: flex; align-items: center; justify-content: center; gap: 60px;
+  }
+
+  .grid-bg {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .left {
+    position: relative; z-index: 10;
+    max-width: 380px;
+  }
+
+  .left .label {
+    font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: rgba(139,92,246,0.6); margin-bottom: 16px;
+  }
+
+  .left h2 {
+    font-size: 40px; font-weight: 200; color: #fff; letter-spacing: -0.5px; line-height: 1.15;
+    margin-bottom: 20px;
+  }
+  .left h2 strong {
+    font-weight: 900;
+    background: linear-gradient(135deg, #a78bfa, #06b6d4);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .left p {
+    font-size: 16px; color: rgba(255,255,255,0.4); line-height: 1.6; margin-bottom: 28px;
+    font-weight: 300;
+  }
+
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step {
+    display: flex; align-items: center; gap: 14px;
+  }
+  .step-num {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0;
+    background: rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.3);
+  }
+  .step-text { font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 400; }
+  .step-text strong { color: rgba(255,255,255,0.85); font-weight: 600; }
+
+  .right { position: relative; z-index: 10; }
+
+  .code-window {
+    width: 620px;
+    background: rgba(13,17,23,0.95);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 16px; overflow: hidden;
+    box-shadow: 0 0 80px rgba(139,92,246,0.08), 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  .code-titlebar {
+    height: 44px; background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; padding: 0 18px; gap: 8px;
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot.r { background: #ff5f57; }
+  .dot.a { background: #febc2e; }
+  .dot.g { background: #28c840; }
+  .filename {
+    margin-left: 14px; font-size: 13px; color: rgba(255,255,255,0.35);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .code-body {
+    padding: 26px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; line-height: 1.7; color: #e6edf3;
+  }
+
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; }
+  .prop { color: #ffa657; }
+  .dim { opacity: 0.5; }
+
+  .install-bar {
+    margin-top: 16px;
+    background: rgba(13,17,23,0.95);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 12px; padding: 16px 22px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .install-bar .prompt { color: #4ade80; font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; }
+  .install-bar .cmd { color: #e6edf3; font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+
+  .bottom-bar {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 48px;
+    background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: center; justify-content: center; z-index: 20;
+  }
+  .bottom-bar span {
+    font-size: 12px; font-weight: 400; letter-spacing: 2px;
+    color: rgba(255,255,255,0.2); text-transform: uppercase;
+  }
+
+  .vignette {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 5;
+    background: radial-gradient(ellipse at 60% 50%, transparent 40%, rgba(0,0,0,0.5) 100%);
+    pointer-events: none;
+  }
+  .noise {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 50; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+  <div class="grid-bg"></div>
+  <div class="vignette"></div>
+  <div class="noise"></div>
+
+  <!-- Left: explanation -->
+  <div class="left">
+    <div class="label">Quickstart</div>
+    <h2>Get started in<br><strong>3 lines of code</strong></h2>
+    <p>Install, wrap your agent, chat. The evolution happens automatically behind the scenes.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Install</strong> — one npm package</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Wrap</strong> — give your agent a genome</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Chat</strong> — it learns and evolves</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: code -->
+  <div class="right">
+    <div class="code-window">
+      <div class="code-titlebar">
+        <div class="dot r"></div>
+        <div class="dot a"></div>
+        <div class="dot g"></div>
+        <span class="filename">my-agent.ts</span>
+      </div>
+      <div class="code-body">
+        <span class="kw">import</span> { PGA } <span class="kw">from</span> <span class="str">'@gsep/core'</span>;<br>
+        <br>
+        <span class="cm">// Give your agent a genome</span><br>
+        <span class="kw">const</span> agent = PGA.<span class="fn">wrap</span>(<span class="str">'my-assistant'</span>, {<br>
+        &nbsp;&nbsp;<span class="prop">provider</span>: <span class="str">'anthropic'</span>,<br>
+        &nbsp;&nbsp;<span class="prop">model</span>: <span class="str">'claude-sonnet-4-5-20250929'</span>,<br>
+        &nbsp;&nbsp;<span class="prop">preset</span>: <span class="str">'standard'</span>,<br>
+        });<br>
+        <br>
+        <span class="cm">// Chat — it evolves automatically</span><br>
+        <span class="kw">const</span> reply = <span class="kw">await</span> agent.<span class="fn">chat</span>(<br>
+        &nbsp;&nbsp;<span class="str">'Help me design an API'</span>,<br>
+        &nbsp;&nbsp;{ <span class="prop">userId</span>: <span class="str">'user-42'</span> }<br>
+        );<br>
+        <br>
+        <span class="cm">// Prompts mutate, compete, improve</span><br>
+        <span class="cm">// Per-user adaptation happens automatically</span><br>
+        <span class="cm">// Bad mutations roll back, good ones propagate</span>
+      </div>
+    </div>
+
+    <div class="install-bar">
+      <span class="prompt">$</span>
+      <span class="cmd">npm install @gsep/core</span>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <span>GSEP &mdash; Genomic Self-Evolving Prompts &mdash; gsepcore.com</span>
+  </div>
+</div>
+</body>
+</html>

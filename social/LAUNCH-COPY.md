@@ -70,9 +70,9 @@ Tech details:
 
 Quickstart:
 
-    npm install @pga-ai/core
+    npm install @gsep/core
 
-    import { PGA } from '@pga-ai/core';
+    import { PGA } from '@gsep/core';
     const agent = PGA.wrap('my-agent', {
       provider: 'anthropic',
       model: 'claude-sonnet-4-5-20250929',
@@ -123,7 +123,7 @@ What makes it different:
 Built with TypeScript, 1555 tests, MIT licensed. Patented architecture.
 
 Get started:
-npm install @pga-ai/core
+npm install @gsep/core
 ```
 
 ### First Comment on PH:
@@ -146,7 +146,7 @@ This is v0.8.0 — the core evolution engine works, and we have 30 intelligence
 modules you can enable. We'd love feedback from the community on what to
 prioritize next.
 
-Try it: npm install @pga-ai/core
+Try it: npm install @gsep/core
 Repo: https://github.com/gsepcore/pga-platform
 ```
 
@@ -166,7 +166,7 @@ Prompts mutate, compete, and improve — automatically.
 
 Open source. MIT licensed. Works with Claude, GPT-4, Gemini, Ollama.
 
-npm install @pga-ai/core
+npm install @gsep/core
 
 https://github.com/gsepcore/pga-platform
 ```
@@ -218,7 +218,7 @@ const reply = await agent.chat('Help me', { userId: 'u1' });
 GSEP is open source (MIT) — we believe evolution should be accessible.
 
 Star it: https://github.com/gsepcore/pga-platform
-Try it: npm install @pga-ai/core
+Try it: npm install @gsep/core
 Site: https://gsepcore.com
 
 Built by @LuisvelMarketer from Germany.
@@ -268,7 +268,7 @@ this useful for your agents?
 
 GitHub: https://github.com/gsepcore/pga-platform
 Website: https://gsepcore.com
-Get started: npm install @pga-ai/core
+Get started: npm install @gsep/core
 
 #AI #OpenSource #MachineLearning #TypeScript #AIAgents #PromptEngineering
 ```

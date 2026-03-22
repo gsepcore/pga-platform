@@ -16,7 +16,7 @@ Type-safe event emitter for genome changes, mutations, and system events.
 ### Quick Start
 
 ```typescript
-import { PGAEventEmitter } from '@pga-ai/core';
+import { PGAEventEmitter } from '@gsep/core';
 
 const events = new PGAEventEmitter();
 
@@ -143,7 +143,7 @@ const myGenomeEvolved = await events.waitFor(
 ### Integration with GSEP
 
 ```typescript
-import { PGA, PGAEventEmitter } from '@pga-ai/core';
+import { PGA, PGAEventEmitter } from '@gsep/core';
 
 const events = new PGAEventEmitter();
 const pga = new PGA({
@@ -178,7 +178,7 @@ Stream text, arrays, and data flows with buffering and flow control.
 ### Stream Text
 
 ```typescript
-import { StreamingManager } from '@pga-ai/core';
+import { StreamingManager } from '@gsep/core';
 
 const streaming = new StreamingManager();
 
@@ -289,7 +289,7 @@ for await (const chunk of merged) {
 ## Real-Time Chat Example
 
 ```typescript
-import { PGA, PGAEventEmitter, StreamingManager } from '@pga-ai/core';
+import { PGA, PGAEventEmitter, StreamingManager } from '@gsep/core';
 
 const events = new PGAEventEmitter();
 const streaming = new StreamingManager();
@@ -338,7 +338,7 @@ async function streamChat(genome, message, userId) {
 
 ```typescript
 import { WebSocketServer } from 'ws';
-import { PGAEventEmitter } from '@pga-ai/core';
+import { PGAEventEmitter } from '@gsep/core';
 
 const wss = new WebSocketServer({ port: 8080 });
 const events = new PGAEventEmitter();
@@ -366,7 +366,7 @@ await events.emit('genome:evolved', {
 
 ```typescript
 import express from 'express';
-import { PGAEventEmitter } from '@pga-ai/core';
+import { PGAEventEmitter } from '@gsep/core';
 
 const app = express();
 const events = new PGAEventEmitter();
@@ -391,7 +391,7 @@ app.listen(3000);
 ## Live Metrics Dashboard
 
 ```typescript
-import { PGAEventEmitter, MetricsCollector } from '@pga-ai/core';
+import { PGAEventEmitter, MetricsCollector } from '@gsep/core';
 
 const events = new PGAEventEmitter();
 const metrics = new MetricsCollector();

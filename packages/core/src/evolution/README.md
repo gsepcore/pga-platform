@@ -53,7 +53,7 @@ The Evolution Engine consists of 4 interconnected components that form a complet
 
 **Usage**:
 ```typescript
-import { DriftAnalyzer } from '@pga-ai/core';
+import { DriftAnalyzer } from '@gsep/core';
 
 const analyzer = new DriftAnalyzer({
   successRateThreshold: 0.10,     // 10% drop triggers alert
@@ -113,7 +113,7 @@ if (analysis.isDrifting) {
 
 **Usage**:
 ```typescript
-import { MutationEngine } from '@pga-ai/core';
+import { MutationEngine } from '@gsep/core';
 
 const engine = new MutationEngine();
 
@@ -134,7 +134,7 @@ mutants.forEach(m => {
 
 **Creating Custom Operators**:
 ```typescript
-import { IMutationOperator } from '@pga-ai/core';
+import { IMutationOperator } from '@gsep/core';
 
 class CustomOperator implements IMutationOperator {
   name = 'my-custom-mutation';
@@ -188,7 +188,7 @@ engine.registerOperator(new CustomOperator());
 
 **Usage**:
 ```typescript
-import { FitnessCalculator, InteractionData } from '@pga-ai/core';
+import { FitnessCalculator, InteractionData } from '@gsep/core';
 
 const calc = new FitnessCalculator({
   weights: {
@@ -246,7 +246,7 @@ console.log(`Meets 5% threshold: ${meetsThreshold}`);
 
 **Usage**:
 ```typescript
-import { EvolutionGuardrailsManager } from '@pga-ai/core';
+import { EvolutionGuardrailsManager } from '@gsep/core';
 
 const manager = new EvolutionGuardrailsManager(storage, {
   minQualityScore: 0.60,
@@ -363,7 +363,7 @@ import {
   MutationEngine,
   FitnessCalculator,
   EvolutionGuardrailsManager
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 const kernel = new GenomeKernel(genome);
 const analyzer = new DriftAnalyzer();

@@ -295,8 +295,8 @@ IMPORTANT: Use the above context to inform your response.`;
 ### Basic RAG Setup
 
 ```typescript
-import { RAGEngine, InMemoryVectorStore, MetricsCollector } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm/anthropic';
+import { RAGEngine, InMemoryVectorStore, MetricsCollector } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
 
 // Setup
 const metricsCollector = new MetricsCollector({ enabled: true });

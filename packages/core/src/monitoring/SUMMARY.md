@@ -132,12 +132,12 @@ Comprehensive tests ensuring reliability.
 
 ## 🔗 API Exports
 
-All monitoring components are exported from `@pga-ai/core`:
+All monitoring components are exported from `@gsep/core`:
 
 ```typescript
 // Classes
-export { MetricsCollector } from '@pga-ai/core';
-export { MonitoringDashboard } from '@pga-ai/core';
+export { MetricsCollector } from '@gsep/core';
+export { MonitoringDashboard } from '@gsep/core';
 
 // Types
 export type {
@@ -149,7 +149,7 @@ export type {
     Alert,
     MetricsCollectorConfig,
     DashboardConfig,
-} from '@pga-ai/core';
+} from '@gsep/core';
 ```
 
 ---
@@ -187,7 +187,7 @@ export type {
 ## 💡 Usage Example
 
 ```typescript
-import { MetricsCollector, MonitoringDashboard } from '@pga-ai/core';
+import { MetricsCollector, MonitoringDashboard } from '@gsep/core';
 
 // Setup
 const metrics = new MetricsCollector({

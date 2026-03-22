@@ -1,5 +1,5 @@
 {
-  "name": "@pga-ai/adapters-storage-postgres",
+  "name": "@gsep/adapters-storage-postgres",
   "version": "0.8.0",
   "description": "PostgreSQL storage adapter for GSEP",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "pg": "^8.13.1",
-    "@pga-ai/core": "*"
+    "@gsep/core": "*"
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",

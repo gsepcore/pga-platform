@@ -1,4 +1,4 @@
-# @pga-ai/adapters-llm-openai
+# @gsep/adapters-llm-openai
 
 OpenAI adapter for GSEP (Genomic Self-Evolving Prompts).
 
@@ -20,7 +20,7 @@ OpenAI adapter for GSEP (Genomic Self-Evolving Prompts).
 ## Installation
 
 ```bash
-npm install @pga-ai/adapters-llm-openai
+npm install @gsep/adapters-llm-openai
 ```
 
 ## Usage
@@ -28,7 +28,7 @@ npm install @pga-ai/adapters-llm-openai
 ### Basic Usage
 
 ```typescript
-import { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';
+import { OpenAIAdapter } from '@gsep/adapters-llm-openai';
 
 const adapter = new OpenAIAdapter({
   apiKey: process.env.OPENAI_API_KEY!,
@@ -61,9 +61,9 @@ for await (const chunk of adapter.chatStream([
 ### With GSEP Genome
 
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+import { PGA } from '@gsep/core';
+import { OpenAIAdapter } from '@gsep/adapters-llm-openai';
+import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
 const pga = new PGA({
   llmAdapter: new OpenAIAdapter({

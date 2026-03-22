@@ -109,20 +109,20 @@ function checkTypeScript(): CheckResult {
 
 function checkPGACore(): CheckResult {
     try {
-        require.resolve('@pga-ai/core');
+        require.resolve('@gsep/core');
         return { success: true };
     } catch {
         return {
             success: false,
-            message: '@pga-ai/core not found. Run: npm install @pga-ai/core',
+            message: '@gsep/core not found. Run: npm install @gsep/core',
         };
     }
 }
 
 function checkLLMAdapters(): CheckResult {
     const adapters = [
-        { pkg: '@pga-ai/adapters-llm-anthropic', name: 'Claude' },
-        { pkg: '@pga-ai/adapters-llm-openai', name: 'OpenAI' },
+        { pkg: '@gsep/adapters-llm-anthropic', name: 'Claude' },
+        { pkg: '@gsep/adapters-llm-openai', name: 'OpenAI' },
     ];
 
     const installed: string[] = [];
@@ -143,8 +143,8 @@ function checkLLMAdapters(): CheckResult {
     return {
         success: false,
         message: 'No LLM adapter found. Install at least one:\n'
-            + '    npm install @pga-ai/adapters-llm-anthropic   # Claude\n'
-            + '    npm install @pga-ai/adapters-llm-openai       # GPT-4',
+            + '    npm install @gsep/adapters-llm-anthropic   # Claude\n'
+            + '    npm install @gsep/adapters-llm-openai       # GPT-4',
     };
 }
 

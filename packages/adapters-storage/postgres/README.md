@@ -1,19 +1,19 @@
-# @pga-ai/adapters-storage-postgres
+# @gsep/adapters-storage-postgres
 
 > PostgreSQL storage adapter for GSEP (Genomic Self-Evolving Prompts)
 
 ## Installation
 
 ```bash
-npm install @pga-ai/core @pga-ai/adapters-storage-postgres
+npm install @gsep/core @gsep/adapters-storage-postgres
 ```
 
 ## Usage
 
 ```typescript
-import { PGA } from '@pga-ai/core';
-import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';
-import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';
+import { PGA } from '@gsep/core';
+import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
 const pga = new PGA({
   llm: new ClaudeAdapter({

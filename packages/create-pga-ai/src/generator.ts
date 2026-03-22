@@ -204,20 +204,20 @@ async function generateSourceFiles(projectPath: string, config: ProjectConfig) {
 }
 
 function generateIndexFile(config: ProjectConfig): string {
-    let imports = `import 'dotenv/config';\nimport { PGA } from '@pga-ai/core';\n`;
+    let imports = `import 'dotenv/config';\nimport { PGA } from '@gsep/core';\n`;
 
     if (config.llmProvider === 'anthropic') {
-        imports += `import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';\n`;
+        imports += `import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\n`;
     } else if (config.llmProvider === 'openai') {
-        imports += `import { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';\n`;
+        imports += `import { OpenAIAdapter } from '@gsep/adapters-llm-openai';\n`;
     } else {
-        imports += `import { ClaudeAdapter } from '@pga-ai/adapters-llm-anthropic';\nimport { OpenAIAdapter } from '@pga-ai/adapters-llm-openai';\n`;
+        imports += `import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\nimport { OpenAIAdapter } from '@gsep/adapters-llm-openai';\n`;
     }
 
     if (config.storage === 'postgres') {
-        imports += `import { PostgresAdapter } from '@pga-ai/adapters-storage-postgres';\n`;
+        imports += `import { PostgresAdapter } from '@gsep/adapters-storage-postgres';\n`;
     } else {
-        imports += `import { InMemoryStorage } from '@pga-ai/core';\n`;
+        imports += `import { InMemoryStorage } from '@gsep/core';\n`;
     }
 
     imports += `\nimport { setupAgent } from './agent.js';\n\n`;
@@ -336,7 +336,7 @@ function generateAgentFile(config: ProjectConfig): string {
         autoMutateOnDrift: true,
       },`;
 
-    return `import type { PGA, GenomeInstance } from '@pga-ai/core';
+    return `import type { PGA, GenomeInstance } from '@gsep/core';
 
 /**
  * Setup the agent genome with initial configuration

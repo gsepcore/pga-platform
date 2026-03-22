@@ -38,7 +38,7 @@ const ctaCards = [
   {
     icon: "🚀",
     title: "Install Now",
-    url: "npm install @pga-ai/core",
+    url: "npm install @gsep/core",
     color: THEME.green,
     startFrame: 360,
   },

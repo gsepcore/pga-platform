@@ -1,4 +1,4 @@
-# create-pga-ai
+# create-gsep
 
 **The fastest way to start building with GSEP Platform** — Create a complete GSEP agent project with a single command.
 
@@ -150,14 +150,14 @@ EVOLUTION_MODE=aggressive  # Options: conservative, balanced, aggressive
 Depending on your configuration, the installer adds:
 
 **Core Package:**
-- `@pga-ai/core` — Main GSEP framework
+- `@gsep/core` — Main GSEP framework
 
 **LLM Adapters:**
-- `@pga-ai/adapters-llm-anthropic` — Claude integration
-- `@pga-ai/adapters-llm-openai` — GPT integration
+- `@gsep/adapters-llm-anthropic` — Claude integration
+- `@gsep/adapters-llm-openai` — GPT integration
 
 **Storage Adapters:**
-- `@pga-ai/adapters-storage-postgres` — PostgreSQL storage
+- `@gsep/adapters-storage-postgres` — PostgreSQL storage
 
 **Dev Dependencies:**
 - `typescript` — TypeScript compiler

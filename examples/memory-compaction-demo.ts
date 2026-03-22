@@ -10,7 +10,7 @@ import {
     type Conversation,
     type MemoryMessage,
     type CompactionConfig,
-} from '@pga-ai/core';
+} from '@gsep/core';
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // Example 1: Basic Memory Compaction

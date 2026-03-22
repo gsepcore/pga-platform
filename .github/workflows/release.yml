@@ -70,53 +70,53 @@ jobs:
       - name: Build packages
         run: npm run build
 
-      - name: Publish @pga-ai/core
+      - name: Publish @gsep/core
         run: cd packages/core && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/adapters-llm-anthropic
+      - name: Publish @gsep/adapters-llm-anthropic
         run: cd packages/adapters-llm/anthropic && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/adapters-llm-openai
+      - name: Publish @gsep/adapters-llm-openai
         run: cd packages/adapters-llm/openai && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/adapters-llm-google
+      - name: Publish @gsep/adapters-llm-google
         run: cd packages/adapters-llm/google && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/adapters-llm-ollama
+      - name: Publish @gsep/adapters-llm-ollama
         run: cd packages/adapters-llm/ollama && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/adapters-llm-perplexity
+      - name: Publish @gsep/adapters-llm-perplexity
         run: cd packages/adapters-llm/perplexity && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/adapters-storage-postgres
+      - name: Publish @gsep/adapters-storage-postgres
         run: cd packages/adapters-storage/postgres && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/cli
+      - name: Publish @gsep/cli
         run: cd packages/cli && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish @pga-ai/server
+      - name: Publish @gsep/server
         run: cd packages/server && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Publish create-pga-ai
-        run: cd packages/create-pga-ai && npm publish --access public
+      - name: Publish create-gsep
+        run: cd packages/create-gsep && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
