@@ -611,6 +611,10 @@ describe('Evaluator', () => {
         });
 
         it('should return TIE when results are similar', async () => {
+            // Mock Date.now to eliminate timing variance between the two evaluations
+            let now = 1000;
+            vi.spyOn(Date, 'now').mockImplementation(() => now++);
+
             const response = 'test response long enough';
             const genome1 = createMockGenome(response);
             const genome2 = createMockGenome(response);
