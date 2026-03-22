@@ -11,6 +11,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/gsep/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/gsep/actions/workflows/ci.yml)
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
+[![Survival Demo](https://img.shields.io/badge/Survival_Demo-Interactive-blueviolet?style=for-the-badge)](https://gsepcore.com/survival)
 [![Product Hunt](https://img.shields.io/badge/Product%20Hunt-Live%20Now-orange?style=for-the-badge&logo=producthunt)](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
 
 **Drop-in upgrade that makes any AI agent learn, adapt, and evolve autonomously.**
@@ -48,6 +49,8 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 </a>
 
 *Click for full demo on YouTube*
+
+**[Try the Survival Demo](https://gsepcore.com/survival)** — Watch mutations, fitness selection, and constitutional guardrails in real-time. No install needed.
 
 </div>
 
