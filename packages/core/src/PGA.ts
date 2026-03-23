@@ -709,11 +709,32 @@ export class GenomeInstance {
             events: this.events,
             port,
             host: '127.0.0.1',
-            getGenes: () => ({
-                layer0: this.genome.layers.layer0,
-                layer1: this.genome.layers.layer1,
-                layer2: this.genome.layers.layer2,
-            }),
+            getGenes: () => {
+                const c3Analytics = this.contentFirewall?.getAnalytics();
+                const c4Status = this.immuneSystem?.getImmuneStatus();
+                return {
+                    layer0: this.genome.layers.layer0,
+                    layer1: this.genome.layers.layer1,
+                    layer2: this.genome.layers.layer2,
+                    c3: this.contentFirewall ? {
+                        active: true,
+                        integrityValid: this.contentFirewall.integrityValid,
+                        totalPatterns: 57,
+                        totalScanned: c3Analytics?.totalScanned ?? 0,
+                        totalBlocked: c3Analytics?.totalBlocked ?? 0,
+                        totalSanitized: c3Analytics?.totalSanitized ?? 0,
+                        blockRate: c3Analytics?.blockRate ?? 0,
+                    } : undefined,
+                    c4: this.immuneSystem ? {
+                        active: true,
+                        totalScans: c4Status?.totalScans ?? 0,
+                        threatsDetected: c4Status?.threatsDetected ?? 0,
+                        quarantinesTriggered: c4Status?.quarantinesTriggered ?? 0,
+                        sanitizations: c4Status?.sanitizations ?? 0,
+                        immuneMemorySize: c4Status?.immuneMemorySize ?? 0,
+                    } : undefined,
+                };
+            },
         });
 
         await this.dashboardServer.start();
@@ -2058,6 +2079,16 @@ Ready to see what we can do together? 😊`,
                         layer0: this.genome.layers.layer0,
                         layer1: this.genome.layers.layer1,
                         layer2: this.genome.layers.layer2,
+                        c3: this.contentFirewall ? {
+                            active: true,
+                            integrityValid: this.contentFirewall.integrityValid,
+                            totalPatterns: 57,
+                            ...this.contentFirewall.getAnalytics(),
+                        } : undefined,
+                        c4: this.immuneSystem ? {
+                            active: true,
+                            ...this.immuneSystem.getImmuneStatus(),
+                        } : undefined,
                     },
                 }, { genomeId: this.genome.id });
 
@@ -2117,6 +2148,16 @@ Ready to see what we can do together? 😊`,
                         layer0: this.genome.layers.layer0,
                         layer1: this.genome.layers.layer1,
                         layer2: this.genome.layers.layer2,
+                        c3: this.contentFirewall ? {
+                            active: true,
+                            integrityValid: this.contentFirewall.integrityValid,
+                            totalPatterns: 57,
+                            ...this.contentFirewall.getAnalytics(),
+                        } : undefined,
+                        c4: this.immuneSystem ? {
+                            active: true,
+                            ...this.immuneSystem.getImmuneStatus(),
+                        } : undefined,
                     },
                 }, { genomeId: this.genome.id });
 

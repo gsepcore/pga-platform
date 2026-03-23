@@ -30,7 +30,13 @@ export interface DashboardServerConfig {
     /** Optional genome snapshot provider for initial hydration */
     getSnapshot?: (genomeId: string) => unknown;
     /** Optional gene data provider for the gene sidebar */
-    getGenes?: () => { layer0: unknown[]; layer1: unknown[]; layer2: unknown[] };
+    getGenes?: () => {
+        layer0: unknown[];
+        layer1: unknown[];
+        layer2: unknown[];
+        c3?: { active: boolean; integrityValid: boolean; totalPatterns: number; totalScanned: number; totalBlocked: number; totalSanitized: number; blockRate: number };
+        c4?: { active: boolean; totalScans: number; threatsDetected: number; quarantinesTriggered: number; sanitizations: number; immuneMemorySize: number };
+    };
 }
 
 interface SSEConnection {
@@ -45,7 +51,7 @@ export class DashboardServer {
     private server: Server | null = null;
     private connections: Map<string, SSEConnection[]> = new Map();
     private eventSubscriptionId: string | null = null;
-    private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot' | 'getGenes'>> & { getSnapshot?: (genomeId: string) => unknown; getGenes?: () => { layer0: unknown[]; layer1: unknown[]; layer2: unknown[] } };
+    private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot' | 'getGenes'>> & Pick<DashboardServerConfig, 'getSnapshot' | 'getGenes'>;
     private dashboardHtml: string | null = null;
 
     constructor(config: DashboardServerConfig) {
@@ -324,7 +330,7 @@ export class DashboardServer {
 
         const genes = this.config.getGenes
             ? this.config.getGenes()
-            : { layer0: [], layer1: [], layer2: [] };
+            : { layer0: [], layer1: [], layer2: [], c3: undefined, c4: undefined };
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(genes));

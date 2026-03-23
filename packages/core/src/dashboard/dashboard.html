@@ -343,6 +343,56 @@ body {
     font-style: italic;
 }
 
+/* ─── Defense Sections (C3/C4) ───────────── */
+.defense-section {
+    padding: 12px 16px;
+}
+
+.defense-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 12px;
+}
+
+.defense-stat-label {
+    color: var(--text-muted);
+}
+
+.defense-stat-value {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.defense-integrity {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.defense-integrity.valid {
+    background: var(--green-dim);
+    color: var(--green);
+}
+
+.defense-integrity.invalid {
+    background: var(--red-dim);
+    color: var(--red);
+}
+
+.defense-inactive {
+    padding: 12px 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
 /* ─── Main Grid ──────────────────────────── */
 .main {
     flex: 1;
@@ -678,6 +728,8 @@ body {
         <div id="genes-c0" class="gene-layer-group"></div>
         <div id="genes-c1" class="gene-layer-group"></div>
         <div id="genes-c2" class="gene-layer-group"></div>
+        <div id="defense-c3" class="gene-layer-group"></div>
+        <div id="defense-c4" class="gene-layer-group"></div>
     </aside>
 
     <!-- Main Content -->
@@ -971,6 +1023,66 @@ function renderGenes(layers) {
     renderLayerGroup('genes-c0', 'C0 — Immutable DNA', '🔒', l0, 'c0');
     renderLayerGroup('genes-c1', 'C1 — Operative Genes', '⚙️', l1, 'c1');
     renderLayerGroup('genes-c2', 'C2 — Epigenetics', '👤', l2, 'c2');
+    renderC3(layers.c3);
+    renderC4(layers.c4);
+}
+
+function renderC3(c3) {
+    const container = document.getElementById('defense-c3');
+    const wasCollapsed = container.querySelector('.gene-layer-header.collapsed') !== null;
+
+    let html = '<div class="gene-layer-header c3' + (wasCollapsed ? ' collapsed' : '') + '" onclick="toggleLayer(this)" style="color:var(--red)">';
+    html += '<span class="layer-icon">🛡️</span>';
+    html += '<span>C3 — Content Firewall</span>';
+    html += '<span class="chevron">▼</span>';
+    html += '</div>';
+
+    html += '<div class="gene-layer-body' + (wasCollapsed ? ' collapsed' : '') + '">';
+
+    if (!c3 || !c3.active) {
+        html += '<div class="defense-inactive">Firewall not active</div>';
+    } else {
+        html += '<div class="defense-section">';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Integrity</span>';
+        html += '<span class="defense-integrity ' + (c3.integrityValid ? 'valid' : 'invalid') + '">' + (c3.integrityValid ? '✓ SHA-256 Valid' : '✗ Tampered') + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Patterns</span><span class="defense-stat-value" style="color:var(--purple)">' + c3.totalPatterns + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Scanned</span><span class="defense-stat-value">' + c3.totalScanned + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Blocked</span><span class="defense-stat-value" style="color:var(--red)">' + c3.totalBlocked + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Sanitized</span><span class="defense-stat-value" style="color:var(--amber)">' + c3.totalSanitized + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Block Rate</span><span class="defense-stat-value">' + (c3.blockRate * 100).toFixed(1) + '%</span></div>';
+        html += '</div>';
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function renderC4(c4) {
+    const container = document.getElementById('defense-c4');
+    const wasCollapsed = container.querySelector('.gene-layer-header.collapsed') !== null;
+
+    let html = '<div class="gene-layer-header c4' + (wasCollapsed ? ' collapsed' : '') + '" onclick="toggleLayer(this)" style="color:var(--emerald)">';
+    html += '<span class="layer-icon">🧬</span>';
+    html += '<span>C4 — Immune System</span>';
+    html += '<span class="chevron">▼</span>';
+    html += '</div>';
+
+    html += '<div class="gene-layer-body' + (wasCollapsed ? ' collapsed' : '') + '">';
+
+    if (!c4 || !c4.active) {
+        html += '<div class="defense-inactive">Immune system not active</div>';
+    } else {
+        html += '<div class="defense-section">';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Total Scans</span><span class="defense-stat-value">' + c4.totalScans + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Threats Found</span><span class="defense-stat-value" style="color:' + (c4.threatsDetected > 0 ? 'var(--red)' : 'var(--green)') + '">' + c4.threatsDetected + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Quarantines</span><span class="defense-stat-value" style="color:var(--red)">' + c4.quarantinesTriggered + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Sanitizations</span><span class="defense-stat-value" style="color:var(--amber)">' + c4.sanitizations + '</span></div>';
+        html += '<div class="defense-stat-row"><span class="defense-stat-label">Immune Memory</span><span class="defense-stat-value" style="color:var(--cyan)">' + c4.immuneMemorySize + '</span></div>';
+        html += '</div>';
+    }
+
+    html += '</div>';
+    container.innerHTML = html;
 }
 
 function renderLayerGroup(containerId, title, icon, alleles, layerClass) {
