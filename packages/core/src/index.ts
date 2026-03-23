@@ -199,6 +199,11 @@ export {
     GeneAdopter,
     GeneAdoptionConfigSchema,
     MarketplaceClient,
+
+    // Marketplace Mappers
+    mapListingToCognitiveGene,
+    mapCognitiveGeneToPublishBody,
+    mapFiltersToApiParams,
 } from './gene-bank/index.js';
 
 // Storage Adapters (included)
@@ -242,6 +247,24 @@ export type {
     GeneAdoptionConfig,
     AdoptionRequest,
     AdoptedGeneStatus,
+
+    // Marketplace Client
+    MarketplaceClientOptions,
+
+    // Marketplace Types (API response shapes)
+    MarketplaceGeneListing,
+    MarketplaceSearchResponse,
+    MarketplaceSearchFilters,
+    MarketplaceHealthResponse,
+    MarketplacePublishResponse,
+    CreatePurchaseResponse,
+    MarketplacePurchase,
+    RefundResponse,
+    SellerOnboardResponse,
+    SellerStatus,
+    SellerEarnings,
+    MarketplaceAdoptionResponse,
+    DiscoverOptions,
 } from './gene-bank/index.js';
 
 // ─── Memory Compaction (v0.4.0) ─────────────────────────

@@ -94,3 +94,28 @@ export {
 } from './GeneAdopter';
 // Marketplace Client (global sharing)
 export { MarketplaceClient } from './MarketplaceClient';
+export type { MarketplaceClientOptions } from './MarketplaceClient';
+
+// Marketplace Types (API response shapes)
+export type {
+    MarketplaceGeneListing,
+    MarketplaceSearchResponse,
+    MarketplaceSearchFilters,
+    MarketplaceHealthResponse,
+    MarketplacePublishResponse,
+    CreatePurchaseResponse,
+    MarketplacePurchase,
+    RefundResponse,
+    SellerOnboardResponse,
+    SellerStatus,
+    SellerEarnings,
+    MarketplaceAdoptionResponse,
+    DiscoverOptions,
+} from './MarketplaceTypes';
+
+// Marketplace Mappers (public utilities)
+export {
+    mapListingToCognitiveGene,
+    mapCognitiveGeneToPublishBody,
+    mapFiltersToApiParams,
+} from './MarketplaceMapper';
