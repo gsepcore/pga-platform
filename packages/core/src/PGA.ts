@@ -733,6 +733,7 @@ export class GenomeInstance {
                         sanitizations: c4Status?.sanitizations ?? 0,
                         immuneMemorySize: c4Status?.immuneMemorySize ?? 0,
                     } : undefined,
+                    geneBank: this.getGeneBankDashboardData(),
                 };
             },
         });
@@ -2089,6 +2090,7 @@ Ready to see what we can do together? 😊`,
                             active: true,
                             ...this.immuneSystem.getImmuneStatus(),
                         } : undefined,
+                        geneBank: this.getGeneBankDashboardData(),
                     },
                 }, { genomeId: this.genome.id });
 
@@ -2158,6 +2160,7 @@ Ready to see what we can do together? 😊`,
                             active: true,
                             ...this.immuneSystem.getImmuneStatus(),
                         } : undefined,
+                        geneBank: this.getGeneBankDashboardData(),
                     },
                 }, { genomeId: this.genome.id });
 
@@ -3189,6 +3192,31 @@ Ready to see what we can do together? 😊`,
             'latency-increase': { layer: 1, gene: 'tool-usage' },
         };
         return mapping[signal.type] || { layer: 2, gene: 'communication-style' };
+    }
+
+    /**
+     * Compute Gene Bank stats for dashboard from genome layers.
+     */
+    private getGeneBankDashboardData(): {
+        active: boolean;
+        totalGenes: number;
+        sellable: unknown[];
+        published: unknown[];
+        adopted: unknown[];
+    } {
+        const allGenes = [
+            ...this.genome.layers.layer0,
+            ...this.genome.layers.layer1,
+            ...this.genome.layers.layer2,
+        ];
+        const publishThreshold = this.genome.config.autonomous?.autoPublishThreshold ?? 0.85;
+        return {
+            active: !!this.geneBank,
+            totalGenes: allGenes.filter(g => g.status === 'active').length,
+            sellable: allGenes.filter(g => g.status === 'active' && g.fitness >= publishThreshold && !g.publishedToSwarm),
+            published: allGenes.filter(g => g.publishedToSwarm),
+            adopted: allGenes.filter(g => (g.variant || '').startsWith('swarm_')),
+        };
     }
 
     /**

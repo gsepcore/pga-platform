@@ -36,6 +36,13 @@ export interface DashboardServerConfig {
         layer2: unknown[];
         c3?: { active: boolean; integrityValid: boolean; totalPatterns: number; totalScanned: number; totalBlocked: number; totalSanitized: number; blockRate: number };
         c4?: { active: boolean; totalScans: number; threatsDetected: number; quarantinesTriggered: number; sanitizations: number; immuneMemorySize: number };
+        geneBank?: {
+            active: boolean;
+            totalGenes: number;
+            sellable: unknown[];
+            published: unknown[];
+            adopted: unknown[];
+        };
     };
 }
 
