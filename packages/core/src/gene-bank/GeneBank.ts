@@ -6,6 +6,7 @@ import {
     SharingScope,
 } from './CognitiveGene';
 import type { MetricsCollector } from '../monitoring/MetricsCollector';
+import type { MarketplaceClient } from './MarketplaceClient';
 
 /**
  * GeneBank.ts
@@ -191,6 +192,7 @@ export class GeneBank {
     private config: GeneBankConfig;
     private adoptionCountToday: number = 0;
     private lastAdoptionReset: Date = new Date();
+    private marketplaceClient?: MarketplaceClient;
 
     constructor(
         private storage: GeneStorageAdapter,
@@ -569,5 +571,24 @@ export class GeneBank {
             ...this.config,
             ...updates,
         });
+    }
+
+    // ========================================================================
+    // MARKETPLACE CLIENT
+    // ========================================================================
+
+    /**
+     * Set the MarketplaceClient for this gene bank.
+     * Called after construction to avoid circular dependency.
+     */
+    setMarketplaceClient(client: MarketplaceClient): void {
+        this.marketplaceClient = client;
+    }
+
+    /**
+     * Get the attached MarketplaceClient (if configured)
+     */
+    getMarketplaceClient(): MarketplaceClient | undefined {
+        return this.marketplaceClient;
     }
 }

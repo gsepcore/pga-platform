@@ -851,6 +851,354 @@ body {
         grid-template-columns: 1fr 1fr;
     }
 }
+
+/* ─── Tab Navigation ─────────────────────── */
+.tab-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-card);
+    padding: 0 24px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    font-family: var(--font);
+}
+
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── Marketplace View ───────────────────── */
+.mp-container {
+    padding: 20px 24px;
+    max-width: 1200px;
+}
+
+.mp-search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.mp-search-bar input,
+.mp-search-bar select {
+    padding: 8px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: var(--font);
+}
+
+.mp-search-bar input { flex: 1; min-width: 200px; }
+.mp-search-bar select { min-width: 120px; }
+
+.mp-search-bar button {
+    padding: 8px 16px;
+    background: var(--purple);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+.mp-search-bar button:hover { opacity: 0.9; }
+
+.mp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.mp-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.mp-card:hover { border-color: var(--purple); }
+
+.mp-card-name {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.mp-card-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.mp-card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.mp-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.mp-badge.type { background: var(--purple-dim); color: var(--purple); }
+.mp-badge.fitness { background: var(--green-dim); color: var(--green); }
+.mp-badge.price { background: var(--amber-dim); color: var(--amber); }
+.mp-badge.adoptions { background: var(--cyan-dim); color: var(--cyan); }
+
+.mp-pagination {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.mp-pagination button {
+    padding: 6px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    cursor: pointer;
+    font-family: var(--font);
+}
+
+.mp-pagination button:disabled { opacity: 0.4; cursor: default; }
+.mp-pagination button:hover:not(:disabled) { border-color: var(--purple); }
+
+/* Gene Detail View */
+.mp-detail {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.mp-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 16px;
+}
+
+.mp-detail h2 {
+    font-size: 20px;
+    margin-bottom: 4px;
+}
+
+.mp-detail-desc {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 16px;
+}
+
+.mp-fitness-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.mp-fitness-item {
+    background: var(--bg);
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.mp-fitness-item .label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.mp-fitness-item .value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--mono);
+    color: var(--green);
+}
+
+.mp-action-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: var(--font);
+}
+
+.mp-action-btn.primary { background: var(--purple); color: #fff; }
+.mp-action-btn.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+.mp-action-btn:hover { opacity: 0.9; }
+
+.mp-back-btn {
+    background: none;
+    border: none;
+    color: var(--purple);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: var(--font);
+    margin-bottom: 12px;
+    padding: 0;
+}
+
+.mp-back-btn:hover { text-decoration: underline; }
+
+/* Seller Panel */
+.mp-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.mp-stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+}
+
+.mp-stat-card .value {
+    font-size: 24px;
+    font-weight: 700;
+    font-family: var(--mono);
+}
+
+.mp-stat-card .label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Purchase list */
+.mp-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mp-table th, .mp-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+}
+
+.mp-table th {
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+.mp-empty {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.mp-sub-nav {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
+}
+
+.mp-sub-btn {
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: var(--font);
+}
+
+.mp-sub-btn:hover { color: var(--text); }
+.mp-sub-btn.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+.mp-sub-content { display: none; }
+.mp-sub-content.active { display: block; }
+
+/* Modal */
+.mp-modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.mp-modal-overlay.active { display: flex; }
+
+.mp-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    min-width: 360px;
+    max-width: 90vw;
+}
+
+.mp-modal h3 { margin-bottom: 12px; }
+
+.mp-modal textarea {
+    width: 100%;
+    padding: 8px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 13px;
+    min-height: 80px;
+    margin-bottom: 12px;
+    resize: vertical;
+}
+
+.mp-modal-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
 </style>
 </head>
 <body>
@@ -907,6 +1255,15 @@ body {
         <span id="stat-threats" class="stat-value green">0</span>
     </div>
 </div>
+
+<!-- Tab Navigation -->
+<div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('evolution')">Evolution</button>
+    <button class="tab-btn" onclick="switchTab('marketplace')">Marketplace</button>
+</div>
+
+<!-- Tab: Evolution (original dashboard) -->
+<div id="tab-evolution" class="tab-content active">
 
 <!-- App Layout: Sidebar + Main -->
 <div class="app-layout">
@@ -1011,6 +1368,79 @@ body {
         <div class="card" style="grid-column: 1 / -1;">
             <div class="card-title">📋 Evolution Log</div>
             <div id="event-log" class="log-panel"></div>
+        </div>
+    </div>
+</div>
+</div><!-- /tab-evolution -->
+
+<!-- Tab: Marketplace -->
+<div id="tab-marketplace" class="tab-content">
+<div class="mp-container">
+
+    <!-- Sub-navigation -->
+    <div class="mp-sub-nav">
+        <button class="mp-sub-btn active" onclick="switchMpTab('browse')">Browse</button>
+        <button class="mp-sub-btn" onclick="switchMpTab('seller')">My Marketplace</button>
+        <button class="mp-sub-btn" onclick="switchMpTab('purchases')">My Purchases</button>
+    </div>
+
+    <!-- Sub: Browse / Search -->
+    <div id="mp-browse" class="mp-sub-content active">
+        <div class="mp-search-bar">
+            <input type="text" id="mp-search-q" placeholder="Search genes...">
+            <select id="mp-search-type">
+                <option value="">All types</option>
+                <option value="behavioral">Behavioral</option>
+                <option value="cognitive">Cognitive</option>
+                <option value="defensive">Defensive</option>
+                <option value="efficiency">Efficiency</option>
+                <option value="creative">Creative</option>
+            </select>
+            <select id="mp-search-sort">
+                <option value="fitness">Highest Fitness</option>
+                <option value="adoptions">Most Adopted</option>
+                <option value="newest">Newest</option>
+            </select>
+            <button onclick="mpSearch()">Search</button>
+        </div>
+        <div id="mp-results" class="mp-grid"></div>
+        <div id="mp-pagination" class="mp-pagination"></div>
+    </div>
+
+    <!-- Sub: Gene Detail (hidden by default, shown on card click) -->
+    <div id="mp-detail-view" class="mp-sub-content">
+        <button class="mp-back-btn" onclick="mpBackToBrowse()">&larr; Back to results</button>
+        <div id="mp-detail-content"></div>
+    </div>
+
+    <!-- Sub: My Marketplace (Seller Panel) -->
+    <div id="mp-seller" class="mp-sub-content">
+        <h3 style="margin-bottom:16px">Seller Dashboard</h3>
+        <div id="mp-seller-status"></div>
+        <div id="mp-seller-earnings" class="mp-stats-row"></div>
+        <h4 style="margin:16px 0 12px">My Published Genes</h4>
+        <div id="mp-my-genes" class="mp-grid"></div>
+        <h4 style="margin:16px 0 12px">Publish Eligible Genes</h4>
+        <div id="mp-publish-eligible" class="mp-grid"></div>
+    </div>
+
+    <!-- Sub: My Purchases -->
+    <div id="mp-purchases" class="mp-sub-content">
+        <h3 style="margin-bottom:16px">My Purchases</h3>
+        <div id="mp-purchases-list"></div>
+    </div>
+
+</div>
+</div><!-- /tab-marketplace -->
+
+<!-- Refund Modal -->
+<div id="mp-refund-modal" class="mp-modal-overlay">
+    <div class="mp-modal">
+        <h3>Request Refund</h3>
+        <textarea id="mp-refund-reason" placeholder="Why are you requesting a refund?"></textarea>
+        <div class="mp-modal-actions">
+            <button class="mp-action-btn secondary" onclick="closeRefundModal()">Cancel</button>
+            <button class="mp-action-btn primary" onclick="submitRefund()">Submit</button>
         </div>
     </div>
 </div>
@@ -1575,6 +2005,385 @@ function drawChart() {
 
 // Initial draw
 drawChart();
+
+// ─── Tab Switching ──────────────────────────────
+function switchTab(name) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelector('.tab-btn[onclick*="' + name + '"]').classList.add('active');
+    document.getElementById('tab-' + name).classList.add('active');
+    if (name === 'marketplace') mpInit();
+}
+
+function switchMpTab(name) {
+    document.querySelectorAll('.mp-sub-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.mp-sub-content').forEach(c => c.classList.remove('active'));
+    document.querySelector('.mp-sub-btn[onclick*="' + name + '"]').classList.add('active');
+    document.getElementById('mp-' + name).classList.add('active');
+    if (name === 'seller') mpLoadSeller();
+    if (name === 'purchases') mpLoadPurchases();
+}
+
+// ─── Marketplace State ──────────────────────────
+const mpState = {
+    initialized: false,
+    searchOffset: 0,
+    searchLimit: 12,
+    searchTotal: 0,
+    currentDetail: null,
+    refundPurchaseId: null,
+};
+
+function mpApi(path, options) {
+    const sep = path.includes('?') ? '&' : '?';
+    return fetch(location.origin + '/gsep/marketplace/' + path + sep + 'token=' + encodeURIComponent(token), options || {})
+        .then(function(r) {
+            if (!r.ok) return r.json().then(function(b) { throw new Error(b.error || 'HTTP ' + r.status); });
+            return r.json();
+        });
+}
+
+function mpInit() {
+    if (mpState.initialized) return;
+    mpState.initialized = true;
+    mpSearch();
+}
+
+// ─── Browse / Search ────────────────────────────
+function mpSearch(offset) {
+    mpState.searchOffset = offset || 0;
+    var q = document.getElementById('mp-search-q').value;
+    var type = document.getElementById('mp-search-type').value;
+    var sort = document.getElementById('mp-search-sort').value;
+
+    var params = 'search?limit=' + mpState.searchLimit + '&offset=' + mpState.searchOffset;
+    if (q) params += '&q=' + encodeURIComponent(q);
+    if (type) params += '&type=' + encodeURIComponent(type);
+    if (sort) params += '&sortBy=' + encodeURIComponent(sort);
+
+    document.getElementById('mp-results').innerHTML = '<div class="mp-empty">Searching...</div>';
+
+    mpApi(params).then(function(data) {
+        mpState.searchTotal = data.total || 0;
+        renderMpResults(data.genes || []);
+        renderMpPagination();
+    }).catch(function(err) {
+        document.getElementById('mp-results').innerHTML = '<div class="mp-empty">Error: ' + escapeHtml(err.message) + '</div>';
+        document.getElementById('mp-pagination').innerHTML = '';
+    });
+}
+
+function renderMpResults(genes) {
+    var container = document.getElementById('mp-results');
+    if (genes.length === 0) {
+        container.innerHTML = '<div class="mp-empty">No genes found. Try different search terms.</div>';
+        return;
+    }
+    var html = '';
+    for (var i = 0; i < genes.length; i++) {
+        var g = genes[i];
+        var price = g.price_cents !== undefined ? '$' + (g.price_cents / 100).toFixed(2) : 'Free';
+        html += '<div class="mp-card" onclick="mpShowDetail(\'' + escapeHtml(g.id || g.marketplace_id || '') + '\')">';
+        html += '<div class="mp-card-name">' + escapeHtml(g.name || 'Unnamed') + '</div>';
+        html += '<div class="mp-card-desc">' + escapeHtml(g.description || '') + '</div>';
+        html += '<div class="mp-card-meta">';
+        html += '<span class="mp-badge type">' + escapeHtml(g.type || g.gene_type || '?') + '</span>';
+        html += '<span class="mp-badge fitness">' + ((g.overall_fitness || g.fitness || 0) * 1).toFixed(2) + '</span>';
+        html += '<span class="mp-badge adoptions">' + (g.adoption_count || 0) + ' adopted</span>';
+        if (g.price_cents > 0) html += '<span class="mp-badge price">' + price + '</span>';
+        html += '</div></div>';
+    }
+    container.innerHTML = html;
+}
+
+function renderMpPagination() {
+    var total = mpState.searchTotal;
+    var offset = mpState.searchOffset;
+    var limit = mpState.searchLimit;
+    var container = document.getElementById('mp-pagination');
+
+    if (total <= limit) { container.innerHTML = ''; return; }
+
+    var html = '<button ' + (offset <= 0 ? 'disabled' : 'onclick="mpSearch(' + (offset - limit) + ')"') + '>&laquo; Prev</button>';
+    html += '<span style="padding:6px 12px;color:var(--text-muted);font-size:12px">' + (offset + 1) + '–' + Math.min(offset + limit, total) + ' of ' + total + '</span>';
+    html += '<button ' + (offset + limit >= total ? 'disabled' : 'onclick="mpSearch(' + (offset + limit) + ')"') + '>Next &raquo;</button>';
+    container.innerHTML = html;
+}
+
+// ─── Gene Detail ────────────────────────────────
+function mpShowDetail(id) {
+    document.getElementById('mp-browse').classList.remove('active');
+    document.getElementById('mp-detail-view').classList.add('active');
+    document.getElementById('mp-detail-content').innerHTML = '<div class="mp-empty">Loading...</div>';
+
+    mpApi('genes/' + encodeURIComponent(id)).then(function(g) {
+        mpState.currentDetail = g;
+        var price = g.price_cents !== undefined ? '$' + (g.price_cents / 100).toFixed(2) : 'Free';
+        var html = '<div class="mp-detail">';
+        html += '<div class="mp-detail-header">';
+        html += '<div><h2>' + escapeHtml(g.name || 'Gene') + '</h2>';
+        html += '<span class="mp-badge type">' + escapeHtml(g.type || g.gene_type || '?') + '</span> ';
+        html += '<span class="mp-badge fitness">' + ((g.overall_fitness || 0) * 1).toFixed(2) + '</span>';
+        html += '</div>';
+        html += '<div style="text-align:right">';
+        if (g.price_cents > 0) {
+            html += '<div style="font-size:24px;font-weight:700;color:var(--amber);margin-bottom:8px">' + price + '</div>';
+            html += '<button class="mp-action-btn primary" onclick="mpBuy(\'' + escapeHtml(g.id) + '\')">Buy</button>';
+        } else {
+            html += '<button class="mp-action-btn primary" onclick="mpAdopt(\'' + escapeHtml(g.id) + '\')">Adopt Free Gene</button>';
+        }
+        html += '</div></div>';
+        html += '<div class="mp-detail-desc">' + escapeHtml(g.description || '') + '</div>';
+
+        // Fitness metrics
+        html += '<div class="mp-fitness-grid">';
+        var metrics = [
+            ['Overall', g.overall_fitness],
+            ['Task Success', g.task_success],
+            ['Safety', g.safety_score],
+            ['Efficiency', g.efficiency_score],
+            ['Consistency', g.consistency_score],
+            ['Satisfaction', g.user_satisfaction],
+        ];
+        for (var m = 0; m < metrics.length; m++) {
+            var val = metrics[m][1];
+            html += '<div class="mp-fitness-item"><div class="label">' + metrics[m][0] + '</div>';
+            html += '<div class="value">' + (val !== undefined ? (val * 1).toFixed(2) : '—') + '</div></div>';
+        }
+        html += '</div>';
+
+        // Meta info
+        html += '<div style="font-size:12px;color:var(--text-muted)">';
+        if (g.domain) html += 'Domain: ' + escapeHtml(g.domain) + ' · ';
+        html += 'Adoptions: ' + (g.adoption_count || 0);
+        if (g.generation !== undefined) html += ' · Generation: ' + g.generation;
+        html += '</div>';
+
+        html += '</div>';
+        document.getElementById('mp-detail-content').innerHTML = html;
+    }).catch(function(err) {
+        document.getElementById('mp-detail-content').innerHTML = '<div class="mp-empty">Error: ' + escapeHtml(err.message) + '</div>';
+    });
+}
+
+function mpBackToBrowse() {
+    document.getElementById('mp-detail-view').classList.remove('active');
+    document.getElementById('mp-browse').classList.add('active');
+}
+
+function mpBuy(geneListingId) {
+    if (!confirm('Purchase this gene?')) return;
+    mpApi('purchases', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ geneListingId: geneListingId }),
+    }).then(function(result) {
+        alert('Purchase successful! Go to My Purchases to adopt.');
+        switchMpTab('purchases');
+    }).catch(function(err) {
+        alert('Purchase failed: ' + err.message);
+    });
+}
+
+function mpAdopt(marketplaceGeneId) {
+    if (!confirm('Adopt this gene into your GSEP?')) return;
+    mpApi('adopt/' + encodeURIComponent(marketplaceGeneId), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+    }).then(function(gene) {
+        alert('Gene adopted! It is now in your local Gene Bank.');
+        fetchGenes();
+    }).catch(function(err) {
+        alert('Adoption failed: ' + err.message);
+    });
+}
+
+// ─── Seller Panel ───────────────────────────────
+function mpLoadSeller() {
+    var statusEl = document.getElementById('mp-seller-status');
+    var earningsEl = document.getElementById('mp-seller-earnings');
+    var myGenesEl = document.getElementById('mp-my-genes');
+    var publishEl = document.getElementById('mp-publish-eligible');
+
+    statusEl.innerHTML = '<div class="mp-empty">Loading seller info...</div>';
+
+    // Load seller status
+    mpApi('seller/status').then(function(s) {
+        var html = '<div class="mp-stat-card" style="margin-bottom:16px;text-align:left;padding:12px 16px">';
+        html += '<span style="font-weight:600">Stripe Connect:</span> ';
+        if (s.status === 'active' || s.charges_enabled) {
+            html += '<span style="color:var(--green)">Active</span>';
+        } else if (s.onboarding_url || s.status === 'pending') {
+            html += '<span style="color:var(--amber)">Pending</span>';
+        } else {
+            html += '<span style="color:var(--text-muted)">Not Connected</span> ';
+            html += '<button class="mp-action-btn primary" style="padding:4px 12px;font-size:12px;margin-left:8px" onclick="mpOnboard()">Connect Stripe</button>';
+        }
+        html += '</div>';
+        statusEl.innerHTML = html;
+    }).catch(function() {
+        statusEl.innerHTML = '<div class="mp-stat-card" style="text-align:left;padding:12px 16px">';
+        statusEl.innerHTML += '<span style="color:var(--text-muted)">Not connected to Marketplace</span> ';
+        statusEl.innerHTML += '<button class="mp-action-btn primary" style="padding:4px 12px;font-size:12px;margin-left:8px" onclick="mpOnboard()">Connect Stripe</button>';
+        statusEl.innerHTML += '</div>';
+    });
+
+    // Load earnings
+    mpApi('seller/earnings').then(function(e) {
+        var html = '';
+        html += '<div class="mp-stat-card"><div class="value" style="color:var(--green)">$' + ((e.total_earned || 0) / 100).toFixed(2) + '</div><div class="label">Total Earned</div></div>';
+        html += '<div class="mp-stat-card"><div class="value" style="color:var(--amber)">$' + ((e.pending || 0) / 100).toFixed(2) + '</div><div class="label">Pending</div></div>';
+        html += '<div class="mp-stat-card"><div class="value" style="color:var(--cyan)">' + (e.total_sales || 0) + '</div><div class="label">Total Sales</div></div>';
+        earningsEl.innerHTML = html;
+    }).catch(function() {
+        earningsEl.innerHTML = '';
+    });
+
+    // Load my published genes
+    mpApi('my-genes').then(function(genes) {
+        if (!genes || genes.length === 0) {
+            myGenesEl.innerHTML = '<div class="mp-empty">No published genes yet.</div>';
+            return;
+        }
+        var html = '';
+        for (var i = 0; i < genes.length; i++) {
+            var g = genes[i];
+            html += '<div class="mp-card">';
+            html += '<div class="mp-card-name">' + escapeHtml(g.name || 'Gene') + '</div>';
+            html += '<div class="mp-card-meta">';
+            html += '<span class="mp-badge type">' + escapeHtml(g.type || g.gene_type || '?') + '</span>';
+            html += '<span class="mp-badge fitness">' + ((g.overall_fitness || 0) * 1).toFixed(2) + '</span>';
+            html += '<span class="mp-badge adoptions">' + (g.adoption_count || 0) + ' adopted</span>';
+            html += '</div></div>';
+        }
+        myGenesEl.innerHTML = html;
+    }).catch(function() {
+        myGenesEl.innerHTML = '<div class="mp-empty">Could not load published genes.</div>';
+    });
+
+    // Show publish-eligible genes from sidebar data
+    renderPublishEligible(publishEl);
+}
+
+function renderPublishEligible(container) {
+    var bank = state.genes.geneBank;
+    if (!bank || !bank.sellable || bank.sellable.length === 0) {
+        container.innerHTML = '<div class="mp-empty">No genes eligible for publishing (fitness &ge; 0.80 required).</div>';
+        return;
+    }
+    var html = '';
+    for (var i = 0; i < bank.sellable.length; i++) {
+        var g = bank.sellable[i];
+        html += '<div class="mp-card">';
+        html += '<div class="mp-card-name">' + escapeHtml(g.gene || 'Unknown') + '</div>';
+        html += '<div class="mp-card-meta">';
+        html += '<span class="mp-badge fitness">' + (g.fitness || 0).toFixed(2) + '</span>';
+        html += '<button class="mp-action-btn primary" style="padding:4px 12px;font-size:11px;margin-left:auto" onclick="mpPublish(\'' + escapeHtml(g.gene || '') + '\')">Publish</button>';
+        html += '</div></div>';
+    }
+    container.innerHTML = html;
+}
+
+function mpPublish(geneId) {
+    if (!confirm('Publish gene "' + geneId + '" to the Marketplace?')) return;
+    mpApi('publish/' + encodeURIComponent(geneId), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+    }).then(function(result) {
+        if (result.success) {
+            alert('Gene published successfully!');
+            mpLoadSeller();
+            fetchGenes();
+        } else {
+            alert('Publish failed: ' + (result.error || 'Unknown error'));
+        }
+    }).catch(function(err) {
+        alert('Publish failed: ' + err.message);
+    });
+}
+
+function mpOnboard() {
+    mpApi('seller/onboard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ country: 'US' }),
+    }).then(function(result) {
+        if (result.onboarding_url || result.url) {
+            window.open(result.onboarding_url || result.url, '_blank');
+        } else {
+            alert('Onboarding initiated. Check your email for Stripe instructions.');
+        }
+        mpLoadSeller();
+    }).catch(function(err) {
+        alert('Onboarding failed: ' + err.message);
+    });
+}
+
+// ─── Purchases ──────────────────────────────────
+function mpLoadPurchases() {
+    var container = document.getElementById('mp-purchases-list');
+    container.innerHTML = '<div class="mp-empty">Loading purchases...</div>';
+
+    mpApi('purchases').then(function(purchases) {
+        if (!purchases || purchases.length === 0) {
+            container.innerHTML = '<div class="mp-empty">No purchases yet. Browse the marketplace to find genes!</div>';
+            return;
+        }
+        var html = '<table class="mp-table"><thead><tr>';
+        html += '<th>Gene</th><th>Status</th><th>Price</th><th>Date</th><th>Actions</th>';
+        html += '</tr></thead><tbody>';
+        for (var i = 0; i < purchases.length; i++) {
+            var p = purchases[i];
+            html += '<tr>';
+            html += '<td>' + escapeHtml(p.gene_name || p.gene_listing_id || '?') + '</td>';
+            html += '<td>' + escapeHtml(p.status || '?') + '</td>';
+            html += '<td>$' + ((p.amount_cents || 0) / 100).toFixed(2) + '</td>';
+            html += '<td>' + (p.created_at ? new Date(p.created_at).toLocaleDateString() : '—') + '</td>';
+            html += '<td>';
+            if (p.status === 'completed') {
+                html += '<button class="mp-action-btn primary" style="padding:3px 10px;font-size:11px" onclick="mpAdopt(\'' + escapeHtml(p.gene_listing_id) + '\')">Adopt</button> ';
+                html += '<button class="mp-action-btn secondary" style="padding:3px 10px;font-size:11px" onclick="openRefundModal(\'' + escapeHtml(p.id) + '\')">Refund</button>';
+            }
+            html += '</td></tr>';
+        }
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }).catch(function(err) {
+        container.innerHTML = '<div class="mp-empty">Error: ' + escapeHtml(err.message) + '</div>';
+    });
+}
+
+// ─── Refund Modal ───────────────────────────────
+function openRefundModal(purchaseId) {
+    mpState.refundPurchaseId = purchaseId;
+    document.getElementById('mp-refund-reason').value = '';
+    document.getElementById('mp-refund-modal').classList.add('active');
+}
+
+function closeRefundModal() {
+    document.getElementById('mp-refund-modal').classList.remove('active');
+    mpState.refundPurchaseId = null;
+}
+
+function submitRefund() {
+    var reason = document.getElementById('mp-refund-reason').value.trim();
+    if (!reason) { alert('Please provide a reason.'); return; }
+    if (!mpState.refundPurchaseId) return;
+
+    mpApi('purchases/refund', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ purchaseId: mpState.refundPurchaseId, reason: reason }),
+    }).then(function() {
+        alert('Refund requested.');
+        closeRefundModal();
+        mpLoadPurchases();
+    }).catch(function(err) {
+        alert('Refund failed: ' + err.message);
+    });
+}
 </script>
 </body>
 </html>

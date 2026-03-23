@@ -44,6 +44,7 @@ import { PersonalNarrative, type NarrativeSummary, type SignificantMoment } from
 import { AnalyticMemoryEngine, type MemoryQueryResult } from './memory/AnalyticMemoryEngine.js';
 import { MetaEvolutionEngine } from './evolution/boost/MetaEvolutionEngine.js';
 import type { GeneBank } from './gene-bank/GeneBank.js';
+import { MarketplaceClient } from './gene-bank/MarketplaceClient.js';
 import type { DriftSignal } from './evolution/DriftAnalyzer.js';
 import { CanaryDeploymentManager } from './evolution/CanaryDeployment.js';
 import type { CanaryDeployment } from './evolution/CanaryDeployment.js';
@@ -111,6 +112,14 @@ export interface GSEPConfig {
      * Optional Gene Bank for genesis bootstrap + swarm intelligence (v0.5.0)
      */
     geneBank?: GeneBank;
+
+    /**
+     * Optional marketplace configuration for Gene Marketplace access (v0.8.0)
+     */
+    marketplace?: {
+        apiKey?: string;
+        url?: string;
+    };
 }
 
 /**
@@ -308,6 +317,7 @@ export class GSEP {
             this.gsepConfig.rag,
             this.gsepConfig.reasoning,
             this.gsepConfig.geneBank,
+            this.gsepConfig.marketplace,
         );
     }
 
@@ -327,6 +337,7 @@ export class GSEP {
             this.gsepConfig.rag,
             this.gsepConfig.reasoning,
             this.gsepConfig.geneBank,
+            this.gsepConfig.marketplace,
         );
     }
 
@@ -429,6 +440,7 @@ export class GenomeInstance {
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
     private evolutionInProgress: boolean = false;
+    private marketplaceClient?: MarketplaceClient;
 
     constructor(
         private genome: Genome,
@@ -439,6 +451,7 @@ export class GenomeInstance {
         ragConfig?: RAGConfig,
         reasoningConfig?: Partial<ReasoningConfig>,
         private geneBank?: GeneBank,
+        private marketplaceConfig?: { apiKey?: string; url?: string },
     ) {
         this.assembler = new PromptAssembler(storage, genome);
         this.dnaProfile = new DNAProfile(storage);
@@ -663,6 +676,19 @@ export class GenomeInstance {
         } catch {
             // Shadow mode: if GenomeKernel fails to initialize, continue without it
         }
+
+        // Marketplace Client: wire to GeneBank for dashboard proxy routes
+        if (this.geneBank && this.marketplaceConfig) {
+            this.marketplaceClient = new MarketplaceClient(
+                this.geneBank,
+                {
+                    apiKey: this.marketplaceConfig.apiKey,
+                    marketplaceUrl: this.marketplaceConfig.url,
+                },
+                this.metrics,
+            );
+            this.geneBank.setMarketplaceClient(this.marketplaceClient);
+        }
     }
 
     /**
@@ -709,6 +735,7 @@ export class GenomeInstance {
             events: this.events,
             port,
             host: '127.0.0.1',
+            getMarketplaceClient: () => this.geneBank?.getMarketplaceClient(),
             getGenes: () => {
                 const c3Analytics = this.contentFirewall?.getAnalytics();
                 const c4Status = this.immuneSystem?.getImmuneStatus();

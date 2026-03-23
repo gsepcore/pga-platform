@@ -13,6 +13,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { DashboardTokenHelper, type DashboardTokenPayload } from './DashboardToken.js';
 import type { GSEPEventEmitter, GSEPEvent } from '../realtime/EventEmitter.js';
+import type { MarketplaceClient } from '../gene-bank/MarketplaceClient.js';
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -29,6 +30,8 @@ export interface DashboardServerConfig {
     maxConnectionsPerUser?: number;
     /** Optional genome snapshot provider for initial hydration */
     getSnapshot?: (genomeId: string) => unknown;
+    /** Optional MarketplaceClient provider for marketplace proxy routes */
+    getMarketplaceClient?: () => MarketplaceClient | undefined;
     /** Optional gene data provider for the gene sidebar */
     getGenes?: () => {
         layer0: unknown[];
@@ -58,7 +61,7 @@ export class DashboardServer {
     private server: Server | null = null;
     private connections: Map<string, SSEConnection[]> = new Map();
     private eventSubscriptionId: string | null = null;
-    private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot' | 'getGenes'>> & Pick<DashboardServerConfig, 'getSnapshot' | 'getGenes'>;
+    private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot' | 'getGenes' | 'getMarketplaceClient'>> & Pick<DashboardServerConfig, 'getSnapshot' | 'getGenes' | 'getMarketplaceClient'>;
     private dashboardHtml: string | null = null;
 
     constructor(config: DashboardServerConfig) {
@@ -143,7 +146,7 @@ export class DashboardServer {
 
         // CORS headers
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
         if (req.method === 'OPTIONS') {
@@ -162,6 +165,8 @@ export class DashboardServer {
             this.handleGenes(url, res);
         } else if (path === '/gsep/health') {
             this.handleHealth(res);
+        } else if (path.startsWith('/gsep/marketplace/')) {
+            this.handleMarketplace(req, url, res);
         } else {
             res.writeHead(404, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Not found' }));
@@ -352,6 +357,154 @@ export class DashboardServer {
             connections: this.getConnectionCount(),
             uptime: process.uptime(),
         }));
+    }
+
+    // ─── Marketplace Proxy Routes ─────────────────────────
+
+    private handleMarketplace(req: IncomingMessage, url: URL, res: ServerResponse): void {
+        // Auth: all marketplace routes require token
+        const token = url.searchParams.get('token');
+        if (!token) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Missing token' }));
+            return;
+        }
+
+        const payload = DashboardTokenHelper.verify(this.config.secret, token);
+        if (!payload) {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Invalid or expired token' }));
+            return;
+        }
+
+        // Check if marketplace client is available
+        const client = this.config.getMarketplaceClient?.();
+        if (!client) {
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Marketplace not configured' }));
+            return;
+        }
+
+        // Route based on sub-path + method
+        const subPath = url.pathname.replace('/gsep/marketplace/', '');
+        const method = req.method ?? 'GET';
+
+        // GET routes
+        if (method === 'GET') {
+            if (subPath === 'health') {
+                this.mpProxy(res, () => client.healthCheck());
+            } else if (subPath === 'search') {
+                const filters = this.parseSearchParams(url);
+                this.mpProxy(res, () => client.discoverGenes(filters, { raw: true }));
+            } else if (subPath.startsWith('genes/') && subPath.indexOf('/', 6) === -1) {
+                const id = subPath.slice(6);
+                this.mpProxy(res, () => client.getGeneListing(id));
+            } else if (subPath === 'my-genes') {
+                this.mpProxy(res, () => client.listPublishedGenes());
+            } else if (subPath === 'purchases') {
+                this.mpProxy(res, () => client.listPurchases());
+            } else if (subPath === 'seller/status') {
+                this.mpProxy(res, () => client.getSellerStatus());
+            } else if (subPath === 'seller/earnings') {
+                this.mpProxy(res, () => client.getSellerEarnings());
+            } else {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Not found' }));
+            }
+            return;
+        }
+
+        // POST routes — need body parsing
+        if (method === 'POST') {
+            this.readBody(req).then((body) => {
+                if (subPath.startsWith('publish/')) {
+                    const geneId = subPath.replace('publish/', '');
+                    this.mpProxy(res, () => client.publishToMarketplace(geneId));
+                } else if (subPath.startsWith('adopt/')) {
+                    const id = subPath.replace('adopt/', '');
+                    this.mpProxy(res, () => client.adoptFromMarketplace(id));
+                } else if (subPath === 'purchases') {
+                    const { geneListingId } = body as { geneListingId: string };
+                    if (!geneListingId) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Missing geneListingId' }));
+                        return;
+                    }
+                    this.mpProxy(res, () => client.createPurchase(geneListingId));
+                } else if (subPath === 'purchases/refund') {
+                    const { purchaseId, reason } = body as { purchaseId: string; reason: string };
+                    if (!purchaseId || !reason) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Missing purchaseId or reason' }));
+                        return;
+                    }
+                    this.mpProxy(res, () => client.requestRefund(purchaseId, reason));
+                } else if (subPath === 'seller/onboard') {
+                    const { country } = body as { country?: string };
+                    this.mpProxy(res, () => client.onboardSeller(country));
+                } else {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Not found' }));
+                }
+            }).catch(() => {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid JSON body' }));
+            });
+            return;
+        }
+
+        res.writeHead(405, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'Method not allowed' }));
+    }
+
+    /** Execute a marketplace client method and send the result as JSON */
+    private async mpProxy(res: ServerResponse, fn: () => Promise<unknown>): Promise<void> {
+        try {
+            const result = await fn();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(result));
+        } catch (error) {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            const status = message.includes('not found') || message.includes('HTTP 404') ? 404 : 502;
+            res.writeHead(status, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: message }));
+        }
+    }
+
+    /** Read and parse JSON body from an incoming request */
+    private readBody(req: IncomingMessage): Promise<unknown> {
+        return new Promise((resolve, reject) => {
+            let data = '';
+            req.on('data', (chunk: Buffer) => { data += chunk.toString(); });
+            req.on('end', () => {
+                try {
+                    resolve(data.length > 0 ? JSON.parse(data) : {});
+                } catch {
+                    reject(new Error('Invalid JSON'));
+                }
+            });
+            req.on('error', reject);
+        });
+    }
+
+    /** Parse marketplace search params from URL query */
+    private parseSearchParams(url: URL): Record<string, unknown> {
+        const filters: Record<string, unknown> = {};
+        const q = url.searchParams.get('q');
+        if (q) filters.q = q;
+        const type = url.searchParams.get('type');
+        if (type) filters.type = [type];
+        const domain = url.searchParams.get('domain');
+        if (domain) filters.domain = [domain];
+        const minFitness = url.searchParams.get('minFitness');
+        if (minFitness) filters.minFitness = parseFloat(minFitness);
+        const sortBy = url.searchParams.get('sortBy');
+        if (sortBy) filters.sortBy = sortBy;
+        const limit = url.searchParams.get('limit');
+        if (limit) filters.limit = parseInt(limit, 10);
+        const offset = url.searchParams.get('offset');
+        if (offset) filters.offset = parseInt(offset, 10);
+        return filters;
     }
 
     // ─── Event Broadcasting ──────────────────────────────
