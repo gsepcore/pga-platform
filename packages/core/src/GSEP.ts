@@ -59,14 +59,14 @@ import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
-import { PGAEventEmitter } from './realtime/EventEmitter.js';
+import { GSEPEventEmitter } from './realtime/EventEmitter.js';
 import { DashboardServer } from './dashboard/DashboardServer.js';
 import { DashboardTokenHelper } from './dashboard/DashboardToken.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
 import type { GSEPStatus, GSEPChatResult } from './types/index.js';
 
-export interface PGAConfig {
+export interface GSEPConfig {
     /**
      * LLM adapter (Claude, GPT, Gemini, etc.)
      */
@@ -118,45 +118,45 @@ export interface PGAConfig {
  *
  * Example usage:
  * ```typescript
- * const pga = new PGA({
+ * const gsep = new GSEP({
  *   llm: new ClaudeAdapter({ apiKey: '...' }),
  *   storage: new PostgresAdapter({ connectionString: '...' }),
  * });
  *
- * const genome = await pga.createGenome({ name: 'my-agent' });
+ * const genome = await gsep.createGenome({ name: 'my-agent' });
  * ```
  */
-export class PGA {
+export class GSEP {
     private genomeManager: GenomeManager;
     private llm: LLMAdapter;
     private metricsCollector: MetricsCollector;
     private dashboard?: MonitoringDashboard;
 
-    constructor(private pgaConfig: PGAConfig) {
+    constructor(private gsepConfig: GSEPConfig) {
         // ─── LLM Validation ────────────────────────────────────
-        if (!pgaConfig.llm) {
+        if (!gsepConfig.llm) {
             throw new Error(
                 `[GSEP] LLM adapter is required.\n\n`
                 + `GSEP needs an AI model to function. Please provide an LLM adapter:\n\n`
-                + `  import { PGA } from '@gsep/core';\n`
+                + `  import { GSEP } from '@gsep/core';\n`
                 + `  import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\n\n`
-                + `  const pga = new PGA({\n`
+                + `  const gsep = new GSEP({\n`
                 + `    llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY }),\n`
                 + `    storage: yourStorageAdapter,\n`
                 + `  });\n\n`
                 + `Supported adapters:\n`
                 + `  - @gsep/adapters-llm-anthropic (Claude)\n`
                 + `  - @gsep/adapters-llm-openai (GPT-4)\n\n`
-                + `Run 'pga doctor' for full diagnostics.`,
+                + `Run 'gsep doctor' for full diagnostics.`,
             );
         }
 
-        if (!pgaConfig.storage) {
+        if (!gsepConfig.storage) {
             throw new Error(
                 `[GSEP] Storage adapter is required.\n\n`
                 + `GSEP needs a storage adapter to persist genomes. Please provide one:\n\n`
                 + `  import { InMemoryStorage } from '@gsep/core';\n\n`
-                + `  const pga = new PGA({\n`
+                + `  const gsep = new GSEP({\n`
                 + `    llm: yourLLMAdapter,\n`
                 + `    storage: new InMemoryStorage(),\n`
                 + `  });\n\n`
@@ -164,19 +164,19 @@ export class PGA {
             );
         }
 
-        this.llm = pgaConfig.llm;
-        this.genomeManager = new GenomeManager(pgaConfig.storage);
+        this.llm = gsepConfig.llm;
+        this.genomeManager = new GenomeManager(gsepConfig.storage);
 
         // Initialize monitoring
-        this.metricsCollector = new MetricsCollector(pgaConfig.monitoring || {
+        this.metricsCollector = new MetricsCollector(gsepConfig.monitoring || {
             enabled: true,
             enableCostTracking: true,
             enableAuditLogs: true,
         });
 
         // Initialize dashboard if enabled
-        if (pgaConfig.dashboard?.enabled) {
-            this.dashboard = new MonitoringDashboard(this.metricsCollector, pgaConfig.dashboard);
+        if (gsepConfig.dashboard?.enabled) {
+            this.dashboard = new MonitoringDashboard(this.metricsCollector, gsepConfig.dashboard);
         }
     }
 
@@ -184,17 +184,17 @@ export class PGA {
      * Initialize GSEP (setup database, load seeds, etc.)
      */
     async initialize(): Promise<void> {
-        await this.pgaConfig.storage.initialize();
+        await this.gsepConfig.storage.initialize();
 
         // Start dashboard if configured
-        if (this.dashboard && this.pgaConfig.dashboard?.enabled) {
+        if (this.dashboard && this.gsepConfig.dashboard?.enabled) {
             this.dashboard.start();
         }
 
         // Log initialization
         this.metricsCollector.logAudit({
             level: 'info',
-            component: 'pga',
+            component: 'gsep',
             operation: 'initialize',
             message: 'GSEP system initialized successfully',
         });
@@ -245,7 +245,7 @@ export class PGA {
 
         this.metricsCollector.logAudit({
             level: 'info',
-            component: 'pga',
+            component: 'gsep',
             operation: 'shutdown',
             message: 'GSEP system shutdown',
         });
@@ -275,23 +275,23 @@ export class PGA {
                 enableSandbox: true,
                 mutationRate: 'balanced',
                 evolutionGuardrails: defaultGuardrails,
-                ...this.pgaConfig.config,
+                ...this.gsepConfig.config,
                 ...options.config,
             },
         });
 
         // Genesis Bootstrap: seed with high-fitness genes from Gene Bank
-        if (this.pgaConfig.geneBank && genome.config.autonomous?.genesisBootstrap) {
-            const bootstrap = new GenesisBootstrap(this.pgaConfig.geneBank);
+        if (this.gsepConfig.geneBank && genome.config.autonomous?.genesisBootstrap) {
+            const bootstrap = new GenesisBootstrap(this.gsepConfig.geneBank);
             const result = await bootstrap.bootstrap(
                 genome,
                 genome.config.autonomous.bootstrapMinFitness ?? 0.7,
             );
             if (result.genesUpgraded > 0) {
-                await this.pgaConfig.storage.saveGenome(genome);
+                await this.gsepConfig.storage.saveGenome(genome);
                 this.metricsCollector.logAudit({
                     level: 'info',
-                    component: 'pga',
+                    component: 'gsep',
                     operation: 'genesis-bootstrap',
                     message: `Bootstrapped ${result.genesUpgraded} genes from Gene Bank`,
                     metadata: { upgrades: result.upgrades },
@@ -302,12 +302,12 @@ export class PGA {
         return new GenomeInstance(
             genome,
             this.llm,
-            this.pgaConfig.storage,
+            this.gsepConfig.storage,
             this.metricsCollector,
-            this.pgaConfig.modelRouter,
-            this.pgaConfig.rag,
-            this.pgaConfig.reasoning,
-            this.pgaConfig.geneBank,
+            this.gsepConfig.modelRouter,
+            this.gsepConfig.rag,
+            this.gsepConfig.reasoning,
+            this.gsepConfig.geneBank,
         );
     }
 
@@ -321,12 +321,12 @@ export class PGA {
         return new GenomeInstance(
             genome,
             this.llm,
-            this.pgaConfig.storage,
+            this.gsepConfig.storage,
             this.metricsCollector,
-            this.pgaConfig.modelRouter,
-            this.pgaConfig.rag,
-            this.pgaConfig.reasoning,
-            this.pgaConfig.geneBank,
+            this.gsepConfig.modelRouter,
+            this.gsepConfig.rag,
+            this.gsepConfig.reasoning,
+            this.gsepConfig.geneBank,
         );
     }
 
@@ -352,7 +352,7 @@ export class PGA {
      *
      * @example Level 1: Wrap an LLMAdapter
      * ```typescript
-     * const agent = await PGA.wrap(myClaudeAdapter, {
+     * const agent = await GSEP.wrap(myClaudeAdapter, {
      *   systemPrompt: "You are a helpful assistant...",
      *   protect: ['Never share user data'],
      *   evolve: ['tool-usage', 'reasoning'],
@@ -363,7 +363,7 @@ export class PGA {
      *
      * @example Level 2: Wrap a function
      * ```typescript
-     * const agent = await PGA.wrap(async (input) => {
+     * const agent = await GSEP.wrap(async (input) => {
      *   return await myAgent.run(input);
      * }, { name: 'my-agent', systemPrompt: '...' });
      * const result = await agent.execute("help me debug this");
@@ -426,7 +426,7 @@ export class GenomeInstance {
     private genomeKernel?: GenomeKernel;
     private contentFirewall?: ContentFirewall;
     private immuneSystem?: BehavioralImmuneSystem;
-    private events: PGAEventEmitter = new PGAEventEmitter();
+    private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
     private evolutionInProgress: boolean = false;
 
@@ -682,7 +682,7 @@ export class GenomeInstance {
     /**
      * Get event emitter for real-time dashboard subscriptions
      */
-    getEventEmitter(): PGAEventEmitter {
+    getEventEmitter(): GSEPEventEmitter {
         return this.events;
     }
 
@@ -1217,7 +1217,7 @@ Ready to see what we can do together? 😊`,
                 requestId,
                 duration: Date.now() - startTime,
                 success: true,
-                model: 'pga-genome', // Could be enhanced with actual model info
+                model: 'gsep-genome', // Could be enhanced with actual model info
                 inputTokens,
                 outputTokens,
             });
@@ -1433,7 +1433,7 @@ Ready to see what we can do together? 😊`,
                 requestId,
                 duration: Date.now() - startTime,
                 success: false,
-                model: 'pga-genome',
+                model: 'gsep-genome',
                 inputTokens: 0,
                 outputTokens: 0,
                 error,

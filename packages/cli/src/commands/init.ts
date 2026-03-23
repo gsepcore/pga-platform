@@ -88,7 +88,7 @@ async function createProjectStructure(
         dependencies: Record<string, string>;
         devDependencies: Record<string, string>;
     } = {
-        name: 'my-pga-project',
+        name: 'my-gsep-project',
         version: '1.0.0',
         type: 'module',
         description: 'GSEP-powered AI application',
@@ -181,7 +181,7 @@ function getEnvTemplate(template: string): string {
 
     if (template === 'enterprise') {
         env += '# PostgreSQL Connection\n';
-        env += 'DATABASE_URL=postgresql://user:password@localhost:5432/pga\n\n';
+        env += 'DATABASE_URL=postgresql://user:password@localhost:5432/gsep\n\n';
     }
 
     return env;
@@ -193,12 +193,12 @@ function getMainTemplate(template: string): string {
  * Basic GSEP Application
  */
 
-import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { GSEP, InMemoryStorageAdapter } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 async function main() {
     // Initialize GSEP
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
         }),
@@ -206,7 +206,7 @@ async function main() {
     });
 
     // Create a genome
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'my-assistant',
         config: {
             systemPrompt: 'You are a helpful AI assistant.',
@@ -235,13 +235,13 @@ main().catch(console.error);
  * Includes monitoring and multi-model support
  */
 
-import { PGA, InMemoryStorageAdapter, MetricsCollector } from '@gsep/core';
+import { GSEP, InMemoryStorageAdapter, MetricsCollector } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 import { OpenAIAdapter } from '@gsep/adapters-llm-openai';
 
 async function main() {
     // Initialize GSEP with Claude
-    const pgaClaude = new PGA({
+    const gsepClaude = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
             model: 'claude-sonnet-4-5-20250929',
@@ -250,7 +250,7 @@ async function main() {
     });
 
     // Initialize GSEP with OpenAI (alternative)
-    const pgaOpenAI = new PGA({
+    const gsepOpenAI = new GSEP({
         llm: new OpenAIAdapter({
             apiKey: process.env.OPENAI_API_KEY!,
             model: 'gpt-4-turbo-preview',
@@ -291,7 +291,7 @@ main().catch(console.error);
  * Production-ready with PostgreSQL, monitoring, and multi-model support
  */
 
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
@@ -304,7 +304,7 @@ async function main() {
     await storage.initialize();
 
     // Initialize GSEP with persistent storage
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
             model: 'claude-sonnet-4-5-20250929',
@@ -313,7 +313,7 @@ async function main() {
     });
 
     // Create genome
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'enterprise-assistant',
         config: {
             systemPrompt: 'You are an enterprise-grade AI assistant with genomic evolution.',
@@ -367,7 +367,7 @@ npm run dev
 ## Project Structure
 
 \`\`\`
-my-pga-project/
+my-gsep-project/
 ├── src/
 │   └── index.ts          # Main application
 ├── genomes/              # Genome exports

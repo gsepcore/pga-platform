@@ -92,7 +92,7 @@ async function generateEnvFile(projectPath: string, config: ProjectConfig) {
     }
 
     if (config.storage === 'postgres') {
-        envContent += '# PostgreSQL Connection\nDATABASE_URL=postgresql://user:password@localhost:5432/pga_db\n\n';
+        envContent += '# PostgreSQL Connection\nDATABASE_URL=postgresql://user:password@localhost:5432/gsep_db\n\n';
     }
 
     envContent += '# Evolution Configuration\nEVOLUTION_MODE=' + (config.evolutionBoost ? 'aggressive' : 'balanced') + '\n';
@@ -204,7 +204,7 @@ async function generateSourceFiles(projectPath: string, config: ProjectConfig) {
 }
 
 function generateIndexFile(config: ProjectConfig): string {
-    let imports = `import 'dotenv/config';\nimport { PGA } from '@gsep/core';\n`;
+    let imports = `import 'dotenv/config';\nimport { GSEP } from '@gsep/core';\n`;
 
     if (config.llmProvider === 'anthropic') {
         imports += `import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\n`;
@@ -254,16 +254,16 @@ function generateIndexFile(config: ProjectConfig): string {
   // Initialize storage
   ${storageSetup}
   // Initialize GSEP
-  const pga = new PGA({
+  const gsep = new GSEP({
     llm,
     storage,
   });
 
-  await pga.initialize();
+  await gsep.initialize();
   console.log('✅ GSEP initialized\\n');
 
   // Setup agent genome
-  const genome = await setupAgent(pga);
+  const genome = await setupAgent(gsep);
 
   // Example conversation
   const userId = 'demo-user';
@@ -341,10 +341,10 @@ function generateAgentFile(config: ProjectConfig): string {
 /**
  * Setup the agent genome with initial configuration
  */
-export async function setupAgent(pga: PGA): Promise<GenomeInstance> {
+export async function setupAgent(gsep: GSEP): Promise<GenomeInstance> {
   console.log('🧬 Creating agent genome...\\n');
 
-  const genome = await pga.createGenome({
+  const genome = await gsep.createGenome({
     name: 'my-agent',
     config: {${autonomousConfig}
     },
