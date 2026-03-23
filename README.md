@@ -73,7 +73,7 @@ npm install @gsep/core @gsep/adapters-llm-perplexity   # Perplexity (web search)
 
 ```typescript
 // gsep-setup.ts — add this file to your project
-import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { GSEP, InMemoryStorageAdapter } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
 const llm = new ClaudeAdapter({
@@ -81,7 +81,7 @@ const llm = new ClaudeAdapter({
   model: 'claude-sonnet-4-5-20250929',
 });
 
-const gsep = new PGA({
+const gsep = new GSEP({
   llm,
   storage: new InMemoryStorageAdapter(),  // For development/demos (data lost on restart)
   // For production, use PostgreSQL (data persists, auto-creates 9 tables):
@@ -262,7 +262,7 @@ const genome = await gsep.createGenome({
 ```typescript
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
-const gsep = new PGA({
+const gsep = new GSEP({
   llm,
   storage: new PostgresAdapter({
     connectionString: process.env.DATABASE_URL!,
@@ -425,7 +425,7 @@ class MyLLMAdapter implements LLMAdapter {
 }
 
 // Use it with GSEP:
-const gsep = new PGA({ llm: new MyLLMAdapter() });
+const gsep = new GSEP({ llm: new MyLLMAdapter() });
 ```
 
 Only `chat()` is required. `stream()` and `estimateCost()` are optional.

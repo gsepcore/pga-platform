@@ -35,12 +35,12 @@ npm install @gsep/adapters-llm @gsep/adapters-storage
 ## Quick Start
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage/postgres';
 
 // 1. Initialize GSEP
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_KEY,
   }),
@@ -49,10 +49,10 @@ const pga = new PGA({
   }),
 });
 
-await pga.initialize();
+await gsep.initialize();
 
 // 2. Create genome
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   name: 'my-assistant',
 });
 
@@ -130,14 +130,14 @@ GSEP evolves through a 4-phase cycle:
 
 ## API Reference
 
-### PGA Class
+### GSEP Class
 
-#### `new PGA(config)`
+#### `new GSEP(config)`
 
-Create PGA instance.
+Create GSEP instance.
 
 ```typescript
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({ apiKey: '...' }),
   storage: new PostgresAdapter({ connectionString: '...' }),
   config: {
@@ -147,20 +147,20 @@ const pga = new PGA({
 });
 ```
 
-#### `pga.initialize()`
+#### `gsep.initialize()`
 
 Initialize storage (create tables, etc.).
 
 ```typescript
-await pga.initialize();
+await gsep.initialize();
 ```
 
-#### `pga.createGenome(options)`
+#### `gsep.createGenome(options)`
 
 Create new genome.
 
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   name: 'my-assistant',
   config: {
     enableSandbox: true,
