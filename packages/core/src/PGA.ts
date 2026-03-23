@@ -709,6 +709,11 @@ export class GenomeInstance {
             events: this.events,
             port,
             host: '127.0.0.1',
+            getGenes: () => ({
+                layer0: this.genome.layers.layer0,
+                layer1: this.genome.layers.layer1,
+                layer2: this.genome.layers.layer2,
+            }),
         });
 
         await this.dashboardServer.start();
@@ -2046,6 +2051,16 @@ Ready to see what we can do together? 😊`,
                     improvement: mutationCandidate.fitness - currentAllele.fitness,
                 }, { genomeId: this.genome.id });
 
+                // Emit gene:updated so the dashboard sidebar refreshes
+                this.events.emitSync('gene:updated', {
+                    genomeId: this.genome.id,
+                    layers: {
+                        layer0: this.genome.layers.layer0,
+                        layer1: this.genome.layers.layer1,
+                        layer2: this.genome.layers.layer2,
+                    },
+                }, { genomeId: this.genome.id });
+
                 return {
                     applied: true,
                     reason: gateResult.reason,
@@ -2093,6 +2108,16 @@ Ready to see what we can do together? 😊`,
                     variant: mutationCandidate.variant,
                     fitness: mutationCandidate.fitness,
                     reason: gateResult.reason,
+                }, { genomeId: this.genome.id });
+
+                // Emit gene:updated so the dashboard sidebar refreshes
+                this.events.emitSync('gene:updated', {
+                    genomeId: this.genome.id,
+                    layers: {
+                        layer0: this.genome.layers.layer0,
+                        layer1: this.genome.layers.layer1,
+                        layer2: this.genome.layers.layer2,
+                    },
                 }, { genomeId: this.genome.id });
 
                 return {

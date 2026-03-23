@@ -27,7 +27,8 @@ export type PGAEventType =
     | 'drift:detected'
     | 'gate:evaluated'
     | 'firewall:threat'
-    | 'immune:threat';
+    | 'immune:threat'
+    | 'gene:updated';
 
 export interface PGAEvent<T = unknown> {
     type: PGAEventType;

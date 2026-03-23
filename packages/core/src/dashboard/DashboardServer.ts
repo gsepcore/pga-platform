@@ -29,6 +29,8 @@ export interface DashboardServerConfig {
     maxConnectionsPerUser?: number;
     /** Optional genome snapshot provider for initial hydration */
     getSnapshot?: (genomeId: string) => unknown;
+    /** Optional gene data provider for the gene sidebar */
+    getGenes?: () => { layer0: unknown[]; layer1: unknown[]; layer2: unknown[] };
 }
 
 interface SSEConnection {
@@ -43,7 +45,7 @@ export class DashboardServer {
     private server: Server | null = null;
     private connections: Map<string, SSEConnection[]> = new Map();
     private eventSubscriptionId: string | null = null;
-    private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot'>> & { getSnapshot?: (genomeId: string) => unknown };
+    private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot' | 'getGenes'>> & { getSnapshot?: (genomeId: string) => unknown; getGenes?: () => { layer0: unknown[]; layer1: unknown[]; layer2: unknown[] } };
     private dashboardHtml: string | null = null;
 
     constructor(config: DashboardServerConfig) {
@@ -143,6 +145,8 @@ export class DashboardServer {
             this.handleDashboard(url, res);
         } else if (path === '/gsep/snapshot') {
             this.handleSnapshot(url, res);
+        } else if (path === '/gsep/genes') {
+            this.handleGenes(url, res);
         } else if (path === '/gsep/health') {
             this.handleHealth(res);
         } else {
@@ -299,6 +303,31 @@ export class DashboardServer {
                 data: e.data,
             })),
         }));
+    }
+
+    // ─── Genes Endpoint ──────────────────────────────────
+
+    private handleGenes(url: URL, res: ServerResponse): void {
+        const token = url.searchParams.get('token');
+        if (!token) {
+            res.writeHead(401, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Missing token' }));
+            return;
+        }
+
+        const payload = DashboardTokenHelper.verify(this.config.secret, token);
+        if (!payload) {
+            res.writeHead(403, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Invalid or expired token' }));
+            return;
+        }
+
+        const genes = this.config.getGenes
+            ? this.config.getGenes()
+            : { layer0: [], layer1: [], layer2: [] };
+
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(genes));
     }
 
     // ─── Health Endpoint ─────────────────────────────────

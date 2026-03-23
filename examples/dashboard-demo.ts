@@ -7,7 +7,7 @@
  *   npx tsx examples/dashboard-demo.ts
  */
 
-import { PGA, InMemoryStorageAdapter } from '@pga-ai/core';
+import { PGA, InMemoryStorageAdapter } from '../packages/core/src/index.js';
 
 const mockLLM = {
     model: 'mock-model',
