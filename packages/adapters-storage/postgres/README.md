@@ -11,11 +11,11 @@ npm install @gsep/core @gsep/adapters-storage-postgres
 ## Usage
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_API_KEY,
   }),
@@ -25,9 +25,9 @@ const pga = new PGA({
   }),
 });
 
-await pga.initialize();
+await gsep.initialize();
 
-const genome = await pga.createGenome({ name: 'my-assistant' });
+const genome = await gsep.createGenome({ name: 'my-assistant' });
 const response = await genome.chat('Hello!', { userId: 'user123' });
 
 console.log(response);
@@ -51,20 +51,20 @@ postgresql://user:password@host:port/database
 
 **Example:**
 ```
-postgresql://postgres:secret@localhost:5432/pga
+postgresql://postgres:secret@localhost:5432/gsep
 ```
 
 ## Database Schema
 
 The adapter automatically creates the following tables:
 
-- `pga_genomes` - Genome metadata
-- `pga_alleles` - Gene alleles (Layer 0, 1, 2)
-- `pga_user_dna` - User cognitive profiles
-- `pga_interactions` - Interaction logs
-- `pga_mutations` - Mutation history
-- `pga_feedback` - User feedback signals
-- `pga_analytics` - Pre-aggregated stats
+- `gsep_genomes` - Genome metadata
+- `gsep_alleles` - Gene alleles (Layer 0, 1, 2)
+- `gsep_user_dna` - User cognitive profiles
+- `gsep_interactions` - Interaction logs
+- `gsep_mutations` - Mutation history
+- `gsep_feedback` - User feedback signals
+- `gsep_analytics` - Pre-aggregated stats
 
 See [`sql/schema.sql`](./sql/schema.sql) for full schema.
 
@@ -82,7 +82,7 @@ const adapter = new PostgresAdapter({
 await runMigrations();
 
 // Then initialize GSEP (will skip schema creation)
-await pga.initialize();
+await gsep.initialize();
 ```
 
 ## Performance
@@ -101,9 +101,9 @@ const adapter = new PostgresAdapter({
 ### Indexes
 
 All critical queries are indexed:
-- Genome lookups: `pga_genomes(id)`
-- Allele selection: `pga_alleles(genome_id, layer, gene, status)`
-- User DNA: `pga_user_dna(user_id, genome_id)`
+- Genome lookups: `gsep_genomes(id)`
+- Allele selection: `gsep_alleles(genome_id, layer, gene, status)`
+- User DNA: `gsep_user_dna(user_id, genome_id)`
 - Analytics queries: All have composite indexes
 
 ## Production Checklist
@@ -113,7 +113,7 @@ All critical queries are indexed:
 ✅ Set up database backups
 ✅ Monitor connection pool usage
 ✅ Use read replicas for analytics queries
-✅ Consider partitioning `pga_interactions` table for high volume
+✅ Consider partitioning `gsep_interactions` table for high volume
 
 ## Troubleshooting
 
@@ -126,7 +126,7 @@ const adapter = new PostgresAdapter({
   autoInitialize: true, // ← This creates tables
 });
 
-await pga.initialize();
+await gsep.initialize();
 ```
 
 ### Connection timeout

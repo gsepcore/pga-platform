@@ -67,7 +67,7 @@ Use `--save-report` on any benchmark example to export a markdown report.
 | Example | What it shows | Est. cost | Requirements |
 |---------|--------------|-----------|-------------|
 | [postgres-quickstart.ts](./postgres-quickstart.ts) | PostgreSQL adapter setup (persistent storage) | Free | `DATABASE_URL` |
-| [pga-with-monitoring-production.ts](./pga-with-monitoring-production.ts) | Production-grade setup with monitoring and alerting | ~$0.05 | `ANTHROPIC_API_KEY` + `DATABASE_URL` |
+| [gsep-with-monitoring-production.ts](./gsep-with-monitoring-production.ts) | Production-grade setup with monitoring and alerting | ~$0.05 | `ANTHROPIC_API_KEY` + `DATABASE_URL` |
 | [quick-start.ts](./quick-start.ts) | Minimal Gene Bank integration | ~$0.02 | `ANTHROPIC_API_KEY` |
 
 ## Starter Templates

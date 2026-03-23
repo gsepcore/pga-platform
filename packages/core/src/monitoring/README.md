@@ -223,9 +223,9 @@ setInterval(() => {
   const metrics = metricsCollector.exportMetrics();
 
   // Send to Prometheus/Grafana
-  promClient.gauge('pga_response_time').set(metrics.performance.avgResponseTime);
-  promClient.gauge('pga_cost_total').set(metrics.cost.totalCost);
-  promClient.gauge('pga_success_rate').set(metrics.performance.successRate);
+  promClient.gauge('gsep_response_time').set(metrics.performance.avgResponseTime);
+  promClient.gauge('gsep_cost_total').set(metrics.cost.totalCost);
+  promClient.gauge('gsep_success_rate').set(metrics.performance.successRate);
 }, 60000);
 ```
 
@@ -238,9 +238,9 @@ const dogstatsd = new StatsD();
 setInterval(() => {
   const perf = metrics.getPerformanceMetrics();
 
-  dogstatsd.gauge('pga.response_time', perf.avgResponseTime);
-  dogstatsd.gauge('pga.success_rate', perf.successRate);
-  dogstatsd.increment('pga.requests', perf.totalRequests);
+  dogstatsd.gauge('gsep.response_time', perf.avgResponseTime);
+  dogstatsd.gauge('gsep.success_rate', perf.successRate);
+  dogstatsd.increment('gsep.requests', perf.totalRequests);
 }, 60000);
 ```
 

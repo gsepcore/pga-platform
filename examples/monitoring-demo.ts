@@ -24,7 +24,7 @@ async function productionMonitoringDemo() {
             apiKey: process.env.ANTHROPIC_API_KEY || 'demo-key',
         }),
         storage: new PostgresAdapter({
-            connectionString: process.env.DATABASE_URL || 'postgres://localhost/pga',
+            connectionString: process.env.DATABASE_URL || 'postgres://localhost/gsep',
         }),
         config: {
             enableSandbox: true,
