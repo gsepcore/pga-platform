@@ -1,5 +1,5 @@
 /**
- * PGAServer — Secure Evolution Server (Pull/Push Architecture)
+ * GSEPServer — Secure Evolution Server (Pull/Push Architecture)
  *
  * Provides a REST API for external agents (Python, Go, Rust, etc.)
  * to benefit from GSEP evolution WITHOUT proxying LLM traffic.
@@ -17,7 +17,7 @@
 
 import { timingSafeEqual } from 'node:crypto';
 import Fastify, { type FastifyInstance } from 'fastify';
-import { PGA, GenomeInstance, GenomeBuilder, InMemoryStorageAdapter } from '@gsep/core';
+import { GSEP, GenomeInstance, GenomeBuilder, InMemoryStorageAdapter } from '@gsep/core';
 import type { LLMAdapter, StorageAdapter, WrapOptions } from '@gsep/core';
 import type { GeneCategory } from '@gsep/core';
 import { HMACVerifier } from './auth/HMACVerifier.js';
@@ -29,7 +29,7 @@ import { registerPaymentRoutes } from './routes/payments.js';
 
 // ─── Config Types ──────────────────────────────────────────
 
-export interface PGAServerConfig {
+export interface GSEPServerConfig {
     /** Storage adapter for genome persistence */
     storage?: StorageAdapter;
     /** LLM adapter for LLM-powered mutations (optional) */
@@ -76,9 +76,9 @@ class NoopLLMAdapter implements LLMAdapter {
 
 // ─── GSEP Server ────────────────────────────────────────────
 
-export class PGAServer {
+export class GSEPServer {
     private app: FastifyInstance;
-    private pga!: PGA;
+    private gsep!: GSEP;
     private genomes = new Map<string, GenomeEntry>();
     private storage: StorageAdapter;
     private llm: LLMAdapter;
@@ -87,7 +87,7 @@ export class PGAServer {
     readonly adminApiKey: string;
     readonly port: number;
 
-    constructor(private config: PGAServerConfig) {
+    constructor(private config: GSEPServerConfig) {
         this.adminApiKey = config.adminApiKey;
         this.port = config.port ?? 4444;
         this.storage = config.storage ?? new InMemoryStorageAdapter();
@@ -103,12 +103,12 @@ export class PGAServer {
         const listenPort = port ?? this.port;
 
         // Initialize GSEP core
-        this.pga = new PGA({
+        this.gsep = new GSEP({
             llm: this.llm,
             storage: this.storage,
             monitoring: { enabled: true, enableCostTracking: true, enableAuditLogs: true },
         });
-        await this.pga.initialize();
+        await this.gsep.initialize();
 
         // Rate limiting
         if (this.config.rateLimit) {
@@ -139,7 +139,7 @@ export class PGAServer {
      */
     async stop(): Promise<void> {
         await this.app.close();
-        this.pga.shutdown();
+        this.gsep.shutdown();
     }
 
     /**
@@ -167,7 +167,7 @@ export class PGAServer {
 
         // Save to storage and load as GenomeInstance
         await this.storage.saveGenome(genome);
-        const instance = await this.pga.loadGenome(genome.id);
+        const instance = await this.gsep.loadGenome(genome.id);
         if (!instance) {
             throw new Error(`Failed to create genome: ${options.name}`);
         }
@@ -192,7 +192,7 @@ export class PGAServer {
         const entry = this.genomes.get(genomeId);
         if (!entry) return false;
 
-        await this.pga.deleteGenome(genomeId);
+        await this.gsep.deleteGenome(genomeId);
         this.genomes.delete(genomeId);
         return true;
     }

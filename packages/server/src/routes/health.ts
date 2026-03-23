@@ -8,9 +8,9 @@
  */
 
 import type { FastifyInstance } from 'fastify';
-import type { PGAServer } from '../PGAServer.js';
+import type { GSEPServer } from '../GSEPServer.js';
 
-export function registerHealthRoutes(app: FastifyInstance, server: PGAServer): void {
+export function registerHealthRoutes(app: FastifyInstance, server: GSEPServer): void {
     app.get('/api/health', async () => {
         return {
             status: 'ok',

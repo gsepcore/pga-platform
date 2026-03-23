@@ -70,15 +70,15 @@ export interface BenchmarkResult {
 }
 
 export interface ComparisonResult {
-    withPGA: BenchmarkResult;
-    withoutPGA: BenchmarkResult;
+    withGSEP: BenchmarkResult;
+    withoutGSEP: BenchmarkResult;
     improvements: {
         successRate: number;        // percentage points improvement
         tokenEfficiency: number;    // percentage tokens saved
         responseTime: number;       // percentage faster
         qualityScore: number;       // percentage better
     };
-    verdict: 'PGA_WINS' | 'BASELINE_WINS' | 'TIE';
+    verdict: 'GSEP_WINS' | 'BASELINE_WINS' | 'TIE';
 }
 
 export class Evaluator {
@@ -362,41 +362,41 @@ export class Evaluator {
      * Living OS v1.0 Week 5: Uses EvaluatableGenome interface
      */
     async compare(
-        genomeWithPGA: EvaluatableGenome,
+        genomeWithGSEP: EvaluatableGenome,
         genomeBaseline: EvaluatableGenome,
         tasks: EvaluationTask[],
         userId: string,
     ): Promise<ComparisonResult> {
         // Run both benchmarks
-        const withPGA = await this.evaluate(genomeWithPGA, tasks, userId);
-        const withoutPGA = await this.evaluate(genomeBaseline, tasks, userId);
+        const withGSEP = await this.evaluate(genomeWithGSEP, tasks, userId);
+        const withoutGSEP = await this.evaluate(genomeBaseline, tasks, userId);
 
         // Calculate improvements (guard against division by zero)
-        const successRateImprovement = withPGA.successRate - withoutPGA.successRate;
-        const tokenEfficiency = withoutPGA.avgTokensPerTask > 0
-            ? ((withoutPGA.avgTokensPerTask - withPGA.avgTokensPerTask) / withoutPGA.avgTokensPerTask) * 100
+        const successRateImprovement = withGSEP.successRate - withoutGSEP.successRate;
+        const tokenEfficiency = withoutGSEP.avgTokensPerTask > 0
+            ? ((withoutGSEP.avgTokensPerTask - withGSEP.avgTokensPerTask) / withoutGSEP.avgTokensPerTask) * 100
             : 0;
-        const responseTimeImprovement = withoutPGA.avgResponseTime > 0
-            ? ((withoutPGA.avgResponseTime - withPGA.avgResponseTime) / withoutPGA.avgResponseTime) * 100
+        const responseTimeImprovement = withoutGSEP.avgResponseTime > 0
+            ? ((withoutGSEP.avgResponseTime - withGSEP.avgResponseTime) / withoutGSEP.avgResponseTime) * 100
             : 0;
-        const qualityImprovement = withoutPGA.avgQualityScore > 0
-            ? ((withPGA.avgQualityScore - withoutPGA.avgQualityScore) / withoutPGA.avgQualityScore) * 100
+        const qualityImprovement = withoutGSEP.avgQualityScore > 0
+            ? ((withGSEP.avgQualityScore - withoutGSEP.avgQualityScore) / withoutGSEP.avgQualityScore) * 100
             : 0;
 
         // Determine verdict
         let verdict: ComparisonResult['verdict'] = 'TIE';
-        const pgaScore =
+        const gsepScore =
             successRateImprovement + tokenEfficiency + responseTimeImprovement + qualityImprovement;
 
-        if (pgaScore > 10) {
-            verdict = 'PGA_WINS';
-        } else if (pgaScore < -10) {
+        if (gsepScore > 10) {
+            verdict = 'GSEP_WINS';
+        } else if (gsepScore < -10) {
             verdict = 'BASELINE_WINS';
         }
 
         return {
-            withPGA,
-            withoutPGA,
+            withGSEP,
+            withoutGSEP,
             improvements: {
                 successRate: Math.round(successRateImprovement * 100) / 100,
                 tokenEfficiency: Math.round(tokenEfficiency * 100) / 100,
@@ -455,7 +455,7 @@ export class Evaluator {
 
         // Verdict
         const verdictIcon = {
-            PGA_WINS: '🏆',
+            GSEP_WINS: '🏆',
             BASELINE_WINS: '😞',
             TIE: '🤝',
         }[comparison.verdict];
@@ -487,26 +487,26 @@ export class Evaluator {
         const metrics = [
             [
                 'Success Rate',
-                `${comparison.withoutPGA.successRate.toFixed(1)}%`,
-                `${comparison.withPGA.successRate.toFixed(1)}%`,
+                `${comparison.withoutGSEP.successRate.toFixed(1)}%`,
+                `${comparison.withGSEP.successRate.toFixed(1)}%`,
                 `${comparison.improvements.successRate > 0 ? '+' : ''}${comparison.improvements.successRate.toFixed(1)}%`,
             ],
             [
                 'Avg Tokens',
-                `${comparison.withoutPGA.avgTokensPerTask}`,
-                `${comparison.withPGA.avgTokensPerTask}`,
+                `${comparison.withoutGSEP.avgTokensPerTask}`,
+                `${comparison.withGSEP.avgTokensPerTask}`,
                 `${comparison.improvements.tokenEfficiency.toFixed(1)}%`,
             ],
             [
                 'Avg Time',
-                `${comparison.withoutPGA.avgResponseTime}ms`,
-                `${comparison.withPGA.avgResponseTime}ms`,
+                `${comparison.withoutGSEP.avgResponseTime}ms`,
+                `${comparison.withGSEP.avgResponseTime}ms`,
                 `${comparison.improvements.responseTime.toFixed(1)}%`,
             ],
             [
                 'Quality',
-                `${comparison.withoutPGA.avgQualityScore.toFixed(2)}`,
-                `${comparison.withPGA.avgQualityScore.toFixed(2)}`,
+                `${comparison.withoutGSEP.avgQualityScore.toFixed(2)}`,
+                `${comparison.withGSEP.avgQualityScore.toFixed(2)}`,
                 `${comparison.improvements.qualityScore.toFixed(1)}%`,
             ],
         ];

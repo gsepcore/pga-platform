@@ -1,5 +1,5 @@
 /**
- * PGAServer Tests — Secure Pull/Push Evolution Server (GSEP)
+ * GSEPServer Tests — Secure Pull/Push Evolution Server (GSEP)
  *
  * Uses Fastify inject() for testing (no real HTTP server needed).
  *
@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { PGAServer } from '../PGAServer.js';
+import { GSEPServer } from '../GSEPServer.js';
 import { HMACVerifier } from '../auth/HMACVerifier.js';
 import { InMemoryStorageAdapter } from '@gsep/core';
 
@@ -16,10 +16,10 @@ import { InMemoryStorageAdapter } from '@gsep/core';
 
 const ADMIN_KEY = 'test-admin-key-12345';
 
-let server: PGAServer;
+let server: GSEPServer;
 
 beforeAll(async () => {
-    server = new PGAServer({
+    server = new GSEPServer({
         storage: new InMemoryStorageAdapter(),
         adminApiKey: ADMIN_KEY,
         logger: false, // Suppress logging in tests
@@ -58,7 +58,7 @@ describe('Genome CRUD', () => {
         const response = await server.getApp().inject({
             method: 'POST',
             url: '/api/genomes',
-            headers: { 'x-pga-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
             payload: {
                 name: 'test-agent',
                 systemPrompt: 'You are a helpful code assistant.\n\nProvide clear explanations.',
@@ -93,7 +93,7 @@ describe('Genome CRUD', () => {
         const response = await server.getApp().inject({
             method: 'POST',
             url: '/api/genomes',
-            headers: { 'x-pga-admin-key': 'wrong-key', 'content-type': 'application/json' },
+            headers: { 'x-gsep-admin-key': 'wrong-key', 'content-type': 'application/json' },
             payload: {
                 name: 'bad-key-agent',
                 systemPrompt: 'Test prompt.',
@@ -107,7 +107,7 @@ describe('Genome CRUD', () => {
         const response = await server.getApp().inject({
             method: 'GET',
             url: '/api/genomes',
-            headers: { 'x-pga-admin-key': ADMIN_KEY },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY },
         });
 
         expect(response.statusCode).toBe(200);
@@ -137,7 +137,7 @@ describe('PULL - Get evolved prompt', () => {
         const response = await server.getApp().inject({
             method: 'POST',
             url: '/api/genomes',
-            headers: { 'x-pga-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
             payload: {
                 name: 'pull-test-agent',
                 systemPrompt: 'You are a data analyst.\n\nAnalyze data carefully and provide insights.',
@@ -209,7 +209,7 @@ describe('PUSH - Report metrics', () => {
         const response = await server.getApp().inject({
             method: 'POST',
             url: '/api/genomes',
-            headers: { 'x-pga-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
             payload: {
                 name: 'push-test-agent',
                 systemPrompt: 'You are a test agent.',
@@ -236,7 +236,7 @@ describe('PUSH - Report metrics', () => {
             url: `/api/genomes/${genomeId}/report`,
             headers: {
                 'content-type': 'application/json',
-                'x-pga-signature': signature,
+                'x-gsep-signature': signature,
             },
             payload: reportBody,
         });
@@ -277,7 +277,7 @@ describe('PUSH - Report metrics', () => {
             url: `/api/genomes/${genomeId}/report`,
             headers: {
                 'content-type': 'application/json',
-                'x-pga-signature': 'a'.repeat(64), // Fake signature
+                'x-gsep-signature': 'a'.repeat(64), // Fake signature
             },
             payload: reportBody,
         });
@@ -304,7 +304,7 @@ describe('PUSH - Report metrics', () => {
             url: `/api/genomes/${genomeId}/report`,
             headers: {
                 'content-type': 'application/json',
-                'x-pga-signature': signature,
+                'x-gsep-signature': signature,
             },
             payload: reportBody,
         });
@@ -328,7 +328,7 @@ describe('PUSH - Report metrics', () => {
             url: `/api/genomes/${genomeId}/report`,
             headers: {
                 'content-type': 'application/json',
-                'x-pga-signature': signature,
+                'x-gsep-signature': signature,
             },
             payload: reportBody,
         });
@@ -386,7 +386,7 @@ describe('Genome details and deletion', () => {
         const response = await server.getApp().inject({
             method: 'POST',
             url: '/api/genomes',
-            headers: { 'x-pga-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY, 'content-type': 'application/json' },
             payload: {
                 name: 'detail-test-agent',
                 systemPrompt: 'You are a test agent for details.',
@@ -399,7 +399,7 @@ describe('Genome details and deletion', () => {
         const response = await server.getApp().inject({
             method: 'GET',
             url: `/api/genomes/${genomeId}`,
-            headers: { 'x-pga-admin-key': ADMIN_KEY },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY },
         });
 
         expect(response.statusCode).toBe(200);
@@ -413,7 +413,7 @@ describe('Genome details and deletion', () => {
         const response = await server.getApp().inject({
             method: 'GET',
             url: '/api/genomes/nonexistent-id',
-            headers: { 'x-pga-admin-key': ADMIN_KEY },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY },
         });
 
         expect(response.statusCode).toBe(404);
@@ -423,7 +423,7 @@ describe('Genome details and deletion', () => {
         const response = await server.getApp().inject({
             method: 'DELETE',
             url: `/api/genomes/${genomeId}`,
-            headers: { 'x-pga-admin-key': ADMIN_KEY },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY },
         });
 
         expect(response.statusCode).toBe(200);
@@ -433,7 +433,7 @@ describe('Genome details and deletion', () => {
         const getResponse = await server.getApp().inject({
             method: 'GET',
             url: `/api/genomes/${genomeId}`,
-            headers: { 'x-pga-admin-key': ADMIN_KEY },
+            headers: { 'x-gsep-admin-key': ADMIN_KEY },
         });
         expect(getResponse.statusCode).toBe(404);
     });

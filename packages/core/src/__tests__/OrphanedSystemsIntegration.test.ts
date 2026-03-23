@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 
@@ -52,19 +52,19 @@ function createMockStorage(): StorageAdapter {
 // ─── StrategicAutonomy Refusal Tests ────────────────────
 
 describe('StrategicAutonomy in chat()', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should refuse tasks with purpose-conflicting content', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'strategic-agent',
             config: {
                 autonomous: {
@@ -88,7 +88,7 @@ describe('StrategicAutonomy in chat()', () => {
     });
 
     it('should allow normal tasks through', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'strategic-agent',
             config: {
                 autonomous: {
@@ -114,19 +114,19 @@ describe('StrategicAutonomy in chat()', () => {
 // ─── ThinkingEngine Self-Reflection Tests ───────────────
 
 describe('ThinkingEngine in chat()', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should not crash with ThinkingEngine enabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'thinking-agent',
             config: {
                 autonomous: {
@@ -145,7 +145,7 @@ describe('ThinkingEngine in chat()', () => {
     });
 
     it('should accumulate meta-learning patterns over multiple interactions', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'learning-agent',
             config: {
                 autonomous: {
@@ -168,19 +168,19 @@ describe('ThinkingEngine in chat()', () => {
 // ─── ModelRouter Intelligence Tests ─────────────────────
 
 describe('ModelRouter in chat()', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should route and log model decisions when enabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'routing-agent',
             config: {
                 autonomous: {
@@ -199,7 +199,7 @@ describe('ModelRouter in chat()', () => {
     });
 
     it('should not route when feature disabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'basic-agent',
         });
 
@@ -215,19 +215,19 @@ describe('ModelRouter in chat()', () => {
 // ─── PatternMemory → Predictions in Prompt Tests ────────
 
 describe('PatternMemory predictions in chat()', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should wire PatternMemory predictions into the prompt pipeline', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'predictive-agent',
             config: {
                 autonomous: {
@@ -277,19 +277,19 @@ describe('PatternMemory predictions in chat()', () => {
 // ─── Metacognition Pre-Response Tests ───────────────────
 
 describe('Metacognition pre-response in chat()', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should perform pre-response analysis before LLM call', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'metacognitive-agent',
             config: {
                 autonomous: {
@@ -313,7 +313,7 @@ describe('Metacognition pre-response in chat()', () => {
     });
 
     it('should not inject metacognition for clear messages', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'metacognitive-agent',
             config: {
                 autonomous: {
@@ -334,19 +334,19 @@ describe('Metacognition pre-response in chat()', () => {
 // ─── Full Integration: All Systems Active ───────────────
 
 describe('All orphaned systems active together', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should handle all intelligence systems simultaneously', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'fully-alive-agent',
             config: {
                 autonomous: {
@@ -387,7 +387,7 @@ describe('All orphaned systems active together', () => {
     });
 
     it('should still refuse dangerous tasks even with all systems active', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'fully-alive-agent',
             config: {
                 autonomous: {

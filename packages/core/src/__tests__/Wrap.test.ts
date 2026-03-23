@@ -1,5 +1,5 @@
 /**
- * PGA.wrap() Tests (GSEP)
+ * GSEP.wrap() Tests (GSEP)
  *
  * Tests for the universal self-evolving agent middleware
  *
@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import { WrappedAgent } from '../wrap/WrappedAgent.js';
 import { GenomeBuilder } from '../wrap/GenomeBuilder.js';
 import { InMemoryStorageAdapter } from '../wrap/InMemoryStorageAdapter.js';
@@ -41,10 +41,10 @@ function createDefaultOptions(overrides?: Partial<WrapOptions>): WrapOptions {
 
 // ─── Level 1: LLMAdapter wrapping ──────────────────────────
 
-describe('PGA.wrap() with LLMAdapter', () => {
+describe('GSEP.wrap() with LLMAdapter', () => {
     it('should wrap an LLMAdapter and return a WrappedAgent', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         expect(agent).toBeInstanceOf(WrappedAgent);
         expect(agent.name).toBe('wrapped-agent');
@@ -56,7 +56,7 @@ describe('PGA.wrap() with LLMAdapter', () => {
 
     it('should use the provided name', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions({ name: 'code-reviewer' }));
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions({ name: 'code-reviewer' }));
 
         expect(agent.name).toBe('code-reviewer');
 
@@ -65,7 +65,7 @@ describe('PGA.wrap() with LLMAdapter', () => {
 
     it('should return ChatResponse from chat()', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         const messages: Message[] = [
             { role: 'user', content: 'Review this function' },
@@ -86,7 +86,7 @@ describe('PGA.wrap() with LLMAdapter', () => {
 
     it('should track interactions via execute()', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         const result = await agent.execute('Help me debug this');
 
@@ -98,7 +98,7 @@ describe('PGA.wrap() with LLMAdapter', () => {
 
     it('should use InMemoryStorageAdapter by default', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         // Should work without any external storage
         const response = await agent.chat([{ role: 'user', content: 'Hello' }]);
@@ -110,7 +110,7 @@ describe('PGA.wrap() with LLMAdapter', () => {
     it('should accept custom StorageAdapter', async () => {
         const mockLLM = createMockLLM();
         const customStorage = new InMemoryStorageAdapter();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions({
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions({
             storage: customStorage,
         }));
 
@@ -126,7 +126,7 @@ describe('PGA.wrap() with LLMAdapter', () => {
 
     it('should throw when chat() receives no user message', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         await expect(
             agent.chat([{ role: 'system', content: 'System only' }]),
@@ -138,10 +138,10 @@ describe('PGA.wrap() with LLMAdapter', () => {
 
 // ─── Level 2: Function wrapping ────────────────────────────
 
-describe('PGA.wrap() with function', () => {
+describe('GSEP.wrap() with function', () => {
     it('should wrap an async function and return a WrappedAgent', async () => {
         const fn = vi.fn().mockResolvedValue('Function response');
-        const agent = await PGA.wrap(fn, {
+        const agent = await GSEP.wrap(fn, {
             name: 'my-function-agent',
             systemPrompt: 'You are a test agent.',
         });
@@ -156,7 +156,7 @@ describe('PGA.wrap() with function', () => {
         const fn = vi.fn().mockResolvedValue('Response');
 
         await expect(
-            PGA.wrap(fn, {
+            GSEP.wrap(fn, {
                 systemPrompt: 'Test',
             } as any),
         ).rejects.toThrow('name is required');
@@ -164,7 +164,7 @@ describe('PGA.wrap() with function', () => {
 
     it('should pass user message to the wrapped function via chat()', async () => {
         const fn = vi.fn().mockResolvedValue('Function response');
-        const agent = await PGA.wrap(fn, {
+        const agent = await GSEP.wrap(fn, {
             name: 'test-fn',
             systemPrompt: 'You are a test agent.',
         });
@@ -180,7 +180,7 @@ describe('PGA.wrap() with function', () => {
 
     it('should execute() with simple string input', async () => {
         const fn = vi.fn().mockResolvedValue('Direct response');
-        const agent = await PGA.wrap(fn, {
+        const agent = await GSEP.wrap(fn, {
             name: 'direct-agent',
             systemPrompt: 'Test agent.',
         });
@@ -433,7 +433,7 @@ describe('FunctionLLMAdapter', () => {
 describe('WrappedAgent API', () => {
     it('should expose name and id properties', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions({ name: 'my-agent' }));
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions({ name: 'my-agent' }));
 
         expect(agent.name).toBe('my-agent');
         expect(agent.id).toMatch(/^wrap_/);
@@ -443,7 +443,7 @@ describe('WrappedAgent API', () => {
 
     it('should provide access to underlying GenomeInstance', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         const genome = agent.getGenome();
         expect(genome).toBeDefined();
@@ -454,7 +454,7 @@ describe('WrappedAgent API', () => {
 
     it('should expose drift analysis', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         const drift = agent.getDriftAnalysis();
         expect(drift).toBeDefined();
@@ -464,7 +464,7 @@ describe('WrappedAgent API', () => {
 
     it('should shutdown gracefully', async () => {
         const mockLLM = createMockLLM();
-        const agent = await PGA.wrap(mockLLM, createDefaultOptions());
+        const agent = await GSEP.wrap(mockLLM, createDefaultOptions());
 
         // Should not throw
         expect(() => agent.shutdown()).not.toThrow();

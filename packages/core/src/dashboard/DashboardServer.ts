@@ -12,7 +12,7 @@ import { createServer, type Server, type IncomingMessage, type ServerResponse } 
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { DashboardTokenHelper, type DashboardTokenPayload } from './DashboardToken.js';
-import type { PGAEventEmitter, PGAEvent } from '../realtime/EventEmitter.js';
+import type { GSEPEventEmitter, GSEPEvent } from '../realtime/EventEmitter.js';
 
 // ─── Types ───────────────────────────────────────────────
 
@@ -20,7 +20,7 @@ export interface DashboardServerConfig {
     /** HMAC secret for token verification */
     secret: string;
     /** Event emitter to subscribe to */
-    events: PGAEventEmitter;
+    events: GSEPEventEmitter;
     /** Port to listen on (default 4200) */
     port?: number;
     /** Host to bind to (default '0.0.0.0') */
@@ -81,7 +81,7 @@ export class DashboardServer {
 
             this.server.listen(this.config.port, this.config.host, () => {
                 // Subscribe to all events from the emitter
-                this.eventSubscriptionId = this.config.events.onAny((event: PGAEvent) => {
+                this.eventSubscriptionId = this.config.events.onAny((event: GSEPEvent) => {
                     this.broadcastEvent(event);
                 });
                 resolve();
@@ -356,7 +356,7 @@ export class DashboardServer {
 
     // ─── Event Broadcasting ──────────────────────────────
 
-    private broadcastEvent(event: PGAEvent): void {
+    private broadcastEvent(event: GSEPEvent): void {
         const genomeId = event.metadata?.genomeId;
         const userId = event.metadata?.userId;
 

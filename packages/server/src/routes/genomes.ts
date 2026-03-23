@@ -8,14 +8,14 @@
  */
 
 import type { FastifyInstance } from 'fastify';
-import type { PGAServer } from '../PGAServer.js';
+import type { GSEPServer } from '../GSEPServer.js';
 
-export function registerGenomeRoutes(app: FastifyInstance, server: PGAServer): void {
+export function registerGenomeRoutes(app: FastifyInstance, server: GSEPServer): void {
 
     // ─── Create Genome ─────────────────────────────────────
 
     app.post('/api/genomes', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -46,7 +46,7 @@ export function registerGenomeRoutes(app: FastifyInstance, server: PGAServer): v
     // ─── List Genomes ───────────────────────────────────────
 
     app.get('/api/genomes', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -57,7 +57,7 @@ export function registerGenomeRoutes(app: FastifyInstance, server: PGAServer): v
     // ─── Get Genome Details ─────────────────────────────────
 
     app.get<{ Params: { id: string } }>('/api/genomes/:id', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -80,7 +80,7 @@ export function registerGenomeRoutes(app: FastifyInstance, server: PGAServer): v
     // ─── Delete Genome ──────────────────────────────────────
 
     app.delete<{ Params: { id: string } }>('/api/genomes/:id', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -96,7 +96,7 @@ export function registerGenomeRoutes(app: FastifyInstance, server: PGAServer): v
     // ─── Drift Analysis ─────────────────────────────────────
 
     app.get<{ Params: { id: string } }>('/api/genomes/:id/drift', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -112,7 +112,7 @@ export function registerGenomeRoutes(app: FastifyInstance, server: PGAServer): v
     // ─── Evolution Health ───────────────────────────────────
 
     app.get<{ Params: { id: string } }>('/api/genomes/:id/health', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }

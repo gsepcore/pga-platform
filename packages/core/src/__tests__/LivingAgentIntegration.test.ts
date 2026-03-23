@@ -10,7 +10,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 import type { AutonomousConfig } from '../types/index.js';
@@ -37,8 +37,8 @@ function createMockStorage(): StorageAdapter {
     } as unknown as StorageAdapter;
 }
 
-function createGenomeWithAutonomous(pga: PGA, name: string, autonomous: AutonomousConfig) {
-    return pga.createGenome({ name, config: { autonomous } });
+function createGenomeWithAutonomous(gsep: GSEP, name: string, autonomous: AutonomousConfig) {
+    return gsep.createGenome({ name, config: { autonomous } });
 }
 
 // ─── Tests ──────────────────────────────────────────────
@@ -46,12 +46,12 @@ function createGenomeWithAutonomous(pga: PGA, name: string, autonomous: Autonomo
 describe('Living Agent Integration', () => {
     describe('initialization with all 3 systems', () => {
         it('should initialize with all living agent flags enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'test-living-agent', {
+            const genome = await createGenomeWithAutonomous(gsep, 'test-living-agent', {
                 enableEnhancedSelfModel: true,
                 enablePurposeSurvival: true,
                 enableStrategicAutonomy: true,
@@ -61,22 +61,22 @@ describe('Living Agent Integration', () => {
         });
 
         it('should work without any living agent flags', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await pga.createGenome({ name: 'test-basic-agent' });
+            const genome = await gsep.createGenome({ name: 'test-basic-agent' });
             expect(genome).toBeDefined();
         });
 
         it('should work with only some flags enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'test-partial-agent', {
+            const genome = await createGenomeWithAutonomous(gsep, 'test-partial-agent', {
                 enableEnhancedSelfModel: true,
                 enablePurposeSurvival: false,
                 enableStrategicAutonomy: false,
@@ -87,12 +87,12 @@ describe('Living Agent Integration', () => {
 
     describe('public API methods', () => {
         it('getIntegratedHealth() should return health when enhanced self-model enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'health-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'health-test', {
                 enableEnhancedSelfModel: true,
                 agentPurpose: 'Test assistant',
             });
@@ -104,24 +104,24 @@ describe('Living Agent Integration', () => {
         });
 
         it('getIntegratedHealth() should return null without enhanced self-model', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await pga.createGenome({ name: 'no-health-test' });
+            const genome = await gsep.createGenome({ name: 'no-health-test' });
             const health = genome.getIntegratedHealth();
 
             expect(health).toBeNull();
         });
 
         it('getOperatingMode() should return mode when survival enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'mode-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'mode-test', {
                 enableEnhancedSelfModel: true,
                 enablePurposeSurvival: true,
                 agentPurpose: 'Test agent',
@@ -133,24 +133,24 @@ describe('Living Agent Integration', () => {
         });
 
         it('getOperatingMode() should return null without survival', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await pga.createGenome({ name: 'no-mode-test' });
+            const genome = await gsep.createGenome({ name: 'no-mode-test' });
             const mode = genome.getOperatingMode();
 
             expect(mode).toBeNull();
         });
 
         it('getCapabilities() should return empty array by default', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'cap-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'cap-test', {
                 enableEnhancedSelfModel: true,
                 agentPurpose: 'Test',
             });
@@ -160,12 +160,12 @@ describe('Living Agent Integration', () => {
         });
 
         it('getTrajectories() should return empty array before snapshots', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'traj-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'traj-test', {
                 enableEnhancedSelfModel: true,
                 agentPurpose: 'Test',
             });
@@ -175,12 +175,12 @@ describe('Living Agent Integration', () => {
         });
 
         it('getEvolutionPriorities() should return empty array without drift', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'prio-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'prio-test', {
                 enableStrategicAutonomy: true,
                 agentPurpose: 'Test',
             });
@@ -190,12 +190,12 @@ describe('Living Agent Integration', () => {
         });
 
         it('getAgentVitals() should return vitals when all systems enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'vitals-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'vitals-test', {
                 enableEnhancedSelfModel: true,
                 enablePurposeSurvival: true,
                 enableStrategicAutonomy: true,
@@ -211,24 +211,24 @@ describe('Living Agent Integration', () => {
         });
 
         it('getAgentVitals() should return null without both systems', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await pga.createGenome({ name: 'no-vitals-test' });
+            const genome = await gsep.createGenome({ name: 'no-vitals-test' });
             const vitals = genome.getAgentVitals();
 
             expect(vitals).toBeNull();
         });
 
         it('getSurvivalStrategy() should return strategy when enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'strategy-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'strategy-test', {
                 enableEnhancedSelfModel: true,
                 enablePurposeSurvival: true,
                 agentPurpose: 'Test',
@@ -242,12 +242,12 @@ describe('Living Agent Integration', () => {
 
     describe('graceful fallbacks', () => {
         it('should handle enablePurposeSurvival without enableEnhancedSelfModel gracefully', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'partial-test', {
+            const genome = await createGenomeWithAutonomous(gsep, 'partial-test', {
                 enablePurposeSurvival: true,
                 agentPurpose: 'Test',
             });
@@ -258,12 +258,12 @@ describe('Living Agent Integration', () => {
         });
 
         it('should handle enableStrategicAutonomy without other systems', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm: createMockLLM(),
                 storage: createMockStorage(),
             });
 
-            const genome = await createGenomeWithAutonomous(pga, 'autonomous-only', {
+            const genome = await createGenomeWithAutonomous(gsep, 'autonomous-only', {
                 enableStrategicAutonomy: true,
                 agentPurpose: 'Independent assistant',
             });

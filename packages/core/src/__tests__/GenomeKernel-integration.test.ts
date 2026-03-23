@@ -1,7 +1,7 @@
 /**
  * GenomeKernel Shadow Integration Tests
  *
- * Tests for GenomeKernel shadow mode in GenomeInstance (PGA.ts):
+ * Tests for GenomeKernel shadow mode in GenomeInstance (GSEP.ts):
  * - Shadow initialization on genome construction
  * - C0 integrity verification before chat
  * - Snapshot creation before mutations
@@ -14,7 +14,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 
@@ -66,18 +66,18 @@ class MockStorageAdapter implements StorageAdapter {
 describe('GenomeKernel Shadow Integration', () => {
     let llm: MockLLMAdapter;
     let storage: MockStorageAdapter;
-    let pga: PGA;
+    let gsep: GSEP;
 
     beforeEach(async () => {
         llm = new MockLLMAdapter();
         storage = new MockStorageAdapter();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     describe('shadow initialization', () => {
         it('should create GenomeKernel shadow on genome construction', async () => {
-            const genome = await pga.createGenome({ name: 'shadow-test' });
+            const genome = await gsep.createGenome({ name: 'shadow-test' });
 
             const status = genome.getIntegrityStatus();
             expect(status).not.toBeNull();
@@ -87,7 +87,7 @@ describe('GenomeKernel Shadow Integration', () => {
         });
 
         it('should have a valid C0 hash (64 hex chars)', async () => {
-            const genome = await pga.createGenome({ name: 'hash-test' });
+            const genome = await gsep.createGenome({ name: 'hash-test' });
 
             const status = genome.getIntegrityStatus();
             expect(status).not.toBeNull();
@@ -95,7 +95,7 @@ describe('GenomeKernel Shadow Integration', () => {
         });
 
         it('should start with zero snapshots', async () => {
-            const genome = await pga.createGenome({ name: 'snap-test' });
+            const genome = await gsep.createGenome({ name: 'snap-test' });
 
             const status = genome.getIntegrityStatus();
             expect(status!.snapshotCount).toBe(0);
@@ -104,7 +104,7 @@ describe('GenomeKernel Shadow Integration', () => {
 
     describe('C0 integrity before chat', () => {
         it('should verify C0 integrity and complete chat successfully', async () => {
-            const genome = await pga.createGenome({ name: 'chat-integrity' });
+            const genome = await gsep.createGenome({ name: 'chat-integrity' });
 
             // Chat should work — shadow verification runs silently
             const response = await genome.chat('hello', {
@@ -117,7 +117,7 @@ describe('GenomeKernel Shadow Integration', () => {
         });
 
         it('should maintain zero violations after normal chat', async () => {
-            const genome = await pga.createGenome({ name: 'no-violation' });
+            const genome = await gsep.createGenome({ name: 'no-violation' });
 
             await genome.chat('test message', {
                 userId: 'user-1',
@@ -132,7 +132,7 @@ describe('GenomeKernel Shadow Integration', () => {
 
     describe('snapshot before mutation', () => {
         it('should create snapshot when mutate is called', async () => {
-            const genome = await pga.createGenome({ name: 'mutation-snap' });
+            const genome = await gsep.createGenome({ name: 'mutation-snap' });
 
             // Add an allele so mutation has something to work with
             await genome.addAllele(2, 'system_instructions', 'default',
@@ -149,7 +149,7 @@ describe('GenomeKernel Shadow Integration', () => {
 
     describe('getIntegrityStatus', () => {
         it('should return full integrity status object', async () => {
-            const genome = await pga.createGenome({ name: 'status-test' });
+            const genome = await gsep.createGenome({ name: 'status-test' });
             const status = genome.getIntegrityStatus();
 
             expect(status).toEqual({
@@ -171,7 +171,7 @@ describe('GenomeKernel Shadow Integration', () => {
         });
 
         it('should return consistent C0 hash across multiple calls', async () => {
-            const genome = await pga.createGenome({ name: 'consistent-hash' });
+            const genome = await gsep.createGenome({ name: 'consistent-hash' });
 
             const status1 = genome.getIntegrityStatus();
             const status2 = genome.getIntegrityStatus();

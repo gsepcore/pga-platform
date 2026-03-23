@@ -4,7 +4,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { DashboardServer } from '../DashboardServer.js';
 import { DashboardTokenHelper } from '../DashboardToken.js';
-import { PGAEventEmitter } from '../../realtime/EventEmitter.js';
+import { GSEPEventEmitter } from '../../realtime/EventEmitter.js';
 import http from 'node:http';
 
 const SECRET = 'test-secret-dashboard-server';
@@ -32,12 +32,12 @@ function fetchUrl(url: string): Promise<{ status: number; headers: Record<string
 
 // Use a single server instance for all tests to avoid port reuse timing issues
 describe('DashboardServer', () => {
-    let events: PGAEventEmitter;
+    let events: GSEPEventEmitter;
     let server: DashboardServer;
     const port = TEST_PORT;
 
     beforeAll(async () => {
-        events = new PGAEventEmitter();
+        events = new GSEPEventEmitter();
         server = new DashboardServer({
             secret: SECRET,
             events,

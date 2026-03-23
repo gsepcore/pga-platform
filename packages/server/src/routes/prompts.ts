@@ -12,9 +12,9 @@
  */
 
 import type { FastifyInstance } from 'fastify';
-import type { PGAServer } from '../PGAServer.js';
+import type { GSEPServer } from '../GSEPServer.js';
 
-export function registerPromptRoutes(app: FastifyInstance, server: PGAServer): void {
+export function registerPromptRoutes(app: FastifyInstance, server: GSEPServer): void {
 
     app.get<{
         Params: { id: string };

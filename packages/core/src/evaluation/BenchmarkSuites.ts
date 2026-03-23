@@ -47,9 +47,9 @@ export const CORE_CODING_V1: BenchmarkSuite = coreCodingV1Fixture as BenchmarkSu
 
 // ─── GSEP-Specific Suite v1 ─────────────────────────────────
 
-export const PGA_SPECIFIC_V1: BenchmarkSuite = {
+export const GSEP_SPECIFIC_V1: BenchmarkSuite = {
     metadata: {
-        id: 'pga-specific-v1',
+        id: 'gsep-specific-v1',
         version: '1.0.0',
         owner: 'Luis Alfredo Velasquez Duran',
         createdAt: '2026-02-27',
@@ -59,7 +59,7 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
     },
     tasks: [
         {
-            id: 'pga-architecture',
+            id: 'gsep-architecture',
             name: 'GSEP Architecture',
             description: 'Test understanding of GSEP architecture',
             userMessage: 'Explain the three-layer architecture of GSEP',
@@ -70,7 +70,7 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
             difficulty: 'easy',
         },
         {
-            id: 'pga-evolution',
+            id: 'gsep-evolution',
             name: 'Evolution Mechanism',
             description: 'Test understanding of evolution process',
             userMessage: 'How does GSEP evolve prompts?',
@@ -81,7 +81,7 @@ export const PGA_SPECIFIC_V1: BenchmarkSuite = {
             difficulty: 'medium',
         },
         {
-            id: 'pga-userdna',
+            id: 'gsep-userdna',
             name: 'User DNA Concept',
             description: 'Test understanding of user DNA',
             userMessage: 'What is User DNA in GSEP?',
@@ -104,7 +104,7 @@ export const PROOF_OF_VALUE_V1: BenchmarkSuite = proofOfValueV1Fixture as Benchm
 export const BENCHMARK_SUITES = {
     'core-general-v1': CORE_GENERAL_V1,
     'core-coding-v1': CORE_CODING_V1,
-    'pga-specific-v1': PGA_SPECIFIC_V1,
+    'gsep-specific-v1': GSEP_SPECIFIC_V1,
     'proof-of-value-v1': PROOF_OF_VALUE_V1,
 } as const;
 

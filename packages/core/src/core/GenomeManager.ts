@@ -148,6 +148,6 @@ You continuously learn and adapt to provide the best possible assistance.
     // ─── Utilities ──────────────────────────────────────
 
     private generateId(): string {
-        return `pga_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        return `gsep_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
 }

@@ -47,7 +47,7 @@ interface FitnessMetricsBridge {
 /**
  * Configuration for GSEP Gene Bank Integration
  */
-export interface PGAGeneBankConfig {
+export interface GSEPGeneBankConfig {
     /** Enable automatic gene extraction */
     autoExtract?: boolean;
 
@@ -78,14 +78,14 @@ export interface PGAGeneBankConfig {
  * 2. Auto-adoption when similar tasks detected
  * 3. Lineage tracking for gene evolution
  */
-export class PGAGeneBankIntegration {
+export class GSEPGeneBankIntegration {
     private geneBank: GeneBank;
     private geneExtractor: GeneExtractor;
     private geneAdopters: Map<string, GeneAdopter> = new Map();
 
     constructor(
         private llm: LLMAdapter,
-        private config: PGAGeneBankConfig,
+        private config: GSEPGeneBankConfig,
         private tenantId: string
     ) {
         // Initialize Gene Bank
@@ -93,7 +93,7 @@ export class PGAGeneBankIntegration {
             config.storage,
             {
                 tenantId,
-                agentId: 'pga_system',
+                agentId: 'gsep_system',
                 enableTHK: config.enableTHK ?? true,
                 minFitnessThreshold: config.minFitnessForExtraction ?? 0.7,
             },
@@ -370,13 +370,13 @@ export class PGAGeneBankIntegration {
  *
  * ```typescript
  * // Initialize GSEP with Gene Bank
- * const pga = new PGA({
+ * const gsep = new GSEP({
  *   llm: new ClaudeAdapter({ apiKey }),
  *   storage: new PostgresAdapter({ connectionString }),
  * });
  *
  * // Initialize Gene Bank Integration
- * const geneBankIntegration = new PGAGeneBankIntegration(
+ * const geneBankIntegration = new GSEPGeneBankIntegration(
  *   pga.llm,
  *   {
  *     storage: new PostgresGeneStorage(pgConnection),

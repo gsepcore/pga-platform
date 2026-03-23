@@ -32,7 +32,7 @@ console.log(
 
 // CLI Configuration
 program
-    .name('pga')
+    .name('gsep')
     .description('Interactive CLI for GSEP (Genomic Self-Evolving Prompts)')
     .version(VERSION)
     .option('-v, --verbose', 'Enable verbose output')

@@ -8,7 +8,7 @@
  * - checkSuccess: keywords, minLength, maxLength, custom successCriteria
  * - checkSemanticValidation: all four semantic checks
  * - calculateQuality: keyword bonus, length bonus, clamping
- * - compare: PGA_WINS, BASELINE_WINS, TIE verdicts
+ * - compare: GSEP_WINS, BASELINE_WINS, TIE verdicts
  * - compareWithSuite: delegates to evaluate with suite tasks
  * - formatReport: markdown output structure
  * - formatComparisonReport: markdown comparison table
@@ -561,9 +561,9 @@ describe('Evaluator', () => {
             vi.spyOn(console, 'log').mockImplementation(() => {});
         });
 
-        it('should return PGA_WINS when GSEP genome outperforms baseline significantly', async () => {
+        it('should return GSEP_WINS when GSEP genome outperforms baseline significantly', async () => {
             // GSEP genome: responds with all keywords and long responses
-            const pgaGenome = createMockGenome(
+            const gsepGenome = createMockGenome(
                 'test undefined check null validation error handling auth login token ' +
                 'performance optimize memo scalable microservices database async await ' +
                 'response '.repeat(5),
@@ -578,18 +578,18 @@ describe('Evaluator', () => {
                 }),
             ];
 
-            const result = await evaluator.compare(pgaGenome, baselineGenome, tasks, 'user-1');
+            const result = await evaluator.compare(gsepGenome, baselineGenome, tasks, 'user-1');
 
-            expect(result.withPGA).toBeDefined();
-            expect(result.withoutPGA).toBeDefined();
+            expect(result.withGSEP).toBeDefined();
+            expect(result.withoutGSEP).toBeDefined();
             expect(result.improvements).toBeDefined();
             // GSEP succeeds, baseline fails on minLength (though 'ok' is only 2 chars vs min 5)
-            expect(result.withPGA.successRate).toBeGreaterThanOrEqual(result.withoutPGA.successRate);
+            expect(result.withGSEP.successRate).toBeGreaterThanOrEqual(result.withoutGSEP.successRate);
         });
 
         it('should return BASELINE_WINS or TIE when baseline outperforms GSEP on success rate', async () => {
             // GSEP genome: missing required keywords → fails success checks
-            const pgaGenome = createMockGenome('irrelevant content without required words');
+            const gsepGenome = createMockGenome('irrelevant content without required words');
             // Baseline: has keywords → passes
             const baselineGenome = createMockGenome('test response that passes');
 
@@ -600,14 +600,14 @@ describe('Evaluator', () => {
                 }),
             ];
 
-            const result = await evaluator.compare(pgaGenome, baselineGenome, tasks, 'user-1');
+            const result = await evaluator.compare(gsepGenome, baselineGenome, tasks, 'user-1');
 
             // GSEP fails, baseline passes
-            expect(result.withPGA.successRate).toBe(0);
-            expect(result.withoutPGA.successRate).toBe(100);
+            expect(result.withGSEP.successRate).toBe(0);
+            expect(result.withoutGSEP.successRate).toBe(100);
             // Verdict depends on sum of 4 metrics; responseTime NaN with 0ms mocks → TIE
             // In production with real latency it would be BASELINE_WINS
-            expect(result.verdict).not.toBe('PGA_WINS');
+            expect(result.verdict).not.toBe('GSEP_WINS');
         });
 
         it('should return TIE when results are similar', async () => {
@@ -627,12 +627,12 @@ describe('Evaluator', () => {
         });
 
         it('should correctly compute improvement percentages', async () => {
-            const pgaGenome = createMockGenome('test');
+            const gsepGenome = createMockGenome('test');
             const baselineGenome = createMockGenome('test');
 
             const tasks = [createTask({ expectedOutcome: { keywords: ['test'] } })];
 
-            const result = await evaluator.compare(pgaGenome, baselineGenome, tasks, 'user-1');
+            const result = await evaluator.compare(gsepGenome, baselineGenome, tasks, 'user-1');
 
             // Same responses => all improvements should be ~0
             expect(result.improvements.successRate).toBe(0);
@@ -657,7 +657,7 @@ describe('Evaluator', () => {
                 'a]'.repeat(20),
             );
 
-            const result = await evaluator.compareWithSuite(genome, 'pga-specific-v1', 'user-1');
+            const result = await evaluator.compareWithSuite(genome, 'gsep-specific-v1', 'user-1');
 
             expect(result.totalTasks).toBeGreaterThan(0);
             expect(result.results.length).toBe(result.totalTasks);
@@ -715,23 +715,23 @@ describe('Evaluator', () => {
     // ─── formatComparisonReport ─────────────────────────────
 
     describe('formatComparisonReport', () => {
-        it('should format comparison with PGA_WINS verdict', () => {
+        it('should format comparison with GSEP_WINS verdict', () => {
             const comparison: ComparisonResult = {
-                withPGA: createBenchmarkResult({ successRate: 90, avgTokensPerTask: 80, avgResponseTime: 40, avgQualityScore: 0.9 }),
-                withoutPGA: createBenchmarkResult({ successRate: 60, avgTokensPerTask: 120, avgResponseTime: 60, avgQualityScore: 0.6 }),
+                withGSEP: createBenchmarkResult({ successRate: 90, avgTokensPerTask: 80, avgResponseTime: 40, avgQualityScore: 0.9 }),
+                withoutGSEP: createBenchmarkResult({ successRate: 60, avgTokensPerTask: 120, avgResponseTime: 60, avgQualityScore: 0.6 }),
                 improvements: {
                     successRate: 30,
                     tokenEfficiency: 33.33,
                     responseTime: 33.33,
                     qualityScore: 50,
                 },
-                verdict: 'PGA_WINS',
+                verdict: 'GSEP_WINS',
             };
 
             const report = evaluator.formatComparisonReport(comparison);
 
             expect(report).toContain('GSEP vs Baseline');
-            expect(report).toContain('VERDICT: PGA_WINS');
+            expect(report).toContain('VERDICT: GSEP_WINS');
             expect(report).toContain('Improvements');
             expect(report).toContain('Side-by-Side');
             expect(report).toContain('Success Rate');
@@ -740,8 +740,8 @@ describe('Evaluator', () => {
 
         it('should format comparison with BASELINE_WINS verdict', () => {
             const comparison: ComparisonResult = {
-                withPGA: createBenchmarkResult({ successRate: 30 }),
-                withoutPGA: createBenchmarkResult({ successRate: 90 }),
+                withGSEP: createBenchmarkResult({ successRate: 30 }),
+                withoutGSEP: createBenchmarkResult({ successRate: 90 }),
                 improvements: {
                     successRate: -60,
                     tokenEfficiency: -20,
@@ -758,8 +758,8 @@ describe('Evaluator', () => {
 
         it('should format comparison with TIE verdict', () => {
             const comparison: ComparisonResult = {
-                withPGA: createBenchmarkResult(),
-                withoutPGA: createBenchmarkResult(),
+                withGSEP: createBenchmarkResult(),
+                withoutGSEP: createBenchmarkResult(),
                 improvements: {
                     successRate: 0,
                     tokenEfficiency: 0,
@@ -776,15 +776,15 @@ describe('Evaluator', () => {
 
         it('should include positive improvement with + sign', () => {
             const comparison: ComparisonResult = {
-                withPGA: createBenchmarkResult({ successRate: 80 }),
-                withoutPGA: createBenchmarkResult({ successRate: 60 }),
+                withGSEP: createBenchmarkResult({ successRate: 80 }),
+                withoutGSEP: createBenchmarkResult({ successRate: 60 }),
                 improvements: {
                     successRate: 20,
                     tokenEfficiency: 10,
                     responseTime: 15,
                     qualityScore: 5,
                 },
-                verdict: 'PGA_WINS',
+                verdict: 'GSEP_WINS',
             };
 
             const report = evaluator.formatComparisonReport(comparison);
@@ -794,8 +794,8 @@ describe('Evaluator', () => {
 
         it('should include negative improvements without + sign', () => {
             const comparison: ComparisonResult = {
-                withPGA: createBenchmarkResult(),
-                withoutPGA: createBenchmarkResult(),
+                withGSEP: createBenchmarkResult(),
+                withoutGSEP: createBenchmarkResult(),
                 improvements: {
                     successRate: -5,
                     tokenEfficiency: -3,

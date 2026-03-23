@@ -10,18 +10,18 @@
 
 import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
-import { PGA } from '../PGA.js';
-import type { PGAConfig } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
+import type { GSEPConfig } from '../GSEP.js';
 import type { WrapOptions, FunctionWrapOptions, WrappableFunction } from './WrapOptions.js';
 import { GenomeBuilder } from './GenomeBuilder.js';
 import { InMemoryStorageAdapter } from './InMemoryStorageAdapter.js';
 import { FunctionLLMAdapter } from './FunctionLLMAdapter.js';
 import { globalEvents } from '../realtime/EventEmitter.js';
 import type { Genome } from '../types/index.js';
-import type { GenomeInstance } from '../PGA.js';
+import type { GenomeInstance } from '../GSEP.js';
 
 export class WrappedAgent {
-    private pga: PGA;
+    private gsep: GSEP;
     private genomeInstance!: GenomeInstance;
     private _initialized = false;
     private _name: string;
@@ -36,7 +36,7 @@ export class WrappedAgent {
     ) {
         this._name = options.name ?? 'wrapped-agent';
 
-        const pgaConfig: PGAConfig = {
+        const gsepConfig: GSEPConfig = {
             llm: llmAdapter,
             storage,
             monitoring: options.monitoring?.metricsConfig ?? {
@@ -50,7 +50,7 @@ export class WrappedAgent {
             geneBank: options.geneBank,
         };
 
-        this.pga = new PGA(pgaConfig);
+        this.gsep = new GSEP(gsepConfig);
     }
 
     /**
@@ -79,17 +79,17 @@ export class WrappedAgent {
     /**
      * Initialize the GSEP system and create the genome.
      *
-     * We save the pre-built genome to storage and then use PGA.loadGenome()
+     * We save the pre-built genome to storage and then use GSEP.loadGenome()
      * which constructs a full GenomeInstance with all evolution systems.
      */
     private async initialize(): Promise<void> {
-        await this.pga.initialize();
+        await this.gsep.initialize();
 
         // Save the pre-built genome to storage
         await this.storage.saveGenome(this.genome);
 
         // Load through GSEP to get a full GenomeInstance
-        const instance = await this.pga.loadGenome(this.genome.id);
+        const instance = await this.gsep.loadGenome(this.genome.id);
         if (!instance) {
             throw new Error('Failed to initialize wrapped genome');
         }
@@ -218,7 +218,7 @@ export class WrappedAgent {
 
     /** Shutdown gracefully */
     shutdown(): void {
-        this.pga.shutdown();
+        this.gsep.shutdown();
     }
 
     // ─── Private ────────────────────────────────────────────

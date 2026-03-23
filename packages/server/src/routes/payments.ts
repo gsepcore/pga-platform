@@ -10,19 +10,19 @@
  */
 
 import type { FastifyInstance } from 'fastify';
-import type { PGAServer } from '../PGAServer.js';
+import type { GSEPServer } from '../GSEPServer.js';
 import type { StripePayments } from '@gsep/payments';
 
 export function registerPaymentRoutes(
     app: FastifyInstance,
-    server: PGAServer,
+    server: GSEPServer,
     payments: StripePayments,
 ): void {
 
     // ─── Subscription Checkout ────────────────────────────
 
     app.post('/api/checkout/subscription', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -52,7 +52,7 @@ export function registerPaymentRoutes(
     // ─── Billing Portal ───────────────────────────────────
 
     app.post('/api/billing/portal', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -77,7 +77,7 @@ export function registerPaymentRoutes(
     app.post<{ Params: { geneId: string } }>(
         '/api/checkout/gene/:geneId',
         async (request, reply) => {
-            const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+            const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
             if (!server.verifyAdminKey(apiKey)) {
                 return reply.status(401).send({ error: 'Invalid or missing admin API key' });
             }
@@ -114,7 +114,7 @@ export function registerPaymentRoutes(
     // ─── Connect Onboarding ───────────────────────────────
 
     app.post('/api/connect/onboard', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }
@@ -136,7 +136,7 @@ export function registerPaymentRoutes(
     // ─── Connect Status ───────────────────────────────────
 
     app.get('/api/connect/status', async (request, reply) => {
-        const apiKey = request.headers['x-pga-admin-key'] as string | undefined;
+        const apiKey = request.headers['x-gsep-admin-key'] as string | undefined;
         if (!server.verifyAdminKey(apiKey)) {
             return reply.status(401).send({ error: 'Invalid or missing admin API key' });
         }

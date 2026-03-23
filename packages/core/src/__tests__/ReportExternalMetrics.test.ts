@@ -9,7 +9,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import { InMemoryStorageAdapter } from '../wrap/InMemoryStorageAdapter.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 
@@ -28,21 +28,21 @@ function createMockLLM(): LLMAdapter {
 
 async function createTestGenome() {
     const storage = new InMemoryStorageAdapter();
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: createMockLLM(),
         storage,
         monitoring: { enabled: true, enableCostTracking: true, enableAuditLogs: true },
     });
-    await pga.initialize();
-    const genome = await pga.createGenome({ name: 'external-test' });
-    return { pga, genome, storage };
+    await gsep.initialize();
+    const genome = await gsep.createGenome({ name: 'external-test' });
+    return { gsep, genome, storage };
 }
 
 // ─── Tests ──────────────────────────────────────────────────
 
 describe('GenomeInstance.reportExternalMetrics()', () => {
     it('should accept external metrics without throwing', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         await expect(genome.reportExternalMetrics({
             success: true,
@@ -51,19 +51,19 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
             outputTokens: 150,
         })).resolves.not.toThrow();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should not call the LLM adapter', async () => {
         const mockLLM = createMockLLM();
         const storage = new InMemoryStorageAdapter();
-        const pga = new PGA({
+        const gsep = new GSEP({
             llm: mockLLM,
             storage,
             monitoring: { enabled: true, enableCostTracking: true, enableAuditLogs: true },
         });
-        await pga.initialize();
-        const genome = await pga.createGenome({ name: 'no-llm-test' });
+        await gsep.initialize();
+        const genome = await gsep.createGenome({ name: 'no-llm-test' });
 
         await genome.reportExternalMetrics({
             success: true,
@@ -75,11 +75,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
         // LLM should NOT be called — the whole point of external metrics
         expect(mockLLM.chat).not.toHaveBeenCalled();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should handle failure metrics', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         await expect(genome.reportExternalMetrics({
             success: false,
@@ -88,11 +88,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
             outputTokens: 0,
         })).resolves.not.toThrow();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should accept optional userId and taskType', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         await expect(genome.reportExternalMetrics({
             userId: 'user-123',
@@ -103,11 +103,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
             taskType: 'code-review',
         })).resolves.not.toThrow();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should accept optional quality score', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         await expect(genome.reportExternalMetrics({
             success: true,
@@ -117,11 +117,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
             quality: 0.95,
         })).resolves.not.toThrow();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should record feedback when provided', async () => {
-        const { genome, pga, storage } = await createTestGenome();
+        const { genome, gsep, storage } = await createTestGenome();
 
         await genome.reportExternalMetrics({
             userId: 'user-456',
@@ -137,11 +137,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
         // We verify by checking the genome didn't throw
         expect(true).toBe(true);
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should feed drift analyzer with fitness data', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         // Report several metrics to build drift data
         for (let i = 0; i < 5; i++) {
@@ -156,11 +156,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
         const drift = genome.getDriftAnalysis();
         expect(drift).toBeDefined();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should work without feedback and without userId', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         // Minimal report — no userId, no feedback, no quality, no taskType
         await expect(genome.reportExternalMetrics({
@@ -170,11 +170,11 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
             outputTokens: 30,
         })).resolves.not.toThrow();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 
     it('should handle multiple sequential reports', async () => {
-        const { genome, pga } = await createTestGenome();
+        const { genome, gsep } = await createTestGenome();
 
         for (let i = 0; i < 15; i++) {
             await genome.reportExternalMetrics({
@@ -191,6 +191,6 @@ describe('GenomeInstance.reportExternalMetrics()', () => {
         const drift = genome.getDriftAnalysis();
         expect(drift).toBeDefined();
 
-        pga.shutdown();
+        gsep.shutdown();
     });
 });

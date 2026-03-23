@@ -179,7 +179,7 @@ export class PostgresAdapter implements StorageAdapter {
 
             // Upsert genome
             await client.query(
-                `INSERT INTO pga_genomes (id, name, config, created_at, updated_at)
+                `INSERT INTO gsep_genomes (id, name, config, created_at, updated_at)
                  VALUES ($1, $2, $3, $4, $5)
                  ON CONFLICT (id) DO UPDATE SET
                     name = $2,
@@ -195,7 +195,7 @@ export class PostgresAdapter implements StorageAdapter {
             );
 
             // Delete existing alleles for this genome
-            await client.query('DELETE FROM pga_alleles WHERE genome_id = $1', [genome.id]);
+            await client.query('DELETE FROM gsep_alleles WHERE genome_id = $1', [genome.id]);
 
             // Insert all alleles
             for (const layer of [0, 1, 2] as const) {
@@ -204,7 +204,7 @@ export class PostgresAdapter implements StorageAdapter {
 
                 for (const allele of alleles) {
                     await client.query(
-                        `INSERT INTO pga_alleles (
+                        `INSERT INTO gsep_alleles (
                             genome_id, layer, gene, variant, content, fitness,
                             sample_count, parent_variant, generation, status,
                             sandbox_tested, sandbox_score, recent_scores,
@@ -245,7 +245,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async loadGenome(genomeId: string): Promise<Genome | null> {
         const result = await this.pool.query<GenomeRow>(
-            'SELECT * FROM pga_genomes WHERE id = $1',
+            'SELECT * FROM gsep_genomes WHERE id = $1',
             [genomeId],
         );
 
@@ -257,7 +257,7 @@ export class PostgresAdapter implements StorageAdapter {
 
         // Load alleles
         const allelesResult = await this.pool.query<AlleleRow>(
-            'SELECT * FROM pga_alleles WHERE genome_id = $1 ORDER BY layer, gene, fitness DESC',
+            'SELECT * FROM gsep_alleles WHERE genome_id = $1 ORDER BY layer, gene, fitness DESC',
             [genomeId],
         );
 
@@ -305,7 +305,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async listGenomes(): Promise<Genome[]> {
         const result = await this.pool.query<Pick<GenomeRow, 'id'>>(
-            'SELECT id FROM pga_genomes ORDER BY created_at DESC',
+            'SELECT id FROM gsep_genomes ORDER BY created_at DESC',
         );
 
         const genomes: Genome[] = [];
@@ -323,7 +323,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Delete genome
      */
     async deleteGenome(genomeId: string): Promise<void> {
-        await this.pool.query('DELETE FROM pga_genomes WHERE id = $1', [genomeId]);
+        await this.pool.query('DELETE FROM gsep_genomes WHERE id = $1', [genomeId]);
     }
 
     /**
@@ -331,7 +331,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async saveDNA(userId: string, genomeId: string, dna: UserDNA): Promise<void> {
         await this.pool.query(
-            `INSERT INTO pga_user_dna (
+            `INSERT INTO gsep_user_dna (
                 user_id, genome_id, traits, confidence, generation, last_evolved, updated_at
             ) VALUES ($1, $2, $3, $4, $5, $6, $7)
             ON CONFLICT (user_id, genome_id) DO UPDATE SET
@@ -357,7 +357,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async loadDNA(userId: string, genomeId: string): Promise<UserDNA | null> {
         const result = await this.pool.query<UserDNARow>(
-            'SELECT * FROM pga_user_dna WHERE user_id = $1 AND genome_id = $2',
+            'SELECT * FROM gsep_user_dna WHERE user_id = $1 AND genome_id = $2',
             [userId, genomeId],
         );
 
@@ -382,7 +382,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async recordInteraction(interaction: Interaction): Promise<void> {
         await this.pool.query(
-            `INSERT INTO pga_interactions (
+            `INSERT INTO gsep_interactions (
                 genome_id, user_id, user_message, assistant_response,
                 tool_calls, score, task_type, timestamp
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
@@ -404,7 +404,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async logMutation(mutation: MutationLog): Promise<void> {
         await this.pool.query(
-            `INSERT INTO pga_mutations (
+            `INSERT INTO gsep_mutations (
                 genome_id, layer, gene, variant, mutation_type,
                 parent_variant, trigger_reason, fitness_delta,
                 deployed, details, timestamp
@@ -430,7 +430,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async getMutationHistory(genomeId: string, limit: number = 100): Promise<MutationLog[]> {
         const result = await this.pool.query<MutationRow>(
-            `SELECT * FROM pga_mutations
+            `SELECT * FROM gsep_mutations
              WHERE genome_id = $1
              ORDER BY timestamp DESC
              LIMIT $2`,
@@ -458,7 +458,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async getGeneMutationHistory(genomeId: string, gene: string, limit: number = 50): Promise<MutationLog[]> {
         const result = await this.pool.query<MutationRow>(
-            `SELECT * FROM pga_mutations
+            `SELECT * FROM gsep_mutations
              WHERE genome_id = $1 AND gene = $2
              ORDER BY timestamp DESC
              LIMIT $3`,
@@ -486,7 +486,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async getRecentInteractions(genomeId: string, userId: string, limit: number = 20): Promise<unknown[]> {
         const result = await this.pool.query<InteractionRow>(
-            `SELECT * FROM pga_interactions
+            `SELECT * FROM gsep_interactions
              WHERE genome_id = $1 AND user_id = $2
              ORDER BY timestamp DESC
              LIMIT $3`,
@@ -515,7 +515,7 @@ export class PostgresAdapter implements StorageAdapter {
         timestamp: Date;
     }): Promise<void> {
         await this.pool.query(
-            `INSERT INTO pga_feedback (
+            `INSERT INTO gsep_feedback (
                 genome_id, user_id, gene, sentiment, timestamp
             ) VALUES ($1, $2, $3, $4, $5)`,
             [
@@ -545,23 +545,23 @@ export class PostgresAdapter implements StorageAdapter {
             topGenesResult,
         ] = await Promise.all([
             this.pool.query(
-                'SELECT COUNT(*) as count FROM pga_interactions WHERE genome_id = $1',
+                'SELECT COUNT(*) as count FROM gsep_interactions WHERE genome_id = $1',
                 [genomeId],
             ),
             this.pool.query(
-                'SELECT COUNT(*) as count, AVG(fitness_improvement) as avg_improvement FROM pga_mutations WHERE genome_id = $1 AND deployed = true',
+                'SELECT COUNT(*) as count, AVG(fitness_improvement) as avg_improvement FROM gsep_mutations WHERE genome_id = $1 AND deployed = true',
                 [genomeId],
             ),
             this.pool.query(
                 `SELECT
                     COUNT(*) FILTER (WHERE sentiment = 'positive') as positive,
                     COUNT(*) as total
-                 FROM pga_feedback WHERE genome_id = $1`,
+                 FROM gsep_feedback WHERE genome_id = $1`,
                 [genomeId],
             ),
             this.pool.query(
                 `SELECT gene, AVG(sandbox_score) as fitness
-                 FROM pga_mutations
+                 FROM gsep_mutations
                  WHERE genome_id = $1 AND deployed = true
                  GROUP BY gene
                  ORDER BY fitness DESC
@@ -770,7 +770,7 @@ export class PostgresAdapter implements StorageAdapter {
         createdAt: Date;
     }): Promise<void> {
         await this.pool.query(
-            `INSERT INTO pga_gene_registry (id, family_id, gene, variant, content, layer, fitness, sample_count, success_rate, metadata, created_at)
+            `INSERT INTO gsep_gene_registry (id, family_id, gene, variant, content, layer, fitness, sample_count, success_rate, metadata, created_at)
              VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
              ON CONFLICT (id) DO UPDATE SET
                 fitness = EXCLUDED.fitness,
@@ -797,7 +797,7 @@ export class PostgresAdapter implements StorageAdapter {
      * Query gene registry by family, gene name, and minimum fitness
      */
     async queryGeneRegistry(familyId: string, gene?: string, minFitness?: number): Promise<GeneRegistryEntry[]> {
-        let query = 'SELECT * FROM pga_gene_registry WHERE family_id = $1';
+        let query = 'SELECT * FROM gsep_gene_registry WHERE family_id = $1';
         const params: unknown[] = [familyId];
         let paramIndex = 2;
 
@@ -822,7 +822,7 @@ export class PostgresAdapter implements StorageAdapter {
      */
     async getBestRegistryGene(familyId: string, gene: string): Promise<GeneRegistryEntry | null> {
         const result = await this.pool.query(
-            `SELECT * FROM pga_gene_registry
+            `SELECT * FROM gsep_gene_registry
              WHERE family_id = $1 AND gene = $2
              ORDER BY fitness DESC
              LIMIT 1`,
@@ -868,7 +868,7 @@ export class PostgresAdapter implements StorageAdapter {
         falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
     }): Promise<void> {
         await this.pool.query(
-            `INSERT INTO pga_calibration_history (
+            `INSERT INTO gsep_calibration_history (
                 context_key, layer, operator, task_type, threshold,
                 total_candidates, passed_sandbox, deployed_successfully,
                 rolled_back, false_positive_rate, false_negative_rate,
@@ -891,7 +891,7 @@ export class PostgresAdapter implements StorageAdapter {
         falseNegativeRate: number; optimalThreshold: number; timestamp: Date;
     }>> {
         const result = await this.pool.query(
-            `SELECT * FROM pga_calibration_history
+            `SELECT * FROM gsep_calibration_history
              WHERE context_key = $1
              ORDER BY timestamp DESC
              LIMIT $2`,

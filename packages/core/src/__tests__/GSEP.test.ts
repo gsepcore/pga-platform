@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 
@@ -78,7 +78,7 @@ class MockStorageAdapter implements StorageAdapter {
 
 // ─── Test Suite ─────────────────────────────────────────────
 
-describe('PGA', () => {
+describe('GSEP', () => {
     let llm: MockLLMAdapter;
     let storage: MockStorageAdapter;
 
@@ -89,21 +89,21 @@ describe('PGA', () => {
 
     describe('validation', () => {
         it('should throw descriptive error when LLM adapter is missing', () => {
-            expect(() => new PGA({
+            expect(() => new GSEP({
                 llm: undefined as any,
                 storage,
             })).toThrow('[GSEP] LLM adapter is required');
         });
 
         it('should throw descriptive error when LLM adapter is null', () => {
-            expect(() => new PGA({
+            expect(() => new GSEP({
                 llm: null as any,
                 storage,
             })).toThrow('[GSEP] LLM adapter is required');
         });
 
         it('should throw descriptive error when storage adapter is missing', () => {
-            expect(() => new PGA({
+            expect(() => new GSEP({
                 llm,
                 storage: undefined as any,
             })).toThrow('[GSEP] Storage adapter is required');
@@ -111,36 +111,36 @@ describe('PGA', () => {
 
         it('should include actionable instructions in error message', () => {
             try {
-                new PGA({ llm: undefined as any, storage });
+                new GSEP({ llm: undefined as any, storage });
                 expect.unreachable('Should have thrown');
             } catch (e) {
                 const msg = (e as Error).message;
                 expect(msg).toContain('ClaudeAdapter');
                 expect(msg).toContain('@gsep/adapters-llm-anthropic');
-                expect(msg).toContain('pga doctor');
+                expect(msg).toContain('gsep doctor');
             }
         });
 
         it('should succeed with valid LLM and storage', () => {
-            expect(() => new PGA({ llm, storage })).not.toThrow();
+            expect(() => new GSEP({ llm, storage })).not.toThrow();
         });
     });
 
     describe('initialization', () => {
         it('should initialize GSEP with default monitoring config', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            const metrics = pga.getMetrics();
+            const metrics = gsep.getMetrics();
             expect(metrics).toBeDefined();
         });
 
         it('should initialize GSEP with custom monitoring config', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
                 monitoring: {
@@ -153,14 +153,14 @@ describe('PGA', () => {
                 },
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            const metrics = pga.getMetrics();
+            const metrics = gsep.getMetrics();
             expect(metrics).toBeDefined();
         });
 
         it('should start dashboard if enabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
                 dashboard: {
@@ -169,16 +169,16 @@ describe('PGA', () => {
                 },
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            const dashboard = pga.getDashboard();
+            const dashboard = gsep.getDashboard();
             expect(dashboard).toBeDefined();
 
-            pga.shutdown();
+            gsep.shutdown();
         });
 
         it('should not start dashboard if disabled', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
                 dashboard: {
@@ -186,36 +186,36 @@ describe('PGA', () => {
                 },
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            const dashboard = pga.getDashboard();
+            const dashboard = gsep.getDashboard();
             expect(dashboard).toBeUndefined();
         });
 
         it('should log initialization to audit', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            const metrics = pga.getMetrics();
+            const metrics = gsep.getMetrics();
             const logs = metrics.getAuditLogs(10);
 
             const initLog = logs.find(l => l.operation === 'initialize');
             expect(initLog).toBeDefined();
             expect(initLog?.level).toBe('info');
-            expect(initLog?.component).toBe('pga');
+            expect(initLog?.component).toBe('gsep');
         });
     });
 
     describe('genome management', () => {
         it('should create a genome', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const genome = await pga.createGenome({
+            const genome = await gsep.createGenome({
                 name: 'test-genome',
             });
 
@@ -225,50 +225,50 @@ describe('PGA', () => {
         });
 
         it('should load an existing genome', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const created = await pga.createGenome({
+            const created = await gsep.createGenome({
                 name: 'test-genome',
             });
 
-            const loaded = await pga.loadGenome(created.id);
+            const loaded = await gsep.loadGenome(created.id);
 
             expect(loaded).toBeDefined();
             expect(loaded?.id).toBe(created.id);
         });
 
         it('should list all genomes', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            await pga.createGenome({ name: 'genome-1' });
-            await pga.createGenome({ name: 'genome-2' });
+            await gsep.createGenome({ name: 'genome-1' });
+            await gsep.createGenome({ name: 'genome-2' });
 
-            const genomes = await pga.listGenomes();
+            const genomes = await gsep.listGenomes();
 
             expect(genomes.length).toBe(2);
         });
 
         it('should delete a genome', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const genome = await pga.createGenome({ name: 'test-genome' });
+            const genome = await gsep.createGenome({ name: 'test-genome' });
 
-            await pga.deleteGenome(genome.id);
+            await gsep.deleteGenome(genome.id);
 
-            const loaded = await pga.loadGenome(genome.id);
+            const loaded = await gsep.loadGenome(genome.id);
             expect(loaded).toBeNull();
         });
     });
 
     describe('metrics', () => {
         it('should provide access to metrics collector', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const metrics = pga.getMetrics();
+            const metrics = gsep.getMetrics();
 
             expect(metrics).toBeDefined();
             expect(typeof metrics.recordRequest).toBe('function');
@@ -276,10 +276,10 @@ describe('PGA', () => {
         });
 
         it('should export metrics', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const exported = pga.exportMetrics();
+            const exported = gsep.exportMetrics();
 
             expect(exported).toBeDefined();
             expect(exported.performance).toBeDefined();
@@ -290,19 +290,19 @@ describe('PGA', () => {
         });
 
         it('should get active alerts', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const alerts = pga.getAlerts();
+            const alerts = gsep.getAlerts();
 
             expect(Array.isArray(alerts)).toBe(true);
         });
 
         it('should get health status', async () => {
-            const pga = new PGA({ llm, storage });
-            await pga.initialize();
+            const gsep = new GSEP({ llm, storage });
+            await gsep.initialize();
 
-            const health = pga.getHealthStatus();
+            const health = gsep.getHealthStatus();
 
             expect(health).toBeDefined();
             expect(health.status).toMatch(/healthy|degraded|unhealthy/);
@@ -313,17 +313,17 @@ describe('PGA', () => {
 
     describe('shutdown', () => {
         it('should shutdown gracefully', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
                 dashboard: { enabled: true },
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            pga.shutdown();
+            gsep.shutdown();
 
-            const metrics = pga.getMetrics();
+            const metrics = gsep.getMetrics();
             const logs = metrics.getAuditLogs(10);
 
             const shutdownLog = logs.find(l => l.operation === 'shutdown');
@@ -331,18 +331,18 @@ describe('PGA', () => {
         });
 
         it('should stop dashboard on shutdown', async () => {
-            const pga = new PGA({
+            const gsep = new GSEP({
                 llm,
                 storage,
                 dashboard: { enabled: true },
             });
 
-            await pga.initialize();
+            await gsep.initialize();
 
-            const dashboard = pga.getDashboard();
+            const dashboard = gsep.getDashboard();
             const stopSpy = vi.spyOn(dashboard!, 'stop');
 
-            pga.shutdown();
+            gsep.shutdown();
 
             expect(stopSpy).toHaveBeenCalled();
         });

@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 
@@ -46,19 +46,19 @@ function createMockStorage(): StorageAdapter {
 // ─── Tests ──────────────────────────────────────────────
 
 describe('Continuous Evolution Loop', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should create genome with autonomous config', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'auto-evolving-agent',
             config: {
                 autonomous: {
@@ -73,7 +73,7 @@ describe('Continuous Evolution Loop', () => {
     });
 
     it('should not crash during chat with continuousEvolution enabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'auto-test',
             config: {
                 autonomous: {
@@ -94,7 +94,7 @@ describe('Continuous Evolution Loop', () => {
     });
 
     it('should work normally without autonomous config', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'normal-agent',
         });
 
@@ -107,7 +107,7 @@ describe('Continuous Evolution Loop', () => {
     });
 
     it('should support SelfModel when enabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'self-aware-agent',
             config: {
                 autonomous: {
@@ -122,7 +122,7 @@ describe('Continuous Evolution Loop', () => {
     });
 
     it('should return null SelfAssessment when not enabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'basic-agent',
         });
 
@@ -131,7 +131,7 @@ describe('Continuous Evolution Loop', () => {
     });
 
     it('should support PatternMemory when enabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'pattern-agent',
             config: {
                 autonomous: {

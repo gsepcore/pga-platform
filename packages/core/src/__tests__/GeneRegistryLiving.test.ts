@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
 import type { GeneRegistryEntry } from '../types/index.js';
@@ -83,18 +83,18 @@ class MockStorageWithRegistry implements StorageAdapter {
 describe('Gene Registry - Living Agent', () => {
     let llm: MockLLMAdapter;
     let storage: MockStorageWithRegistry;
-    let pga: PGA;
+    let gsep: GSEP;
 
     beforeEach(async () => {
         llm = new MockLLMAdapter();
         storage = new MockStorageWithRegistry();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     describe('publishGeneToRegistry', () => {
         it('should publish a gene to the family registry', async () => {
-            const genome = await pga.createGenome({
+            const genome = await gsep.createGenome({
                 name: 'agent-alpha',
                 config: { mutationRate: 'balanced', enableSandbox: true },
             });
@@ -122,7 +122,7 @@ describe('Gene Registry - Living Agent', () => {
         });
 
         it('should throw if genome has no familyId', async () => {
-            const genome = await pga.createGenome({ name: 'orphan-agent' });
+            const genome = await gsep.createGenome({ name: 'orphan-agent' });
             await genome.addAllele(1, 'test-gene', 'v1', 'content');
 
             await expect(
@@ -134,7 +134,7 @@ describe('Gene Registry - Living Agent', () => {
     describe('inheritGeneFromRegistry', () => {
         it('should inherit the best gene from family registry', async () => {
             // First, publish a gene from agent-alpha
-            const alpha = await pga.createGenome({ name: 'agent-alpha' });
+            const alpha = await gsep.createGenome({ name: 'agent-alpha' });
             (alpha as any).genome.familyId = 'family-123';
             await alpha.addAllele(1, 'tool-usage', 'v1', 'Use grep for search, not find');
             const allele = (alpha as any).genome.layers.layer1.find(
@@ -144,7 +144,7 @@ describe('Gene Registry - Living Agent', () => {
             await alpha.publishGeneToRegistry('tool-usage', 'v1', 'Expert tool usage');
 
             // Now agent-beta inherits
-            const beta = await pga.createGenome({ name: 'agent-beta' });
+            const beta = await gsep.createGenome({ name: 'agent-beta' });
             (beta as any).genome.familyId = 'family-123';
             await beta.inheritGeneFromRegistry('family-123', 'tool-usage');
 
@@ -158,7 +158,7 @@ describe('Gene Registry - Living Agent', () => {
         });
 
         it('should throw if gene not found in registry', async () => {
-            const genome = await pga.createGenome({ name: 'lonely-agent' });
+            const genome = await gsep.createGenome({ name: 'lonely-agent' });
             (genome as any).genome.familyId = 'family-123';
 
             await expect(
@@ -167,7 +167,7 @@ describe('Gene Registry - Living Agent', () => {
         });
 
         it('should throw if inheriting from different family', async () => {
-            const genome = await pga.createGenome({ name: 'agent' });
+            const genome = await gsep.createGenome({ name: 'agent' });
             (genome as any).genome.familyId = 'family-A';
 
             await expect(
@@ -180,17 +180,17 @@ describe('Gene Registry - Living Agent', () => {
 describe('Quality Scoring - Feedback Loop', () => {
     let llm: MockLLMAdapter;
     let storage: MockStorageWithRegistry;
-    let pga: PGA;
+    let gsep: GSEP;
 
     beforeEach(async () => {
         llm = new MockLLMAdapter();
         storage = new MockStorageWithRegistry();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should compute quality score based on response substance', async () => {
-        const genome = await pga.createGenome({ name: 'quality-agent' });
+        const genome = await gsep.createGenome({ name: 'quality-agent' });
 
         // Access private method for testing
         const computeQuality = (genome as any).computeInteractionQuality.bind(genome);
@@ -226,7 +226,7 @@ describe('Quality Scoring - Feedback Loop', () => {
     });
 
     it('should factor in user satisfaction when available', async () => {
-        const genome = await pga.createGenome({ name: 'satisfaction-agent' });
+        const genome = await gsep.createGenome({ name: 'satisfaction-agent' });
         const computeQuality = (genome as any).computeInteractionQuality.bind(genome);
 
         const response = 'A reasonable response with enough content to be useful';
@@ -248,22 +248,22 @@ describe('Quality Scoring - Feedback Loop', () => {
 describe('Canary Deployment - Integration', () => {
     let llm: MockLLMAdapter;
     let storage: MockStorageWithRegistry;
-    let pga: PGA;
+    let gsep: GSEP;
 
     beforeEach(async () => {
         llm = new MockLLMAdapter();
         storage = new MockStorageWithRegistry();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should have no active canaries by default', async () => {
-        const genome = await pga.createGenome({ name: 'test-agent' });
+        const genome = await gsep.createGenome({ name: 'test-agent' });
         expect(genome.getActiveCanaries()).toHaveLength(0);
     });
 
     it('should track canary deployments through getActiveCanaries', async () => {
-        const genome = await pga.createGenome({ name: 'canary-agent' });
+        const genome = await gsep.createGenome({ name: 'canary-agent' });
         await genome.addAllele(1, 'coding-patterns', 'stable-v1', 'Current coding patterns');
 
         // Access canary manager to start a deployment

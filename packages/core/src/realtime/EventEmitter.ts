@@ -5,7 +5,7 @@
  * Type-safe event system for genome changes, mutations, and system events.
  */
 
-export type PGAEventType =
+export type GSEPEventType =
     | 'genome:created'
     | 'genome:updated'
     | 'genome:deleted'
@@ -30,8 +30,8 @@ export type PGAEventType =
     | 'immune:threat'
     | 'gene:updated';
 
-export interface PGAEvent<T = unknown> {
-    type: PGAEventType;
+export interface GSEPEvent<T = unknown> {
+    type: GSEPEventType;
     timestamp: Date;
     data: T;
     metadata?: {
@@ -174,11 +174,11 @@ export interface MutationPromotedEvent {
     improvement: number;
 }
 
-export type EventHandler<T = unknown> = (event: PGAEvent<T>) => void | Promise<void>;
+export type EventHandler<T = unknown> = (event: GSEPEvent<T>) => void | Promise<void>;
 
 interface EventSubscription {
     id: string;
-    type: PGAEventType;
+    type: GSEPEventType;
     handler: EventHandler;
     once: boolean;
 }
@@ -188,24 +188,24 @@ interface EventSubscription {
  *
  * Type-safe event system for real-time updates and notifications.
  */
-export class PGAEventEmitter {
-    private subscriptions: Map<PGAEventType, EventSubscription[]> = new Map();
+export class GSEPEventEmitter {
+    private subscriptions: Map<GSEPEventType, EventSubscription[]> = new Map();
     private wildcardSubscriptions: EventSubscription[] = [];
-    private eventHistory: PGAEvent[] = [];
+    private eventHistory: GSEPEvent[] = [];
     private maxHistorySize = 1000;
     private nextSubscriptionId = 1;
 
     /**
      * Subscribe to an event
      */
-    on<T = unknown>(type: PGAEventType, handler: EventHandler<T>): string {
+    on<T = unknown>(type: GSEPEventType, handler: EventHandler<T>): string {
         return this.subscribe(type, handler, false);
     }
 
     /**
      * Subscribe to an event (once)
      */
-    once<T = unknown>(type: PGAEventType, handler: EventHandler<T>): string {
+    once<T = unknown>(type: GSEPEventType, handler: EventHandler<T>): string {
         return this.subscribe(type, handler, true);
     }
 
@@ -215,7 +215,7 @@ export class PGAEventEmitter {
     onAny(handler: EventHandler): string {
         const subscription: EventSubscription = {
             id: `wildcard_${this.nextSubscriptionId++}`,
-            type: '*' as PGAEventType,
+            type: '*' as GSEPEventType,
             handler,
             once: false,
         };
@@ -229,7 +229,7 @@ export class PGAEventEmitter {
      * Internal subscribe method
      */
     private subscribe<T = unknown>(
-        type: PGAEventType,
+        type: GSEPEventType,
         handler: EventHandler<T>,
         once: boolean
     ): string {
@@ -282,7 +282,7 @@ export class PGAEventEmitter {
     /**
      * Remove all listeners for a type
      */
-    removeAllListeners(type?: PGAEventType): void {
+    removeAllListeners(type?: GSEPEventType): void {
         if (type) {
             this.subscriptions.delete(type);
         } else {
@@ -295,11 +295,11 @@ export class PGAEventEmitter {
      * Emit an event
      */
     async emit<T = unknown>(
-        type: PGAEventType,
+        type: GSEPEventType,
         data: T,
-        metadata?: PGAEvent<T>['metadata']
+        metadata?: GSEPEvent<T>['metadata']
     ): Promise<void> {
-        const event: PGAEvent<T> = {
+        const event: GSEPEvent<T> = {
             type,
             timestamp: new Date(),
             data,
@@ -348,9 +348,9 @@ export class PGAEventEmitter {
      * Emit synchronously (fire and forget)
      */
     emitSync<T = unknown>(
-        type: PGAEventType,
+        type: GSEPEventType,
         data: T,
-        metadata?: PGAEvent<T>['metadata']
+        metadata?: GSEPEvent<T>['metadata']
     ): void {
         this.emit(type, data, metadata).catch(() => {
             // Fire-and-forget: silently ignore async emission errors
@@ -362,11 +362,11 @@ export class PGAEventEmitter {
      */
     getHistory(
         filter?: {
-            type?: PGAEventType;
+            type?: GSEPEventType;
             since?: Date;
             limit?: number;
         }
-    ): PGAEvent[] {
+    ): GSEPEvent[] {
         let events = this.eventHistory;
 
         if (filter?.type) {
@@ -388,14 +388,14 @@ export class PGAEventEmitter {
      * Wait for specific event
      */
     async waitFor<T = unknown>(
-        type: PGAEventType,
+        type: GSEPEventType,
         timeout?: number,
-        predicate?: (event: PGAEvent<T>) => boolean
-    ): Promise<PGAEvent<T>> {
+        predicate?: (event: GSEPEvent<T>) => boolean
+    ): Promise<GSEPEvent<T>> {
         return new Promise((resolve, reject) => {
             let timeoutId: NodeJS.Timeout | undefined;
 
-            const handler = (event: PGAEvent<T>) => {
+            const handler = (event: GSEPEvent<T>) => {
                 if (predicate && !predicate(event)) {
                     return; // Keep waiting
                 }
@@ -422,7 +422,7 @@ export class PGAEventEmitter {
     /**
      * Get subscriber count
      */
-    listenerCount(type?: PGAEventType): number {
+    listenerCount(type?: GSEPEventType): number {
         if (type) {
             const subs = this.subscriptions.get(type) || [];
             return subs.length + this.wildcardSubscriptions.length;
@@ -440,7 +440,7 @@ export class PGAEventEmitter {
     /**
      * Get all event types with subscribers
      */
-    eventNames(): PGAEventType[] {
+    eventNames(): GSEPEventType[] {
         return Array.from(this.subscriptions.keys());
     }
 
@@ -471,7 +471,7 @@ export class PGAEventEmitter {
         subscriptionsByType: Record<string, number>;
         wildcardSubscriptions: number;
         historySize: number;
-        eventTypes: PGAEventType[];
+        eventTypes: GSEPEventType[];
     } {
         const subscriptionsByType: Record<string, number> = {};
 
@@ -492,4 +492,4 @@ export class PGAEventEmitter {
 /**
  * Global event emitter instance
  */
-export const globalEvents = new PGAEventEmitter();
+export const globalEvents = new GSEPEventEmitter();

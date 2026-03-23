@@ -1,11 +1,11 @@
--- PGA PostgreSQL Schema
+-- GSEP PostgreSQL Schema
 -- Created by Luis Alfredo Velasquez Duran (Germany, 2025)
 
 -- ═══════════════════════════════════════════════════════════
 -- GENOMES
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_genomes (
+CREATE TABLE IF NOT EXISTS gsep_genomes (
     id TEXT PRIMARY KEY,
     name TEXT NOT NULL,
     config JSONB NOT NULL DEFAULT '{}',
@@ -18,16 +18,16 @@ CREATE TABLE IF NOT EXISTS pga_genomes (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_genomes_name ON pga_genomes(name);
-CREATE INDEX IF NOT EXISTS idx_genomes_family ON pga_genomes(family_id, version DESC);
+CREATE INDEX IF NOT EXISTS idx_genomes_name ON gsep_genomes(name);
+CREATE INDEX IF NOT EXISTS idx_genomes_family ON gsep_genomes(family_id, version DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- LAYERS (Three-Layer Architecture)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_alleles (
+CREATE TABLE IF NOT EXISTS gsep_alleles (
     id BIGSERIAL PRIMARY KEY,
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
     layer INTEGER NOT NULL CHECK (layer IN (0, 1, 2)),
     gene TEXT NOT NULL,
     variant TEXT NOT NULL,
@@ -45,17 +45,17 @@ CREATE TABLE IF NOT EXISTS pga_alleles (
     UNIQUE(genome_id, layer, gene, variant)
 );
 
-CREATE INDEX IF NOT EXISTS idx_alleles_genome ON pga_alleles(genome_id);
-CREATE INDEX IF NOT EXISTS idx_alleles_active ON pga_alleles(genome_id, layer, gene, status) WHERE status = 'active';
-CREATE INDEX IF NOT EXISTS idx_alleles_fitness ON pga_alleles(genome_id, layer, gene, fitness DESC);
+CREATE INDEX IF NOT EXISTS idx_alleles_genome ON gsep_alleles(genome_id);
+CREATE INDEX IF NOT EXISTS idx_alleles_active ON gsep_alleles(genome_id, layer, gene, status) WHERE status = 'active';
+CREATE INDEX IF NOT EXISTS idx_alleles_fitness ON gsep_alleles(genome_id, layer, gene, fitness DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- USER DNA (Cognitive Profiles)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_user_dna (
+CREATE TABLE IF NOT EXISTS gsep_user_dna (
     user_id TEXT NOT NULL,
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
     traits JSONB NOT NULL DEFAULT '{}',
     confidence JSONB NOT NULL DEFAULT '{}',
     generation INTEGER DEFAULT 0,
@@ -65,16 +65,16 @@ CREATE TABLE IF NOT EXISTS pga_user_dna (
     PRIMARY KEY (user_id, genome_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_user_dna_genome ON pga_user_dna(genome_id);
-CREATE INDEX IF NOT EXISTS idx_user_dna_evolved ON pga_user_dna(genome_id, last_evolved DESC);
+CREATE INDEX IF NOT EXISTS idx_user_dna_genome ON gsep_user_dna(genome_id);
+CREATE INDEX IF NOT EXISTS idx_user_dna_evolved ON gsep_user_dna(genome_id, last_evolved DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- INTERACTIONS (Learning Data)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_interactions (
+CREATE TABLE IF NOT EXISTS gsep_interactions (
     id BIGSERIAL PRIMARY KEY,
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL,
     user_message TEXT NOT NULL,
     assistant_response TEXT NOT NULL,
@@ -85,16 +85,16 @@ CREATE TABLE IF NOT EXISTS pga_interactions (
     timestamp TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_interactions_genome ON pga_interactions(genome_id, timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_interactions_user ON pga_interactions(genome_id, user_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_interactions_genome ON gsep_interactions(genome_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_interactions_user ON gsep_interactions(genome_id, user_id, timestamp DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- MUTATIONS (Evolution Log)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_mutations (
+CREATE TABLE IF NOT EXISTS gsep_mutations (
     id BIGSERIAL PRIMARY KEY,
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
     layer INTEGER NOT NULL,
     gene TEXT NOT NULL,
     variant TEXT NOT NULL,
@@ -107,45 +107,45 @@ CREATE TABLE IF NOT EXISTS pga_mutations (
     timestamp TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_mutations_genome ON pga_mutations(genome_id, timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_mutations_gene ON pga_mutations(genome_id, gene, timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_mutations_deployed ON pga_mutations(genome_id, deployed, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_mutations_genome ON gsep_mutations(genome_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_mutations_gene ON gsep_mutations(genome_id, gene, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_mutations_deployed ON gsep_mutations(genome_id, deployed, timestamp DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- FEEDBACK (User Feedback Signals)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_feedback (
+CREATE TABLE IF NOT EXISTS gsep_feedback (
     id BIGSERIAL PRIMARY KEY,
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL,
     gene TEXT,
     sentiment TEXT NOT NULL CHECK (sentiment IN ('positive', 'negative', 'neutral')),
     timestamp TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_feedback_genome ON pga_feedback(genome_id, timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_feedback_user ON pga_feedback(genome_id, user_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_feedback_genome ON gsep_feedback(genome_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_feedback_user ON gsep_feedback(genome_id, user_id, timestamp DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- ANALYTICS (Pre-aggregated Stats)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_analytics (
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS gsep_analytics (
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
     metric TEXT NOT NULL,
     value JSONB NOT NULL,
     snapshot_at TIMESTAMPTZ DEFAULT NOW(),
     PRIMARY KEY (genome_id, metric, snapshot_at)
 );
 
-CREATE INDEX IF NOT EXISTS idx_analytics_genome ON pga_analytics(genome_id, snapshot_at DESC);
+CREATE INDEX IF NOT EXISTS idx_analytics_genome ON gsep_analytics(genome_id, snapshot_at DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- GENE REGISTRY (Cross-Genome Knowledge Inheritance)
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_gene_registry (
+CREATE TABLE IF NOT EXISTS gsep_gene_registry (
     id TEXT PRIMARY KEY,
     family_id TEXT NOT NULL,
     gene TEXT NOT NULL,
@@ -160,15 +160,15 @@ CREATE TABLE IF NOT EXISTS pga_gene_registry (
     UNIQUE(family_id, gene, variant)
 );
 
-CREATE INDEX IF NOT EXISTS idx_gene_registry_family ON pga_gene_registry(family_id, fitness DESC);
-CREATE INDEX IF NOT EXISTS idx_gene_registry_gene ON pga_gene_registry(family_id, gene, fitness DESC);
+CREATE INDEX IF NOT EXISTS idx_gene_registry_family ON gsep_gene_registry(family_id, fitness DESC);
+CREATE INDEX IF NOT EXISTS idx_gene_registry_gene ON gsep_gene_registry(family_id, gene, fitness DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- CALIBRATION HISTORY (Dynamic Threshold Tuning)
 -- Living OS v1.0 Final 10/10
 -- ═══════════════════════════════════════════════════════════
 
-CREATE TABLE IF NOT EXISTS pga_calibration_history (
+CREATE TABLE IF NOT EXISTS gsep_calibration_history (
     id BIGSERIAL PRIMARY KEY,
     context_key TEXT NOT NULL,
     layer INTEGER CHECK (layer IN (0, 1, 2)),
@@ -185,8 +185,8 @@ CREATE TABLE IF NOT EXISTS pga_calibration_history (
     timestamp TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX IF NOT EXISTS idx_calibration_context ON pga_calibration_history(context_key, timestamp DESC);
-CREATE INDEX IF NOT EXISTS idx_calibration_layer ON pga_calibration_history(layer, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_calibration_context ON gsep_calibration_history(context_key, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_calibration_layer ON gsep_calibration_history(layer, timestamp DESC);
 
 -- ═══════════════════════════════════════════════════════════
 -- SEMANTIC FACTS (Layered Memory - Long Term Storage)
@@ -196,7 +196,7 @@ CREATE INDEX IF NOT EXISTS idx_calibration_layer ON pga_calibration_history(laye
 CREATE TABLE IF NOT EXISTS semantic_facts (
     id TEXT PRIMARY KEY,
     user_id TEXT NOT NULL,
-    genome_id TEXT NOT NULL REFERENCES pga_genomes(id) ON DELETE CASCADE,
+    genome_id TEXT NOT NULL REFERENCES gsep_genomes(id) ON DELETE CASCADE,
 
     -- Fact content
     fact TEXT NOT NULL,

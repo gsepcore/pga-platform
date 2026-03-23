@@ -12,10 +12,10 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
 import type { StorageAdapter } from '../interfaces/StorageAdapter.js';
-import type { GenomeInstance } from '../PGA.js';
+import type { GenomeInstance } from '../GSEP.js';
 
 // ─── Mock Adapters ──────────────────────────────────────
 
@@ -59,7 +59,7 @@ function createMockStorage(): StorageAdapter {
 // ─── Tests ──────────────────────────────────────────────
 
 describe('Mutation Persistence', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
     let agent: GenomeInstance;
@@ -67,10 +67,10 @@ describe('Mutation Persistence', () => {
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
 
-        agent = await pga.createGenome({
+        agent = await gsep.createGenome({
             name: 'persistence-test-agent',
             config: {
                 autonomous: {
@@ -193,7 +193,7 @@ describe('Mutation Persistence', () => {
     describe('Rejection', () => {
         it('should not modify genome.layers when mutation is rejected', async () => {
             // Create a genome with very strict guardrails that will reject mutations
-            const strictAgent = await pga.createGenome({
+            const strictAgent = await gsep.createGenome({
                 name: 'strict-agent',
                 config: {
                     evolutionGuardrails: {

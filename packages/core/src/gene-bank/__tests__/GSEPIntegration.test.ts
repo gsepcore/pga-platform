@@ -1,5 +1,5 @@
 /**
- * PGAGeneBankIntegration Tests
+ * GSEPGeneBankIntegration Tests
  *
  * Tests for the v1.0 helper methods:
  * - inferDomain: keyword-based domain detection
@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect, vi } from 'vitest';
-import { PGAGeneBankIntegration } from '../PGAIntegration.js';
+import { GSEPGeneBankIntegration } from '../GSEPIntegration.js';
 import type { LLMAdapter } from '../../interfaces/LLMAdapter.js';
 import type { GeneStorageAdapter } from '../GeneBank.js';
 
@@ -36,7 +36,7 @@ const mockStorage: GeneStorageAdapter = {
 
 // Access private methods via any cast for unit testing
 function createIntegration() {
-    return new PGAGeneBankIntegration(
+    return new GSEPGeneBankIntegration(
         mockLLM,
         { storage: mockStorage, autoExtract: true, autoAdopt: true },
         'test-tenant',
@@ -44,13 +44,13 @@ function createIntegration() {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function getPrivate(integration: PGAGeneBankIntegration): any {
+function getPrivate(integration: GSEPGeneBankIntegration): any {
     return integration;
 }
 
 // ─── Tests ────────────────────────────────────────────────
 
-describe('PGAGeneBankIntegration', () => {
+describe('GSEPGeneBankIntegration', () => {
     describe('inferDomain', () => {
         it('should return explicit domain when provided', () => {
             const integration = createIntegration();

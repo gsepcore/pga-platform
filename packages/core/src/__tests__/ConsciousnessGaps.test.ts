@@ -12,7 +12,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { PGA } from '../PGA.js';
+import { GSEP } from '../GSEP.js';
 import { AgentStateVector } from '../advanced-ai/AgentStateVector.js';
 import { AutonomousLoop } from '../advanced-ai/AutonomousLoop.js';
 import { GrowthJournal } from '../memory/GrowthJournal.js';
@@ -388,19 +388,19 @@ describe('CuriosityEngine', () => {
 // ─── Full Integration: All Consciousness Systems ────────
 
 describe('All consciousness systems in chat()', () => {
-    let pga: PGA;
+    let gsep: GSEP;
     let llm: LLMAdapter;
     let storage: StorageAdapter;
 
     beforeEach(async () => {
         llm = createMockLLM();
         storage = createMockStorage();
-        pga = new PGA({ llm, storage });
-        await pga.initialize();
+        gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
     });
 
     it('should handle all consciousness systems together', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'conscious-agent',
             config: {
                 autonomous: {
@@ -436,7 +436,7 @@ describe('All consciousness systems in chat()', () => {
     });
 
     it('should not crash with state vector enabled but other systems disabled', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'minimal-conscious',
             config: {
                 autonomous: {
@@ -454,7 +454,7 @@ describe('All consciousness systems in chat()', () => {
     });
 
     it('should work with growth journal and curiosity engine only', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'growing-agent',
             config: {
                 autonomous: {
@@ -475,7 +475,7 @@ describe('All consciousness systems in chat()', () => {
     });
 
     it('should combine consciousness with strategic refusal', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'conscious-safe-agent',
             config: {
                 autonomous: {
@@ -500,7 +500,7 @@ describe('All consciousness systems in chat()', () => {
     });
 
     it('should handle ALL systems active simultaneously', async () => {
-        const genome = await pga.createGenome({
+        const genome = await gsep.createGenome({
             name: 'fully-conscious-agent',
             config: {
                 autonomous: {

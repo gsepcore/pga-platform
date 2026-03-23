@@ -25,8 +25,12 @@
 
 // ─── Main Exports ───────────────────────────────────────
 
-export { PGA, PGA as GSEP, GenomeInstance } from './PGA.js';
-export type { PGAConfig } from './PGA.js';
+export { GSEP, GenomeInstance } from './GSEP.js';
+export type { GSEPConfig } from './GSEP.js';
+/** @deprecated Use GSEP instead */
+export { GSEP as PGA } from './GSEP.js';
+/** @deprecated Use GSEPConfig instead */
+export type { GSEPConfig as PGAConfig } from './GSEP.js';
 
 // ─── Wrap (Universal Middleware) ────────────────────────
 
@@ -53,7 +57,7 @@ export {
     validateSuiteFrozen,
     CORE_GENERAL_V1,
     CORE_CODING_V1,
-    PGA_SPECIFIC_V1,
+    GSEP_SPECIFIC_V1,
     PROOF_OF_VALUE_V1,
 } from './evaluation/BenchmarkSuites.js';
 export type {
@@ -283,10 +287,10 @@ export type {
 
 // ─── Real-Time ──────────────────────────────────────────
 
-export { PGAEventEmitter, globalEvents } from './realtime/EventEmitter.js';
+export { GSEPEventEmitter, globalEvents } from './realtime/EventEmitter.js';
 export type {
-    PGAEventType,
-    PGAEvent,
+    GSEPEventType,
+    GSEPEvent,
     GenomeCreatedEvent,
     GenomeEvolvedEvent,
     MutationAppliedEvent,
@@ -304,6 +308,10 @@ export type {
     MutationPromotedEvent,
     EventHandler,
 } from './realtime/EventEmitter.js';
+/** @deprecated Use GSEPEventEmitter instead */
+export { GSEPEventEmitter as PGAEventEmitter } from './realtime/EventEmitter.js';
+/** @deprecated Use GSEPEventType/GSEPEvent instead */
+export type { GSEPEventType as PGAEventType, GSEPEvent as PGAEvent } from './realtime/EventEmitter.js';
 
 export { StreamingManager, globalStreaming } from './realtime/StreamingManager.js';
 export type {
