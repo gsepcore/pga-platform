@@ -16,7 +16,7 @@
  * @since 2026-03-05
  */
 
-import { PGA } from '../packages/core/src/PGA.js';
+import { GSEP } from '../packages/core/src/PGA.js';
 import { InMemoryGeneStorage } from '../packages/core/src/gene-bank/adapters/InMemoryGeneStorage.js';
 import { GeneBank } from '../packages/core/src/gene-bank/GeneBank.js';
 import type { LLMAdapter, ChatResponse, Message } from '../packages/core/src/interfaces/LLMAdapter.js';
@@ -125,19 +125,19 @@ async function main() {
         minFitnessThreshold: 0.5,
     });
 
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm,
         storage,
         geneBank,
     });
 
-    await pga.initialize();
+    await gsep.initialize();
 
     // ─── Step 1: Create Agent Alpha ─────────────────────────
 
     console.log('--- Step 1: Creating Agent Alpha ---\n');
 
-    const alpha = await pga.createGenome({
+    const alpha = await gsep.createGenome({
         name: 'agent-alpha',
         config: {
             mutationRate: 'balanced',
@@ -252,7 +252,7 @@ async function main() {
 
     console.log('--- Step 6: Agent Beta Inherits from Alpha ---\n');
 
-    const beta = await pga.createGenome({
+    const beta = await gsep.createGenome({
         name: 'agent-beta',
         config: {
             mutationRate: 'balanced',
@@ -301,7 +301,7 @@ async function main() {
     console.log('--- Step 8: Living Agent Vitals (v0.7.0) ---\n');
 
     // Create agent Gamma with all 3 new living systems
-    const gamma = await pga.createGenome({
+    const gamma = await gsep.createGenome({
         name: 'agent-gamma',
         config: {
             mutationRate: 'balanced',

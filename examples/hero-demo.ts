@@ -28,7 +28,7 @@
 
 import { ProofOfValueRunner } from '../packages/core/src/evaluation/ProofOfValueRunner.js';
 import { PROOF_OF_VALUE_V1 } from '../packages/core/src/evaluation/BenchmarkSuites.js';
-import { PGA, InMemoryStorageAdapter } from '../packages/core/src/index.js';
+import { GSEP, InMemoryStorageAdapter } from '../packages/core/src/index.js';
 import type { LLMAdapter, Message, ChatResponse } from '../packages/core/src/interfaces/LLMAdapter.js';
 import { writeFileSync } from 'fs';
 
@@ -137,7 +137,7 @@ async function createAdapter(provider: string): Promise<LLMAdapter> {
 // ─── Create a real GSEP genome (evolution-enabled) ───────
 
 async function createGSEPGenome(llm: LLMAdapter) {
-    const gsep = new PGA({
+    const gsep = new GSEP({
         llm,
         storage: new InMemoryStorageAdapter(),
     });

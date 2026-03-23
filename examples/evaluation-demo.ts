@@ -4,7 +4,7 @@
  * This example shows how to use the Evaluator to prove GSEP superiority.
  */
 
-import { PGA } from '../packages/core/src/index.js';
+import { GSEP } from '../packages/core/src/index.js';
 import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 import { Evaluator, STANDARD_TASKS } from '../packages/core/src/evaluation/Evaluator.js';
@@ -16,7 +16,7 @@ async function main() {
     console.log('═'.repeat(80) + '\n');
 
     // Initialize GSEP
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
             model: 'claude-sonnet-4-20250514',
@@ -26,12 +26,12 @@ async function main() {
         }),
     });
 
-    await pga.initialize();
+    await gsep.initialize();
 
     // Create two genomes: one with GSEP features, one baseline
     console.log('📦 Creating genomes...\n');
 
-    const genomeWithPGA = await pga.createGenome({
+    const genomeWithPGA = await gsep.createGenome({
         name: 'with-pga',
         config: {
             enableSandbox: true,
@@ -40,7 +40,7 @@ async function main() {
         },
     });
 
-    const genomeBaseline = await pga.createGenome({
+    const genomeBaseline = await gsep.createGenome({
         name: 'baseline',
         config: {
             enableSandbox: false,

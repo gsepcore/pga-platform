@@ -12,7 +12,7 @@
  * Tables are auto-created on first run (9 tables).
  */
 
-import { PGA } from '../packages/core/src/index.js';
+import { GSEP } from '../packages/core/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
 async function main() {
@@ -28,7 +28,7 @@ async function main() {
     await storage.initialize();
     console.log('✓ PostgreSQL connected and tables initialized');
 
-    const gsep = new PGA({ storage });
+    const gsep = new GSEP({ storage });
     await gsep.initialize();
 
     // Create a genome — persists in database

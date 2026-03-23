@@ -11,19 +11,19 @@
  * @since 2026-03-01
  */
 
-import { PGA } from '../packages/core/src/index.js';
+import { GSEP } from '../packages/core/src/index.js';
 import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
 async function demoLayeredMemory() {
     // ─── Configuración ──────────────────────────────────────────
 
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_KEY! }),
         storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL! }),
     });
 
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'memory-enhanced-assistant',
         config: {
             enableSandbox: false,

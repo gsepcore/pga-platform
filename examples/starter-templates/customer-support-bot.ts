@@ -381,7 +381,7 @@ export async function createCustomerSupportBot(
     }
 
     // Create genome
-    const genome = await pga.createGenome(template);
+    const genome = await gsep.createGenome(template);
 
     console.log(`✅ Customer Support Bot created: ${genome.id}`);
     console.log(`   Company: ${options.companyName || '[Not specified]'}`);
@@ -402,17 +402,17 @@ npm install @gsep/core @gsep/adapters-llm-anthropic @gsep/adapters-storage-postg
 
 ## 2. Create Bot
 \`\`\`typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 import { createCustomerSupportBot } from '@gsep/templates';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY! }),
   storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL! }),
 });
 
-await pga.initialize();
+await gsep.initialize();
 
 const bot = await createCustomerSupportBot(pga, {
   companyName: 'Acme Corp',

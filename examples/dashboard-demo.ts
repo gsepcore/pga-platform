@@ -7,7 +7,7 @@
  *   npx tsx examples/dashboard-demo.ts
  */
 
-import { PGA, InMemoryStorageAdapter } from '../packages/core/src/index.js';
+import { GSEP, InMemoryStorageAdapter } from '../packages/core/src/index.js';
 
 const mockLLM = {
     model: 'mock-model',
@@ -18,7 +18,7 @@ const mockLLM = {
 };
 
 async function main() {
-    const gsep = new PGA({ llm: mockLLM as never, storage: new InMemoryStorageAdapter() });
+    const gsep = new GSEP({ llm: mockLLM as never, storage: new InMemoryStorageAdapter() });
     const genome = await gsep.createGenome({ name: 'my-agent' });
 
     // One line — dashboard is live

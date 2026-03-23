@@ -10,7 +10,7 @@
  * @since 2026-02-27
  */
 
-import { PGA, type EvolutionGuardrails } from '../packages/core/src/index.js';
+import { GSEP, type EvolutionGuardrails } from '../packages/core/src/index.js';
 import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
@@ -19,7 +19,7 @@ async function productionMonitoringDemo() {
     // SETUP: Initialize GSEP with production configuration
     // ═══════════════════════════════════════════════════════
 
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY || 'demo-key',
         }),
@@ -32,7 +32,7 @@ async function productionMonitoringDemo() {
         },
     });
 
-    await pga.initialize();
+    await gsep.initialize();
 
     // ═══════════════════════════════════════════════════════
     // CREATE GENOME: With custom Evolution Guardrails
@@ -48,7 +48,7 @@ async function productionMonitoringDemo() {
         gateMode: 'AND',
     };
 
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'production-agent',
         config: {
             evolutionGuardrails: customGuardrails,

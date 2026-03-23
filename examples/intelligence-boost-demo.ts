@@ -12,7 +12,7 @@
  * THE USER WILL FEEL THE 0% → 100% UPGRADE!
  */
 
-import { PGA } from '../packages/core/src/index.js';
+import { GSEP } from '../packages/core/src/index.js';
 import { ClaudeAdapter } from '../packages/adapters-llm/anthropic/src/index.js';
 import { PostgresAdapter } from '../packages/adapters-storage/postgres/src/index.js';
 
@@ -23,7 +23,7 @@ async function main() {
     console.log('═'.repeat(80) + '\n');
 
     // Initialize GSEP
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY!,
             model: 'claude-sonnet-4-20250514',
@@ -38,10 +38,10 @@ async function main() {
         },
     });
 
-    await pga.initialize();
+    await gsep.initialize();
 
     // Create genome
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'intelligence-demo',
     });
 

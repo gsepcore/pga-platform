@@ -8,7 +8,7 @@
  * @since 2026-02-28
  */
 
-import { PGA } from '../packages/core/src/PGA.js';
+import { GSEP } from '../packages/core/src/PGA.js';
 
 // Mock adapters for demonstration
 class MockLLMAdapter {
@@ -80,7 +80,7 @@ async function productionExample() {
 
     console.log('🚀 Initializing GSEP with monitoring...\n');
 
-    const pga = new PGA({
+    const gsep = new GSEP({
         llm: new MockLLMAdapter() as any,
         storage: new MockStorageAdapter() as any,
 
@@ -112,7 +112,7 @@ async function productionExample() {
     });
 
     // Initialize GSEP (also starts dashboard if enabled)
-    await pga.initialize();
+    await gsep.initialize();
 
     console.log('✓ GSEP initialized with monitoring enabled');
     console.log('✓ Dashboard started (refreshing every 2s)\n');
@@ -123,7 +123,7 @@ async function productionExample() {
 
     console.log('🧬 Creating genome...\n');
 
-    const genome = await pga.createGenome({
+    const genome = await gsep.createGenome({
         name: 'production-agent',
         config: {
             mutationRate: 'balanced',
@@ -164,7 +164,7 @@ async function productionExample() {
 
     console.log('📈 Current metrics:\n');
 
-    const metrics = pga.getMetrics();
+    const metrics = gsep.getMetrics();
     const performance = metrics.getPerformanceMetrics();
     const cost = metrics.getCostMetrics();
     const health = metrics.getHealthStatus();
@@ -200,7 +200,7 @@ async function productionExample() {
 
     console.log('\n📤 Exporting metrics for external systems...\n');
 
-    const exportedMetrics = pga.exportMetrics();
+    const exportedMetrics = gsep.exportMetrics();
 
     console.log('Exported metrics structure:');
     console.log(`  • Performance: ${Object.keys(exportedMetrics.performance).length} fields`);
@@ -220,7 +220,7 @@ async function productionExample() {
     console.log('\n🛑 Shutting down gracefully...\n');
 
     // Stop dashboard and log shutdown
-    pga.shutdown();
+    gsep.shutdown();
 
     console.log('✓ GSEP shutdown complete\n');
 
@@ -264,7 +264,7 @@ async function productionExample() {
 async function periodicMetricsExport(pga: PGA) {
     // Export metrics every 60 seconds
     setInterval(() => {
-        const metrics = pga.exportMetrics();
+        const metrics = gsep.exportMetrics();
 
         // Send to your monitoring service
         console.log('📤 Exporting metrics:', {
@@ -289,7 +289,7 @@ async function periodicMetricsExport(pga: PGA) {
 async function alertHandler(pga: PGA) {
     // Check alerts every 30 seconds
     setInterval(() => {
-        const alerts = pga.getAlerts();
+        const alerts = gsep.getAlerts();
 
         for (const alert of alerts) {
             // Send notifications

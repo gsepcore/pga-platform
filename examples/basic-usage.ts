@@ -14,7 +14,7 @@
  *   npx tsx examples/basic-usage.ts
  */
 
-import { PGA, InMemoryStorageAdapter } from '../packages/core/src/index.js';
+import { GSEP, InMemoryStorageAdapter } from '../packages/core/src/index.js';
 
 // ═══════════════════════════════════════════════════════════
 // Storage Options:
@@ -36,7 +36,7 @@ async function main() {
     // Step 1: Initialize GSEP
     // ═══════════════════════════════════════════════════════
 
-    const gsep = new PGA({
+    const gsep = new GSEP({
         storage: new InMemoryStorageAdapter(),
     });
 
@@ -114,7 +114,7 @@ Always be polite, empathetic, and solution-oriented.`,
     // Dynamic import to avoid requiring the adapter when no key is set
     const { ClaudeAdapter } = await import('../packages/adapters-llm/anthropic/src/index.js');
 
-    const gsepWithLLM = new PGA({
+    const gsepWithLLM = new GSEP({
         llm: new ClaudeAdapter({
             apiKey: process.env.ANTHROPIC_API_KEY,
             model: 'claude-sonnet-4-5-20250929',
