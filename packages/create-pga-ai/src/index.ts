@@ -4,7 +4,7 @@
  * create-gsep — Interactive GSEP Platform Installer
  *
  * One command to create a complete GSEP agent project:
- * npm create pga-ai@latest my-agent
+ * npm create gsep@latest my-agent
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-27
@@ -71,7 +71,7 @@ program
                             type: 'input',
                             name: 'projectName',
                             message: 'Project name:',
-                            default: 'my-pga-agent',
+                            default: 'my-gsep-agent',
                             validate: (input: string) => {
                                 if (!input) return 'Project name is required';
                                 if (!/^[a-z0-9-]+$/.test(input)) {

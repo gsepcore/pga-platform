@@ -342,9 +342,9 @@ app.post('/genome/:id/evolve', async (req, res) => {
 ### GSEP Integration
 
 ```typescript
-import { PGA, RateLimiter, AuthManager } from '@gsep/core';
+import { GSEP, RateLimiter, AuthManager } from '@gsep/core';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llmAdapter: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_API_KEY!,
   }),
@@ -373,7 +373,7 @@ async function secureChat(userId: string, genomeId: string, message: string) {
   await auth.authorize(userId, 'chat:send', `genome:${genomeId}`);
 
   // Proceed with chat
-  const genome = await pga.getGenome(genomeId);
+  const genome = await gsep.getGenome(genomeId);
   const response = await genome.chat(message, { userId });
 
   return response;

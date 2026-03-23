@@ -106,7 +106,7 @@ await memory.initialize('genome-id', 'user-123');
 
 3. **Integrate with GSEP:**
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
     name: 'production-agent',
     config: {
         layeredMemory: {
@@ -146,7 +146,7 @@ import { PineconeAdapter } from '@gsep/adapters-vectorstore-pinecone';
 const vectorStore = new PineconeAdapter({
     apiKey: process.env.PINECONE_API_KEY,
     environment: 'us-east1-gcp',
-    indexName: 'pga-knowledge-base',
+    indexName: 'gsep-knowledge-base',
 });
 ```
 
@@ -220,7 +220,7 @@ console.log('Indexed', documents.length, 'documents');
 
 4. **Integrate with GSEP:**
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
     name: 'rag-enabled-agent',
     config: {
         rag: {
@@ -320,7 +320,7 @@ async function reasonWithRules(question: string, context: string) {
 
 3. **Integrate with GSEP:**
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
     name: 'reasoning-agent',
     config: {
         reasoning: {
@@ -344,7 +344,7 @@ const genome = await pga.createGenome({
 **Complete GSEP Agent with All Features:**
 
 ```typescript
-import { PGA, LayeredMemory, RAGEngine, ReasoningEngine, MetricsCollector } from '@gsep/core';
+import { GSEP, LayeredMemory, RAGEngine, ReasoningEngine, MetricsCollector } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage/postgres';
 import { PineconeAdapter } from '@gsep/adapters-vectorstore-pinecone';
@@ -375,11 +375,11 @@ const llm = new ClaudeAdapter({
 const vectorStore = new PineconeAdapter({
     apiKey: process.env.PINECONE_API_KEY,
     environment: 'us-east1-gcp',
-    indexName: 'pga-knowledge',
+    indexName: 'gsep-knowledge',
 });
 
 // 5. Initialize GSEP
-const pga = new PGA({
+const gsep = new GSEP({
     llm,
     storage,
 
@@ -435,7 +435,7 @@ const pga = new PGA({
 });
 
 // 6. Create Genome
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
     name: 'production-agent-v1',
     description: 'Full-featured GSEP agent with memory, RAG, and reasoning',
 });
@@ -539,12 +539,12 @@ ANTHROPIC_KEY=sk-ant-...
 OPENAI_API_KEY=sk-...
 
 # Database
-DATABASE_URL=postgresql://user:pass@host:5432/pga_prod
+DATABASE_URL=postgresql://user:pass@host:5432/gsep_prod
 
 # Vector Store
 PINECONE_API_KEY=...
 PINECONE_ENVIRONMENT=us-east1-gcp
-PINECONE_INDEX=pga-knowledge
+PINECONE_INDEX=gsep-knowledge
 
 # Monitoring
 ENABLE_METRICS=true

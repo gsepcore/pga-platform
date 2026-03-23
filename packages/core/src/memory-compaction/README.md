@@ -372,13 +372,13 @@ compactor.strategies.set('my-strategy', new MyCustomStrategy());
 Memory Compaction works seamlessly with GSEP's evolution system:
 
 ```typescript
-import { PGA, MemoryCompactor } from '@gsep/core';
+import { GSEP, MemoryCompactor } from '@gsep/core';
 
-const pga = new PGA({ /* config */ });
+const gsep = new GSEP({ /* config */ });
 const compactor = new MemoryCompactor();
 
 // Create genome with memory compaction
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   name: 'smart-assistant',
   onBeforeChat: async (conversation) => {
     // Auto-compact before each chat

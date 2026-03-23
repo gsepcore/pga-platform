@@ -336,7 +336,7 @@ function generateAgentFile(config: ProjectConfig): string {
         autoMutateOnDrift: true,
       },`;
 
-    return `import type { PGA, GenomeInstance } from '@gsep/core';
+    return `import type { GSEP, GenomeInstance } from '@gsep/core';
 
 /**
  * Setup the agent genome with initial configuration

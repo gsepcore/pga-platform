@@ -146,7 +146,7 @@ private async extractLongTermFacts(
 #### Control de Privacidad
 
 ```typescript
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
     config: {
         layeredMemory: {
             enabled: true,
@@ -287,14 +287,14 @@ facts      summary    messages     → Prompt
 ### Inicialización
 
 ```typescript
-import { PGA, LayeredMemory } from '@gsep/core';
+import { GSEP, LayeredMemory } from '@gsep/core';
 
-const pga = new PGA({
+const gsep = new GSEP({
     llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_KEY }),
     storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL }),
 });
 
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
     name: 'memory-enhanced-assistant',
     config: {
         layeredMemory: {

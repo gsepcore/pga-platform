@@ -381,7 +381,7 @@ ORDER BY inheritance_success_rate DESC;
 // ═══════════════════════════════════════════════════════════
 
 import {
-  PGA,
+  GSEP,
   GenomeKernel,
   DriftAnalyzer,
   MutationEngine,
@@ -390,11 +390,11 @@ import {
 } from '@gsep/core';
 
 // 1. Initialize Living OS
-const pga = new PGA({ llm, storage });
-await pga.initialize();
+const gsep = new GSEP({ llm, storage });
+await gsep.initialize();
 
 // 2. Create genome with C0 integrity
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   name: 'my-agent',
   familyId: 'customer-support',
 });
@@ -521,7 +521,7 @@ while (true) {
 1. ✅ **Testing**: Write unit tests for all new components
 2. ✅ **Examples**: Create demo scripts showing full flow
 3. ✅ **Documentation**: Generate API docs from TSDoc
-4. ✅ **Integration**: Update PGA.ts to use GenomeKernel
+4. ✅ **Integration**: Update GSEP.ts to use GenomeKernel
 
 ### **Short-term (Month 1-2)**:
 1. ✅ **Gene Registry API**: RESTful API for gene management

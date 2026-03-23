@@ -128,20 +128,20 @@ Start with these documents in order:
 
 **Customer Support Bot** (2 minutes):
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 import { createCustomerSupportBot } from './examples/starter-templates/customer-support-bot';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY! }),
   storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL! }),
 });
 
-await pga.initialize();
+await gsep.initialize();
 
 // Create bot with Living OS
-const bot = await createCustomerSupportBot(pga, {
+const bot = await createCustomerSupportBot(gsep, {
   companyName: 'Your Company',
 });
 
@@ -248,7 +248,7 @@ See [LICENSE.md](LICENSE.md) and [PATENTS.md](PATENTS.md) for details.
 ```typescript
 import {
   // Core
-  PGA,
+  GSEP,
   GenomeInstance,
 
   // Living OS

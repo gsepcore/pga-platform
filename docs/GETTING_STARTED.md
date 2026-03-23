@@ -90,7 +90,7 @@ npx tsx examples/getting-started-agent.ts
 
 ```typescript
 import {
-    PGA,
+    GSEP,
     ClaudeAdapter,
     GeneBank,
     InMemoryGeneStorage,
@@ -107,7 +107,7 @@ npm install @gsep/core
 
 ```typescript
 import {
-    PGA,
+    GSEP,
     ClaudeAdapter,
     GeneBank,
     InMemoryGeneStorage,
@@ -156,7 +156,7 @@ For complete genomic evolution system with LLM integration:
 
 ```typescript
 import {
-    PGA,
+    GSEP,
     ClaudeAdapter,
     GeneBank,
     InMemoryGeneStorage,
@@ -170,7 +170,7 @@ const geneBank = new GeneBank(new InMemoryGeneStorage(), {
 });
 
 // 2. Initialize GSEP with LLM
-const pga = new PGA({
+const gsep = new GSEP({
     llm: new ClaudeAdapter({
         apiKey: process.env.ANTHROPIC_API_KEY!,
         model: 'claude-sonnet-4-5',
@@ -179,7 +179,7 @@ const pga = new PGA({
 });
 
 // 3. Create genome
-const genome = await pga.createGenome({ name: 'assistant' });
+const genome = await gsep.createGenome({ name: 'assistant' });
 
 // 4. Chat with agent
 const response = await genome.chat('Hello!', { userId: 'user123' });
@@ -430,7 +430,7 @@ const metrics = new MetricsCollector({
     flushInterval: 60000, // Flush every minute
 });
 
-const pga = new PGA({
+const gsep = new GSEP({
     llm,
     geneBank,
     agentId: 'my-agent',

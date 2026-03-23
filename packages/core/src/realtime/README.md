@@ -16,9 +16,9 @@ Type-safe event emitter for genome changes, mutations, and system events.
 ### Quick Start
 
 ```typescript
-import { PGAEventEmitter } from '@gsep/core';
+import { GSEPEventEmitter } from '@gsep/core';
 
-const events = new PGAEventEmitter();
+const events = new GSEPEventEmitter();
 
 // Subscribe to genome creation
 events.on('genome:created', (event) => {
@@ -143,10 +143,10 @@ const myGenomeEvolved = await events.waitFor(
 ### Integration with GSEP
 
 ```typescript
-import { PGA, PGAEventEmitter } from '@gsep/core';
+import { GSEP, GSEPEventEmitter } from '@gsep/core';
 
-const events = new PGAEventEmitter();
-const pga = new PGA({
+const events = new GSEPEventEmitter();
+const gsep = new GSEP({
   llmAdapter: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_API_KEY!,
   }),
@@ -168,7 +168,7 @@ events.on('genome:evolved', async (event) => {
 });
 
 // Create genome (automatically emits event)
-const genome = await pga.createGenome({ name: 'assistant' });
+const genome = await gsep.createGenome({ name: 'assistant' });
 ```
 
 ## Streaming Manager
@@ -289,9 +289,9 @@ for await (const chunk of merged) {
 ## Real-Time Chat Example
 
 ```typescript
-import { PGA, PGAEventEmitter, StreamingManager } from '@gsep/core';
+import { GSEP, GSEPEventEmitter, StreamingManager } from '@gsep/core';
 
-const events = new PGAEventEmitter();
+const events = new GSEPEventEmitter();
 const streaming = new StreamingManager();
 
 // Listen for chat events
@@ -338,10 +338,10 @@ async function streamChat(genome, message, userId) {
 
 ```typescript
 import { WebSocketServer } from 'ws';
-import { PGAEventEmitter } from '@gsep/core';
+import { GSEPEventEmitter } from '@gsep/core';
 
 const wss = new WebSocketServer({ port: 8080 });
-const events = new PGAEventEmitter();
+const events = new GSEPEventEmitter();
 
 wss.on('connection', (ws) => {
   // Subscribe to all events for this client
@@ -366,10 +366,10 @@ await events.emit('genome:evolved', {
 
 ```typescript
 import express from 'express';
-import { PGAEventEmitter } from '@gsep/core';
+import { GSEPEventEmitter } from '@gsep/core';
 
 const app = express();
-const events = new PGAEventEmitter();
+const events = new GSEPEventEmitter();
 
 app.get('/events', (req, res) => {
   res.setHeader('Content-Type', 'text/event-stream');
@@ -391,9 +391,9 @@ app.listen(3000);
 ## Live Metrics Dashboard
 
 ```typescript
-import { PGAEventEmitter, MetricsCollector } from '@gsep/core';
+import { GSEPEventEmitter, MetricsCollector } from '@gsep/core';
 
-const events = new PGAEventEmitter();
+const events = new GSEPEventEmitter();
 const metrics = new MetricsCollector();
 
 // Update metrics every second

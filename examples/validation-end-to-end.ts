@@ -59,7 +59,7 @@ class BaselineAgent {
 /**
  * GSEP Agent - With evolution, improves over time
  */
-class PGAAgent {
+class GSEPAgent {
     private baseQuality = 0.65; // Same starting point
     private iterations = 0;
     private learningRate = 0.015; // Learns 1.5% per iteration
@@ -115,11 +115,11 @@ async function runValidation() {
 
     // Setup metrics collectors
     const baselineMetrics = new MetricsCollector({ enableCostTracking: true });
-    const pgaMetrics = new MetricsCollector({ enableCostTracking: true });
+    const gsepMetrics = new MetricsCollector({ enableCostTracking: true });
 
     // Create agents
     const baselineAgent = new BaselineAgent();
-    const pgaAgent = new PGAAgent();
+    const gsepAgent = new GSEPAgent();
 
     // Test tasks
     const testTasks = [
@@ -142,11 +142,11 @@ async function runValidation() {
     const results: Array<{
         task: string;
         baselineQuality: number;
-        pgaQuality: number;
+        gsepQuality: number;
         baselineCost: number;
-        pgaCost: number;
+        gsepCost: number;
         baselineLatency: number;
-        pgaLatency: number;
+        gsepLatency: number;
     }> = [];
 
     // Run tests
@@ -167,35 +167,35 @@ async function runValidation() {
             outputTokens: 1000,
         });
 
-        // Run PGA agent
-        const pgaStart = Date.now();
-        const pgaResult = await pgaAgent.execute(task);
-        const pgaDuration = Date.now() - pgaStart;
+        // Run GSEP agent
+        const gsepStart = Date.now();
+        const gsepResult = await gsepAgent.execute(task);
+        const gsepDuration = Date.now() - gsepStart;
 
-        pgaMetrics.recordRequest({
-            requestId: `pga_${i}`,
-            duration: pgaDuration,
+        gsepMetrics.recordRequest({
+            requestId: `gsep_${i}`,
+            duration: gsepDuration,
             success: true,
-            model: 'pga-evolved',
+            model: 'gsep-evolved',
             inputTokens: 500,
             outputTokens: 1000,
         });
 
-        const improvement = ((pgaResult.quality - baselineResult.quality) / baselineResult.quality) * 100;
-        const costSavings = ((baselineResult.cost - pgaResult.cost) / baselineResult.cost) * 100;
+        const improvement = ((gsepResult.quality - baselineResult.quality) / baselineResult.quality) * 100;
+        const costSavings = ((baselineResult.cost - gsepResult.cost) / baselineResult.cost) * 100;
 
         results.push({
             task,
             baselineQuality: baselineResult.quality,
-            pgaQuality: pgaResult.quality,
+            gsepQuality: gsepResult.quality,
             baselineCost: baselineResult.cost,
-            pgaCost: pgaResult.cost,
+            gsepCost: gsepResult.cost,
             baselineLatency: baselineResult.latency,
-            pgaLatency: pgaResult.latency,
+            gsepLatency: gsepResult.latency,
         });
 
         console.log(
-            `${(i + 1).toString().padStart(2)}   | ${(baselineResult.quality * 100).toFixed(1)}%           | ${(pgaResult.quality * 100).toFixed(1)}%      | ${improvement >= 0 ? '+' : ''}${improvement.toFixed(1)}%       | $${baselineResult.cost.toFixed(4)}        | $${pgaResult.cost.toFixed(4)}   | ${costSavings >= 0 ? '+' : ''}${costSavings.toFixed(1)}%`
+            `${(i + 1).toString().padStart(2)}   | ${(baselineResult.quality * 100).toFixed(1)}%           | ${(gsepResult.quality * 100).toFixed(1)}%      | ${improvement >= 0 ? '+' : ''}${improvement.toFixed(1)}%       | $${baselineResult.cost.toFixed(4)}        | $${gsepResult.cost.toFixed(4)}   | ${costSavings >= 0 ? '+' : ''}${costSavings.toFixed(1)}%`
         );
 
         // Small delay for readability
@@ -212,53 +212,53 @@ async function runValidation() {
 
     // Calculate averages
     const avgBaselineQuality = results.reduce((sum, r) => sum + r.baselineQuality, 0) / results.length;
-    const avgPGAQuality = results.reduce((sum, r) => sum + r.pgaQuality, 0) / results.length;
+    const avgGSEPQuality = results.reduce((sum, r) => sum + r.gsepQuality, 0) / results.length;
     const avgBaselineCost = results.reduce((sum, r) => sum + r.baselineCost, 0) / results.length;
-    const avgPGACost = results.reduce((sum, r) => sum + r.pgaCost, 0) / results.length;
+    const avgGSEPCost = results.reduce((sum, r) => sum + r.gsepCost, 0) / results.length;
     const avgBaselineLatency = results.reduce((sum, r) => sum + r.baselineLatency, 0) / results.length;
-    const avgPGALatency = results.reduce((sum, r) => sum + r.pgaLatency, 0) / results.length;
+    const avgGSEPLatency = results.reduce((sum, r) => sum + r.gsepLatency, 0) / results.length;
 
-    const qualityImprovement = ((avgPGAQuality - avgBaselineQuality) / avgBaselineQuality) * 100;
-    const costSavings = ((avgBaselineCost - avgPGACost) / avgBaselineCost) * 100;
-    const latencyImprovement = ((avgBaselineLatency - avgPGALatency) / avgBaselineLatency) * 100;
+    const qualityImprovement = ((avgGSEPQuality - avgBaselineQuality) / avgBaselineQuality) * 100;
+    const costSavings = ((avgBaselineCost - avgGSEPCost) / avgBaselineCost) * 100;
+    const latencyImprovement = ((avgBaselineLatency - avgGSEPLatency) / avgBaselineLatency) * 100;
 
     console.log('📈 Quality Metrics:');
     console.log('─────────────────────────────────────────');
     console.log(`Baseline Avg Quality:    ${(avgBaselineQuality * 100).toFixed(1)}%`);
-    console.log(`GSEP Avg Quality:        ${(avgPGAQuality * 100).toFixed(1)}%`);
+    console.log(`GSEP Avg Quality:        ${(avgGSEPQuality * 100).toFixed(1)}%`);
     console.log(`Quality Improvement:     ${qualityImprovement >= 0 ? '+' : ''}${qualityImprovement.toFixed(1)}%`);
 
     console.log('\n💰 Cost Metrics:');
     console.log('─────────────────────────────────────────');
     console.log(`Baseline Avg Cost:       $${avgBaselineCost.toFixed(6)}`);
-    console.log(`GSEP Avg Cost:           $${avgPGACost.toFixed(6)}`);
+    console.log(`GSEP Avg Cost:           $${avgGSEPCost.toFixed(6)}`);
     console.log(`Cost Savings:            ${costSavings >= 0 ? '+' : ''}${costSavings.toFixed(1)}%`);
 
     console.log('\n⚡ Performance Metrics:');
     console.log('─────────────────────────────────────────');
     console.log(`Baseline Avg Latency:    ${avgBaselineLatency.toFixed(0)}ms`);
-    console.log(`GSEP Avg Latency:        ${avgPGALatency.toFixed(0)}ms`);
+    console.log(`GSEP Avg Latency:        ${avgGSEPLatency.toFixed(0)}ms`);
     console.log(`Latency Improvement:     ${latencyImprovement >= 0 ? '+' : ''}${latencyImprovement.toFixed(1)}%`);
 
     // Trend analysis (first half vs second half)
     const firstHalf = results.slice(0, 5);
     const secondHalf = results.slice(5, 10);
 
-    const firstHalfPGAQuality = firstHalf.reduce((sum, r) => sum + r.pgaQuality, 0) / firstHalf.length;
-    const secondHalfPGAQuality = secondHalf.reduce((sum, r) => sum + r.pgaQuality, 0) / secondHalf.length;
-    const learningGrowth = ((secondHalfPGAQuality - firstHalfPGAQuality) / firstHalfPGAQuality) * 100;
+    const firstHalfGSEPQuality = firstHalf.reduce((sum, r) => sum + r.gsepQuality, 0) / firstHalf.length;
+    const secondHalfGSEPQuality = secondHalf.reduce((sum, r) => sum + r.gsepQuality, 0) / secondHalf.length;
+    const learningGrowth = ((secondHalfGSEPQuality - firstHalfGSEPQuality) / firstHalfGSEPQuality) * 100;
 
     console.log('\n📚 Evolution Trend (GSEP Agent):');
     console.log('─────────────────────────────────────────');
-    console.log(`First 5 iterations:      ${(firstHalfPGAQuality * 100).toFixed(1)}%`);
-    console.log(`Last 5 iterations:       ${(secondHalfPGAQuality * 100).toFixed(1)}%`);
+    console.log(`First 5 iterations:      ${(firstHalfGSEPQuality * 100).toFixed(1)}%`);
+    console.log(`Last 5 iterations:       ${(secondHalfGSEPQuality * 100).toFixed(1)}%`);
     console.log(`Learning Growth:         ${learningGrowth >= 0 ? '+' : ''}${learningGrowth.toFixed(1)}%`);
 
     // Statistical significance
     console.log('\n📊 Statistical Validation:');
     console.log('─────────────────────────────────────────');
     console.log(`Sample Size:             ${results.length} tasks`);
-    console.log(`GSEP Win Rate:           ${results.filter(r => r.pgaQuality > r.baselineQuality).length}/${results.length} (${((results.filter(r => r.pgaQuality > r.baselineQuality).length / results.length) * 100).toFixed(0)}%)`);
+    console.log(`GSEP Win Rate:           ${results.filter(r => r.gsepQuality > r.baselineQuality).length}/${results.length} (${((results.filter(r => r.gsepQuality > r.baselineQuality).length / results.length) * 100).toFixed(0)}%)`);
     console.log(`Consistency:             ${learningGrowth > 0 ? '✓ Improving over time' : '✗ Not improving'}`);
 
     // ═══════════════════════════════════════════════════════
@@ -278,7 +278,7 @@ async function runValidation() {
         console.log(`  ✓ Costs reduced by ${costSavings.toFixed(1)}%`);
         console.log(`  ✓ Latency improved by ${latencyImprovement.toFixed(1)}%`);
         console.log(`  ✓ Learning curve shows ${learningGrowth.toFixed(1)}% growth`);
-        console.log(`  ✓ GSEP won ${results.filter(r => r.pgaQuality > r.baselineQuality).length}/${results.length} comparisons\n`);
+        console.log(`  ✓ GSEP won ${results.filter(r => r.gsepQuality > r.baselineQuality).length}/${results.length} comparisons\n`);
         console.log('🎯 GSEP demonstrates measurable improvement through evolution.');
         console.log('   Agents using GSEP are smarter, cheaper, and faster over time.\n');
     } else {

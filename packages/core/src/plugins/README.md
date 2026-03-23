@@ -463,7 +463,7 @@ const loggingPlugin: Plugin = {
 ## Integration with GSEP
 
 ```typescript
-import { PGA, PluginManager } from '@gsep/core';
+import { GSEP, PluginManager } from '@gsep/core';
 
 const plugins = new PluginManager();
 
@@ -472,7 +472,7 @@ await plugins.register(slackPlugin);
 await plugins.register(analyticsPlugin);
 await plugins.register(loggingPlugin);
 
-const pga = new PGA({
+const gsep = new GSEP({
   llmAdapter: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_API_KEY!,
   }),
@@ -480,7 +480,7 @@ const pga = new PGA({
 });
 
 // Plugins will automatically hook into GSEP operations
-const genome = await pga.createGenome({ name: 'assistant' });
+const genome = await gsep.createGenome({ name: 'assistant' });
 // beforeGenomeCreate and afterGenomeCreate hooks are called
 
 const response = await genome.chat('Hello!', { userId: 'user-123' });
@@ -561,7 +561,7 @@ const plugin: Plugin = {
   hooks: {
     async onLoad() {
       // Check GSEP version
-      if (!isCompatibleVersion(PGA.VERSION, '>=0.1.0')) {
+      if (!isCompatibleVersion(GSEP.VERSION, '>=0.1.0')) {
         throw new Error('Requires GSEP >= 0.1.0');
       }
     },
@@ -576,18 +576,18 @@ Create and share your plugins:
 1. **Structure**: Follow the Plugin interface
 2. **Documentation**: Include README and examples
 3. **Testing**: Test with different GSEP versions
-4. **Publishing**: Publish to npm with `@pga-plugin/` prefix
+4. **Publishing**: Publish to npm with `@gsep-plugin/` prefix
 5. **Tagging**: Use descriptive tags for discovery
 
 Example package.json:
 
 ```json
 {
-  "name": "@pga-plugin/slack-notifications",
+  "name": "@gsep-plugin/slack-notifications",
   "version": "1.0.0",
   "description": "Slack notifications for GSEP",
   "main": "dist/index.js",
-  "keywords": ["pga", "plugin", "slack", "notifications"],
+  "keywords": ["gsep", "plugin", "slack", "notifications"],
   "peerDependencies": {
     "@gsep/core": "^0.1.0"
   }

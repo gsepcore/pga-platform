@@ -331,7 +331,7 @@ Empresas como bancos o aseguradoras pueden comprar:
 
 #### **Copyright de "Genomas"**
 - Los genomas evolucionados son **propiedad del creador/usuario**
-- El formato `.pga` y el motor son propiedad de GSEP Labs
+- El formato `.gsep` y el motor son propiedad de GSEP Labs
 - Marketplace: Los vendedores retienen IP pero otorgan licencia de uso
 
 ### 7.3 Trademark Protection
@@ -536,9 +536,9 @@ GSEP permite que múltiples agentes con diferentes genomas colaboren:
 
 ```typescript
 // Agente Líder delega a especialistas
-const leader = await pga.createGenome({ name: 'orchestrator' });
-const specialist1 = await pga.createGenome({ name: 'coder' });
-const specialist2 = await pga.createGenome({ name: 'researcher' });
+const leader = await gsep.createGenome({ name: 'orchestrator' });
+const specialist1 = await gsep.createGenome({ name: 'coder' });
+const specialist2 = await gsep.createGenome({ name: 'researcher' });
 
 // Si specialist1 evoluciona mejor método, el líder actualiza el enjambre
 if (specialist1.fitness > 0.9) {
@@ -751,17 +751,17 @@ const result = await chain.call({ input: "Hello!" });
 
 **Después (GSEP - compatible con LangChain):**
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm/anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage/postgres';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_KEY }),
   storage: new PostgresAdapter({ connectionString: process.env.DB_URL })
 });
 
-await pga.initialize();
-const genome = await pga.createGenome({ name: 'my-assistant' });
+await gsep.initialize();
+const genome = await gsep.createGenome({ name: 'my-assistant' });
 
 // Importar prompt existente
 await genome.importPrompt(template);
@@ -788,9 +788,9 @@ npm install @gsep/langchain-adapter
 ```
 
 ```typescript
-import { PGALangChainAdapter } from '@gsep/langchain-adapter';
+import { GSEPLangChainAdapter } from '@gsep/langchain-adapter';
 
-const adapter = new PGALangChainAdapter({
+const adapter = new GSEPLangChainAdapter({
   genome: myGenome,
   autoEvolve: true
 });
@@ -818,7 +818,7 @@ const result = await adapter.call({ input: "..." });
 1. **Derecho al Olvido:**
    Los genomas pueden ser eliminados completamente por usuario mediante API:
    ```typescript
-   await pga.deleteUserData(userId);
+   await gsep.deleteUserData(userId);
    ```
 
 2. **Portabilidad:**
