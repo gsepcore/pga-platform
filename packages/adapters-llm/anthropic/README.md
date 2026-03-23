@@ -11,11 +11,11 @@ npm install @gsep/core @gsep/adapters-llm-anthropic
 ## Usage
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({
     apiKey: process.env.ANTHROPIC_API_KEY,
     model: 'claude-sonnet-4.5-20250929', // optional
@@ -25,9 +25,9 @@ const pga = new PGA({
   }),
 });
 
-await pga.initialize();
+await gsep.initialize();
 
-const genome = await pga.createGenome({ name: 'my-assistant' });
+const genome = await gsep.createGenome({ name: 'my-assistant' });
 const response = await genome.chat('Hello!', { userId: 'user123' });
 
 console.log(response);

@@ -11,10 +11,10 @@ npm install @gsep/core @gsep/adapters-llm-google
 ## Usage
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { GeminiAdapter } from '@gsep/adapters-llm-google';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new GeminiAdapter({
     apiKey: process.env.GOOGLE_API_KEY!,
     model: 'gemini-2.0-flash',

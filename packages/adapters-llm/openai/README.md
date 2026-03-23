@@ -61,11 +61,11 @@ for await (const chunk of adapter.chatStream([
 ### With GSEP Genome
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { OpenAIAdapter } from '@gsep/adapters-llm-openai';
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llmAdapter: new OpenAIAdapter({
     apiKey: process.env.OPENAI_API_KEY!,
     model: 'gpt-4-turbo-preview',
@@ -76,7 +76,7 @@ const pga = new PGA({
   }),
 });
 
-const genome = await pga.createGenome({
+const genome = await gsep.createGenome({
   layer0: {
     systemPrompt: 'You are a helpful AI assistant.',
     constraints: ['Be concise', 'Use examples'],

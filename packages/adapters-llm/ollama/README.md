@@ -23,10 +23,10 @@ ollama serve
 ## Usage
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { OllamaAdapter } from '@gsep/adapters-llm-ollama';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new OllamaAdapter({
     model: 'llama3',
   }),

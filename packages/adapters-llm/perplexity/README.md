@@ -13,10 +13,10 @@ npm install @gsep/core @gsep/adapters-llm-perplexity
 ## Usage
 
 ```typescript
-import { PGA } from '@gsep/core';
+import { GSEP } from '@gsep/core';
 import { PerplexityAdapter } from '@gsep/adapters-llm-perplexity';
 
-const pga = new PGA({
+const gsep = new GSEP({
   llm: new PerplexityAdapter({
     apiKey: process.env.PERPLEXITY_API_KEY!,
     model: 'sonar-pro',
