@@ -4,10 +4,10 @@
  * See your agent evolving in real-time. One line.
  *
  * Usage:
- *   npx tsx examples/dashboard-demo.ts
+ *   GSEP_MARKETPLACE_API_KEY=gsep_mk_xxx npx tsx examples/dashboard-demo.ts
  */
 
-import { GSEP, InMemoryStorageAdapter } from '../packages/core/src/index.js';
+import { GSEP, InMemoryStorageAdapter, GeneBank, InMemoryGeneStorage } from '../packages/core/src/index.js';
 
 const mockLLM = {
     model: 'mock-model',
@@ -18,7 +18,20 @@ const mockLLM = {
 };
 
 async function main() {
-    const gsep = new GSEP({ llm: mockLLM as never, storage: new InMemoryStorageAdapter() });
+    const geneBank = new GeneBank(
+        new InMemoryGeneStorage(),
+        { tenantId: 'gsep-core', agentId: 'dashboard-demo' },
+    );
+
+    const gsep = new GSEP({
+        llm: mockLLM as never,
+        storage: new InMemoryStorageAdapter(),
+        geneBank,
+        marketplace: {
+            apiKey: process.env.GSEP_MARKETPLACE_API_KEY,
+            url: 'https://market.gsepcore.com/v1',
+        },
+    });
     const genome = await gsep.createGenome({ name: 'my-agent' });
 
     // One line — dashboard is live
