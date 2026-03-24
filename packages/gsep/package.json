@@ -53,8 +53,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "vitest run",
-    "test:watch": "vitest",
+    "test": "echo \"Tests run in @gsep/core\" && exit 0",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
@@ -67,8 +66,7 @@
     "@gsep/adapters-llm-perplexity": "*"
   },
   "devDependencies": {
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "typescript": "^5.9.3"
   },
   "engines": {
     "node": ">=20.0.0"
