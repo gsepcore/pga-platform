@@ -23,7 +23,7 @@ Fifth chromosome layer — post-output IPI detection and self-healing. The world
 - Integrated into `chat()` flow — activates automatically when C3 is active
 
 ### Changed
-- **PGA.ts** — auto-initializes `BehavioralImmuneSystem` in `GenomeInstance` constructor
+- **GSEP.ts** — auto-initializes `BehavioralImmuneSystem` in `GenomeInstance` constructor
 - **getIntegrityStatus()** — now includes `immuneSystem` stats (scans, threats, quarantines)
 - Architecture designation updated from 4-chromosome to **5-chromosome** (C0→C1→C2→C3→C4)
 - README, video scenes, landing page, and all marketing updated to reflect C4
@@ -52,7 +52,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 
 ### Changed
 - **PromptAssembler** — all content now flows through `processContent()` → `ContentFirewall.scan()`
-- **PGA.ts** — auto-initializes `ContentFirewall` in `GenomeInstance` constructor
+- **GSEP.ts** — auto-initializes `ContentFirewall` in `GenomeInstance` constructor
 - README updated with four-layer chromosome architecture
 
 ---
@@ -68,7 +68,7 @@ Fourth chromosome layer — defense-in-depth against prompt injection, skill poi
 - **AgentVitals** — unified health scoring across all living agent systems
 - **ProofOfValueRunner** — objective measurement of GSEP's impact with fitness curve reporting
 - **LLM-powered mutation operators** — 4 mutation types rewritten with intelligence-fed evolution
-- **PGA.wrap()** — universal self-evolving agent middleware for any LLM call
+- **GSEP.wrap()** — universal self-evolving agent middleware for any LLM call
 - **@gsep/server** — secure Pull/Push evolution server for external agents (HMAC auth, rate limiting)
 - `reportExternalMetrics()` on `GenomeInstance` for external agent metric ingestion
 

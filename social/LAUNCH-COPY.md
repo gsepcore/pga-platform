@@ -62,7 +62,7 @@ with any LLM (Claude, GPT-4, Gemini, Ollama, Perplexity) without retraining.
 Tech details:
 - TypeScript, MIT licensed
 - 1555 tests across 66 test files
-- Zero-config quickstart: `const agent = PGA.wrap('my-agent', { provider: 'anthropic' })`
+- Zero-config quickstart: `const agent = GSEP.wrap('my-agent', { provider: 'anthropic' })`
 - Includes 30 opt-in intelligence modules (consciousness, memory, metacognition,
   curiosity engine, etc.)
 - InMemoryStorage for dev, PostgreSQL adapter for production
@@ -72,8 +72,8 @@ Quickstart:
 
     npm install @gsep/core
 
-    import { PGA } from '@gsep/core';
-    const agent = PGA.wrap('my-agent', {
+    import { GSEP } from '@gsep/core';
+    const agent = GSEP.wrap('my-agent', {
       provider: 'anthropic',
       model: 'claude-sonnet-4-5-20250929',
       preset: 'standard',
@@ -117,7 +117,7 @@ What makes it different:
 - Works with any LLM (Claude, GPT-4, Gemini, Ollama)
 - No model retraining needed — evolution happens at the prompt layer
 - 30 opt-in intelligence modules (consciousness, memory, curiosity)
-- Zero-config quickstart with PGA.wrap()
+- Zero-config quickstart with GSEP.wrap()
 - C0 immutable layer protects core identity with SHA-256
 
 Built with TypeScript, 1555 tests, MIT licensed. Patented architecture.
@@ -203,7 +203,7 @@ Built in TypeScript. 1555 tests. Patented architecture.
 
 Zero-config quickstart:
 
-const agent = PGA.wrap('my-agent', {
+const agent = GSEP.wrap('my-agent', {
   provider: 'anthropic',
   preset: 'conscious'
 });
@@ -314,9 +314,9 @@ via configuration presets — you can run with just 4 (minimal preset) or all 21
 
 ### "3000-line god class?"
 ```
-You're right, PGA.ts is large. It's the orchestrator that wires 30 optional systems
+You're right, GSEP.ts is large. It's the orchestrator that wires 30 optional systems
 together. Refactoring to a pipeline/middleware architecture is planned for v0.9.0.
-For now, each system is a separate module — PGA.ts just coordinates them. We
+For now, each system is a separate module — GSEP.ts just coordinates them. We
 prioritized shipping a working, tested system over perfect architecture.
 ```
 

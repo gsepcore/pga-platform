@@ -3,7 +3,7 @@
 **The fastest way to start building with GSEP Platform** — Create a complete GSEP agent project with a single command.
 
 ```bash
-npm create pga-ai@latest my-agent
+npm create gsep@latest my-agent
 ```
 
 That's it! 🎉
@@ -22,7 +22,7 @@ That's it! 🎉
 ### 1. Create Your Project
 
 ```bash
-npm create pga-ai@latest my-agent
+npm create gsep@latest my-agent
 cd my-agent
 ```
 
@@ -48,7 +48,7 @@ That's it! Your agent is now running with GSEP's self-evolution capabilities.
 Simply run without arguments for an interactive setup:
 
 ```bash
-npm create pga-ai@latest
+npm create gsep@latest
 ```
 
 You'll be asked:
@@ -63,7 +63,7 @@ You'll be asked:
 Skip the prompts with CLI flags:
 
 ```bash
-npm create pga-ai@latest my-agent \
+npm create gsep@latest my-agent \
   --template chatbot \
   --llm anthropic \
   --storage postgres \
@@ -176,7 +176,7 @@ Depending on your configuration, the installer adds:
 ### Create a Chatbot with Claude
 
 ```bash
-npm create pga-ai@latest my-chatbot \
+npm create gsep@latest my-chatbot \
   --template chatbot \
   --llm anthropic \
   --boost
@@ -185,7 +185,7 @@ npm create pga-ai@latest my-chatbot \
 ### Create a Code Assistant with Both LLMs
 
 ```bash
-npm create pga-ai@latest code-helper \
+npm create gsep@latest code-helper \
   --template code-assistant \
   --llm both \
   --storage postgres \
@@ -195,7 +195,7 @@ npm create pga-ai@latest code-helper \
 ### Create Custom Agent (Development)
 
 ```bash
-npm create pga-ai@latest my-agent \
+npm create gsep@latest my-agent \
   --template custom \
   --llm openai \
   --storage memory
@@ -224,7 +224,7 @@ ANTHROPIC_API_KEY=your-api-key-here
 OPENAI_API_KEY=your-api-key-here
 
 # PostgreSQL (if selected)
-DATABASE_URL=postgresql://user:password@localhost:5432/pga_db
+DATABASE_URL=postgresql://user:password@localhost:5432/gsep_db
 
 # Evolution Configuration
 EVOLUTION_MODE=balanced  # conservative | balanced | aggressive

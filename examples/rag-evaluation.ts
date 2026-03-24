@@ -24,9 +24,9 @@ interface GroundTruth {
 
 const KNOWLEDGE_BASE: RAGDocument[] = [
     {
-        id: 'pga-1',
+        id: 'gsep-1',
         content: 'GSEP (Genomic Self-Evolving Prompts) is a self-evolving prompt system that uses genetic algorithms to optimize AI agent prompts through continuous evolution and learning.',
-        metadata: { category: 'overview', topic: 'pga' },
+        metadata: { category: 'overview', topic: 'gsep' },
     },
     {
         id: 'memory-1',
@@ -73,7 +73,7 @@ const TEST_QUERIES: GroundTruth[] = [
     },
     {
         query: 'What is GSEP?',
-        relevantDocIds: ['pga-1'],
+        relevantDocIds: ['gsep-1'],
         expectedAnswer: 'self-evolving prompt system',
     },
     {

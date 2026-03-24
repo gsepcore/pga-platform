@@ -9,7 +9,7 @@
  * Phase 1: OBSERVE — gather signals from blackboard + message
  * Phase 2: THINK — assess confidence, identify gaps, pick strategy
  * Phase 3: PLAN — decide action (respond, ask, defer, refuse)
- * Phase 4: ACT — (handled by LLM call in PGA.ts)
+ * Phase 4: ACT — (handled by LLM call in GSEP.ts)
  * Phase 5: LEARN — record outcomes, update models, grow
  *
  * @author Luis Alfredo Velasquez Duran

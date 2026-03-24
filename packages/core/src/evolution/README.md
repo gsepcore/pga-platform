@@ -272,28 +272,28 @@ console.log(`Sandbox: ${result.gates.sandbox.passed}`);
 
 ---
 
-## 🔄 Actual Evolution Loop (as implemented in PGA.ts)
+## 🔄 Actual Evolution Loop (as implemented in GSEP.ts)
 
 The evolution loop is the real call chain that runs inside `GenomeInstance`. Here's the
-actual flow traced from PGA.ts source:
+actual flow traced from GSEP.ts source:
 
 ```
-chat() [PGA.ts:671]
+chat() [GSEP.ts:671]
   │
   ├─ assemblePrompt() ─── builds prompt with C0/C1/C2 genes + intelligence layers
   ├─ LLM call ─── generates response
   ├─ estimateQuality() ─── scores response quality (0-1)
   ├─ fitnessCalculator.computeFitness() ─── converts to 6D fitness vector
-  ├─ driftAnalyzer.recordFitness(fitnessVector) [PGA.ts:789]
+  ├─ driftAnalyzer.recordFitness(fitnessVector) [GSEP.ts:789]
   ├─ canaryManager.recordRequest() ─── if canary active, record metrics
   │
-  └─ interactionCount % N === 0 [PGA.ts:806] ─── TRIGGER (default N=10)
+  └─ interactionCount % N === 0 [GSEP.ts:806] ─── TRIGGER (default N=10)
        │
        ▼
-       runEvolutionCycle() [PGA.ts:1862]
+       runEvolutionCycle() [GSEP.ts:1862]
          │
          ├─ Step 0: SURVIVAL CHECK
-         │    ├─ driftAnalyzer.analyzeDrift() [PGA.ts:1864]
+         │    ├─ driftAnalyzer.analyzeDrift() [GSEP.ts:1864]
          │    ├─ purposeSurvival.evaluateThreats()
          │    ├─ if CRITICAL → restore snapshot, exit
          │    └─ if STRESSED/SURVIVAL → snapshot current genome
@@ -329,7 +329,7 @@ chat() [PGA.ts:671]
                    └─ geneBank.searchGenes() ← adopt proven genes
 ```
 
-### mutate() Pipeline [PGA.ts:1134]
+### mutate() Pipeline [GSEP.ts:1134]
 
 Each mutation goes through a 4-step pipeline:
 
@@ -342,7 +342,7 @@ mutate(layer, gene, candidates)
   │    └─ mutationEngine.generateMutants(context, N)
   │         └─ LLM-powered: 4 operators (compress, reorder, safety, tool-bias)
   │
-  ├─ 3. Evaluate through EvolutionGuardrailsManager [PGA.ts:1226]
+  ├─ 3. Evaluate through EvolutionGuardrailsManager [GSEP.ts:1226]
   │    ├─ Quality Gate:   fitness >= 0.60
   │    ├─ Sandbox Gate:   safety score >= 0.70
   │    ├─ Economic Gate:  cost <= $0.10/task

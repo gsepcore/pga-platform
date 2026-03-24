@@ -1,7 +1,7 @@
 /**
  * GSEP Core Tests
  *
- * Tests for the main PGA class with integrated monitoring
+ * Tests for the main GSEP class with integrated monitoring
  *
  * @author Luis Alfredo Velasquez Duran
  * @since 2026-02-28

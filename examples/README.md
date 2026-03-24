@@ -58,7 +58,7 @@ Use `--save-report` on any benchmark example to export a markdown report.
 | Example | What it shows | Est. cost | Requirements |
 |---------|--------------|-----------|-------------|
 | [monitoring-demo.ts](./monitoring-demo.ts) | Basic drift detection and monitoring setup | ~$0.02 | `ANTHROPIC_API_KEY` |
-| [monitoring-demo-direct.ts](./monitoring-demo-direct.ts) | Direct monitoring API (without PGA wrapper) | ~$0.02 | `ANTHROPIC_API_KEY` |
+| [monitoring-demo-direct.ts](./monitoring-demo-direct.ts) | Direct monitoring API (without GSEP wrapper) | ~$0.02 | `ANTHROPIC_API_KEY` |
 | [monitoring-complete-demo.ts](./monitoring-complete-demo.ts) | Full monitoring dashboard with alerts | ~$0.05 | `ANTHROPIC_API_KEY` |
 | [observability-demo.ts](./observability-demo.ts) | Real-time observability and metrics export | ~$0.05 | `ANTHROPIC_API_KEY` |
 

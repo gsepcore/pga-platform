@@ -72,7 +72,7 @@ export async function doctor(_options: { fix?: boolean }): Promise<void> {
         console.log(chalk.bold('To fix issues:'));
         console.log(chalk.dim('  1. Install missing packages with npm install'));
         console.log(chalk.dim('  2. Set API keys: export ANTHROPIC_API_KEY=sk-ant-...'));
-        console.log(chalk.dim('  3. Run "pga doctor" again to verify'));
+        console.log(chalk.dim('  3. Run "gsep doctor" again to verify'));
     } else {
         console.log();
         console.log(chalk.green.bold('  ✓ All checks passed! GSEP is ready.'));

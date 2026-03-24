@@ -36,7 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - npm 7+ support with `npm create` command
 
 ### Features
-- One-command project creation: `npm create pga-ai@latest my-agent`
+- One-command project creation: `npm create gsep@latest my-agent`
 - Interactive prompts with sensible defaults
 - Project name validation (lowercase, hyphens only)
 - Smart package selection based on configuration

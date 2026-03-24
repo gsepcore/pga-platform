@@ -155,7 +155,7 @@ Desde experimental hasta élite certificada.`,
     text: `Integrar GSEP toma solo tres pasos.
 ... Primero, instala el paquete core y tu adaptador LLM.
 Soportamos Claude, GPT-4, Gemini, Ollama y Perplexity.
-... Segundo, inicializa PGA con tu LLM y almacenamiento elegidos.
+... Segundo, inicializa GSEP con tu LLM y almacenamiento elegidos.
 Crea un genoma para tu agente. Es tu contenedor evolutivo.
 ... Tercero, reemplaza tu llamada LLM existente con genome punto chat.
 Es literalmente un cambio de una línea.
@@ -259,7 +259,7 @@ Empresas a escala: contribuyan.`,
 ... Lee la documentación en gsepcore punto com slash docs.
 Danos una estrella en GitHub.
 Únete a nuestra comunidad en Discord.
-O instala ahora con npm install arroba pga-ai slash core.
+O instala ahora con npm install arroba gsep slash core.
 ... Tu agente, pero vivo. Empieza ahora.`,
   },
   {

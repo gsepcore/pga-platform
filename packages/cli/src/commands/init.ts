@@ -412,7 +412,7 @@ ${chalk.bold('Next steps:')}
 ${chalk.bold('Template:')} ${template}
 ${chalk.bold('Location:')} ${projectDir}
 
-${chalk.gray('Run')} ${chalk.cyan('pga --help')} ${chalk.gray('for more commands')}
+${chalk.gray('Run')} ${chalk.cyan('gsep --help')} ${chalk.gray('for more commands')}
     `.trim();
 
     console.log(

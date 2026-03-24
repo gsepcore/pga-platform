@@ -61,9 +61,9 @@ I spent 18 months building an open-source system that treats prompts as **living
 
 ```typescript
 // Instead of a static prompt:
-import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { GSEP, InMemoryStorageAdapter } from '@gsep/core';
 
-const gsep = new PGA({ llm: myAdapter, storage: new InMemoryStorageAdapter() });
+const gsep = new GSEP({ llm: myAdapter, storage: new InMemoryStorageAdapter() });
 await gsep.initialize();
 const agent = await gsep.createGenome({ name: 'my-agent' });
 
@@ -129,10 +129,10 @@ npm install @gsep/core @gsep/adapters-llm-anthropic
 ```
 
 ```typescript
-import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { GSEP, InMemoryStorageAdapter } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
-const gsep = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY }),
   storage: new InMemoryStorageAdapter(),
 });

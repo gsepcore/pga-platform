@@ -20,8 +20,7 @@
   "sideEffects": false,
   "type": "module",
   "bin": {
-    "gsep": "./dist/index.js",
-    "pga": "./dist/index.js"
+    "gsep": "./dist/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

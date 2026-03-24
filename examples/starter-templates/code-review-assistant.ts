@@ -442,7 +442,7 @@ Check:
  * ```typescript
  * import { createCodeReviewAssistant } from '@gsep/templates';
  *
- * const reviewer = await createCodeReviewAssistant(pga, {
+ * const reviewer = await createCodeReviewAssistant(gsep, {
  *   languages: ['typescript', 'python'],
  *   strictMode: true,
  * });
@@ -454,7 +454,7 @@ Check:
  * ```
  */
 export async function createCodeReviewAssistant(
-    pga: any,
+    gsep: any,
     options: {
         languages?: string[];
         strictMode?: boolean;
@@ -528,7 +528,7 @@ const gsep = new GSEP({
 
 await gsep.initialize();
 
-const reviewer = await createCodeReviewAssistant(pga, {
+const reviewer = await createCodeReviewAssistant(gsep, {
   languages: ['typescript', 'python'],
   strictMode: true,
 });

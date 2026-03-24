@@ -152,7 +152,7 @@ From experimental to certified elite.`,
     text: `Integrating GSEP takes just three steps.
 ... First, install the core package and your LLM adapter.
 We support Claude, GPT-4, Gemini, Ollama, and Perplexity.
-... Second, initialize PGA with your chosen LLM and storage.
+... Second, initialize GSEP with your chosen LLM and storage.
 Create a genome for your agent. That's your evolutionary container.
 ... Third, replace your existing LLM call with genome-dot-chat.
 It's literally a one-line change.
@@ -256,7 +256,7 @@ Scale companies: contribute.`,
 ... Read the documentation at gsep-core dot com slash docs.
 Star us on GitHub.
 Join our Discord community.
-Or install now with npm install at-pga-ai-slash-core.
+Or install now with npm install at-gsep-slash-core.
 ... Your agent, but alive. It starts now.`,
   },
   {

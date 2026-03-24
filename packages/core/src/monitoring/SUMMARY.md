@@ -170,7 +170,7 @@ export type {
 ## 🚀 Next Steps
 
 **Immediate:**
-1. ✅ Integrate MetricsCollector into main PGA class
+1. ✅ Integrate MetricsCollector into main GSEP class
 2. ✅ Add monitoring to examples
 3. ✅ Document best practices
 

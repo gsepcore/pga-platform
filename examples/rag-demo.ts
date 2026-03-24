@@ -94,7 +94,7 @@ async function main() {
         {
             id: 'doc-1',
             content: 'GSEP (Genomic Self-Evolving Prompts) is a self-evolving prompt system that uses genetic algorithms to optimize AI agent prompts through continuous evolution and learning.',
-            metadata: { category: 'overview', topic: 'pga-basics' },
+            metadata: { category: 'overview', topic: 'gsep-basics' },
         },
         {
             id: 'doc-2',

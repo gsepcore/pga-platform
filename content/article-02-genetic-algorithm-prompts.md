@@ -138,10 +138,10 @@ npm install @gsep/core @gsep/adapters-llm-anthropic
 ```
 
 ```typescript
-import { PGA, InMemoryStorageAdapter } from '@gsep/core';
+import { GSEP, InMemoryStorageAdapter } from '@gsep/core';
 import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
 
-const gsep = new PGA({
+const gsep = new GSEP({
   llm: new ClaudeAdapter({ apiKey: process.env.ANTHROPIC_API_KEY }),
   storage: new InMemoryStorageAdapter(),
 });

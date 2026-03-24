@@ -179,12 +179,12 @@ expect(summary).toContain('**Generation**: 10');
 **Found in:**
 - `packages/core/src/types/GenomeV2.ts` (exists)
 - `packages/core/src/core/GenomeKernel.ts` (exists)
-- `packages/core/src/PGA.ts` (not integrated)
+- `packages/core/src/GSEP.ts` (not integrated)
 
 **Problem:**
 - Living OS v2.0.0 types are defined ✅
 - GenomeKernel, DriftAnalyzer, etc. implemented ✅
-- BUT: Not integrated into main PGA class ❌
+- BUT: Not integrated into main GSEP class ❌
 - Users cannot actually USE Living OS features
 
 **Components Status:**
@@ -204,11 +204,11 @@ expect(summary).toContain('**Generation**: 10');
 
 **Fix:**
 ```typescript
-// In packages/core/src/PGA.ts
+// In packages/core/src/GSEP.ts
 import { GenomeKernel } from './core/GenomeKernel';
 import { DriftAnalyzer } from './evolution/DriftAnalyzer';
 
-export class PGA {
+export class GSEP {
   private genomeKernel?: GenomeKernel;
 
   async createGenomeV2(config: GenomeV2Config): Promise<GenomeKernel> {
@@ -347,7 +347,7 @@ Tests: 37 passed | 2 failed (39 total)
 ---
 
 ### Pre-Launch (This Month)
-- [ ] **Bug #4:** Integrate Living OS v2.0.0 into PGA class
+- [ ] **Bug #4:** Integrate Living OS v2.0.0 into GSEP class
 - [ ] Add end-to-end integration tests
 - [ ] Performance benchmarking
 - [ ] Security audit
@@ -584,7 +584,7 @@ Tests: 37 passed | 2 failed (39 total)
 - Verify everything runs
 
 **Phase 2: Integration (3 days)**
-- Integrate Living OS v2.0.0 into PGA class
+- Integrate Living OS v2.0.0 into GSEP class
 - Add integration tests
 - Performance benchmarking
 - Security review
@@ -603,7 +603,7 @@ Tests: 37 passed | 2 failed (39 total)
 ## 📝 APPENDIX: Technical Details
 
 ### Files Modified During Audit
-1. `/Users/luisvelasquez/pga-platform/CLAUDE.md` (created)
+1. `/Users/luisvelasquez/gsep/CLAUDE.md` (created)
 2. `packages/core/src/core/GenomeKernel.ts` (unused imports removed)
 3. `packages/core/src/evolution/MutationOperator.ts` (unused param fixed)
 4. `packages/core/src/evolution/PromotionGate.ts` (unused import removed)

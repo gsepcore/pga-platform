@@ -327,7 +327,7 @@ Use when:
  * ```typescript
  * import { createCustomerSupportBot } from '@gsep/templates';
  *
- * const bot = await createCustomerSupportBot(pga, {
+ * const bot = await createCustomerSupportBot(gsep, {
  *   companyName: 'Acme Corp',
  *   faqUrl: 'https://acme.com/faq',
  * });
@@ -338,7 +338,7 @@ Use when:
  * ```
  */
 export async function createCustomerSupportBot(
-    pga: any,
+    gsep: any,
     options: {
         companyName?: string;
         faqUrl?: string;
@@ -414,7 +414,7 @@ const gsep = new GSEP({
 
 await gsep.initialize();
 
-const bot = await createCustomerSupportBot(pga, {
+const bot = await createCustomerSupportBot(gsep, {
   companyName: 'Acme Corp',
 });
 \`\`\`

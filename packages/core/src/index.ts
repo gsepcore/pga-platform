@@ -26,11 +26,7 @@
 // ─── Main Exports ───────────────────────────────────────
 
 export { GSEP, GenomeInstance } from './GSEP.js';
-export type { GSEPConfig } from './GSEP.js';
-/** @deprecated Use GSEP instead */
-export { GSEP as PGA } from './GSEP.js';
-/** @deprecated Use GSEPConfig instead */
-export type { GSEPConfig as PGAConfig } from './GSEP.js';
+export type { GSEPConfig, QuickStartOptions, LLMProvider } from './GSEP.js';
 
 // ─── Wrap (Universal Middleware) ────────────────────────
 
@@ -331,10 +327,6 @@ export type {
     MutationPromotedEvent,
     EventHandler,
 } from './realtime/EventEmitter.js';
-/** @deprecated Use GSEPEventEmitter instead */
-export { GSEPEventEmitter as PGAEventEmitter } from './realtime/EventEmitter.js';
-/** @deprecated Use GSEPEventType/GSEPEvent instead */
-export type { GSEPEventType as PGAEventType, GSEPEvent as PGAEvent } from './realtime/EventEmitter.js';
 
 export { StreamingManager, globalStreaming } from './realtime/StreamingManager.js';
 export type {

@@ -86,7 +86,7 @@ The `create-gsep` package has been successfully implemented and is ready for npm
 ## 🎯 Features Implemented
 
 ### User Experience
-✅ One-command project creation: `npm create pga-ai@latest`
+✅ One-command project creation: `npm create gsep@latest`
 ✅ Beautiful CLI with colors, ASCII art, spinners, boxes
 ✅ Interactive prompts with sensible defaults
 ✅ Project name validation (lowercase, hyphens only)
@@ -202,7 +202,7 @@ npm run build
 - [x] All dependencies specified
 - [ ] Local testing completed
 - [ ] NPM account ready
-- [ ] @pga-ai scope registered on npm
+- [ ] @gsep scope registered on npm
 
 ### 2. Publishing Commands
 
@@ -226,7 +226,7 @@ npm view create-gsep
 
 ```bash
 # In a clean directory
-npm create pga-ai@latest my-test-agent
+npm create gsep@latest my-test-agent
 
 # Verify it works
 cd my-test-agent
@@ -255,16 +255,16 @@ Once published, users can create new GSEP projects with:
 
 ```bash
 # Latest version
-npm create pga-ai@latest my-agent
+npm create gsep@latest my-agent
 
 # Specific version
-npm create pga-ai@0.1.0 my-agent
+npm create gsep@0.1.0 my-agent
 
 # Interactive mode
-npm create pga-ai@latest
+npm create gsep@latest
 
 # CLI mode
-npm create pga-ai@latest my-agent \
+npm create gsep@latest my-agent \
   --template code-assistant \
   --llm anthropic \
   --storage postgres \

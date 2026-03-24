@@ -127,7 +127,7 @@ Query: "How does memory work in GSEP?"
 Found 3 relevant documents:
   - layered-memory (relevance: 85%)
     "Layered Memory in GSEP provides a three-tier architecture..."
-  - pga-basics (relevance: 72%)
+  - gsep-basics (relevance: 72%)
   - storage (relevance: 65%)
 
 🤖 FULL RAG PIPELINE:

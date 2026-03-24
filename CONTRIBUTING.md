@@ -85,7 +85,7 @@ gsep/
 │   ├── core/                          # @gsep/core (MIT License)
 │   │   ├── src/                       # Source code
 │   │   │   ├── types/                 # TypeScript type definitions
-│   │   │   ├── core/                  # GenomeKernel, PGA orchestrator
+│   │   │   ├── core/                  # GenomeKernel, GSEP orchestrator
 │   │   │   ├── evolution/             # DriftAnalyzer, Fitness, Mutations
 │   │   │   ├── memory/               # LayeredMemory, MemoryCompactor
 │   │   │   ├── reasoning/            # ReasoningEngine, ThinkingEngine

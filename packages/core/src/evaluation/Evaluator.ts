@@ -511,8 +511,8 @@ export class Evaluator {
             ],
         ];
 
-        for (const [metric, baseline, pga, improvement] of metrics) {
-            lines.push(`| ${metric} | ${baseline} | ${pga} | ${improvement} |`);
+        for (const [metric, baseline, gsep, improvement] of metrics) {
+            lines.push(`| ${metric} | ${baseline} | ${gsep} | ${improvement} |`);
         }
 
         lines.push('');

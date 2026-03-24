@@ -7,7 +7,7 @@
  *     The mock produces CONSISTENT responses (no artificial improvement).
  *     You'll see the evaluation pipeline in action.
  *
- *   Real LLM mode: Uses a REAL PGA genome with continuous evolution enabled.
+ *   Real LLM mode: Uses a REAL GSEP genome with continuous evolution enabled.
  *     Evolution triggers every 5 interactions, mutating and selecting prompts.
  *     Quality changes reflect actual prompt evolution.
  *

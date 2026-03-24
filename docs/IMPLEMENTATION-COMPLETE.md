@@ -246,7 +246,7 @@ if (decision.approved) {
 
 **Usage**:
 ```typescript
-const bot = await createCustomerSupportBot(pga, {
+const bot = await createCustomerSupportBot(gsep, {
   companyName: 'Acme Corp',
 });
 
@@ -272,7 +272,7 @@ const response = await bot.chat('How do I reset my password?', {
 
 **Usage**:
 ```typescript
-const reviewer = await createCodeReviewAssistant(pga, {
+const reviewer = await createCodeReviewAssistant(gsep, {
   languages: ['typescript', 'python'],
   strictMode: true,
 });

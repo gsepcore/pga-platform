@@ -8,7 +8,7 @@
  * @since 2026-02-28
  */
 
-import { GSEP } from '../packages/core/src/PGA.js';
+import { GSEP } from '../packages/core/src/GSEP.js';
 
 // Mock adapters for demonstration
 class MockLLMAdapter {
@@ -261,7 +261,7 @@ async function productionExample() {
 /**
  * Example: Periodic Metrics Export (Production Pattern)
  */
-async function periodicMetricsExport(pga: PGA) {
+async function periodicMetricsExport(gsepInstance: GSEP) {
     // Export metrics every 60 seconds
     setInterval(() => {
         const metrics = gsep.exportMetrics();
@@ -286,7 +286,7 @@ async function periodicMetricsExport(pga: PGA) {
 /**
  * Example: Alert Handler (Production Pattern)
  */
-async function alertHandler(pga: PGA) {
+async function alertHandler(gsepInstance: GSEP) {
     // Check alerts every 30 seconds
     setInterval(() => {
         const alerts = gsep.getAlerts();

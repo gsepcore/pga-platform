@@ -152,7 +152,7 @@ export const explainers: ExplainerScript[] = [
       {
         title: "Setup en 3 Pasos",
         durationSec: 25,
-        narration: `Paso 1: Instalar. npm install @gsep/core y tu adaptador LLM. Soportamos @gsep/adapters-llm-anthropic para Claude, @gsep/adapters-llm-openai para GPT-4, @gsep/adapters-llm-google para Gemini, @gsep/adapters-llm-ollama para modelos locales, y @gsep/adapters-llm-perplexity para búsqueda web. Paso 2: Inicializar. Crea una instancia PGA con tu LLM y adaptador de almacenamiento. Crea un genoma con nombre y prompt del sistema. Paso 3: Reemplaza tu llamada LLM con genome.chat(). Pasa el mensaje del usuario y un ID de usuario opcional. Eso es todo. Tu agente ahora evoluciona.`,
+        narration: `Paso 1: Instalar. npm install @gsep/core y tu adaptador LLM. Soportamos @gsep/adapters-llm-anthropic para Claude, @gsep/adapters-llm-openai para GPT-4, @gsep/adapters-llm-google para Gemini, @gsep/adapters-llm-ollama para modelos locales, y @gsep/adapters-llm-perplexity para búsqueda web. Paso 2: Inicializar. Crea una instancia GSEP con tu LLM y adaptador de almacenamiento. Crea un genoma con nombre y prompt del sistema. Paso 3: Reemplaza tu llamada LLM con genome.chat(). Pasa el mensaje del usuario y un ID de usuario opcional. Eso es todo. Tu agente ahora evoluciona.`,
       },
       {
         title: "API Express",

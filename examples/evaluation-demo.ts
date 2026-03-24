@@ -32,7 +32,7 @@ async function main() {
     console.log('📦 Creating genomes...\n');
 
     const genomeWithPGA = await gsep.createGenome({
-        name: 'with-pga',
+        name: 'with-gsep',
         config: {
             enableSandbox: true,
             mutationRate: 'balanced',

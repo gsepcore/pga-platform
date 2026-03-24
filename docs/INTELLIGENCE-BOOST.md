@@ -10,7 +10,7 @@ Intelligence Boost transforms GSEP agents from basic AI assistants into genius-l
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    GenomeInstance (PGA.ts)                   │
+│                    GenomeInstance (GSEP.ts)                   │
 │  Orchestrates all intelligence systems                       │
 └───────────┬──────────────────────────────────────────────────┘
             │
@@ -563,7 +563,7 @@ async assemblePrompt(context?: SelectionContext, currentMessage?: string): Promi
 
 ## 5. Integration with GenomeInstance
 
-**File:** `packages/core/src/PGA.ts`
+**File:** `packages/core/src/GSEP.ts`
 
 ### Chat Flow with Intelligence
 

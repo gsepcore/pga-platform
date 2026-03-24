@@ -1,0 +1,79 @@
+{
+  "name": "gsep",
+  "version": "0.8.0",
+  "description": "GSEP — Genomic Self-Evolving Prompts. One install, one line, your AI agent evolves.",
+  "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
+  "license": "MIT",
+  "homepage": "https://gsepcore.com",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/gsepcore"
+  },
+  "bugs": {
+    "url": "https://github.com/gsepcore/gsep/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gsepcore/gsep",
+    "directory": "packages/gsep"
+  },
+  "keywords": [
+    "gsep",
+    "ai",
+    "agents",
+    "llm",
+    "prompt-evolution",
+    "genomic-prompts",
+    "self-evolving",
+    "claude",
+    "openai",
+    "gemini",
+    "ollama",
+    "perplexity",
+    "prompt-engineering",
+    "gene-bank",
+    "autonomous-agents"
+  ],
+  "sideEffects": false,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@gsep/core": "*",
+    "@gsep/adapters-llm-anthropic": "*",
+    "@gsep/adapters-llm-openai": "*",
+    "@gsep/adapters-llm-google": "*",
+    "@gsep/adapters-llm-ollama": "*",
+    "@gsep/adapters-llm-perplexity": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

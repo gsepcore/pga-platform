@@ -12,7 +12,7 @@
  * @since 2026-03-06
  */
 
-import { GSEP } from '../packages/core/src/PGA.js';
+import { GSEP } from '../packages/core/src/GSEP.js';
 import { ProofOfValueRunner } from '../packages/core/src/evaluation/ProofOfValueRunner.js';
 import { PROOF_OF_VALUE_V1 } from '../packages/core/src/evaluation/BenchmarkSuites.js';
 import type { LLMAdapter, Message, ChatResponse } from '../packages/core/src/interfaces/LLMAdapter.js';

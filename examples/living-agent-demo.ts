@@ -16,7 +16,7 @@
  * @since 2026-03-05
  */
 
-import { GSEP } from '../packages/core/src/PGA.js';
+import { GSEP } from '../packages/core/src/GSEP.js';
 import { InMemoryGeneStorage } from '../packages/core/src/gene-bank/adapters/InMemoryGeneStorage.js';
 import { GeneBank } from '../packages/core/src/gene-bank/GeneBank.js';
 import type { LLMAdapter, ChatResponse, Message } from '../packages/core/src/interfaces/LLMAdapter.js';

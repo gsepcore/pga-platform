@@ -1,5 +1,5 @@
 /**
- * Quick Test - Verify PGA Core Installation
+ * Quick Test - Verify GSEP Core Installation
  *
  * Tests core components
  */
@@ -102,7 +102,7 @@ class TestGeneStorage implements GeneStorageAdapter {
 }
 
 async function runTests() {
-    console.log('🧪 Testing PGA Core Installation...\n');
+    console.log('🧪 Testing GSEP Core Installation...\n');
 
     try {
         // Test 1: Gene Bank Storage
@@ -243,7 +243,7 @@ async function runTests() {
         console.log('🎉 ALL TESTS PASSED!');
         console.log('═══════════════════════════════════════════════════════\n');
 
-        console.log('✅ Your PGA Core installation is working correctly!');
+        console.log('✅ Your GSEP Core installation is working correctly!');
         console.log('');
         console.log('📊 Summary:');
         console.log(`   • Gene Bank: ✅ Working`);

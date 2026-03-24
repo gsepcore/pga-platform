@@ -313,7 +313,7 @@ Add status badges to README.md:
 
 [![CI](https://github.com/gsepcore/gsep/actions/workflows/ci.yml/badge.svg)](https://github.com/gsepcore/gsep/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![npm version](https://badge.fury.io/js/@pga%2Fcore.svg)](https://www.npmjs.com/package/@gsep/core)
+[![npm version](https://badge.fury.io/js/@gsep%2Fcore.svg)](https://www.npmjs.com/package/@gsep/core)
 ```
 
 Commit and push:

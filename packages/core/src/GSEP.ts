@@ -9,7 +9,10 @@
 
 import type { LLMAdapter } from './interfaces/LLMAdapter.js';
 import type { StorageAdapter } from './interfaces/StorageAdapter.js';
-import type { Genome, GenomeConfig, SelectionContext, Interaction, EvolutionGuardrails } from './types/index.js';
+import type { Genome, GenomeConfig, SelectionContext, Interaction, EvolutionGuardrails, AutonomousConfig } from './types/index.js';
+import { InMemoryStorageAdapter } from './wrap/InMemoryStorageAdapter.js';
+import { getPreset } from './presets/ConfigPresets.js';
+import type { PresetName } from './presets/ConfigPresets.js';
 import { WrappedAgent } from './wrap/WrappedAgent.js';
 import type { WrapOptions, FunctionWrapOptions } from './wrap/WrapOptions.js';
 import { GenomeManager } from './core/GenomeManager.js';
@@ -66,6 +69,83 @@ import { DashboardTokenHelper } from './dashboard/DashboardToken.js';
 import { GSEPIdentitySection, type GSEPIdentityContext } from './core/GSEPIdentitySection.js';
 import { GSEPActivityFooter, type GSEPActivity } from './core/GSEPActivityFooter.js';
 import type { GSEPStatus, GSEPChatResult } from './types/index.js';
+
+/**
+ * Options for GSEP.quickStart() — one-line initialization.
+ *
+ * @example Minimal (auto-detects everything):
+ * ```typescript
+ * const agent = await GSEP.quickStart();
+ * ```
+ *
+ * @example With preset:
+ * ```typescript
+ * const agent = await GSEP.quickStart({ preset: 'conscious' });
+ * ```
+ *
+ * @example With explicit API key:
+ * ```typescript
+ * const agent = await GSEP.quickStart({
+ *     apiKey: 'sk-ant-...',
+ *     provider: 'anthropic',
+ *     preset: 'standard',
+ * });
+ * ```
+ */
+export type LLMProvider = 'anthropic' | 'openai' | 'google' | 'ollama' | 'perplexity';
+
+export interface QuickStartOptions {
+    /** Agent name (default: 'my-agent') */
+    name?: string;
+
+    /** LLM provider — auto-detected from env vars if omitted */
+    provider?: LLMProvider;
+
+    /** API key — reads from env vars if omitted (not required for ollama) */
+    apiKey?: string;
+
+    /** Model ID override (e.g. 'claude-sonnet-4-5-20250929', 'gpt-4', 'llama3') */
+    model?: string;
+
+    /** Ollama host URL (default: 'http://localhost:11434') */
+    ollamaHost?: string;
+
+    /** Configuration preset (default: 'standard') */
+    preset?: PresetName;
+
+    /** Extra autonomous config overrides applied on top of the preset */
+    overrides?: Partial<AutonomousConfig>;
+
+    /** Storage adapter — uses InMemoryStorageAdapter if omitted */
+    storage?: StorageAdapter;
+
+    /** Pre-built LLM adapter — skips provider auto-detection if provided */
+    llm?: LLMAdapter;
+}
+
+/**
+ * Options for GSEP.quickStart() — one-line initialization.
+ *
+ * @example Minimal (auto-detects everything from env vars):
+ * ```typescript
+ * const agent = await GSEP.quickStart();
+ * ```
+ *
+ * @example With preset:
+ * ```typescript
+ * const agent = await GSEP.quickStart({ preset: 'conscious' });
+ * ```
+ *
+ * @example Full control:
+ * ```typescript
+ * const agent = await GSEP.quickStart({
+ *     apiKey: 'sk-ant-...',
+ *     provider: 'anthropic',
+ *     preset: 'standard',
+ *     name: 'customer-support-bot',
+ * });
+ * ```
+ */
 
 export interface GSEPConfig {
     /**
@@ -353,6 +433,183 @@ export class GSEP {
      */
     async deleteGenome(genomeId: string): Promise<void> {
         await this.genomeManager.deleteGenome(genomeId);
+    }
+
+    /**
+     * One-line initialization — creates a fully configured GSEP agent.
+     *
+     * Auto-detects LLM provider from environment variables,
+     * uses in-memory storage by default, and applies the 'standard' preset.
+     *
+     * @example
+     * ```typescript
+     * // Minimal — reads ANTHROPIC_API_KEY from env
+     * const agent = await GSEP.quickStart();
+     * const response = await agent.chat('Hello!');
+     *
+     * // With preset
+     * const agent = await GSEP.quickStart({ preset: 'conscious' });
+     *
+     * // Full control
+     * const agent = await GSEP.quickStart({
+     *     provider: 'anthropic',
+     *     apiKey: 'sk-ant-...',
+     *     preset: 'standard',
+     *     name: 'customer-support-bot',
+     * });
+     * ```
+     */
+    static async quickStart(options: QuickStartOptions = {}): Promise<GenomeInstance> {
+        const {
+            name = 'my-agent',
+            preset = 'standard',
+            overrides,
+        } = options;
+
+        // ─── Resolve LLM adapter ───────────────────────────────
+        let llm: LLMAdapter;
+
+        if (options.llm) {
+            llm = options.llm;
+        } else {
+            const provider = options.provider ?? GSEP.detectProvider(options.apiKey);
+            const apiKey = options.apiKey ?? GSEP.resolveApiKey(provider);
+            llm = await GSEP.createLLMAdapter(provider, apiKey, options.model, options.ollamaHost);
+        }
+
+        // ─── Resolve storage ───────────────────────────────────
+        const storage = options.storage ?? new InMemoryStorageAdapter();
+
+        // ─── Build autonomous config from preset + overrides ───
+        const autonomous: AutonomousConfig = overrides
+            ? { ...getPreset(preset), ...overrides }
+            : getPreset(preset);
+
+        // ─── Create, initialize, and return genome ─────────────
+        const gsep = new GSEP({ llm, storage });
+        await gsep.initialize();
+
+        return gsep.createGenome({
+            name,
+            config: { autonomous },
+        });
+    }
+
+    /** Detect LLM provider from available environment variables. */
+    private static detectProvider(apiKey?: string): LLMProvider {
+        if (apiKey?.startsWith('sk-ant-')) return 'anthropic';
+        if (apiKey?.startsWith('pplx-')) return 'perplexity';
+
+        if (process.env.ANTHROPIC_API_KEY) return 'anthropic';
+        if (process.env.OPENAI_API_KEY) return 'openai';
+        if (process.env.GOOGLE_API_KEY) return 'google';
+        if (process.env.PERPLEXITY_API_KEY) return 'perplexity';
+        // Ollama doesn't need a key — detect by host availability
+        if (process.env.OLLAMA_HOST) return 'ollama';
+
+        throw new Error(
+            `[GSEP] No API key found.\n\n`
+            + `Set one of these environment variables:\n`
+            + `  export ANTHROPIC_API_KEY=sk-ant-...   (Claude)\n`
+            + `  export OPENAI_API_KEY=sk-...          (GPT-4)\n`
+            + `  export GOOGLE_API_KEY=...             (Gemini)\n`
+            + `  export PERPLEXITY_API_KEY=pplx-...    (Perplexity)\n`
+            + `  export OLLAMA_HOST=http://localhost:11434  (Ollama)\n\n`
+            + `Or pass it directly:\n`
+            + `  GSEP.quickStart({ provider: 'anthropic', apiKey: '...' })\n`
+            + `  GSEP.quickStart({ provider: 'ollama', model: 'llama3' })`,
+        );
+    }
+
+    /** Resolve API key from environment for a given provider. */
+    private static resolveApiKey(provider: LLMProvider): string {
+        // Ollama doesn't require an API key
+        if (provider === 'ollama') return '';
+
+        const envMap: Record<string, string> = {
+            anthropic: 'ANTHROPIC_API_KEY',
+            openai: 'OPENAI_API_KEY',
+            google: 'GOOGLE_API_KEY',
+            perplexity: 'PERPLEXITY_API_KEY',
+        };
+
+        const envVar = envMap[provider];
+        const key = process.env[envVar];
+
+        if (!key) {
+            throw new Error(
+                `[GSEP] ${envVar} not set.\n\n`
+                + `  export ${envVar}=your-api-key\n\n`
+                + `Or pass it directly:\n`
+                + `  GSEP.quickStart({ provider: '${provider}', apiKey: '...' })`,
+            );
+        }
+
+        return key;
+    }
+
+    /** Default models per provider. */
+    private static readonly DEFAULT_MODELS: Record<LLMProvider, string> = {
+        anthropic: 'claude-sonnet-4-5-20250929',
+        openai: 'gpt-4',
+        google: 'gemini-2.0-flash',
+        ollama: 'llama3',
+        perplexity: 'sonar',
+    };
+
+    /** Package names per provider. */
+    private static readonly ADAPTER_PACKAGES: Record<LLMProvider, string> = {
+        anthropic: '@gsep/adapters-llm-anthropic',
+        openai: '@gsep/adapters-llm-openai',
+        google: '@gsep/adapters-llm-google',
+        ollama: '@gsep/adapters-llm-ollama',
+        perplexity: '@gsep/adapters-llm-perplexity',
+    };
+
+    /** Adapter class names per provider. */
+    private static readonly ADAPTER_CLASSES: Record<LLMProvider, string> = {
+        anthropic: 'ClaudeAdapter',
+        openai: 'OpenAIAdapter',
+        google: 'GeminiAdapter',
+        ollama: 'OllamaAdapter',
+        perplexity: 'PerplexityAdapter',
+    };
+
+    /** Dynamically import and create the appropriate LLM adapter. */
+    private static async createLLMAdapter(
+        provider: LLMProvider,
+        apiKey: string,
+        model?: string,
+        ollamaHost?: string,
+    ): Promise<LLMAdapter> {
+        const pkg = GSEP.ADAPTER_PACKAGES[provider];
+        const className = GSEP.ADAPTER_CLASSES[provider];
+        const defaultModel = GSEP.DEFAULT_MODELS[provider];
+
+        try {
+            const mod = await (import(pkg as string) as Promise<Record<string, unknown>>);
+            const AdapterClass = (mod[className] ?? mod.default) as new (config: Record<string, unknown>) => LLMAdapter;
+
+            const config: Record<string, unknown> = {
+                model: model ?? defaultModel,
+            };
+
+            // Ollama uses host instead of apiKey
+            if (provider === 'ollama') {
+                config.host = ollamaHost ?? process.env.OLLAMA_HOST ?? 'http://localhost:11434';
+            } else {
+                config.apiKey = apiKey;
+            }
+
+            return new AdapterClass(config);
+        } catch {
+            throw new Error(
+                `[GSEP] ${pkg} not installed.\n\n`
+                + `  npm install ${pkg}\n\n`
+                + `Or use the unified package that includes all adapters:\n`
+                + `  npm install gsep`,
+            );
+        }
     }
 
     /**

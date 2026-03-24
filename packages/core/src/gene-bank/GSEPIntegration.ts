@@ -377,7 +377,7 @@ export class GSEPGeneBankIntegration {
  *
  * // Initialize Gene Bank Integration
  * const geneBankIntegration = new GSEPGeneBankIntegration(
- *   pga.llm,
+ *   gsep.llm,
  *   {
  *     storage: new PostgresGeneStorage(pgConnection),
  *     autoExtract: true,
@@ -388,7 +388,7 @@ export class GSEPGeneBankIntegration {
  * );
  *
  * // Hook into GSEP lifecycle
- * pga.on('mutation:promoted', async (genome, mutation, oldFitness, newFitness) => {
+ * gsep.on('mutation:promoted', async (genome, mutation, oldFitness, newFitness) => {
  *   const gene = await geneBankIntegration.onMutationPromoted(
  *     genome,
  *     mutation,
@@ -401,7 +401,7 @@ export class GSEPGeneBankIntegration {
  *   }
  * });
  *
- * pga.on('task:start', async (genome, taskDescription, domain) => {
+ * gsep.on('task:start', async (genome, taskDescription, domain) => {
  *   const adoptedGenes = await geneBankIntegration.onTaskStart(
  *     genome,
  *     taskDescription,
@@ -411,12 +411,12 @@ export class GSEPGeneBankIntegration {
  *   console.log(`🧬 Adopted ${adoptedGenes.length} genes for this task`);
  * });
  *
- * pga.on('task:complete', async (genome, success, fitness) => {
+ * gsep.on('task:complete', async (genome, success, fitness) => {
  *   await geneBankIntegration.onTaskComplete(genome, success, fitness);
  * });
  *
  * // Use in chat with enhanced prompt
- * const genome = await pga.createGenome({ name: 'assistant' });
+ * const genome = await gsep.createGenome({ name: 'assistant' });
  * const basePrompt = await genome.getPrompt();
  * const enhancedPrompt = await geneBankIntegration.getEnhancedPrompt(
  *   genome,
