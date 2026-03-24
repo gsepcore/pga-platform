@@ -36,7 +36,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --build",
     "test": "echo \"Tests require external service credentials — see README\" && exit 0",
     "clean": "rm -rf dist",
     "dev": "tsc --watch",
