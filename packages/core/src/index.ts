@@ -692,6 +692,17 @@ export {
     CONTENT_TRUST_PREAMBLE,
 } from './firewall/DefaultPatterns.js';
 
+// ─── Anomaly Detection (v0.9.0) ──────────────────────────
+
+export { AnomalyDetector } from './firewall/AnomalyDetector.js';
+export type {
+    Anomaly,
+    AnomalyType,
+    AnomalySeverity,
+    AnomalyDetectorConfig,
+    AnomalyAnalytics,
+} from './firewall/AnomalyDetector.js';
+
 // ─── Purpose Lock (v0.9.0) ───────────────────────────────
 
 export { PurposeLock } from './firewall/PurposeLock.js';

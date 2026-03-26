@@ -62,6 +62,7 @@ import { GrowthJournal } from './memory/GrowthJournal.js';
 import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { PurposeLock } from './firewall/PurposeLock.js';
+import { AnomalyDetector, type Anomaly } from './firewall/AnomalyDetector.js';
 import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
@@ -714,6 +715,7 @@ export class GenomeInstance {
     private contentFirewall?: ContentFirewall;
     private immuneSystem?: BehavioralImmuneSystem;
     private purposeLock?: PurposeLock;
+    private anomalyDetector: AnomalyDetector;
     private weeklyReportGenerator: WeeklyReportGenerator;
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
@@ -917,6 +919,9 @@ export class GenomeInstance {
                 rejectionTemplate: genome.config.purposeLock.rejectionTemplate,
             }, llm);
         }
+
+        // Anomaly Detector — coordinated pattern and fraud detection
+        this.anomalyDetector = new AnomalyDetector();
 
         // Weekly Report Generator
         this.weeklyReportGenerator = new WeeklyReportGenerator(
@@ -1446,6 +1451,19 @@ Ready to see what we can do together? 😊`,
                         prompt = this.applyCanaryVariant(prompt, canary);
                     }
                 }
+            }
+
+            // ── Anomaly Detection: check for coordinated patterns ──
+            const anomalies = this.anomalyDetector.analyze(userMessage, context.userId);
+            if (anomalies.some(a => a.suggestedAction === 'block')) {
+                this.metrics.logAudit({
+                    level: 'warning',
+                    component: 'anomaly-detector',
+                    operation: 'block',
+                    message: `Blocked: ${anomalies.map(a => a.description).join('; ')}`,
+                    genomeId: this.genome.id,
+                });
+                return 'Your message could not be processed at this time. Please try again later.';
             }
 
             // ── Purpose Lock: reject off-topic messages before processing ──
@@ -3008,6 +3026,20 @@ Ready to see what we can do together? 😊`,
      */
     generateWeeklyReport(): WeeklyReport {
         return this.weeklyReportGenerator.generate();
+    }
+
+    /**
+     * Get anomaly detection analytics.
+     */
+    getAnomalyAnalytics() {
+        return this.anomalyDetector.getAnalytics();
+    }
+
+    /**
+     * Get recent anomaly history.
+     */
+    getAnomalyHistory(limit?: number): Anomaly[] {
+        return this.anomalyDetector.getHistory(limit);
     }
 
     /**
