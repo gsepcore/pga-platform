@@ -65,6 +65,7 @@ import { PurposeLock } from './firewall/PurposeLock.js';
 import { AnomalyDetector, type Anomaly } from './firewall/AnomalyDetector.js';
 import { SkillRegistry, SkillExecutor, SkillRouter, ProactiveEngine, type SkillDefinition, type ProactiveTask, type ProactiveResult, type NotificationHandler } from './skills/index.js';
 import { GSEPMiddleware, type MiddlewareOptions } from './middleware/GSEPMiddleware.js';
+import { detectRuntime as detectRuntimeLevel } from './middleware/RuntimeDetector.js';
 import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
@@ -477,11 +478,20 @@ export class GSEP {
      * ```
      */
     static async quickStart(options: QuickStartOptions = {}): Promise<GenomeInstance> {
+        // ─── Runtime auto-detect (fallback when no provider specified) ──
+        const runtimeDetection = (!options.provider && !options.llm)
+            ? detectRuntimeLevel()
+            : undefined;
+
         const {
             name = 'my-agent',
             preset = 'full',
             overrides,
         } = options;
+
+        // Use detected provider if available and none was specified
+        const effectiveProvider = options.provider
+            ?? (runtimeDetection?.provider as LLMProvider | undefined);
 
         // ─── Resolve LLM adapter ───────────────────────────────
         let llm: LLMAdapter;
@@ -489,7 +499,7 @@ export class GSEP {
         if (options.llm) {
             llm = options.llm;
         } else {
-            const provider = options.provider ?? GSEP.detectProvider(options.apiKey);
+            const provider = effectiveProvider ?? GSEP.detectProvider(options.apiKey);
             const apiKey = options.apiKey ?? GSEP.resolveApiKey(provider);
             llm = await GSEP.createLLMAdapter(provider, apiKey, options.model, options.ollamaHost);
         }
@@ -514,10 +524,29 @@ export class GSEP {
         const gsep = new GSEP({ llm, storage });
         await gsep.initialize();
 
-        return gsep.createGenome({
+        const genome = await gsep.createGenome({
             name,
             config: { autonomous, purposeLock },
         });
+
+        // ─── Connect skills if provided ────────────────────────
+        if (options.skills) {
+            for (const skill of options.skills) {
+                if (typeof skill === 'string') {
+                    // MCP server URI
+                    try {
+                        await genome.connectMCPServer(skill);
+                    } catch { /* best-effort — server may not be available yet */ }
+                } else {
+                    // Inline skill definition
+                    if (skill.execute) {
+                        genome.registerSkill(skill.name, skill.description, skill.inputSchema, skill.execute);
+                    }
+                }
+            }
+        }
+
+        return genome;
     }
 
     /** Detect LLM provider from available environment variables. */
@@ -635,6 +664,44 @@ export class GSEP {
                 + `  npm install gsep`,
             );
         }
+    }
+
+    /**
+     * Upgrade ANY function or chatbot into a full GSEP-powered autonomous agent.
+     *
+     * Takes a simple chat function and wraps it with all GSEP capabilities:
+     * evolution, memory, security, skills, proactivity, and purpose lock.
+     *
+     * @example
+     * ```typescript
+     * // Your existing chatbot function
+     * const myBot = async (msg: string) => callOpenAI(msg);
+     *
+     * // One line — now it's a full autonomous agent
+     * const agent = await GSEP.upgrade(myBot, {
+     *     purpose: 'Customer support for Acme Corp',
+     * });
+     *
+     * // Same interface, 100x more powerful
+     * const response = await agent.chat('Hello!', { userId: 'user-1' });
+     * ```
+     */
+    static async upgrade(
+        chatFn: (message: string) => Promise<string>,
+        options: QuickStartOptions = {},
+    ): Promise<GenomeInstance> {
+        // Create a full GSEP agent
+        const genome = await GSEP.quickStart(options);
+
+        // Register the original chat function as a skill
+        genome.registerSkill(
+            'original-agent',
+            'The original agent function — use this for generating responses',
+            { type: 'object', properties: { message: { type: 'string', description: 'The message to send' } } },
+            async (params) => chatFn(String(params.message ?? '')),
+        );
+
+        return genome;
     }
 
     /**
@@ -1589,8 +1656,12 @@ Ready to see what we can do together? 😊`,
                     this.genome.config.reasoning?.defaultStrategy
                 );
                 response = { content: reasoningResult.answer };
+            } else if (this.skillRouter && this.skillRegistry.size > 0) {
+                // LLM chat with skill-calling loop
+                const skillResult = await this.skillRouter.run(prompt, sanitizedUserMessage);
+                response = { content: skillResult.response };
             } else {
-                // Standard LLM chat
+                // Standard LLM chat (no skills)
                 response = await this.llm.chat(
                     [
                         { role: 'system', content: prompt },
@@ -3199,9 +3270,25 @@ Ready to see what we can do together? 😊`,
      *
      * Returns conversations, quality evolution, token costs, security
      * stats, ROI calculation, and improvement suggestions.
+     * Includes growth journal narrative if available.
      */
     generateWeeklyReport(): WeeklyReport {
-        return this.weeklyReportGenerator.generate();
+        const report = this.weeklyReportGenerator.generate();
+
+        // Enrich with growth journal insights
+        if (this.growthJournal) {
+            const snapshot = this.growthJournal.getGrowthSnapshot();
+            if (snapshot.narrative) {
+                report.summary += `\n\n🌱 Growth: ${snapshot.narrative}`;
+            }
+            if (snapshot.recentInsights.length > 0) {
+                report.suggestions.push(
+                    ...snapshot.recentInsights.slice(0, 3).map(i => `Growth insight: ${i}`),
+                );
+            }
+        }
+
+        return report;
     }
 
     /**
@@ -3216,6 +3303,13 @@ Ready to see what we can do together? 😊`,
      */
     getAnomalyHistory(limit?: number): Anomaly[] {
         return this.anomalyDetector.getHistory(limit);
+    }
+
+    /**
+     * Get the agent's growth snapshot — learning journey, milestones, insights.
+     */
+    getGrowthSnapshot() {
+        return this.growthJournal?.getGrowthSnapshot() ?? null;
     }
 
     /**

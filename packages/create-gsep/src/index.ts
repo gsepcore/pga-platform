@@ -96,6 +96,8 @@ program
 
             // Prompt user for configuration
             const config = await promptUser(options);
+            config.gsepMode = detection.gsepMode;
+            config.detectedFramework = detection.framework;
 
             // Generate project
             console.log(chalk.cyan('\n🏗️  Creating project structure...\n'));

@@ -204,77 +204,75 @@ async function generateSourceFiles(projectPath: string, config: ProjectConfig) {
 }
 
 function generateIndexFile(config: ProjectConfig): string {
-    let imports = `import 'dotenv/config';\nimport { GSEP } from '@gsep/core';\n`;
+    const mode = config.gsepMode ?? 'quickstart';
 
-    if (config.llmProvider === 'anthropic') {
-        imports += `import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\n`;
-    } else if (config.llmProvider === 'openai') {
-        imports += `import { OpenAIAdapter } from '@gsep/adapters-llm-openai';\n`;
-    } else {
-        imports += `import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';\nimport { OpenAIAdapter } from '@gsep/adapters-llm-openai';\n`;
-    }
+    // Middleware mode — for existing agents (OpenClaw, LangChain, etc.)
+    if (mode === 'middleware' || mode === 'middleware-observer') {
+        return `import 'dotenv/config';
+import { GSEP } from 'gsep';
 
-    if (config.storage === 'postgres') {
-        imports += `import { PostgresAdapter } from '@gsep/adapters-storage-postgres';\n`;
-    } else {
-        imports += `import { InMemoryStorage } from '@gsep/core';\n`;
-    }
+async function main() {
+  console.log('🧬 Starting GSEP Middleware for ${config.detectedFramework ?? 'your agent'}...\\n');
 
-    imports += `\nimport { setupAgent } from './agent.js';\n\n`;
+  // GSEP middleware — enhances your existing agent without replacing it
+  const gsep = await GSEP.middleware();
 
-    const llmSetup = config.llmProvider === 'anthropic'
-        ? `const llm = new ClaudeAdapter({\n    apiKey: process.env.ANTHROPIC_API_KEY!,\n    model: 'claude-sonnet-4-5-20250929',\n  });\n`
-        : `const llm = new OpenAIAdapter({\n    apiKey: process.env.OPENAI_API_KEY!,\n    model: 'gpt-4-turbo-preview',\n  });\n`;
+  console.log('✅ GSEP middleware ready\\n');
+  console.log('Integration guide:');
+  console.log('  1. In your agent\\'s chat flow, call gsep.before() before the LLM');
+  console.log('  2. Call gsep.after() with the response');
+  console.log('  3. GSEP handles evolution, security, and proactive intelligence\\n');
 
-    const storageSetup = config.storage === 'postgres'
-        ? `const storage = new PostgresAdapter({\n    connectionString: process.env.DATABASE_URL!,\n  });\n`
-        : `const storage = new InMemoryStorage();\n`;
+  // Example usage:
+  const originalPrompt = 'You are a helpful assistant';
+  const userMessage = 'Hello! What can you do?';
 
-    // Living Agent demo lines
-    const livingAgentDemo = config.livingAgent
-        ? `
-  // --- Living Agent capabilities demo ---
-  const emotion = genome.inferEmotion(message);
-  if (emotion) {
-    console.log(\`  Emotion detected: \${emotion.primary} (intensity: \${emotion.intensity.toFixed(2)})\\n\`);
-  }
-
-  const narrative = genome.getNarrativeSummary();
-  if (narrative) {
-    console.log(\`  Relationship: \${narrative.relationshipStage} (\${narrative.interactionCount} interactions)\\n\`);
-  }
-`
-        : '';
-
-    return `${imports}async function main() {
-  console.log('🧬 Starting GSEP Agent...\\n');
-
-  // Initialize LLM adapter
-  ${llmSetup}
-  // Initialize storage
-  ${storageSetup}
-  // Initialize GSEP
-  const gsep = new GSEP({
-    llm,
-    storage,
+  const { prompt } = await gsep.before(originalPrompt, {
+    message: userMessage,
+    userId: 'demo-user',
   });
 
-  await gsep.initialize();
-  console.log('✅ GSEP initialized\\n');
+  console.log('Enhanced prompt length:', prompt.length, 'chars');
+  console.log('(Your agent uses this enhanced prompt instead of the original)\\n');
 
-  // Setup agent genome
-  const genome = await setupAgent(gsep);
+  // After your agent responds:
+  // await gsep.after(response, { userId: 'demo-user', quality: 0.85 });
+
+  console.log('✨ GSEP middleware is working!');
+}
+
+main().catch(console.error);
+`;
+    }
+
+    // QuickStart mode — for new projects and basic chatbots
+    return `import 'dotenv/config';
+import { GSEP } from 'gsep';
+
+async function main() {
+  console.log('🧬 Starting GSEP Agent...\\n');
+
+  // One line — full autonomous agent with 27 intelligence systems
+  const agent = await GSEP.quickStart({
+    name: '${config.template}-agent',
+  });
+
+  console.log('✅ GSEP agent ready (27 intelligence systems active)\\n');
 
   // Example conversation
-  const userId = 'demo-user';
-  const message = 'Hello! What can you do?';
+  const response = await agent.chat('Hello! What can you do?', {
+    userId: 'demo-user',
+    taskType: 'general',
+  });
 
-  console.log(\`User: \${message}\\n\`);
-  const response = await genome.chat(message, { userId, taskType: 'general' });
-  console.log(\`Agent: \${response}\\n\`);
-${livingAgentDemo}
-  console.log('✨ Your GSEP-powered agent is working!');
-  console.log('Next: Customize the genome in src/agent.ts\\n');
+  console.log('Agent:', response, '\\n');
+
+  // Weekly report
+  const report = agent.generateWeeklyReport();
+  console.log(report.summary);
+
+  console.log('\\n✨ Your GSEP-powered agent is working!');
+  console.log('Next: Add skills, proactive tasks, and purpose lock in src/agent.ts\\n');
 }
 
 main().catch(console.error);
