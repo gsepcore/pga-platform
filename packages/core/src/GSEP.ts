@@ -1359,8 +1359,30 @@ Ready to see what we can do together? 😊`,
                 prompt = ragContext.augmentedPrompt;
             }
 
-            // ── PRE-LLM: PatternMemory predictions → ProactiveSuggestions boost ──
-            // Feed behavioral predictions into the prompt for proactive intelligence
+            // ── PRE-LLM: ContextMemory — inject user history and preferences ──
+            if (context.userId) {
+                try {
+                    const memoryPrompt = await this.contextMemory.getMemoryPrompt(context.userId, this.genome.id);
+                    if (memoryPrompt && memoryPrompt.length > 0) {
+                        prompt += `\n\n---\n\n${memoryPrompt}`;
+                    }
+                } catch { /* ContextMemory is best-effort */ }
+            }
+
+            // ── PRE-LLM: ProactiveSuggestions — anticipate user needs ──
+            if (context.userId) {
+                try {
+                    const suggestions = await this.proactiveSuggestions.generateSuggestions(
+                        context.userId, this.genome.id, userMessage,
+                    );
+                    if (suggestions.length > 0) {
+                        const suggestionsPrompt = this.proactiveSuggestions.formatSuggestionsPrompt(suggestions);
+                        prompt += `\n\n---\n\n${suggestionsPrompt}`;
+                    }
+                } catch { /* ProactiveSuggestions is best-effort */ }
+            }
+
+            // ── PRE-LLM: PatternMemory predictions → behavioral boost ──
             if (this.patternMemory) {
                 const predictions = this.patternMemory.getPredictions();
                 if (predictions.length > 0) {
