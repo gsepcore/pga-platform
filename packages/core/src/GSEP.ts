@@ -1648,19 +1648,23 @@ Ready to see what we can do together? 😊`,
             // Continuous Evolution Loop (guarded against concurrent execution)
             this.interactionCount++;
             const autoConfig = this.genome.config.autonomous;
-            if (
-                !this.evolutionInProgress
-                && autoConfig?.continuousEvolution
-                && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0
-            ) {
+            const isScheduledEvolution = autoConfig?.continuousEvolution
+                && this.interactionCount % (autoConfig.evolveEveryN ?? 10) === 0;
+
+            // Immediate evolution on severe/critical drift (don't wait for scheduled cycle)
+            const isUrgentDrift = driftCheck.isDrifting
+                && autoConfig?.autoMutateOnDrift !== false
+                && driftCheck.signals.some(s => s.severity === 'severe' || s.severity === 'critical');
+
+            if (!this.evolutionInProgress && (isScheduledEvolution || isUrgentDrift)) {
                 this.evolutionInProgress = true;
                 this.runEvolutionCycle()
                     .catch(err =>
                         this.metrics.logAudit({
                             level: 'warning',
                             component: 'genome',
-                            operation: 'auto-evolve',
-                            message: `Auto-evolution failed: ${err instanceof Error ? err.message : String(err)}`,
+                            operation: isUrgentDrift ? 'urgent-evolve' : 'auto-evolve',
+                            message: `${isUrgentDrift ? 'Urgent' : 'Auto'}-evolution failed: ${err instanceof Error ? err.message : String(err)}`,
                             genomeId: this.genome.id,
                         })
                     )
