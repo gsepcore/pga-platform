@@ -1397,6 +1397,26 @@ Ready to see what we can do together? 😊`,
                 });
             }
 
+            // ── Emotional Escalation: detect high frustration → suggest human handoff ──
+            if (this.emotionalModel) {
+                const emotion = this.emotionalModel.inferEmotion(userMessage);
+                // Escalate if intensity > 0.8 and user is frustrated or impatient
+                if ((emotion.primary === 'frustrated' || emotion.primary === 'impatient') && emotion.intensity > 0.8) {
+                    this.metrics.logAudit({
+                        level: 'info',
+                        component: 'emotional-escalation',
+                        operation: 'escalate',
+                        message: `High ${emotion.primary} detected (intensity: ${emotion.intensity.toFixed(2)}) — consider human escalation`,
+                        genomeId: this.genome.id,
+                    });
+                    this.events.emitSync('emotion:escalation', {
+                        genomeId: this.genome.id,
+                        emotion: emotion.primary,
+                        intensity: emotion.intensity,
+                    }, { genomeId: this.genome.id, userId: context.userId });
+                }
+            }
+
             // Assemble prompt with intelligence boost (memory + proactive suggestions)
             let prompt = await this.assemblePrompt(context, userMessage);
 
@@ -1455,6 +1475,14 @@ Ready to see what we can do together? 😊`,
 
             // ── Anomaly Detection: check for coordinated patterns ──
             const anomalies = this.anomalyDetector.analyze(userMessage, context.userId);
+            for (const anomaly of anomalies) {
+                this.events.emitSync('anomaly:detected', {
+                    genomeId: this.genome.id,
+                    type: anomaly.type,
+                    severity: anomaly.severity,
+                    description: anomaly.description,
+                }, { genomeId: this.genome.id, userId: context.userId });
+            }
             if (anomalies.some(a => a.suggestedAction === 'block')) {
                 this.metrics.logAudit({
                     level: 'warning',

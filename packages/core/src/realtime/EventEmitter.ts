@@ -29,7 +29,9 @@ export type GSEPEventType =
     | 'firewall:threat'
     | 'immune:threat'
     | 'gene:updated'
-    | 'purpose:rejected';
+    | 'purpose:rejected'
+    | 'emotion:escalation'
+    | 'anomaly:detected';
 
 export interface GSEPEvent<T = unknown> {
     type: GSEPEventType;
