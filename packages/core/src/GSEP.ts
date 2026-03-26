@@ -62,6 +62,7 @@ import { GrowthJournal } from './memory/GrowthJournal.js';
 import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { PurposeLock } from './firewall/PurposeLock.js';
+import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
 import { GSEPEventEmitter } from './realtime/EventEmitter.js';
@@ -713,6 +714,7 @@ export class GenomeInstance {
     private contentFirewall?: ContentFirewall;
     private immuneSystem?: BehavioralImmuneSystem;
     private purposeLock?: PurposeLock;
+    private weeklyReportGenerator: WeeklyReportGenerator;
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
     private evolutionInProgress: boolean = false;
@@ -915,6 +917,16 @@ export class GenomeInstance {
                 rejectionTemplate: genome.config.purposeLock.rejectionTemplate,
             }, llm);
         }
+
+        // Weekly Report Generator
+        this.weeklyReportGenerator = new WeeklyReportGenerator(
+            this.metrics,
+            this.driftAnalyzer,
+            this.contentFirewall,
+            this.immuneSystem,
+            this.purposeLock,
+            { agentName: genome.name },
+        );
 
         // GSEP Identity & Activity Footer
         this.gsepIdentitySection = new GSEPIdentitySection();
@@ -1965,6 +1977,11 @@ Ready to see what we can do together? 😊`,
             await this.fitnessTracker.recordPerformance(1, allele.gene, allele.variant, score);
         }
 
+        // Weekly Report: record interaction
+        const chatQuality = this.computeInteractionQuality(interaction);
+        const chatTokens = estimateTokenCount(interaction.userMessage) + estimateTokenCount(interaction.assistantResponse ?? '');
+        this.weeklyReportGenerator.recordInteraction(chatQuality, chatTokens);
+
         // Pattern Memory: record interaction data
         if (this.patternMemory) {
             this.patternMemory.recordInteraction({
@@ -2981,6 +2998,23 @@ Ready to see what we can do together? 😊`,
             this.genome.id,
             currentMessage,
         );
+    }
+
+    /**
+     * Generate a weekly performance report.
+     *
+     * Returns conversations, quality evolution, token costs, security
+     * stats, ROI calculation, and improvement suggestions.
+     */
+    generateWeeklyReport(): WeeklyReport {
+        return this.weeklyReportGenerator.generate();
+    }
+
+    /**
+     * Get the number of interactions this week.
+     */
+    getWeekInteractionCount(): number {
+        return this.weeklyReportGenerator.getWeekInteractionCount();
     }
 
     /**

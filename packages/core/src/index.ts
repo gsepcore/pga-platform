@@ -116,6 +116,9 @@ export type {
     MetricsCollectorConfig,
 } from './monitoring/MetricsCollector.js';
 
+export { WeeklyReportGenerator } from './monitoring/WeeklyReportGenerator.js';
+export type { WeeklyReport, ReportConfig } from './monitoring/WeeklyReportGenerator.js';
+
 export { MonitoringDashboard } from './monitoring/MonitoringDashboard.js';
 export type {
     DashboardConfig,
