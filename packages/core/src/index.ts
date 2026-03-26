@@ -702,6 +702,23 @@ export {
     CONTENT_TRUST_PREAMBLE,
 } from './firewall/DefaultPatterns.js';
 
+// ─── Skills (MCP + Inline) ───────────────────────────────
+
+export {
+    SkillRegistry,
+    SkillExecutor,
+    SkillRouter,
+} from './skills/index.js';
+export type {
+    SkillDefinition,
+    SkillMetrics,
+    SkillCallResult,
+    SkillExecutorConfig,
+    ToolCall as SkillToolCall,
+    ToolCallResult as SkillToolCallResult,
+    SkillRouterConfig,
+} from './skills/index.js';
+
 // ─── Anomaly Detection (v0.9.0) ──────────────────────────
 
 export { AnomalyDetector } from './firewall/AnomalyDetector.js';

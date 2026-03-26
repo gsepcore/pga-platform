@@ -63,6 +63,7 @@ import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { PurposeLock } from './firewall/PurposeLock.js';
 import { AnomalyDetector, type Anomaly } from './firewall/AnomalyDetector.js';
+import { SkillRegistry, SkillExecutor, SkillRouter, type SkillDefinition } from './skills/index.js';
 import { GSEPMiddleware, type MiddlewareOptions } from './middleware/GSEPMiddleware.js';
 import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
@@ -134,6 +135,9 @@ export interface QuickStartOptions {
 
     /** Forbidden topics for Purpose Lock (e.g. ['cooking', 'politics']) */
     forbiddenTopics?: string[];
+
+    /** Skills — MCP server URIs or inline skill definitions */
+    skills?: Array<string | SkillDefinition>;
 }
 
 /**
@@ -737,6 +741,9 @@ export class GenomeInstance {
     private immuneSystem?: BehavioralImmuneSystem;
     private purposeLock?: PurposeLock;
     private anomalyDetector: AnomalyDetector;
+    private skillRegistry: SkillRegistry;
+    private skillExecutor: SkillExecutor;
+    private skillRouter?: SkillRouter;
     private weeklyReportGenerator: WeeklyReportGenerator;
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
@@ -943,6 +950,13 @@ export class GenomeInstance {
 
         // Anomaly Detector — coordinated pattern and fraud detection
         this.anomalyDetector = new AnomalyDetector();
+
+        // Skills — MCP tools and inline functions
+        this.skillRegistry = new SkillRegistry();
+        this.skillExecutor = new SkillExecutor(this.skillRegistry);
+        if (llm) {
+            this.skillRouter = new SkillRouter(this.skillRegistry, this.skillExecutor, llm);
+        }
 
         // Weekly Report Generator
         this.weeklyReportGenerator = new WeeklyReportGenerator(
@@ -3065,6 +3079,50 @@ Ready to see what we can do together? 😊`,
             this.genome.id,
             currentMessage,
         );
+    }
+
+    /**
+     * Register a skill from an inline function.
+     */
+    registerSkill(
+        name: string,
+        description: string,
+        inputSchema: Record<string, unknown>,
+        execute: (params: Record<string, unknown>) => Promise<string>,
+    ): void {
+        this.skillRegistry.registerInline(name, description, inputSchema, execute);
+    }
+
+    /**
+     * Connect to an MCP server and discover its tools as skills.
+     */
+    async connectMCPServer(uri: string): Promise<Array<{ name: string; description: string }>> {
+        return this.skillExecutor.connectMCP(uri);
+    }
+
+    /**
+     * Get the skill registry for direct manipulation.
+     */
+    getSkillRegistry(): SkillRegistry {
+        return this.skillRegistry;
+    }
+
+    /**
+     * Get ranked skills by fitness.
+     */
+    getSkillRanking() {
+        return this.skillRegistry.getRankedSkills();
+    }
+
+    /**
+     * Run the skill router — lets the LLM decide which tools to call.
+     * Returns the final response and all tool calls made.
+     */
+    async runWithSkills(systemPrompt: string, userMessage: string) {
+        if (!this.skillRouter) {
+            throw new Error('[GSEP] Skill router requires an LLM adapter');
+        }
+        return this.skillRouter.run(systemPrompt, userMessage);
     }
 
     /**
