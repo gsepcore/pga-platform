@@ -94,6 +94,22 @@ export interface GenomeConfig {
         /** Enable/disable the C3 Content Firewall (default: true) */
         enabled?: boolean;
     };
+
+    // Purpose Lock (v0.9.0) — Purpose fidelity protection
+    purposeLock?: {
+        /** Enable purpose lock (default: false — requires purpose to be set) */
+        enabled?: boolean;
+        /** The agent's purpose statement */
+        purpose?: string;
+        /** Allowed topics */
+        allowedTopics?: string[];
+        /** Forbidden topics */
+        forbiddenTopics?: string[];
+        /** Strictness: 'strict' rejects borderline, 'moderate' allows it */
+        strictness?: 'strict' | 'moderate' | 'lenient';
+        /** Custom rejection message. Use {purpose} as placeholder */
+        rejectionTemplate?: string;
+    };
 }
 
 /**

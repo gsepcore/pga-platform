@@ -61,6 +61,7 @@ import { AutonomousLoop } from './advanced-ai/AutonomousLoop.js';
 import { GrowthJournal } from './memory/GrowthJournal.js';
 import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
+import { PurposeLock } from './firewall/PurposeLock.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
 import { GSEPEventEmitter } from './realtime/EventEmitter.js';
@@ -121,6 +122,15 @@ export interface QuickStartOptions {
 
     /** Pre-built LLM adapter — skips provider auto-detection if provided */
     llm?: LLMAdapter;
+
+    /** Agent purpose — enables Purpose Lock to keep the agent on-topic */
+    purpose?: string;
+
+    /** Allowed topics for Purpose Lock (e.g. ['purchases', 'shipping', 'payments']) */
+    allowedTopics?: string[];
+
+    /** Forbidden topics for Purpose Lock (e.g. ['cooking', 'politics']) */
+    forbiddenTopics?: string[];
 }
 
 /**
@@ -485,13 +495,21 @@ export class GSEP {
             ? { ...getPreset(preset), ...overrides }
             : getPreset(preset);
 
+        // ─── Build purpose lock config if purpose provided ───
+        const purposeLock = options.purpose ? {
+            enabled: true,
+            purpose: options.purpose,
+            allowedTopics: options.allowedTopics,
+            forbiddenTopics: options.forbiddenTopics,
+        } : undefined;
+
         // ─── Create, initialize, and return genome ─────────────
         const gsep = new GSEP({ llm, storage });
         await gsep.initialize();
 
         return gsep.createGenome({
             name,
-            config: { autonomous },
+            config: { autonomous, purposeLock },
         });
     }
 
@@ -694,6 +712,7 @@ export class GenomeInstance {
     private genomeKernel?: GenomeKernel;
     private contentFirewall?: ContentFirewall;
     private immuneSystem?: BehavioralImmuneSystem;
+    private purposeLock?: PurposeLock;
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
     private evolutionInProgress: boolean = false;
@@ -884,6 +903,17 @@ export class GenomeInstance {
                     forbiddenTopics: [],
                 },
             });
+        }
+
+        // Purpose Lock — keeps agent on-topic, rejects off-purpose requests
+        if (genome.config.purposeLock?.enabled && genome.config.purposeLock.purpose) {
+            this.purposeLock = new PurposeLock({
+                purpose: genome.config.purposeLock.purpose,
+                allowedTopics: genome.config.purposeLock.allowedTopics,
+                forbiddenTopics: genome.config.purposeLock.forbiddenTopics,
+                strictness: genome.config.purposeLock.strictness,
+                rejectionTemplate: genome.config.purposeLock.rejectionTemplate,
+            }, llm);
         }
 
         // GSEP Identity & Activity Footer
@@ -1403,6 +1433,26 @@ Ready to see what we can do together? 😊`,
                         activeCanaryId = canary.id;
                         prompt = this.applyCanaryVariant(prompt, canary);
                     }
+                }
+            }
+
+            // ── Purpose Lock: reject off-topic messages before processing ──
+            if (this.purposeLock) {
+                const rejection = await this.purposeLock.guard(userMessage);
+                if (rejection) {
+                    this.metrics.logAudit({
+                        level: 'info',
+                        component: 'purpose-lock',
+                        operation: 'reject',
+                        message: `Off-purpose message rejected`,
+                        genomeId: this.genome.id,
+                    });
+                    this.events.emitSync('purpose:rejected', {
+                        genomeId: this.genome.id,
+                        userMessage: userMessage.substring(0, 100),
+                    }, { genomeId: this.genome.id, userId: context.userId });
+
+                    return rejection;
                 }
             }
 

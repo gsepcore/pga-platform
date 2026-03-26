@@ -689,6 +689,16 @@ export {
     CONTENT_TRUST_PREAMBLE,
 } from './firewall/DefaultPatterns.js';
 
+// ─── Purpose Lock (v0.9.0) ───────────────────────────────
+
+export { PurposeLock } from './firewall/PurposeLock.js';
+export type {
+    PurposeLockConfig,
+    PurposeClassification,
+    PurposeVerdict,
+    PurposeLockAnalytics,
+} from './firewall/PurposeLock.js';
+
 // ─── C4 Behavioral Immune System (v0.9.0) ───────────────
 export { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
 export type {
