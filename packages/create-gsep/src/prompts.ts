@@ -11,6 +11,10 @@ export interface ProjectConfig {
     evolutionBoost: boolean;
     livingAgent: boolean;
     template: 'chatbot' | 'code-assistant' | 'customer-support' | 'data-analysis' | 'custom';
+    /** Auto-detected GSEP integration mode */
+    gsepMode?: 'quickstart' | 'quickstart-proactive' | 'middleware' | 'middleware-observer';
+    /** Auto-detected framework name */
+    detectedFramework?: string;
 }
 
 export async function promptUser(cliOptions: any): Promise<ProjectConfig> {

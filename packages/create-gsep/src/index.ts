@@ -17,6 +17,7 @@ import boxen from 'boxen';
 import { promptUser } from './prompts.js';
 import { installDependencies } from './installer.js';
 import { generateProject } from './generator.js';
+import { detectRuntime, formatDetectionResult } from './detector.js';
 
 const program = new Command();
 
@@ -85,7 +86,13 @@ program
                 name = inputName;
             }
 
-            console.log(chalk.cyan('\n📋 Let\'s configure your GSEP agent...\n'));
+            // Auto-detect existing agent runtime
+            console.log(chalk.cyan('\n🔍 Scanning project for existing agent...\n'));
+            const detection = await detectRuntime(process.cwd());
+            console.log(formatDetectionResult(detection));
+            console.log('');
+
+            console.log(chalk.cyan('📋 Let\'s configure your GSEP agent...\n'));
 
             // Prompt user for configuration
             const config = await promptUser(options);
