@@ -14,3 +14,11 @@ export type {
     ToolCallResult,
     SkillRouterConfig,
 } from './SkillRouter.js';
+
+export { ProactiveEngine } from './ProactiveEngine.js';
+export type {
+    ProactiveTask,
+    ProactiveResult,
+    ProactiveEngineConfig,
+    NotificationHandler,
+} from './ProactiveEngine.js';

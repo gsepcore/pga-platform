@@ -708,6 +708,7 @@ export {
     SkillRegistry,
     SkillExecutor,
     SkillRouter,
+    ProactiveEngine,
 } from './skills/index.js';
 export type {
     SkillDefinition,
@@ -717,6 +718,10 @@ export type {
     ToolCall as SkillToolCall,
     ToolCallResult as SkillToolCallResult,
     SkillRouterConfig,
+    ProactiveTask,
+    ProactiveResult,
+    ProactiveEngineConfig,
+    NotificationHandler,
 } from './skills/index.js';
 
 // ─── Anomaly Detection (v0.9.0) ──────────────────────────

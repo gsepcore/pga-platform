@@ -63,7 +63,7 @@ import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { PurposeLock } from './firewall/PurposeLock.js';
 import { AnomalyDetector, type Anomaly } from './firewall/AnomalyDetector.js';
-import { SkillRegistry, SkillExecutor, SkillRouter, type SkillDefinition } from './skills/index.js';
+import { SkillRegistry, SkillExecutor, SkillRouter, ProactiveEngine, type SkillDefinition, type ProactiveTask, type ProactiveResult, type NotificationHandler } from './skills/index.js';
 import { GSEPMiddleware, type MiddlewareOptions } from './middleware/GSEPMiddleware.js';
 import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
@@ -744,6 +744,7 @@ export class GenomeInstance {
     private skillRegistry: SkillRegistry;
     private skillExecutor: SkillExecutor;
     private skillRouter?: SkillRouter;
+    private proactiveEngine?: ProactiveEngine;
     private weeklyReportGenerator: WeeklyReportGenerator;
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
@@ -956,6 +957,9 @@ export class GenomeInstance {
         this.skillExecutor = new SkillExecutor(this.skillRegistry);
         if (llm) {
             this.skillRouter = new SkillRouter(this.skillRegistry, this.skillExecutor, llm);
+            this.proactiveEngine = new ProactiveEngine(llm, this.skillRegistry, this.skillExecutor, {
+                agentPurpose: genome.layers.layer0[0]?.content ?? genome.name,
+            });
         }
 
         // Weekly Report Generator
@@ -3123,6 +3127,71 @@ Ready to see what we can do together? 😊`,
             throw new Error('[GSEP] Skill router requires an LLM adapter');
         }
         return this.skillRouter.run(systemPrompt, userMessage);
+    }
+
+    /**
+     * Add a proactive background task.
+     *
+     * @example
+     * ```typescript
+     * agent.addProactiveTask({
+     *   id: 'check-competitors',
+     *   name: 'Competitor Price Monitor',
+     *   instruction: 'Search for competitor pricing and report changes',
+     *   intervalMs: 3600000, // every hour
+     *   notify: true,
+     *   priority: 5,
+     * });
+     * ```
+     */
+    addProactiveTask(task: Omit<ProactiveTask, 'active'>): void {
+        if (!this.proactiveEngine) {
+            throw new Error('[GSEP] Proactive engine requires an LLM adapter');
+        }
+        this.proactiveEngine.addTask(task);
+    }
+
+    /**
+     * Start the proactive engine — begins running background tasks.
+     */
+    startProactiveEngine(): void {
+        this.proactiveEngine?.start();
+    }
+
+    /**
+     * Stop the proactive engine.
+     */
+    stopProactiveEngine(): void {
+        this.proactiveEngine?.stop();
+    }
+
+    /**
+     * Register a handler for proactive notifications.
+     *
+     * @example
+     * ```typescript
+     * agent.onProactiveNotification((result) => {
+     *   console.log(`[${result.importance}] ${result.findings}`);
+     *   sendSlackMessage(result.findings);
+     * });
+     * ```
+     */
+    onProactiveNotification(handler: NotificationHandler): void {
+        this.proactiveEngine?.onNotification(handler);
+    }
+
+    /**
+     * Run all proactive tasks once (manual trigger).
+     */
+    async runProactiveTasks(): Promise<ProactiveResult[]> {
+        return this.proactiveEngine?.runAll() ?? [];
+    }
+
+    /**
+     * Get proactive task results history.
+     */
+    getProactiveResults(limit?: number): ProactiveResult[] {
+        return this.proactiveEngine?.getResults(limit) ?? [];
     }
 
     /**
