@@ -110,7 +110,7 @@ export interface QuickStartOptions {
     /** Ollama host URL (default: 'http://localhost:11434') */
     ollamaHost?: string;
 
-    /** Configuration preset (default: 'standard') */
+    /** Configuration preset (default: 'conscious') */
     preset?: PresetName;
 
     /** Extra autonomous config overrides applied on top of the preset */
@@ -462,7 +462,7 @@ export class GSEP {
     static async quickStart(options: QuickStartOptions = {}): Promise<GenomeInstance> {
         const {
             name = 'my-agent',
-            preset = 'standard',
+            preset = 'conscious',
             overrides,
         } = options;
 
