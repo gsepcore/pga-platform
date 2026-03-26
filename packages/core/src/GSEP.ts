@@ -742,7 +742,7 @@ export class GenomeInstance {
         // Evolution components
         this.fitnessTracker = new FitnessTracker(storage, genome);
         this.fitnessCalculator = new FitnessCalculator();
-        this.mutationEngine = new MutationEngine();
+        this.mutationEngine = new MutationEngine(llm);
         this.canaryManager = new CanaryDeploymentManager(storage, {
             initialTrafficPercent: 10,
             minSampleSize: 5,

@@ -82,18 +82,24 @@ export interface IMutationOperator {
  */
 export class CompressInstructionsOperator implements IMutationOperator {
     name: MutationType = 'compress_instructions';
-    description = 'Reduce token count while preserving meaning';
+    description = 'Reduce token count while preserving meaning (LLM-powered when available)';
     targetChromosome = 'c1' as const;
+
+    constructor(private llm?: LLMAdapter) {}
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
 
-        // Apply compression to C1 operative genes
+        // LLM-powered compression (preferred)
+        if (this.llm) {
+            return this.mutateLLM(context, mutant);
+        }
+
+        // Fallback: regex-based compression
         mutant.chromosomes.c1.operations = mutant.chromosomes.c1.operations.map((gene) =>
             this.compressGene(gene)
         );
 
-        // Create mutation record
         const mutation: MutationRecord = {
             id: this.generateId(),
             timestamp: new Date(),
@@ -117,30 +123,93 @@ export class CompressInstructionsOperator implements IMutationOperator {
             mutant,
             mutation,
             description: 'Compressed instructions to reduce token usage',
-            expectedImprovement: 0.15, // 15% improvement expected
+            expectedImprovement: 0.15,
+        };
+    }
+
+    private async mutateLLM(context: MutationContext, mutant: GenomeV2): Promise<MutationResult> {
+        let totalOriginal = 0;
+        let totalCompressed = 0;
+        let anyCompressed = false;
+
+        for (let i = 0; i < mutant.chromosomes.c1.operations.length; i++) {
+            const gene = mutant.chromosomes.c1.operations[i];
+            const originalTokens = gene.tokenCount || estimateTokenCount(gene.content);
+            totalOriginal += originalTokens;
+
+            try {
+                const response = await this.llm!.chat([
+                    { role: 'system', content: 'You are a prompt compression specialist. Reduce token count while preserving EXACT functional behavior. Return ONLY the compressed text.' },
+                    { role: 'user', content: `Compress this AI agent instruction. Preserve ALL capabilities, remove redundancy and filler.\n\nCATEGORY: ${gene.category}\n\nINSTRUCTION:\n${gene.content}` },
+                ], { temperature: 0.3 });
+
+                const compressed = response.content.trim();
+                const compressedTokens = estimateTokenCount(compressed);
+
+                if (compressedTokens < originalTokens) {
+                    mutant.chromosomes.c1.operations[i] = {
+                        ...gene,
+                        content: compressed,
+                        tokenCount: compressedTokens,
+                        version: (gene.version ?? 0) + 1,
+                        lastModified: new Date(),
+                    };
+                    totalCompressed += compressedTokens;
+                    anyCompressed = true;
+                } else {
+                    totalCompressed += originalTokens;
+                }
+            } catch {
+                totalCompressed += originalTokens;
+            }
+        }
+
+        if (!anyCompressed) {
+            return this.createFailure(context, 'LLM compression did not reduce tokens for any gene');
+        }
+
+        const ratio = totalCompressed / totalOriginal;
+        const saved = totalOriginal - totalCompressed;
+
+        return {
+            success: true,
+            mutant,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: JSON.stringify(context.genome.chromosomes.c1),
+                after: JSON.stringify(mutant.chromosomes.c1),
+                diff: `LLM compression: ${totalOriginal} → ${totalCompressed} tokens (${saved} saved, ${((1 - ratio) * 100).toFixed(1)}% reduction)`,
+                trigger: 'drift-detected',
+                reason: context.reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: `LLM-compressed ${saved} tokens (${((1 - ratio) * 100).toFixed(1)}% reduction)`,
+            expectedImprovement: (1 - ratio) * 0.25,
+            compressionMetrics: { originalTokens: totalOriginal, compressedTokens: totalCompressed, ratio },
         };
     }
 
     estimateImprovement(context: MutationContext): number {
-        // Higher improvement if token efficiency is low
         const currentEfficiency = context.genome.fitness.tokenEfficiency;
-        return (1 - currentEfficiency) * 0.2; // Up to 20% improvement
+        return (1 - currentEfficiency) * 0.2;
     }
 
+    // ─── Regex fallback methods ─────────────────────────────
     private compressGene(gene: OperativeGene): OperativeGene {
         const compressed = { ...gene };
-
-        // Compression strategies
         compressed.content = this.removeRedundancy(gene.content);
         compressed.content = this.abbreviateCommon(compressed.content);
         compressed.content = this.consolidateInstructions(compressed.content);
         compressed.tokenCount = estimateTokenCount(compressed.content);
-
         return compressed;
     }
 
     private removeRedundancy(content: string): string {
-        // Remove duplicate phrases
         const sentences = content.split('. ');
         const unique = [...new Set(sentences)];
         return unique.join('. ');
@@ -154,21 +223,33 @@ export class CompressInstructionsOperator implements IMutationOperator {
             'please': 'pls',
             'you should': 'you must',
         };
-
         let result = content;
         for (const [full, abbrev] of Object.entries(abbreviations)) {
             result = result.replace(new RegExp(full, 'gi'), abbrev);
         }
-
         return result;
     }
 
     private consolidateInstructions(content: string): string {
-        // Merge similar instructions
         return content
-            .replace(/\n{3,}/g, '\n\n') // Remove excessive newlines
-            .replace(/\s{2,}/g, ' ') // Remove excessive spaces
+            .replace(/\n{3,}/g, '\n\n')
+            .replace(/\s{2,}/g, ' ')
             .trim();
+    }
+
+    private createFailure(context: MutationContext, reason: string): MutationResult {
+        return {
+            success: false,
+            mutant: context.genome,
+            mutation: {
+                id: this.generateId(), timestamp: new Date(), chromosome: 'c1',
+                operation: this.name, before: '', after: '', diff: '',
+                trigger: 'drift-detected', reason, sandboxTested: false,
+                promoted: false, proposer: 'system',
+            },
+            description: reason,
+            expectedImprovement: 0,
+        };
     }
 
     private deepClone(genome: GenomeV2): GenomeV2 {
@@ -180,7 +261,6 @@ export class CompressInstructionsOperator implements IMutationOperator {
     }
 
     private computeDiff(before: unknown, after: unknown): string {
-        // Simple diff for now
         return `Changed ${JSON.stringify(before).length} → ${JSON.stringify(after).length} chars`;
     }
 }
@@ -193,13 +273,20 @@ export class CompressInstructionsOperator implements IMutationOperator {
  */
 export class ReorderConstraintsOperator implements IMutationOperator {
     name: MutationType = 'reorder_constraints';
-    description = 'Optimize constraint ordering for LLM processing';
+    description = 'Optimize constraint ordering for LLM processing (LLM-powered when available)';
     targetChromosome = 'c1' as const;
+
+    constructor(private llm?: LLMAdapter) {}
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
 
-        // Reorder genes by priority
+        // LLM-powered reordering (preferred)
+        if (this.llm) {
+            return this.mutateLLM(context, mutant);
+        }
+
+        // Fallback: static priority-based reordering
         mutant.chromosomes.c1.operations = this.reorderGenes(
             mutant.chromosomes.c1.operations
         );
@@ -224,16 +311,65 @@ export class ReorderConstraintsOperator implements IMutationOperator {
             mutant,
             mutation,
             description: 'Reordered constraints for better LLM comprehension',
-            expectedImprovement: 0.10, // 10% improvement
+            expectedImprovement: 0.10,
+        };
+    }
+
+    private async mutateLLM(context: MutationContext, mutant: GenomeV2): Promise<MutationResult> {
+        const genes = mutant.chromosomes.c1.operations;
+        const geneList = genes.map((g, i) => `[${i}] CATEGORY: ${g.category} | FITNESS: ${g.fitness.composite.toFixed(2)} | SUCCESS: ${(g.successRate * 100).toFixed(0)}% | CONTENT: ${g.content.substring(0, 100)}...`).join('\n');
+
+        try {
+            const response = await this.llm!.chat([
+                { role: 'system', content: 'You are an LLM prompt optimization expert. LLMs give more weight to instructions at the beginning and end of prompts. High-priority, high-fitness instructions should be placed first. Low-performing instructions should be placed in the middle where they have less influence until they improve.' },
+                { role: 'user', content: `Analyze these ${genes.length} agent instructions and return the optimal ordering as a JSON array of indices.\n\nCurrent fitness metrics:\n- Overall quality: ${context.genome.fitness.quality.toFixed(2)}\n- Success rate: ${(context.genome.fitness.successRate * 100).toFixed(0)}%\n- Drift reason: ${context.reason}\n\nINSTRUCTIONS:\n${geneList}\n\nReturn ONLY a JSON array of indices in optimal order, e.g. [2,0,1,3]. No explanation.` },
+            ], { temperature: 0.3 });
+
+            const match = response.content.match(/\[[\d,\s]+\]/);
+            if (!match) {
+                // LLM didn't return valid JSON, fall back to static
+                mutant.chromosomes.c1.operations = this.reorderGenes(genes);
+            } else {
+                const order: number[] = JSON.parse(match[0]);
+                // Validate all indices exist
+                if (order.length === genes.length && order.every(i => i >= 0 && i < genes.length)) {
+                    mutant.chromosomes.c1.operations = order.map(i => genes[i]);
+                } else {
+                    mutant.chromosomes.c1.operations = this.reorderGenes(genes);
+                }
+            }
+        } catch {
+            mutant.chromosomes.c1.operations = this.reorderGenes(genes);
+        }
+
+        return {
+            success: true,
+            mutant,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: JSON.stringify(context.genome.chromosomes.c1),
+                after: JSON.stringify(mutant.chromosomes.c1),
+                diff: 'LLM-optimized gene ordering based on fitness and LLM attention patterns',
+                trigger: 'drift-detected',
+                reason: context.reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: 'LLM-optimized instruction ordering for maximum LLM comprehension',
+            expectedImprovement: 0.15,
         };
     }
 
     estimateImprovement(_context: MutationContext): number {
-        return 0.10; // Consistent 10% improvement
+        return 0.10;
     }
 
+    // ─── Static fallback ────────────────────────────────────
     private reorderGenes(genes: OperativeGene[]): OperativeGene[] {
-        // Priority order: tool-usage > reasoning > communication
         const priorityOrder: Record<string, number> = {
             'tool-usage': 1,
             'reasoning': 2,
@@ -267,13 +403,20 @@ export class ReorderConstraintsOperator implements IMutationOperator {
  */
 export class SafetyReinforcementOperator implements IMutationOperator {
     name: MutationType = 'safety_reinforcement';
-    description = 'Strengthen security and safety boundaries';
+    description = 'Strengthen security and safety boundaries (LLM-powered when available)';
     targetChromosome = 'c1' as const;
+
+    constructor(private llm?: LLMAdapter) {}
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
 
-        // Add safety checks to operative genes
+        // LLM-powered safety analysis (preferred)
+        if (this.llm) {
+            return this.mutateLLM(context, mutant);
+        }
+
+        // Fallback: static safety strings
         mutant.chromosomes.c1.operations = mutant.chromosomes.c1.operations.map((gene) =>
             this.reinforceGene(gene)
         );
@@ -298,20 +441,70 @@ export class SafetyReinforcementOperator implements IMutationOperator {
             mutant,
             mutation,
             description: 'Reinforced safety constraints',
-            expectedImprovement: 0.08, // 8% improvement
+            expectedImprovement: 0.08,
+        };
+    }
+
+    private async mutateLLM(context: MutationContext, mutant: GenomeV2): Promise<MutationResult> {
+        const purpose = context.genome.chromosomes.c0.identity.purpose;
+        const constraints = context.genome.chromosomes.c0.identity.constraints.join(', ');
+        const forbiddenTopics = context.genome.chromosomes.c0.security.forbiddenTopics.join(', ') || 'none specified';
+
+        for (let i = 0; i < mutant.chromosomes.c1.operations.length; i++) {
+            const gene = mutant.chromosomes.c1.operations[i];
+
+            try {
+                const response = await this.llm!.chat([
+                    { role: 'system', content: 'You are a security expert for AI agents. Analyze instructions for vulnerabilities and rewrite them with targeted safety reinforcements. Do NOT add generic safety platitudes — identify SPECIFIC risks in the instruction and add SPECIFIC mitigations.' },
+                    { role: 'user', content: `Analyze this AI agent instruction and rewrite it with targeted safety reinforcements.\n\nAGENT PURPOSE: ${purpose}\nCONSTRAINTS: ${constraints}\nFORBIDDEN TOPICS: ${forbiddenTopics}\nINTERVENTION RATE: ${(context.genome.fitness.interventionRate * 100).toFixed(0)}%\nDRIFT REASON: ${context.reason}\n\nCATEGORY: ${gene.category}\nCURRENT INSTRUCTION:\n${gene.content}\n\nRewrite the instruction with safety reinforcements integrated naturally (not appended). Return ONLY the reinforced instruction.` },
+                ], { temperature: 0.3 });
+
+                const reinforced = response.content.trim();
+                if (reinforced.length > 0 && reinforced !== gene.content) {
+                    mutant.chromosomes.c1.operations[i] = {
+                        ...gene,
+                        content: reinforced,
+                        tokenCount: estimateTokenCount(reinforced),
+                        version: (gene.version ?? 0) + 1,
+                        lastModified: new Date(),
+                    };
+                }
+            } catch {
+                // Keep original gene on LLM failure
+            }
+        }
+
+        return {
+            success: true,
+            mutant,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: JSON.stringify(context.genome.chromosomes.c1),
+                after: JSON.stringify(mutant.chromosomes.c1),
+                diff: 'LLM-analyzed vulnerabilities and integrated targeted safety reinforcements',
+                trigger: 'drift-detected',
+                reason: context.reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: 'LLM-reinforced safety with targeted mitigations based on vulnerability analysis',
+            expectedImprovement: 0.15,
         };
     }
 
     estimateImprovement(context: MutationContext): number {
-        // Higher improvement if intervention rate is high
         const interventionRate = context.genome.fitness.interventionRate;
-        return interventionRate * 0.15; // Up to 15% improvement
+        return interventionRate * 0.15;
     }
 
+    // ─── Static fallback ────────────────────────────────────
     private reinforceGene(gene: OperativeGene): OperativeGene {
         const reinforced = { ...gene };
 
-        // Add safety checks based on category
         if (gene.category === 'tool-usage') {
             reinforced.content += '\n\nSAFETY: Always validate inputs before tool execution.';
         } else if (gene.category === 'coding-patterns') {
@@ -339,13 +532,20 @@ export class SafetyReinforcementOperator implements IMutationOperator {
  */
 export class ToolSelectionBiasOperator implements IMutationOperator {
     name: MutationType = 'tool_selection_bias';
-    description = 'Adjust tool usage patterns based on performance';
+    description = 'Adjust tool usage patterns based on performance (LLM-powered when available)';
     targetChromosome = 'c1' as const;
+
+    constructor(private llm?: LLMAdapter) {}
 
     async mutate(context: MutationContext): Promise<MutationResult> {
         const mutant = this.deepClone(context.genome);
 
-        // Adjust tool selection in operative genes
+        // LLM-powered tool optimization (preferred)
+        if (this.llm) {
+            return this.mutateLLM(context, mutant);
+        }
+
+        // Fallback: static bias adjustment
         for (let i = 0; i < mutant.chromosomes.c1.operations.length; i++) {
             const gene = mutant.chromosomes.c1.operations[i];
             if (gene.category === 'tool-usage') {
@@ -373,18 +573,86 @@ export class ToolSelectionBiasOperator implements IMutationOperator {
             mutant,
             mutation,
             description: 'Optimized tool usage patterns',
-            expectedImprovement: 0.12, // 12% improvement
+            expectedImprovement: 0.12,
+        };
+    }
+
+    private async mutateLLM(context: MutationContext, mutant: GenomeV2): Promise<MutationResult> {
+        const allGenes = mutant.chromosomes.c1.operations;
+        const toolGenes = allGenes.filter(g => g.category === 'tool-usage');
+
+        if (toolGenes.length === 0) {
+            return {
+                success: true, mutant, mutation: {
+                    id: this.generateId(), timestamp: new Date(), chromosome: 'c1',
+                    operation: this.name, before: '', after: '', diff: 'No tool-usage genes to optimize',
+                    trigger: 'drift-detected', reason: context.reason, sandboxTested: false,
+                    promoted: false, proposer: 'system',
+                },
+                description: 'No tool-usage genes found',
+                expectedImprovement: 0,
+            };
+        }
+
+        const performanceReport = toolGenes.map(g =>
+            `- "${g.content.substring(0, 80)}..." → success: ${(g.successRate * 100).toFixed(0)}%, used: ${g.usageCount} times, fitness: ${g.fitness.composite.toFixed(2)}`
+        ).join('\n');
+
+        for (let i = 0; i < mutant.chromosomes.c1.operations.length; i++) {
+            const gene = mutant.chromosomes.c1.operations[i];
+            if (gene.category !== 'tool-usage') continue;
+
+            try {
+                const response = await this.llm!.chat([
+                    { role: 'system', content: 'You are an expert in AI agent tool usage optimization. Rewrite tool instructions based on real performance data. If a tool has low success rate, rewrite the instruction to narrow its use cases. If high success rate, reinforce and expand. Do NOT just append advice — rewrite the entire instruction.' },
+                    { role: 'user', content: `Rewrite this tool instruction based on real performance data.\n\nTOOL PERFORMANCE ACROSS ALL TOOLS:\n${performanceReport}\n\nTHIS TOOL'S METRICS:\n- Success rate: ${(gene.successRate * 100).toFixed(0)}%\n- Usage count: ${gene.usageCount}\n- Fitness: ${gene.fitness.composite.toFixed(2)}\n\nCURRENT INSTRUCTION:\n${gene.content}\n\nDRIFT REASON: ${context.reason}\n\nRewrite the instruction to optimize based on this data. Return ONLY the rewritten instruction.` },
+                ], { temperature: 0.5 });
+
+                const optimized = response.content.trim();
+                if (optimized.length > 0 && optimized !== gene.content) {
+                    mutant.chromosomes.c1.operations[i] = {
+                        ...gene,
+                        content: optimized,
+                        tokenCount: estimateTokenCount(optimized),
+                        version: (gene.version ?? 0) + 1,
+                        lastModified: new Date(),
+                    };
+                }
+            } catch {
+                // Keep original on failure
+            }
+        }
+
+        return {
+            success: true,
+            mutant,
+            mutation: {
+                id: this.generateId(),
+                timestamp: new Date(),
+                chromosome: 'c1',
+                operation: this.name,
+                before: JSON.stringify(context.genome.chromosomes.c1),
+                after: JSON.stringify(mutant.chromosomes.c1),
+                diff: 'LLM-optimized tool instructions based on real performance data',
+                trigger: 'drift-detected',
+                reason: context.reason,
+                sandboxTested: false,
+                promoted: false,
+                proposer: 'system',
+            },
+            description: 'LLM-rewritten tool instructions based on success/failure patterns',
+            expectedImprovement: 0.18,
         };
     }
 
     estimateImprovement(_context: MutationContext): number {
-        return 0.12; // Consistent 12% improvement
+        return 0.12;
     }
 
+    // ─── Static fallback ────────────────────────────────────
     private adjustToolBias(gene: OperativeGene): OperativeGene {
         let content = gene.content;
 
-        // Favor high-success-rate tools
         if (gene.successRate > 0.8) {
             content += '\n\nPRIORITY: Prefer this tool for similar tasks (high success rate).';
         } else if (gene.successRate < 0.5) {
@@ -593,12 +861,12 @@ Return ONLY the compressed instruction, nothing else.`,
 export class MutationEngine {
     private operators: Map<MutationType, IMutationOperator> = new Map();
 
-    constructor() {
-        // Register all operators
-        this.registerOperator(new CompressInstructionsOperator());
-        this.registerOperator(new ReorderConstraintsOperator());
-        this.registerOperator(new SafetyReinforcementOperator());
-        this.registerOperator(new ToolSelectionBiasOperator());
+    constructor(llm?: LLMAdapter) {
+        // Register all operators (LLM-powered when available, regex fallback otherwise)
+        this.registerOperator(new CompressInstructionsOperator(llm));
+        this.registerOperator(new ReorderConstraintsOperator(llm));
+        this.registerOperator(new SafetyReinforcementOperator(llm));
+        this.registerOperator(new ToolSelectionBiasOperator(llm));
     }
 
     /**
