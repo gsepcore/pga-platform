@@ -63,6 +63,7 @@ import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { PurposeLock } from './firewall/PurposeLock.js';
 import { AnomalyDetector, type Anomaly } from './firewall/AnomalyDetector.js';
+import { GSEPMiddleware, type MiddlewareOptions } from './middleware/GSEPMiddleware.js';
 import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
@@ -630,6 +631,26 @@ export class GSEP {
                 + `  npm install gsep`,
             );
         }
+    }
+
+    /**
+     * Create a middleware instance for existing agents (OpenClaw, custom, etc.)
+     *
+     * Two hooks: `before()` enhances the prompt, `after()` observes the result.
+     * Auto-detects LLM provider and uses the cheapest model for internal ops.
+     *
+     * @example
+     * ```typescript
+     * const gsep = await GSEP.middleware();
+     *
+     * // In your agent's flow:
+     * const { prompt } = await gsep.before(originalPrompt, { message: userMsg, userId });
+     * const response = await myAgent.callLLM(prompt);
+     * await gsep.after(response, { userId, quality: 0.85 });
+     * ```
+     */
+    static async middleware(options?: MiddlewareOptions): Promise<GSEPMiddleware> {
+        return GSEPMiddleware.create(options);
     }
 
     /**

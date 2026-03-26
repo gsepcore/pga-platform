@@ -28,6 +28,16 @@
 export { GSEP, GenomeInstance } from './GSEP.js';
 export type { GSEPConfig, QuickStartOptions, LLMProvider } from './GSEP.js';
 
+// ─── Middleware (Two-Hook Integration) ──────────────────
+
+export { GSEPMiddleware } from './middleware/GSEPMiddleware.js';
+export type {
+    MiddlewareOptions,
+    BeforeContext,
+    AfterContext,
+    BeforeResult,
+} from './middleware/GSEPMiddleware.js';
+
 // ─── Wrap (Universal Middleware) ────────────────────────
 
 export { WrappedAgent } from './wrap/WrappedAgent.js';
