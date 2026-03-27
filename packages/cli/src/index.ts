@@ -50,6 +50,21 @@ program
         await init(options);
     });
 
+// ─── SERVE Command ─────────────────────────────────────────
+
+program
+    .command('serve')
+    .description('Start GSEP as an LLM proxy server (for n8n, Retell AI, etc.)')
+    .option('-p, --port <number>', 'Server port', '3000')
+    .option('--host <address>', 'Bind address', '0.0.0.0')
+    .option('--purpose <text>', 'Agent purpose (enables Purpose Lock)')
+    .option('--allowed-topics <topics>', 'Comma-separated allowed topics')
+    .option('--forbidden-topics <topics>', 'Comma-separated forbidden topics')
+    .action(async (options) => {
+        const { serve } = await import('./commands/serve.js');
+        await serve(options);
+    });
+
 // ─── DOCTOR Command ─────────────────────────────────────────
 
 program
