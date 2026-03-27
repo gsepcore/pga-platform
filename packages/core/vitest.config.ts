@@ -32,6 +32,7 @@ export default defineConfig({
         'src/core/DNAProfile.ts',
         'src/core/FitnessTracker.ts',
         'src/core/PromptAssembler.ts',
+
       ],
       thresholds: {
         lines: 80,
