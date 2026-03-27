@@ -334,23 +334,66 @@ function generateAgentFile(config: ProjectConfig): string {
         autoMutateOnDrift: true,
       },`;
 
-    return `import type { GSEP, GenomeInstance } from '@gsep/core';
+    const mode = config.gsepMode ?? 'quickstart';
+
+    // Modern agent.ts for middleware mode
+    if (mode === 'middleware' || mode === 'middleware-observer') {
+        return `/**
+ * GSEP Middleware Integration
+ *
+ * Your agent keeps its own runtime. GSEP enhances it with two hooks.
+ * Detected framework: ${config.detectedFramework ?? 'unknown'}
+ */
+
+// Import your agent here:
+// import { myAgent } from './my-agent.js';
+
+export const AGENT_PURPOSE = '${coreIdentity}';
+export const AGENT_CAPABILITIES = '${capabilities}';
+`;
+    }
+
+    // Modern agent.ts for quickstart mode
+    return `/**
+ * Agent Configuration
+ *
+ * Customize your GSEP-powered agent here.
+ * Purpose: ${coreIdentity}
+ */
+
+export const AGENT_PURPOSE = '${coreIdentity}';
+export const AGENT_CAPABILITIES = '${capabilities}';
 
 /**
- * Setup the agent genome with initial configuration
+ * Optional: Register custom skills
  */
-export async function setupAgent(gsep: GSEP): Promise<GenomeInstance> {
-  console.log('🧬 Creating agent genome...\\n');
+export function registerCustomSkills(agent: import('gsep').GenomeInstance) {
+  // Example: register an inline skill
+  // agent.registerSkill('check-inventory', 'Check product inventory', {
+  //   type: 'object',
+  //   properties: { productId: { type: 'string' } },
+  // }, async (params) => {
+  //   const res = await fetch(\`https://api.example.com/inventory/\${params.productId}\`);
+  //   return await res.text();
+  // });
 
-  const genome = await gsep.createGenome({
-    name: 'my-agent',
-    config: {${autonomousConfig}
-    },
-  });
+  // Example: connect an MCP server
+  // await agent.connectMCPServer('http://localhost:3001/mcp');
+}
 
-  console.log('✅ Genome created with ${config.livingAgent ? '10 cognitive layers' : 'evolution enabled'}\\n');
-
-  return genome;
+/**
+ * Optional: Register proactive tasks
+ */
+export function registerProactiveTasks(agent: import('gsep').GenomeInstance) {
+  // Example: monitor service health every 5 minutes
+  // agent.addProactiveTask({
+  //   id: 'health-check',
+  //   name: 'Service Health Monitor',
+  //   instruction: 'Check if the main API is responding. Alert if down.',
+  //   intervalMs: 300000,
+  //   notify: true,
+  //   priority: 10,
+  // });
 }
 `;
 }

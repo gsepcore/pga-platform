@@ -30,8 +30,12 @@ export type GSEPEventType =
     | 'immune:threat'
     | 'gene:updated'
     | 'purpose:rejected'
+    | 'purpose:accepted'
     | 'emotion:escalation'
-    | 'anomaly:detected';
+    | 'anomaly:detected'
+    | 'skill:registered'
+    | 'proactive:started'
+    | 'proactive:completed';
 
 export interface GSEPEvent<T = unknown> {
     type: GSEPEventType;

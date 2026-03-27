@@ -138,10 +138,86 @@ body {
 .stat-value.purple { color: var(--purple); }
 .stat-value.cyan { color: var(--cyan); }
 
-/* ─── App Layout (Sidebar + Main) ────────── */
+/* ─── App Layout (Sidebar + Main + Right Panel) ── */
 .app-layout {
     display: flex;
     min-height: calc(100vh - 120px);
+}
+
+/* ─── Right Sidebar (Intelligence Panel) ───── */
+.intel-sidebar {
+    width: 280px;
+    min-width: 280px;
+    border-left: 1px solid var(--border);
+    background: var(--bg-card);
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+    padding: 16px;
+}
+.intel-sidebar::-webkit-scrollbar { width: 4px; }
+.intel-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.intel-section {
+    margin-bottom: 20px;
+}
+.intel-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+}
+.intel-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+}
+.intel-stat:last-child { border-bottom: none; }
+.intel-stat-label { color: var(--text-muted); }
+.intel-stat-value { font-weight: 600; color: var(--text); font-family: var(--mono); }
+.intel-stat-value.good { color: var(--green); }
+.intel-stat-value.warning { color: var(--amber); }
+.intel-stat-value.danger { color: var(--red); }
+.intel-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.intel-badge.active { background: var(--green-dim); color: var(--green); }
+.intel-badge.inactive { background: var(--border); color: var(--text-muted); }
+.intel-skill {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    margin-bottom: 4px;
+    background: var(--bg-hover);
+    border-radius: 6px;
+    font-size: 12px;
+}
+.intel-skill-name { color: var(--text); }
+.intel-skill-rate { font-family: var(--mono); font-size: 11px; }
+.intel-anomaly {
+    padding: 8px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    border-left: 3px solid var(--amber);
+    background: var(--amber-dim);
+}
+.intel-anomaly.critical { border-left-color: var(--red); background: var(--red-dim); }
+.intel-proactive {
+    padding: 8px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    background: var(--purple-dim);
+    border-left: 3px solid var(--purple);
 }
 
 /* ─── Gene Sidebar ───────────────────────── */
@@ -821,11 +897,12 @@ body {
     .app-layout {
         flex-direction: column;
     }
-    .gene-sidebar {
+    .gene-sidebar, .intel-sidebar {
         width: 100%;
         min-width: 100%;
         max-height: none;
         border-right: none;
+        border-left: none;
         border-bottom: 1px solid var(--border);
     }
     .gene-layer-body {
@@ -1433,6 +1510,110 @@ body {
 </div>
 </div><!-- /tab-marketplace -->
 
+    </div><!-- /main -->
+
+    <!-- Intelligence Sidebar (Right) -->
+    <aside class="intel-sidebar" id="intel-sidebar">
+
+        <!-- Purpose Lock -->
+        <div class="intel-section">
+            <div class="intel-title">🎯 Purpose Lock</div>
+            <div id="intel-purpose-status">
+                <div class="intel-stat">
+                    <span class="intel-stat-label">Status</span>
+                    <span id="intel-purpose-active" class="intel-badge inactive">Inactive</span>
+                </div>
+                <div class="intel-stat">
+                    <span class="intel-stat-label">On-Purpose</span>
+                    <span id="intel-purpose-on" class="intel-stat-value">0</span>
+                </div>
+                <div class="intel-stat">
+                    <span class="intel-stat-label">Rejected</span>
+                    <span id="intel-purpose-rejected" class="intel-stat-value">0</span>
+                </div>
+                <div class="intel-stat">
+                    <span class="intel-stat-label">Deviation Rate</span>
+                    <span id="intel-purpose-rate" class="intel-stat-value">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Anomaly Detection -->
+        <div class="intel-section">
+            <div class="intel-title">🚨 Anomaly Detection</div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Analyzed</span>
+                <span id="intel-anomaly-total" class="intel-stat-value">0</span>
+            </div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Detected</span>
+                <span id="intel-anomaly-detected" class="intel-stat-value good">0</span>
+            </div>
+            <div id="intel-anomaly-list"></div>
+        </div>
+
+        <!-- Skills -->
+        <div class="intel-section">
+            <div class="intel-title">🔧 Skills</div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Registered</span>
+                <span id="intel-skills-count" class="intel-stat-value">0</span>
+            </div>
+            <div id="intel-skills-list"></div>
+        </div>
+
+        <!-- Proactive Engine -->
+        <div class="intel-section">
+            <div class="intel-title">⚡ Proactive Engine</div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Status</span>
+                <span id="intel-proactive-status" class="intel-badge inactive">Stopped</span>
+            </div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Tasks</span>
+                <span id="intel-proactive-tasks" class="intel-stat-value">0</span>
+            </div>
+            <div id="intel-proactive-results"></div>
+        </div>
+
+        <!-- Weekly Report Summary -->
+        <div class="intel-section">
+            <div class="intel-title">📊 Weekly Report</div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Conversations</span>
+                <span id="intel-report-conversations" class="intel-stat-value">0</span>
+            </div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Quality Trend</span>
+                <span id="intel-report-trend" class="intel-stat-value">—</span>
+            </div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">ROI</span>
+                <span id="intel-report-roi" class="intel-stat-value">—</span>
+            </div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Threats Blocked</span>
+                <span id="intel-report-threats" class="intel-stat-value good">0</span>
+            </div>
+        </div>
+
+        <!-- Emotional State -->
+        <div class="intel-section">
+            <div class="intel-title">💭 Emotional Intelligence</div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Last Emotion</span>
+                <span id="intel-emotion-primary" class="intel-stat-value">—</span>
+            </div>
+            <div class="intel-stat">
+                <span class="intel-stat-label">Escalations</span>
+                <span id="intel-emotion-escalations" class="intel-stat-value good">0</span>
+            </div>
+        </div>
+
+    </aside>
+
+</div><!-- /app-layout -->
+
 <!-- Refund Modal -->
 <div id="mp-refund-modal" class="mp-modal-overlay">
     <div class="mp-modal">
@@ -1447,6 +1628,55 @@ body {
 
 <script>
 // ─── State ───────────────────────────────────────
+// ─── Intelligence Sidebar State ──────────────────────
+const intelState = {
+    purposeOn: 0,
+    purposeRejected: 0,
+    anomalyTotal: 0,
+    anomalyDetected: 0,
+    skillsCount: 0,
+    proactiveTasks: 0,
+    proactiveRunning: false,
+    conversations: 0,
+    emotionEscalations: 0,
+};
+
+function updateEl(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = String(value);
+}
+
+function updateIntelPurpose() {
+    updateEl('intel-purpose-on', intelState.purposeOn);
+    updateEl('intel-purpose-rejected', intelState.purposeRejected);
+    const total = intelState.purposeOn + intelState.purposeRejected;
+    const rate = total > 0 ? ((intelState.purposeRejected / total) * 100).toFixed(1) + '%' : '0%';
+    updateEl('intel-purpose-rate', rate);
+    const rateEl = document.getElementById('intel-purpose-rate');
+    if (rateEl) {
+        rateEl.className = 'intel-stat-value' + (intelState.purposeRejected > 0 ? ' warning' : ' good');
+    }
+}
+
+function addIntelAnomaly(data) {
+    updateEl('intel-anomaly-total', ++intelState.anomalyTotal);
+    const detEl = document.getElementById('intel-anomaly-detected');
+    if (detEl) {
+        detEl.textContent = String(intelState.anomalyDetected);
+        detEl.className = 'intel-stat-value' + (intelState.anomalyDetected > 0 ? ' danger' : ' good');
+    }
+    const list = document.getElementById('intel-anomaly-list');
+    if (list) {
+        const severity = data.severity || 'medium';
+        const cls = severity === 'critical' || severity === 'high' ? 'intel-anomaly critical' : 'intel-anomaly';
+        const el = document.createElement('div');
+        el.className = cls;
+        el.innerHTML = '<strong>' + (data.type || 'unknown') + '</strong><br>' + (data.description || '').substring(0, 100);
+        list.prepend(el);
+        while (list.children.length > 5) list.removeChild(list.lastChild);
+    }
+}
+
 const state = {
     connected: false,
     startTime: Date.now(),
@@ -1630,9 +1860,74 @@ function routeEvent(event) {
             }
             break;
 
+        case 'purpose:rejected':
+            intelState.purposeRejected++;
+            updateIntelPurpose();
+            addLog('🎯', 'Purpose Lock: <span class="amber">off-topic rejected</span> — "' + (data.userMessage || '').substring(0, 50) + '"');
+            break;
+
+        case 'purpose:accepted':
+            intelState.purposeOn++;
+            updateIntelPurpose();
+            const purposeBadge = document.getElementById('intel-purpose-active');
+            if (purposeBadge) { purposeBadge.className = 'intel-badge active'; purposeBadge.textContent = 'Active'; }
+            break;
+
+        case 'anomaly:detected':
+            intelState.anomalyDetected++;
+            addIntelAnomaly(data);
+            addLog('🚨', 'Anomaly: <span class="red">' + (data.type || 'unknown') + '</span> — ' + (data.description || '').substring(0, 80));
+            break;
+
+        case 'emotion:escalation':
+            intelState.emotionEscalations++;
+            updateEl('intel-emotion-primary', (data.emotion || '?') + ' (' + ((data.intensity || 0) * 100).toFixed(0) + '%)');
+            updateEl('intel-emotion-escalations', intelState.emotionEscalations);
+            addLog('💭', 'Emotional escalation: <span class="amber">' + (data.emotion || '?') + '</span> intensity ' + ((data.intensity || 0) * 100).toFixed(0) + '%');
+            break;
+
+        case 'skill:registered':
+            intelState.skillsCount++;
+            updateEl('intel-skills-count', intelState.skillsCount);
+            const skillsList = document.getElementById('intel-skills-list');
+            if (skillsList) {
+                const el = document.createElement('div');
+                el.className = 'intel-skill';
+                el.innerHTML = '<span class="intel-skill-name">' + (data.skill || '?') + '</span><span class="intel-skill-rate">new</span>';
+                skillsList.prepend(el);
+                while (skillsList.children.length > 8) skillsList.removeChild(skillsList.lastChild);
+            }
+            addLog('🔧', 'Skill registered: <span class="cyan">' + (data.skill || '?') + '</span> — ' + (data.description || '').substring(0, 60));
+            break;
+
+        case 'proactive:started':
+            intelState.proactiveRunning = true;
+            const proStatus = document.getElementById('intel-proactive-status');
+            if (proStatus) { proStatus.className = 'intel-badge active'; proStatus.textContent = 'Running'; }
+            addLog('⚡', 'Proactive Engine <span class="green">started</span>');
+            break;
+
+        case 'proactive:completed':
+            intelState.proactiveTasks++;
+            updateEl('intel-proactive-tasks', intelState.proactiveTasks);
+            const proResults = document.getElementById('intel-proactive-results');
+            if (proResults) {
+                const el = document.createElement('div');
+                el.className = 'intel-proactive';
+                el.innerHTML = '<strong>' + (data.taskName || data.taskId || '?') + '</strong><br>' + (data.summary || '').substring(0, 100);
+                proResults.prepend(el);
+                while (proResults.children.length > 5) proResults.removeChild(proResults.lastChild);
+            }
+            addLog('⚡', 'Proactive task: <span class="purple">' + (data.taskName || '?') + '</span> [' + (data.importance || '?') + ']');
+            break;
+
         default:
             addLog('📌', '<span class="text-muted">' + type + '</span>');
     }
+
+    // Update interaction count for right sidebar
+    intelState.conversations++;
+    updateEl('intel-report-conversations', intelState.conversations);
 }
 
 // ─── Gene Sidebar Rendering ─────────────────────

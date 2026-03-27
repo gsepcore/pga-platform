@@ -1618,6 +1618,11 @@ Ready to see what we can do together? 😊`,
 
                     return rejection;
                 }
+
+                // Message passed Purpose Lock — emit accepted event
+                this.events.emitSync('purpose:accepted', {
+                    genomeId: this.genome.id,
+                }, { genomeId: this.genome.id, userId: context.userId });
             }
 
             // ── C3 Firewall: scan user input before sending to LLM ──
@@ -3166,6 +3171,11 @@ Ready to see what we can do together? 😊`,
         execute: (params: Record<string, unknown>) => Promise<string>,
     ): void {
         this.skillRegistry.registerInline(name, description, inputSchema, execute);
+        this.events.emitSync('skill:registered', {
+            genomeId: this.genome.id,
+            skill: name,
+            description,
+        }, { genomeId: this.genome.id });
     }
 
     /**
@@ -3227,6 +3237,9 @@ Ready to see what we can do together? 😊`,
      */
     startProactiveEngine(): void {
         this.proactiveEngine?.start();
+        this.events.emitSync('proactive:started', {
+            genomeId: this.genome.id,
+        }, { genomeId: this.genome.id });
     }
 
     /**
@@ -3255,7 +3268,18 @@ Ready to see what we can do together? 😊`,
      * Run all proactive tasks once (manual trigger).
      */
     async runProactiveTasks(): Promise<ProactiveResult[]> {
-        return this.proactiveEngine?.runAll() ?? [];
+        const results = await (this.proactiveEngine?.runAll() ?? Promise.resolve([]));
+        for (const result of results) {
+            this.events.emitSync('proactive:completed', {
+                genomeId: this.genome.id,
+                taskId: result.taskId,
+                taskName: result.taskName,
+                shouldNotify: result.shouldNotify,
+                importance: result.importance,
+                summary: result.findings.substring(0, 200),
+            }, { genomeId: this.genome.id });
+        }
+        return results;
     }
 
     /**
