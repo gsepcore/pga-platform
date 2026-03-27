@@ -37,6 +37,16 @@ export type {
     RuntimeDetection,
 } from './middleware/RuntimeDetector.js';
 
+// ─── Serverless Adapter ────────────────────────────────
+
+export {
+    getServerlessGenome,
+    serverlessChat,
+    serverlessEvolve,
+    clearServerlessCache,
+} from './middleware/ServerlessAdapter.js';
+export type { ServerlessConfig } from './middleware/ServerlessAdapter.js';
+
 // ─── Middleware (Two-Hook Integration) ──────────────────
 
 export { GSEPMiddleware } from './middleware/GSEPMiddleware.js';

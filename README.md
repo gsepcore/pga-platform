@@ -56,71 +56,91 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 
 ---
 
-## 🚀 Install in Your Existing Agent (3 Steps)
+## 🚀 Get Started
 
-### Step 1: Install
+### Option 1: New Agent (One Line)
 
 ```bash
-# Pick your LLM provider:
-npm install @gsep/core @gsep/adapters-llm-anthropic  # Claude
-npm install @gsep/core @gsep/adapters-llm-openai      # GPT-4
-npm install @gsep/core @gsep/adapters-llm-google       # Gemini
-npm install @gsep/core @gsep/adapters-llm-ollama       # Local models (Llama, Mistral, etc.)
-npm install @gsep/core @gsep/adapters-llm-perplexity   # Perplexity (web search)
+npm install gsep
 ```
-
-### Step 2: Initialize GSEP (once, at startup)
 
 ```typescript
-// gsep-setup.ts — add this file to your project
-import { GSEP, InMemoryStorageAdapter } from '@gsep/core';
-import { ClaudeAdapter } from '@gsep/adapters-llm-anthropic';
+import { GSEP } from 'gsep';
 
-const llm = new ClaudeAdapter({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-  model: 'claude-sonnet-4-5-20250929',
-});
-
-const gsep = new GSEP({
-  llm,
-  storage: new InMemoryStorageAdapter(),  // For development/demos (data lost on restart)
-  // For production, use PostgreSQL (data persists, auto-creates 9 tables):
-  // storage: new PostgresAdapter({ connectionString: process.env.DATABASE_URL }),
-});
-await gsep.initialize();
-
-// Create the genome — this is your agent's evolving brain
-export const genome = await gsep.createGenome({
-  name: 'my-agent',
-  config: {
-    autonomous: {
-      continuousEvolution: true,   // Auto-evolve every N interactions
-      evolveEveryN: 10,
-      autoMutateOnDrift: true,     // Self-heal when performance drops
-      enableSelfModel: true,       // Agent knows its strengths/weaknesses
-      enablePatternMemory: true,   // Learns behavioral patterns
-    },
-  },
-});
+const agent = await GSEP.quickStart();
+const response = await agent.chat('Hello!', { userId: 'user-1' });
+// 27 intelligence systems active. Auto-detects your LLM from env vars.
 ```
 
-### Step 3: Replace your LLM call
+### Option 2: Upgrade Existing Chatbot
 
 ```typescript
-// BEFORE — direct LLM call in your agent:
-const response = await llm.chat(userMessage);
+import { GSEP } from 'gsep';
 
-// AFTER — route through GSEP:
-import { genome } from './gsep-setup.js';
+// Your existing function
+const myBot = async (msg: string) => callOpenAI(msg);
 
-const response = await genome.chat(userMessage, {
-  userId: user.id,
-  taskType: 'support',  // or 'coding', 'analysis', etc.
+// One line — now it's an autonomous agent
+const agent = await GSEP.upgrade(myBot, {
+  purpose: 'Customer support for Acme Corp',
 });
-// response is a string — drop-in replacement, same interface
 ```
 
-**That's it.** Your agent now evolves autonomously.
+### Option 3: Middleware for Complex Agents (OpenClaw, LangChain, etc.)
+
+```typescript
+import { GSEP } from 'gsep';
+
+const gsep = await GSEP.middleware();
+
+// In your agent's flow — two hooks, that's it:
+const { prompt } = await gsep.before(originalPrompt, { message: userMsg, userId });
+const response = await myAgent.callLLM(prompt);
+await gsep.after(response, { userId, quality: 0.85 });
+```
+
+### Option 4: No-Code Platforms (n8n, Retell AI, Voiceflow, etc.)
+
+```bash
+npx gsep serve --port 3000
+# Or with Docker:
+docker run -p 3000:3000 -e ANTHROPIC_API_KEY=sk-ant-... gsepcore/gsep
+```
+
+In your platform, change the API URL:
+```
+Before: https://api.openai.com
+After:  http://localhost:3000
+```
+
+That's it. Your agent now evolves autonomously.
+
+### Option 5: Serverless (Lambda, Vercel)
+
+```typescript
+import { serverlessChat } from 'gsep';
+
+export const handler = async (event) => {
+  const response = await serverlessChat({
+    llm: myLLMAdapter,
+    storage: myPostgresAdapter,  // Required — InMemory loses state
+  }, event.body.message, { userId: event.body.userId });
+
+  return { statusCode: 200, body: JSON.stringify({ response }) };
+};
+```
+
+---
+
+### Supported LLM Providers
+
+| Provider | Model | Auto-detect env var |
+|----------|-------|-------------------|
+| Anthropic Claude | Sonnet, Opus, Haiku | `ANTHROPIC_API_KEY` |
+| OpenAI | GPT-4, GPT-4o | `OPENAI_API_KEY` |
+| Google Gemini | Flash, Pro | `GOOGLE_API_KEY` |
+| Ollama (local) | Llama, Mistral, etc. | `OLLAMA_HOST` |
+| Perplexity | Sonar | `PERPLEXITY_API_KEY` |
 
 ---
 

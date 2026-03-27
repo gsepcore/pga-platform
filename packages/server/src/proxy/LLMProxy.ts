@@ -147,15 +147,39 @@ export class LLMProxy {
                 });
             }
 
-            if (body.stream) {
-                return reply.status(400).send({
-                    error: { message: 'Streaming not yet supported via GSEP proxy', type: 'invalid_request_error' },
-                });
-            }
-
             try {
                 const result = await this.processChat(body.messages);
 
+                // Streaming mode — SSE chunked delivery
+                if (body.stream) {
+                    const id = `chatcmpl-gsep-${Date.now()}`;
+                    const created = Math.floor(Date.now() / 1000);
+                    const model = body.model ?? this.config.llm.model;
+
+                    reply.raw.writeHead(200, {
+                        'Content-Type': 'text/event-stream',
+                        'Cache-Control': 'no-cache',
+                        'Connection': 'keep-alive',
+                    });
+
+                    const words = result.content.split(/(\s+)/);
+                    for (const word of words) {
+                        reply.raw.write(`data: ${JSON.stringify({
+                            id, object: 'chat.completion.chunk', created, model,
+                            choices: [{ index: 0, delta: { content: word }, finish_reason: null }],
+                        })}\n\n`);
+                    }
+
+                    reply.raw.write(`data: ${JSON.stringify({
+                        id, object: 'chat.completion.chunk', created, model,
+                        choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
+                    })}\n\n`);
+                    reply.raw.write('data: [DONE]\n\n');
+                    reply.raw.end();
+                    return;
+                }
+
+                // Non-streaming mode
                 const response: OpenAIResponse = {
                     id: `chatcmpl-gsep-${Date.now()}`,
                     object: 'chat.completion',

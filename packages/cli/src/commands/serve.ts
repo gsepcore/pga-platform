@@ -93,12 +93,6 @@ export async function serve(options: {
             });
         }
 
-        if (body.stream) {
-            return reply.status(400).send({
-                error: { message: 'Streaming not yet supported', type: 'invalid_request_error' },
-            });
-        }
-
         try {
             const userMessages = body.messages.filter(m => m.role === 'user');
             const lastMsg = userMessages[userMessages.length - 1]?.content ?? '';
@@ -111,6 +105,46 @@ export async function serve(options: {
             const promptTokens = body.messages.reduce((s, m) => s + Math.ceil(m.content.length / 4), 0);
             const completionTokens = Math.ceil(response.length / 4);
 
+            // Streaming mode — SSE chunked delivery
+            if (body.stream) {
+                const id = `chatcmpl-gsep-${Date.now()}`;
+                const created = Math.floor(Date.now() / 1000);
+                const model = body.model ?? llm.model;
+
+                reply.raw.writeHead(200, {
+                    'Content-Type': 'text/event-stream',
+                    'Cache-Control': 'no-cache',
+                    'Connection': 'keep-alive',
+                });
+
+                // Chunk the response into words for realistic streaming
+                const words = response.split(/(\s+)/);
+                for (const word of words) {
+                    const chunk = {
+                        id,
+                        object: 'chat.completion.chunk',
+                        created,
+                        model,
+                        choices: [{
+                            index: 0,
+                            delta: { content: word },
+                            finish_reason: null,
+                        }],
+                    };
+                    reply.raw.write(`data: ${JSON.stringify(chunk)}\n\n`);
+                }
+
+                // Send final chunk
+                reply.raw.write(`data: ${JSON.stringify({
+                    id, object: 'chat.completion.chunk', created, model,
+                    choices: [{ index: 0, delta: {}, finish_reason: 'stop' }],
+                })}\n\n`);
+                reply.raw.write('data: [DONE]\n\n');
+                reply.raw.end();
+                return;
+            }
+
+            // Non-streaming mode
             return reply.send({
                 id: `chatcmpl-gsep-${Date.now()}`,
                 object: 'chat.completion',
