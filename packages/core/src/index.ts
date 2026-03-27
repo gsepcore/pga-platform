@@ -28,6 +28,15 @@
 export { GSEP, GenomeInstance } from './GSEP.js';
 export type { GSEPConfig, QuickStartOptions, LLMProvider } from './GSEP.js';
 
+// ─── Runtime Detection ─────────────────────────────────
+
+export { detectRuntime } from './middleware/RuntimeDetector.js';
+export type {
+    RuntimeLevel,
+    GSEPMode,
+    RuntimeDetection,
+} from './middleware/RuntimeDetector.js';
+
 // ─── Middleware (Two-Hook Integration) ──────────────────
 
 export { GSEPMiddleware } from './middleware/GSEPMiddleware.js';

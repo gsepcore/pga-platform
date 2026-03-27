@@ -12,11 +12,9 @@ export { GSEPServer } from './GSEPServer.js';
 export type { GSEPServerConfig, RegisterGenomeOptions, GenomeEntry } from './GSEPServer.js';
 export { HMACVerifier } from './auth/HMACVerifier.js';
 
-// Backward compatibility aliases
-/** @deprecated Use GSEPServer instead */
-export { GSEPServer as PGAServer } from './GSEPServer.js';
-/** @deprecated Use GSEPServerConfig instead */
-export type { GSEPServerConfig as PGAServerConfig } from './GSEPServer.js';
+// LLM Proxy (for no-code platforms)
+export { LLMProxy } from './proxy/LLMProxy.js';
+export type { LLMProxyConfig } from './proxy/LLMProxy.js';
 
 // Re-export payment types for convenience
 export type {
