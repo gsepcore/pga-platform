@@ -13,6 +13,14 @@
 export { SecurityEventBus, type SecurityEvent, type SecurityEventType } from './SecurityEventBus.js';
 export { type SecurityPresetName, type SecurityConfig, getSecurityPreset } from './SecurityPresets.js';
 
+// Layer 1: Bridge
+export { GenomeSecurityBridge, type InboundResult, type OutboundResult, type ChannelTrustLevel } from './GenomeSecurityBridge.js';
+
+// Layer 2: Data Protection
+export { PIIRedactionEngine, type PIICategory, type PIIMatch, type RedactionResult } from './PIIRedactionEngine.js';
+export { DataClassifier, type DataClassification, type ClassificationResult } from './DataClassifier.js';
+export { LLMProxyLayer, type LLMAdapterLike, type ProxyStats } from './LLMProxyLayer.js';
+
 // Layer 3: Credential Vault
 export { KeychainAdapter } from './KeychainAdapter.js';
 export { KeyHierarchy, type DerivedKeys } from './KeyHierarchy.js';
