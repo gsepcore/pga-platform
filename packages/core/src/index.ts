@@ -801,6 +801,64 @@ export type { PresetName } from './presets/ConfigPresets.js';
 
 export { estimateTokenCount, tokenEfficiency, compressionRatio } from './utils/tokens.js';
 
+// ─── Genome Shield (Security) ────────────────────────────
+
+export {
+    // Layer 1: GSEP Integration
+    SecurityEventBus,
+    GenomeSecurityBridge,
+    getSecurityPreset,
+    // Layer 2: Data Protection
+    PIIRedactionEngine,
+    DataClassifier,
+    LLMProxyLayer,
+    // Layer 3: Credential Vault
+    KeychainAdapter,
+    KeyHierarchy,
+    EncryptedConfigStore,
+    SecretsMigrator,
+    // Layer 4: Skill Security
+    SkillManifest,
+    SkillSigner,
+    CapabilityBroker,
+    // Layer 5: Execution Control
+    CommandExecutionGuard,
+    FileSystemBoundary,
+    // Layer 6: Network Control
+    OutboundAllowlist,
+    NetworkAuditLogger,
+    // Layer 7: Audit & Compliance
+    TamperProofAuditLog,
+    DataAccessTracker,
+    ComplianceExporter,
+} from './security/index.js';
+
+export type {
+    SecurityEvent,
+    SecurityEventType,
+    SecurityConfig,
+    SecurityPresetName,
+    InboundResult,
+    OutboundResult,
+    ChannelTrustLevel,
+    PIICategory,
+    RedactionResult,
+    DataClassification,
+    SkillManifestData,
+    CapabilityType,
+    SkillSignature,
+    ExecRequest,
+    ExecResult,
+    FSAccess,
+    OutboundCheckResult,
+    AuditEntry,
+    DataAccessRecord,
+    DataAccessReport,
+    ExportResult,
+    ReportFormat,
+    ReportType,
+} from './security/index.js';
+
 // ─── Version ────────────────────────────────────────────
 
 export const VERSION = '0.8.0';
