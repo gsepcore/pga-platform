@@ -40,5 +40,7 @@ export { FileSystemBoundary, type FSAccess, type FSCheckResult } from './FileSys
 export { OutboundAllowlist, type OutboundCheckResult } from './OutboundAllowlist.js';
 export { NetworkAuditLogger, type NetworkLogEntry, type TrafficSummary } from './NetworkAuditLogger.js';
 
-// Layer 7: Audit
+// Layer 7: Audit & Compliance
 export { TamperProofAuditLog, type AuditEntry, type AuditEventType } from './TamperProofAuditLog.js';
+export { DataAccessTracker, type DataSource, type DataCategory, type DataAccessRecord, type DataAccessReport } from './DataAccessTracker.js';
+export { ComplianceExporter, type ReportFormat, type ReportType, type ExportResult } from './ComplianceExporter.js';
