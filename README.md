@@ -286,6 +286,16 @@ C0 is cryptographically immutable (SHA-256). C1 mutates slowly through an 8-stag
 
 GSEP ships with a 7-layer security architecture. **Zero new npm dependencies** — built entirely on `node:crypto` and macOS Keychain.
 
+### How Security Activates
+
+| Level | What you get | Config needed |
+|-------|-------------|---------------|
+| **Automatic** (every agent) | C3 Firewall (53 patterns), C4 Immune System (6 checks), PII Redaction (9 categories), Data Classification, Anomaly Detection | **None.** Active on every `chat()` call automatically. |
+| **Full Shield** (personal/SMB) | + Keychain vault, filesystem boundary, command guard, network allowlist, tamper-proof audit log | `initGenomeShield({ profile: 'secure' })` |
+| **Enterprise** (teams/compliance) | + RBAC (5 roles), MFA (TOTP), enterprise policies, secret rotation, GDPR engine, SOC 2 controls | `initGenomeShield({ profile: 'secure', enterprise: { rbac: true, mfa: true, gdpr: true } })` |
+
+> **Any agent that calls `GSEP.quickStart()` or `genome.chat()` is already protected — no setup required.**
+
 ```
 +=============================================+
 |  Layer 7: AUDIT & COMPLIANCE               |
