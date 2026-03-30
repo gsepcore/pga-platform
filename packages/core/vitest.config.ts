@@ -33,13 +33,6 @@ export default defineConfig({
         'src/core/FitnessTracker.ts',
         'src/core/PromptAssembler.ts',
 
-        // Enterprise security modules — tested separately, exclude from coverage
-        'src/security/RBACEngine.ts',
-        'src/security/MFAProvider.ts',
-        'src/security/EnterprisePolicyEngine.ts',
-        'src/security/SecretRotationEngine.ts',
-        'src/security/GDPREngine.ts',
-        'src/security/SOC2Controls.ts',
 
       ],
       thresholds: {
