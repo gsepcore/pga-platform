@@ -4,11 +4,12 @@
 
 <br>
 
-# 🧬 GSEP — Make Your AI Agent Self-Evolving
+# GSEP — Make Your AI Agent Self-Evolving
 
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/@gsep/core?style=for-the-badge)](https://www.npmjs.com/package/@gsep/core)
 [![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/gsep/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/gsep/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/Tests-1931_passing-brightgreen?style=for-the-badge)]()
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
 [![Survival Demo](https://img.shields.io/badge/Survival_Demo-Interactive-blueviolet?style=for-the-badge)](https://gsepcore.com/survival)
@@ -16,11 +17,24 @@
 
 **Drop-in upgrade that makes any AI agent learn, adapt, and evolve autonomously.**
 
-Created by **Luis Alfredo Velasquez Duran** | Germany, 2025–2026
+Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 
 [Website](https://gsepcore.com) · [Documentation](https://gsepcore.com) · [GitHub](https://github.com/gsepcore/gsep) · [Product Hunt](https://www.producthunt.com/products/gsep-genomic-self-evolving-prompt)
 
 </div>
+
+---
+
+## At a Glance
+
+| Metric | Value |
+|--------|-------|
+| Tests passing | **1931** |
+| Security modules | **22** |
+| Prompt injection patterns | **53** |
+| PII categories (with Luhn) | **9** |
+| Security profiles | **4** |
+| New npm dependencies | **0** |
 
 ---
 
@@ -32,12 +46,12 @@ GSEP wraps your existing agent's LLM calls with a genomic evolution layer. Your 
 
 ```
 YOUR AGENT (before)                YOUR AGENT (after GSEP)
-┌──────────────────┐               ┌──────────────────┐
-│  Static prompt   │               │  🧬 Evolving prompt  │
-│  Same for all    │   + GSEP →   │  Adapts per user      │
-│  Never improves  │               │  Auto-improves        │
-│  Manual tuning   │               │  Self-healing         │
-└──────────────────┘               └──────────────────┘
+┌──────────────────┐               ┌──────────────────────────┐
+│  Static prompt   │               │  Evolving prompt         │
+│  Same for all    │   + GSEP ->   │  Adapts per user         │
+│  Never improves  │               │  Auto-improves           │
+│  Manual tuning   │               │  Self-healing            │
+└──────────────────┘               └──────────────────────────┘
 ```
 
 <div align="center">
@@ -56,7 +70,7 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 
 ---
 
-## 🚀 Get Started
+## Get Started
 
 ### Option 1: New Agent (One Line)
 
@@ -135,7 +149,7 @@ export const handler = async (event) => {
 ### Supported LLM Providers
 
 | Provider | Model | Auto-detect env var |
-|----------|-------|-------------------|
+|----------|-------|---------------------|
 | Anthropic Claude | Sonnet, Opus, Haiku | `ANTHROPIC_API_KEY` |
 | OpenAI | GPT-4, GPT-4o | `OPENAI_API_KEY` |
 | Google Gemini | Flash, Pro | `GOOGLE_API_KEY` |
@@ -144,7 +158,7 @@ export const handler = async (event) => {
 
 ---
 
-## ▶️ Try It Now (Zero Cost)
+## Try It Now (Zero Cost)
 
 See GSEP's evolution pipeline in action — no API key, no cost:
 
@@ -202,7 +216,7 @@ ANTHROPIC_API_KEY=sk-... npx tsx examples/hero-demo.ts anthropic
 
 ---
 
-## What changes after installing GSEP?
+## What Changes After Installing GSEP?
 
 | Before GSEP | After GSEP |
 |------------|-----------|
@@ -215,26 +229,281 @@ ANTHROPIC_API_KEY=sk-... npx tsx examples/hero-demo.ts anthropic
 
 ---
 
-## 🧬 How It Works
+## How It Works
 
 Every interaction flows through a **four-phase evolution cycle**:
 
 ```
-User message → genome.chat()
-      ↓
+User message -> genome.chat()
+      |
 1. TRANSCRIPTION — Log interaction + extract context
 2. VARIATION     — Generate candidate prompt mutations
 3. SIMULATION    — Test mutations in sandbox (safe, no side effects)
 4. SELECTION     — Deploy only if fitness improves
-      ↓
-Improved prompt ← stored in genome
+      |
+Improved prompt <- stored in genome
 ```
 
 Mutations are safe: tested before deployment, rolled back on regression, and C0 (core identity) never mutates.
 
 ---
 
-## 🗑️ Uninstall GSEP
+## Architecture
+
+### Five-Layer Chromosome Model
+
+GSEP wraps your agent's prompts in a five-layer chromosome structure:
+
+```
++-------------------------------------------+
+|  C0: Immutable DNA                        |
+|  (Security, Ethics, Core Identity)        |
+|  NEVER mutates — SHA-256 protected        |
++-------------------------------------------+
+|  C1: Operative Genes                      |
+|  (Tool Usage, Coding Patterns)            |
+|  SLOW mutation (sandbox-tested)           |
++-------------------------------------------+
+|  C2: Epigenomes                           |
+|  (User Preferences, Style)               |
+|  FAST mutation (adapts daily)             |
++-------------------------------------------+
+|  C3: Content Firewall                     |
+|  (Prompt Injection Defense)               |
+|  53 patterns — SHA-256 core               |
++-------------------------------------------+
+|  C4: Behavioral Immune System             |
+|  (Output Infection Detection)             |
+|  6 checks — auto-heal + quarantine        |
++-------------------------------------------+
+```
+
+C0 is cryptographically immutable (SHA-256). C1 mutates slowly through an 8-stage promotion gate. C2 adapts fast based on user interactions. C3 and C4 provide input/output security.
+
+---
+
+## Genome Shield — Enterprise Security
+
+GSEP ships with a 7-layer security architecture. **Zero new npm dependencies** — built entirely on `node:crypto` and macOS Keychain.
+
+```
++=============================================+
+|  Layer 7: AUDIT & COMPLIANCE               |
+|  TamperProofAuditLog | DataAccessTracker   |
+|  ComplianceExporter                        |
++---------------------------------------------+
+|  Layer 6: NETWORK CONTROL                  |
+|  OutboundAllowlist | NetworkAuditLogger    |
++---------------------------------------------+
+|  Layer 5: EXECUTION CONTROL                |
+|  CommandExecutionGuard | FileSystemBoundary|
++---------------------------------------------+
+|  Layer 4: SKILL & CAPABILITY               |
+|  SkillManifest | SkillSigner               |
+|  CapabilityBroker                          |
++---------------------------------------------+
+|  Layer 3: SECRETS MANAGEMENT               |
+|  KeychainAdapter | KeyHierarchy            |
+|  EncryptedConfigStore | SecretsMigrator    |
++---------------------------------------------+
+|  Layer 2: DATA PROTECTION                  |
+|  PIIRedactionEngine | DataClassifier       |
+|  LLMProxyLayer                             |
++---------------------------------------------+
+|  Layer 1: EVENT BUS & PRESETS              |
+|  SecurityEventBus | SecurityPresets        |
+|  GenomeSecurityBridge                      |
++=============================================+
+```
+
+### All 22 Security Modules
+
+| Layer | Module | Purpose |
+|-------|--------|---------|
+| 1 | SecurityEventBus | Central event routing for all security events |
+| 1 | SecurityPresets | Pre-configured security profiles |
+| 1 | GenomeSecurityBridge | Connects Genome Shield to the chromosome model |
+| 2 | PIIRedactionEngine | Detects and redacts 9 PII categories with Luhn validation |
+| 2 | DataClassifier | Labels data sensitivity (public, internal, confidential, restricted) |
+| 2 | LLMProxyLayer | Intercepts LLM calls to strip sensitive data before transmission |
+| 3 | KeychainAdapter | macOS Keychain integration for credential storage |
+| 3 | KeyHierarchy | Derived key management (master -> per-genome -> per-session) |
+| 3 | EncryptedConfigStore | AES-256-GCM encrypted configuration at rest |
+| 3 | SecretsMigrator | Migrates plaintext `.env` secrets to Keychain |
+| 4 | SkillManifest | Declares required permissions per skill |
+| 4 | SkillSigner | Cryptographic signing and verification for skill packages |
+| 4 | CapabilityBroker | Grants/revokes capabilities at runtime based on trust level |
+| 5 | CommandExecutionGuard | Allowlist-based shell command execution control |
+| 5 | FileSystemBoundary | Restricts file access to declared directories only |
+| 6 | OutboundAllowlist | Domain-level allowlist for all outbound HTTP requests |
+| 6 | NetworkAuditLogger | Logs every outbound connection with payload hashes |
+| 7 | TamperProofAuditLog | Hash-chain audit log (each entry references the previous hash) |
+| 7 | DataAccessTracker | Tracks who accessed what data and when |
+| 7 | ComplianceExporter | Exports audit trails in SOC 2 / GDPR-compatible formats |
+
+### Security Profiles
+
+| Profile | PII Redaction | Keychain | Execution Guard | Outbound Allowlist | Audit Log | Use Case |
+|---------|:---:|:---:|:---:|:---:|:---:|---------|
+| `paranoid` | ON | ON | ON | ON | ON | Regulated industries, healthcare, finance |
+| `secure` **(DEFAULT)** | ON | ON | ON | OFF | ON | Production SaaS, customer-facing agents |
+| `standard` | ON | OFF | OFF | OFF | OFF | Internal tools, staging environments |
+| `developer` | OFF | OFF | OFF | OFF | OFF | Local development, rapid prototyping |
+
+```typescript
+import { GSEP } from 'gsep';
+
+const agent = await GSEP.quickStart({
+  securityProfile: 'paranoid', // or 'secure' (default), 'standard', 'developer'
+});
+```
+
+---
+
+## GSEP vs Alternatives
+
+| Capability | GSEP | ChatGPT Desktop | Claude Desktop | Cursor | GitHub Copilot |
+|-----------|:----:|:---:|:---:|:---:|:---:|
+| PII redaction (9 categories + Luhn) | Yes | No | No | No | No |
+| Prompt injection firewall | 53 patterns | Basic | Basic | None | None |
+| Credential storage | Keychain | N/A | N/A | .env | .env |
+| Audit log | Hash-chain | None | None | None | None |
+| Execution control | Allowlist | None | None | None | None |
+| Output infection detection | 6 checks | None | None | None | None |
+| Self-evolving prompts | Yes | No | No | No | No |
+| Drift detection + auto-heal | Yes | No | No | No | No |
+| Open source (MIT) | Yes | No | No | No | No |
+
+---
+
+## Integration with Genome
+
+GSEP is the security and evolution SDK. [Genome](https://github.com/gsepcore/genome) is a reference client agent built on top of it.
+
+```typescript
+npm install @gsep/core
+```
+
+```typescript
+import { GenomeSecurityBridge } from '@gsep/core/security';
+
+// Bridge connects all 7 security layers to your genome instance
+const bridge = new GenomeSecurityBridge(genome, {
+  profile: 'secure',
+});
+```
+
+If you are building your own agent, you only need `@gsep/core`. Genome is optional.
+
+---
+
+## Capabilities
+
+### Core (enabled by default)
+
+- **Autonomous Evolution** — Prompts improve every N interactions without manual tuning
+- **Drift Detection** — Auto-corrects when agent performance degrades
+- **SelfModel** — Agent tracks its own strengths and weaknesses
+- **Pattern Memory** — Learns behavioral patterns to predict user needs
+- **Gene Bank + THK** — Agents share successful prompt mutations across genomes
+
+### Security (enabled by default)
+
+<details>
+<summary><strong>C3 Content Firewall (v0.8.0)</strong></summary>
+
+Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 scans **all** external content before it enters the system prompt.
+
+- **53 detection patterns** across 7 threat categories (prompt injection, role hijacking, data exfiltration, encoding evasion, privilege escalation, instruction override, content smuggling)
+- **Trust Registry** — 4 trust levels (system, validated, external, untrusted) with per-source scan policies
+- **Content Tagging** — Spotlighting-inspired trust delimiters teach the LLM to treat external content as data, not instructions
+- **SHA-256 integrity** — Core patterns are cryptographically immutable, like C0
+- **Multi-language** — Detects injections in English, Spanish, German, French, and Chinese
+- **Zero dependencies** — Uses only Node.js `crypto`
+
+</details>
+
+<details>
+<summary><strong>C4 Behavioral Immune System (v0.9.0)</strong></summary>
+
+Output-level immune system for LLM agents. Detects if the agent's **own response** was manipulated by Indirect Prompt Injection (IPI).
+
+**6 Deterministic Checks** (no extra LLM calls):
+- **System prompt leakage** — detects verbatim fragments of the assembled prompt in the response
+- **Injection echo** — C3 bidirectional scan catches injection patterns in output
+- **Role confusion** — 10 regex patterns detect model re-programming
+- **Purpose deviation** — verifies response against C0 forbidden topics
+- **Instruction compliance** — if C3 flagged the input AND the output complied with the injection
+- **Data exfiltration** — markdown image injection, suspicious fetch/XHR, webhook URLs
+
+**Auto-Healing Pipeline**: Detect -> Quarantine -> GenomeKernel Snapshot -> Retry LLM -> Safe Fallback
+
+</details>
+
+### Advanced (opt-in)
+
+<details>
+<summary><strong>Living Agent — 10 cognitive layers (v0.6.0)</strong></summary>
+
+Emotional detection, calibrated autonomy, personal narrative, analytic memory, and more. Each capability is an individual flag in `AutonomousConfig`:
+
+- `enableMetacognition` — Confidence analysis per response
+- `enableEmotionalModel` — Detects user emotional state
+- `enableCalibratedAutonomy` — Learns when to act vs ask
+- `enablePersonalNarrative` — Tracks relationship history
+- `enableAnalyticMemory` — Knowledge graph with temporal decay
+
+</details>
+
+<details>
+<summary><strong>Three Pillars of Life (v0.7.0)</strong></summary>
+
+- **Enhanced Self-Model** — Purpose-aware self-awareness with capability tracking and evolution trajectory
+- **Purpose Survival** — State machine (THRIVING -> STABLE -> STRESSED -> SURVIVAL -> CRITICAL) with threat detection and genome snapshots
+- **Strategic Autonomy** — Goal-based decisions, evolution prioritization, adaptive mutation rates, and task refusal for dangerous operations
+
+</details>
+
+<details>
+<summary><strong>Proof of Value Runner (v0.7.0)</strong></summary>
+
+Measure GSEP's impact objectively. Runs multiple evolution cycles and reports the fitness curve:
+
+```bash
+npx tsx examples/proof-of-value.ts
+```
+
+```
+VERDICT: [OK] IMPROVEMENT PROVEN (+16.0% quality)
+
+  Cycle      Quality    Success    Tokens
+  Base       0.50       0.0%       52
+  Cycle 1    0.51       0.0%       81
+  Cycle 2    0.58       0.0%       107
+  Cycle 3    0.58       0.0%       107
+  Cycle 4    0.58       0.0%       107
+```
+
+```typescript
+import { ProofOfValueRunner, PROOF_OF_VALUE_V1 } from '@gsep/core';
+
+const runner = new ProofOfValueRunner();
+const result = await runner.run(genome, {
+  name: 'My Experiment',
+  cycles: 5,
+  interactionsPerCycle: 10,
+  dataset: PROOF_OF_VALUE_V1.tasks,
+  userId: 'test-user',
+});
+
+console.log(runner.formatConsoleReport(result));
+```
+
+</details>
+
+---
+
+## Uninstall GSEP
 
 GSEP is non-invasive. Removing it takes 2 steps:
 
@@ -242,25 +511,23 @@ GSEP is non-invasive. Removing it takes 2 steps:
 
 ```typescript
 // Remove this:
-import { genome } from './gsep-setup.js';
 const response = await genome.chat(userMessage, { userId, taskType: 'support' });
 
 // Restore your original call:
 const response = await llm.chat(userMessage);
 ```
 
-### Step 2: Remove packages and files
+### Step 2: Remove packages
 
 ```bash
 npm uninstall @gsep/core @gsep/adapters-llm-anthropic @gsep/adapters-llm-openai @gsep/adapters-storage-postgres
-rm gsep-setup.ts  # or wherever you placed the setup file
 ```
 
-Your agent goes back to exactly how it was before. No side effects, no leftover config, no database cleanup needed (in-memory storage is gone when the process stops; PostgreSQL tables can be dropped with `DROP TABLE IF EXISTS pga_genomes, pga_interactions CASCADE;`).
+No side effects, no leftover config. In-memory storage is gone when the process stops. PostgreSQL tables can be dropped with `DROP TABLE IF EXISTS pga_genomes, pga_interactions CASCADE;`.
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
 ### Minimal (just evolution)
 
@@ -306,7 +573,6 @@ const genome = await gsep.createGenome({
   name: 'my-agent',
   config: {
     autonomous: {
-      // Evolution (v0.5.0)
       continuousEvolution: true,
       evolveEveryN: 10,
       autoMutateOnDrift: true,
@@ -314,23 +580,16 @@ const genome = await gsep.createGenome({
       enableSelfModel: true,
       enablePatternMemory: true,
       maxPatterns: 50,
-
-      // Living Agent (v0.6.0)
-      enableMetacognition: true,       // Confidence analysis
-      enableEmotionalModel: true,      // Detects user emotions
-      enableCalibratedAutonomy: true,  // Learns when to act vs ask
-      enablePersonalNarrative: true,   // Tracks relationship history
-      enableAnalyticMemory: true,      // Knowledge graph
-
-      // Living Agent v0.7.0 — Three Pillars of Life
-      enableEnhancedSelfModel: true,   // Purpose-aware self-model
-      enablePurposeSurvival: true,     // Threat detection + mode switching
-      enableStrategicAutonomy: true,   // Goal-based strategic decisions
+      enableMetacognition: true,
+      enableEmotionalModel: true,
+      enableCalibratedAutonomy: true,
+      enablePersonalNarrative: true,
+      enableAnalyticMemory: true,
+      enableEnhancedSelfModel: true,
+      enablePurposeSurvival: true,
+      enableStrategicAutonomy: true,
       agentPurpose: 'Expert coding assistant',
     },
-
-    // Content Firewall v0.8.0 (enabled by default)
-    // firewall: { enabled: false },  // Uncomment to disable
   },
 });
 ```
@@ -339,7 +598,48 @@ const genome = await gsep.createGenome({
 
 ---
 
-## 🔌 Integration Examples
+## Packages
+
+| Package | Description |
+|---------|-------------|
+| [`@gsep/core`](./packages/core) | Core engine — evolution, memory, security, self-model (MIT) |
+| [`@gsep/adapters-llm-anthropic`](./packages/adapters-llm/anthropic) | Anthropic Claude |
+| [`@gsep/adapters-llm-openai`](./packages/adapters-llm/openai) | OpenAI GPT-4 |
+| [`@gsep/adapters-llm-google`](./packages/adapters-llm/google) | Google Gemini |
+| [`@gsep/adapters-llm-ollama`](./packages/adapters-llm/ollama) | Ollama (local models) |
+| [`@gsep/adapters-llm-perplexity`](./packages/adapters-llm/perplexity) | Perplexity (web search) |
+| [`@gsep/adapters-storage-postgres`](./packages/adapters-storage/postgres) | PostgreSQL persistence |
+
+---
+
+## Bring Your Own LLM
+
+GSEP works with **any LLM**. Implement the `LLMAdapter` interface:
+
+```typescript
+import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '@gsep/core';
+
+class MyLLMAdapter implements LLMAdapter {
+  readonly name = 'my-provider';
+  readonly model = 'my-model';
+
+  async chat(messages: Message[], options?: ChatOptions): Promise<ChatResponse> {
+    const result = await myLLMClient.generate(messages);
+    return {
+      content: result.text,
+      usage: { inputTokens: result.promptTokens, outputTokens: result.completionTokens },
+    };
+  }
+}
+
+const gsep = new GSEP({ llm: new MyLLMAdapter() });
+```
+
+Only `chat()` is required. `stream()` and `estimateCost()` are optional.
+
+---
+
+## Integration Examples
 
 ### Express/Fastify API agent
 
@@ -348,13 +648,7 @@ import { genome } from './gsep-setup.js';
 
 app.post('/chat', async (req, res) => {
   const { message, userId } = req.body;
-
-  // GSEP handles evolution, memory, adaptation automatically
-  const response = await genome.chat(message, {
-    userId,
-    taskType: 'support',
-  });
-
+  const response = await genome.chat(message, { userId, taskType: 'support' });
   res.json({ reply: response });
 });
 ```
@@ -364,13 +658,9 @@ app.post('/chat', async (req, res) => {
 ```typescript
 import { genome } from './gsep-setup.js';
 
-// Whatever your loop looks like — just swap the LLM call
 while (true) {
   const input = await getUserInput();
-  const response = await genome.chat(input, {
-    userId: currentUser.id,
-    taskType: 'general',
-  });
+  const response = await genome.chat(input, { userId: currentUser.id, taskType: 'general' });
   displayResponse(response);
 }
 ```
@@ -388,7 +678,6 @@ bot.on('message', async (msg) => {
     userId: msg.author.id,
     taskType: 'general',
   });
-
   msg.reply(response);
 });
 ```
@@ -398,212 +687,14 @@ bot.on('message', async (msg) => {
 ```typescript
 import { genome } from './gsep-setup.js';
 
-// Replace your LLM call inside the chain
-const response = await genome.chat(question, {
-  userId,
-  taskType: 'reasoning',
-});
+const response = await genome.chat(question, { userId, taskType: 'reasoning' });
 ```
 
 </details>
 
 ---
 
-## 📦 Packages
-
-| Package | Description |
-|---------|-------------|
-| [`@gsep/core`](./packages/core) | Core engine — evolution, memory, self-model (MIT) |
-| [`@gsep/adapters-llm-anthropic`](./packages/adapters-llm/anthropic) | Anthropic Claude |
-| [`@gsep/adapters-llm-openai`](./packages/adapters-llm/openai) | OpenAI GPT-4 |
-| [`@gsep/adapters-llm-google`](./packages/adapters-llm/google) | Google Gemini |
-| [`@gsep/adapters-llm-ollama`](./packages/adapters-llm/ollama) | Ollama (local models) |
-| [`@gsep/adapters-llm-perplexity`](./packages/adapters-llm/perplexity) | Perplexity (web search) |
-| [`@gsep/adapters-storage-postgres`](./packages/adapters-storage/postgres) | PostgreSQL persistence |
-
----
-
-## 🔧 Bring Your Own LLM
-
-GSEP works with **any LLM**. If your provider isn't listed above, implement the `LLMAdapter` interface:
-
-```typescript
-import type { LLMAdapter, Message, ChatOptions, ChatResponse } from '@gsep/core';
-
-class MyLLMAdapter implements LLMAdapter {
-  readonly name = 'my-provider';
-  readonly model = 'my-model';
-
-  async chat(messages: Message[], options?: ChatOptions): Promise<ChatResponse> {
-    // Call your LLM here
-    const result = await myLLMClient.generate(messages);
-    return {
-      content: result.text,
-      usage: { inputTokens: result.promptTokens, outputTokens: result.completionTokens },
-    };
-  }
-}
-
-// Use it with GSEP:
-const gsep = new GSEP({ llm: new MyLLMAdapter() });
-```
-
-Only `chat()` is required. `stream()` and `estimateCost()` are optional.
-
----
-
-## 🧪 Capabilities
-
-### Core (enabled by default)
-
-- **Autonomous Evolution** — Prompts improve every N interactions without manual tuning
-- **Drift Detection** — Auto-corrects when agent performance degrades
-- **SelfModel** — Agent tracks its own strengths and weaknesses
-- **Pattern Memory** — Learns behavioral patterns to predict user needs
-- **Gene Bank + THK** — Agents share successful prompt mutations across genomes
-
-### Security (enabled by default)
-
-<details>
-<summary><strong>C3 Content Firewall (v0.8.0)</strong></summary>
-
-Defense-in-depth against prompt injection, skill poisoning, and supply-chain attacks on AI agents. C3 scans **all** external content before it enters the system prompt.
-
-- **53 detection patterns** across 7 threat categories (prompt injection, role hijacking, data exfiltration, encoding evasion, privilege escalation, instruction override, content smuggling)
-- **Trust Registry** — 4 trust levels (system, validated, external, untrusted) with per-source scan policies
-- **Content Tagging** — Spotlighting-inspired trust delimiters (`<<<TRUSTED:C0>>>` / `<<<UNTRUSTED:PLUGIN>>>`) teach the LLM to treat external content as data, not instructions
-- **SHA-256 integrity** — Core patterns are cryptographically immutable, like C0
-- **Multi-language** — Detects injections in English, Spanish, German, French, and Chinese
-- **Zero dependencies** — Uses only Node.js `crypto`
-- Enabled by default, opt-out with `firewall: { enabled: false }`
-
-</details>
-
-<details>
-<summary><strong>C4 Behavioral Immune System (v0.9.0)</strong></summary>
-
-Output-level immune system for LLM agents. Detects if the agent's **own response** was manipulated by Indirect Prompt Injection (IPI).
-
-**6 Deterministic Checks** (no extra LLM calls):
-- **System prompt leakage** — detects verbatim fragments of the assembled prompt in the response
-- **Injection echo** — C3 bidirectional scan catches injection patterns in output
-- **Role confusion** — 10 regex patterns detect model re-programming ("I am now...", "jailbreak mode", etc.)
-- **Purpose deviation** — verifies response against C0 forbidden topics
-- **Instruction compliance** — if C3 flagged the input AND the output complied with the injection
-- **Data exfiltration** — markdown image injection, suspicious fetch/XHR, webhook URLs
-
-**Auto-Healing Pipeline**: Detect → Quarantine → GenomeKernel Snapshot → Retry LLM → Safe Fallback
-
-- Activates automatically with C3 (no extra config)
-- Persistent immune memory (attack signatures)
-- Reports in `getIntegrityStatus()`
-
-</details>
-
-### Advanced (opt-in)
-
-<details>
-<summary><strong>Living Agent — 10 cognitive layers (v0.6.0)</strong></summary>
-
-Emotional detection, calibrated autonomy, personal narrative, analytic memory, and more. Each capability is an individual flag in `AutonomousConfig`:
-
-- `enableMetacognition` — Confidence analysis per response
-- `enableEmotionalModel` — Detects user emotional state
-- `enableCalibratedAutonomy` — Learns when to act vs ask
-- `enablePersonalNarrative` — Tracks relationship history
-- `enableAnalyticMemory` — Knowledge graph with temporal decay
-
-</details>
-
-<details>
-<summary><strong>Three Pillars of Life (v0.7.0)</strong></summary>
-
-- **Enhanced Self-Model** — Purpose-aware self-awareness with capability tracking and evolution trajectory
-- **Purpose Survival** — State machine (THRIVING → STABLE → STRESSED → SURVIVAL → CRITICAL) with threat detection and genome snapshots
-- **Strategic Autonomy** — Goal-based decisions, evolution prioritization, adaptive mutation rates, and task refusal for dangerous operations
-
-</details>
-
-<details>
-<summary><strong>Proof of Value Runner (v0.7.0)</strong></summary>
-
-Measure GSEP's impact objectively. Runs multiple evolution cycles and reports the fitness curve:
-
-```bash
-npx tsx examples/proof-of-value.ts
-```
-
-```
-VERDICT: [OK] IMPROVEMENT PROVEN (+16.0% quality)
-
-  Cycle      Quality    Success    Tokens
-  Base       0.50       0.0%       52
-  Cycle 1    0.51       0.0%       81
-  Cycle 2    0.58       0.0%       107
-  Cycle 3    0.58       0.0%       107
-  Cycle 4    0.58       0.0%       107
-```
-
-Use programmatically:
-
-```typescript
-import { ProofOfValueRunner, PROOF_OF_VALUE_V1 } from '@gsep/core';
-
-const runner = new ProofOfValueRunner();
-const result = await runner.run(genome, {
-  name: 'My Experiment',
-  cycles: 5,
-  interactionsPerCycle: 10,
-  dataset: PROOF_OF_VALUE_V1.tasks,
-  userId: 'test-user',
-});
-
-console.log(runner.formatConsoleReport(result));   // ASCII table + curve
-console.log(runner.formatMarkdownReport(result));  // Markdown report
-```
-
-</details>
-
----
-
-## 🏗️ Architecture
-
-<details>
-<summary><strong>Five-layer chromosome model</strong></summary>
-
-GSEP wraps your agent's prompts in a five-layer chromosome structure:
-
-```
-┌─────────────────────────────────────────┐
-│  C0: Immutable DNA                      │
-│  (Security, Ethics, Core Identity)      │
-│  🔒 NEVER mutates — SHA-256 protected  │
-├─────────────────────────────────────────┤
-│  C1: Operative Genes                    │
-│  (Tool Usage, Coding Patterns)          │
-│  🐢 SLOW mutation (sandbox-tested)     │
-├─────────────────────────────────────────┤
-│  C2: Epigenomes                         │
-│  (User Preferences, Style)              │
-│  ⚡ FAST mutation (adapts daily)       │
-├─────────────────────────────────────────┤
-│  C3: Content Firewall                   │
-│  (Prompt Injection Defense)             │
-│  🛡️ 53 patterns — SHA-256 core        │
-├─────────────────────────────────────────┤
-│  C4: Behavioral Immune System           │
-│  (Output Infection Detection)           │
-│  🧬 6 checks — auto-heal + quarantine  │
-└─────────────────────────────────────────┘
-```
-
-C0 is cryptographically immutable (SHA-256). C1 mutates slowly through an 8-stage promotion gate. C2 adapts fast based on user interactions. C3 and C4 provide input/output security.
-
-</details>
-
----
-
-## 🛡️ Intellectual Property
+## Intellectual Property
 
 **Patent Status**: Patented
 
@@ -614,9 +705,9 @@ C0 is cryptographically immutable (SHA-256). C1 mutates slowly through an 8-stag
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-We welcome contributions from the community! Whether it's a bug fix, new feature, documentation improvement, or a new LLM adapter — every contribution matters.
+We welcome contributions from the community. Whether it's a bug fix, new feature, documentation improvement, or a new LLM adapter — every contribution matters.
 
 ```bash
 git clone https://github.com/gsepcore/gsep
@@ -630,31 +721,23 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full guide, code standards, and
 
 ---
 
-## 👥 Contributors
+## Contributors
 
-Thanks to everyone who has contributed to GSEP. Every PR, issue, and idea makes this project better.
+Thanks to everyone who has contributed to GSEP.
 
 <a href="https://github.com/gsepcore/gsep/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=gsepcore/gsep" alt="Contributors" />
 </a>
 
-Want to see your avatar here? Check [CONTRIBUTING.md](./CONTRIBUTING.md) to get started.
-
 ---
 
-## 💜 Sponsors
+## Sponsors
 
-GSEP is open source and free to use. If you or your company benefit from GSEP, consider sponsoring the project to support continued development.
+GSEP is open source and free to use. If you or your company benefit from GSEP, consider sponsoring the project.
 
 <a href="https://github.com/sponsors/gsepcore">
   <img src="https://img.shields.io/badge/Sponsor_GSEP-%E2%9D%A4-pink?style=for-the-badge&logo=githubsponsors" alt="Sponsor GSEP">
 </a>
-
-**Why sponsor?**
-- Ensure long-term maintenance and new features
-- Get your logo displayed here and in the docs
-- Priority support and feature requests
-- Support independent open-source development
 
 | Tier | Amount | Perks |
 |------|--------|-------|
@@ -669,7 +752,7 @@ GSEP is open source and free to use. If you or your company benefit from GSEP, c
 
 ---
 
-## 📬 Contact
+## Contact
 
 - **Website**: [gsepcore.com](https://gsepcore.com)
 - **Discord**: [discord.gg/7rtUa6aU](https://discord.gg/7rtUa6aU)
@@ -679,12 +762,12 @@ GSEP is open source and free to use. If you or your company benefit from GSEP, c
 
 <div align="center">
 
-**GSEP** 🧬 — *Your agent, but alive.*
+**GSEP** — *Your agent, but alive.*
 
 <br>
 
-If you find GSEP useful, please ⭐ [star this repo](https://github.com/gsepcore/gsep) — it helps others discover the project!
+If you find GSEP useful, please star [this repo](https://github.com/gsepcore/gsep) — it helps others discover the project.
 
-© 2025–2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
+(c) 2025-2026 Luis Alfredo Velasquez Duran. All Rights Reserved.
 
 </div>
