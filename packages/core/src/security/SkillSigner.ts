@@ -9,7 +9,7 @@
  * @since 2026-03-30
  */
 
-import { createHash, sign, verify, generateKeyPairSync } from 'node:crypto';
+import { createHash, createPrivateKey, sign, verify, generateKeyPairSync } from 'node:crypto';
 
 // ─── Types ──────────────────────────────────────────────
 
@@ -161,7 +161,6 @@ export class SkillSigner {
 
     private derivePublicKey(privateKeyDer: Buffer): string {
         try {
-            const { createPrivateKey } = require('node:crypto') as typeof import('node:crypto');
             const keyObj = createPrivateKey({ key: privateKeyDer, format: 'der', type: 'pkcs8' });
             const pubDer = keyObj.export({ type: 'spki', format: 'der' });
             return (pubDer as Buffer).toString('hex');
