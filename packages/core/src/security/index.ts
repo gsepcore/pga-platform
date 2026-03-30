@@ -44,3 +44,11 @@ export { NetworkAuditLogger, type NetworkLogEntry, type TrafficSummary } from '.
 export { TamperProofAuditLog, type AuditEntry, type AuditEventType } from './TamperProofAuditLog.js';
 export { DataAccessTracker, type DataSource, type DataCategory, type DataAccessRecord, type DataAccessReport } from './DataAccessTracker.js';
 export { ComplianceExporter, type ReportFormat, type ReportType, type ExportResult } from './ComplianceExporter.js';
+
+// ─── Enterprise Modules ─────────────────────────────────
+export { RBACEngine, type RoleName, type Permission, type Role, type AccessCheckResult } from './RBACEngine.js';
+export { MFAProvider, type MFASetup, type MFAVerifyResult } from './MFAProvider.js';
+export { EnterprisePolicyEngine, type EnterprisePolicy, type RolePolicy, type AlertRule } from './EnterprisePolicyEngine.js';
+export { SecretRotationEngine, type RotationPolicy, type RotationResult, type RotationStatus } from './SecretRotationEngine.js';
+export { GDPREngine, type ConsentRecord, type ErasureReport, type DataPortabilityExport, type DPIAReport } from './GDPREngine.js';
+export { SOC2Controls, type SOC2Control, type SOC2Report, type ControlStatus } from './SOC2Controls.js';
