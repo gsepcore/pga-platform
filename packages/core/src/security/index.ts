@@ -27,5 +27,18 @@ export { KeyHierarchy, type DerivedKeys } from './KeyHierarchy.js';
 export { EncryptedConfigStore } from './EncryptedConfigStore.js';
 export { SecretsMigrator } from './SecretsMigrator.js';
 
+// Layer 4: Skill Security
+export { SkillManifest, type SkillManifestData, type CapabilityType, type SkillPermissions } from './SkillManifest.js';
+export { SkillSigner, type SkillSignature, type KeyPair } from './SkillSigner.js';
+export { CapabilityBroker, type CapabilityGrant, type CapabilityCheckResult } from './CapabilityBroker.js';
+
+// Layer 5: Execution Control
+export { CommandExecutionGuard, type ExecRequest, type ExecResult, type ExecDecision } from './CommandExecutionGuard.js';
+export { FileSystemBoundary, type FSAccess, type FSCheckResult } from './FileSystemBoundary.js';
+
+// Layer 6: Network Control
+export { OutboundAllowlist, type OutboundCheckResult } from './OutboundAllowlist.js';
+export { NetworkAuditLogger, type NetworkLogEntry, type TrafficSummary } from './NetworkAuditLogger.js';
+
 // Layer 7: Audit
 export { TamperProofAuditLog, type AuditEntry, type AuditEventType } from './TamperProofAuditLog.js';
