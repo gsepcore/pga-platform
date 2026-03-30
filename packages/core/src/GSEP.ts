@@ -63,6 +63,9 @@ import { CuriosityEngine } from './memory/CuriosityEngine.js';
 import { ContentFirewall } from './firewall/ContentFirewall.js';
 import { PurposeLock } from './firewall/PurposeLock.js';
 import { AnomalyDetector, type Anomaly } from './firewall/AnomalyDetector.js';
+import { SecurityEventBus } from './security/SecurityEventBus.js';
+import { GenomeSecurityBridge } from './security/GenomeSecurityBridge.js';
+import { getSecurityPreset } from './security/SecurityPresets.js';
 import { SkillRegistry, SkillExecutor, SkillRouter, ProactiveEngine, type SkillDefinition, type ProactiveTask, type ProactiveResult, type NotificationHandler } from './skills/index.js';
 import { GSEPMiddleware, type MiddlewareOptions } from './middleware/GSEPMiddleware.js';
 import { detectRuntime as detectRuntimeLevel } from './middleware/RuntimeDetector.js';
@@ -817,6 +820,8 @@ export class GenomeInstance {
     private interactionCount: number = 0;
     private evolutionInProgress: boolean = false;
     private marketplaceClient?: MarketplaceClient;
+    private shieldBridge?: GenomeSecurityBridge;
+    private shieldEventBus?: SecurityEventBus;
 
     constructor(
         private genome: Genome,
@@ -1098,6 +1103,39 @@ export class GenomeInstance {
                 this.metrics,
             );
             this.geneBank.setMarketplaceClient(this.marketplaceClient);
+        }
+
+        // ── Genome Shield: Initialize security bridge ──────────────
+        this.initializeShield(genome);
+    }
+
+    /**
+     * Initialize Genome Shield security layers (non-blocking).
+     */
+    private initializeShield(genome: Genome): void {
+        try {
+
+            const profileName = (genome.config as unknown as Record<string, unknown>).securityProfile as string ?? 'standard';
+            const validProfiles = ['paranoid', 'secure', 'standard', 'developer'];
+            const profile = validProfiles.includes(profileName) ? profileName as 'paranoid' | 'secure' | 'standard' | 'developer' : 'standard';
+
+            this.shieldEventBus = new SecurityEventBus();
+            const securityConfig = getSecurityPreset(profile);
+            this.shieldBridge = new GenomeSecurityBridge(securityConfig, this.shieldEventBus);
+
+            // Subscribe shield events to GSEP event emitter (for dashboard)
+            this.shieldEventBus.onAny((event) => {
+                if (event.decision === 'deny') {
+                    this.events.emitSync('anomaly:detected' as never, {
+                        genomeId: genome.id,
+                        type: event.type,
+                        severity: event.severity,
+                        description: `${event.resource.type}: ${event.resource.id}`,
+                    }, { genomeId: genome.id });
+                }
+            });
+        } catch {
+            // Security module not available — continue without shield
         }
     }
 
@@ -1652,6 +1690,27 @@ Ready to see what we can do together? 😊`,
                 sanitizedUserMessage = inputScan.sanitizedContent;
             }
 
+            // ── Genome Shield: PII redaction + data classification ──
+            if (this.shieldBridge) {
+                const shieldResult = await this.shieldBridge.processInbound(
+                    sanitizedUserMessage,
+                    context.taskType ?? 'system',
+                    context.userId,
+                );
+                if (!shieldResult.allowed) {
+                    this.metrics.logAudit({
+                        level: 'warning',
+                        component: 'genome-shield',
+                        operation: 'inbound-blocked',
+                        message: shieldResult.blockReason ?? 'Blocked by Genome Shield',
+                        genomeId: this.genome.id,
+                        userId: context.userId,
+                    });
+                    return shieldResult.blockReason ?? 'Message blocked by security policy.';
+                }
+                sanitizedUserMessage = shieldResult.sanitized;
+            }
+
             // Use Reasoning if enabled
             let response: { content: string; usage?: { inputTokens: number; outputTokens: number; totalCost?: number } };
             if (this.reasoningEngine) {
@@ -1724,6 +1783,16 @@ Ready to see what we can do together? 😊`,
                     } else if (verdict.action === 'sanitize') {
                         response = { ...response, content: verdict.response };
                     }
+                }
+            }
+
+            // ── Genome Shield: outbound scan + PII re-hydration ──
+            if (this.shieldBridge) {
+                const outbound = await this.shieldBridge.processOutbound(response.content, prompt);
+                if (outbound.verdict === 'quarantine') {
+                    response = { ...response, content: 'Response blocked by security policy.' };
+                } else if (outbound.sanitized) {
+                    response = { ...response, content: outbound.sanitized };
                 }
             }
 
