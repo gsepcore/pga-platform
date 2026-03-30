@@ -1115,7 +1115,7 @@ export class GenomeInstance {
     private initializeShield(genome: Genome): void {
         try {
 
-            const profileName = (genome.config as unknown as Record<string, unknown>).securityProfile as string ?? 'standard';
+            const profileName = (genome.config as unknown as Record<string, unknown>).securityProfile as string ?? 'secure';
             const validProfiles = ['paranoid', 'secure', 'standard', 'developer'];
             const profile = validProfiles.includes(profileName) ? profileName as 'paranoid' | 'secure' | 'standard' | 'developer' : 'standard';
 
