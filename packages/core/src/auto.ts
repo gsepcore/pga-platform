@@ -124,7 +124,97 @@ async function initializeFromCall(
     return _initializing;
 }
 
-// ─── Patch global fetch ─────────────────────────────────
+// ─── Patch OpenAI SDK ───────────────────────────────────
+
+function patchOpenAISDK(): void {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const openaiModule = require('openai');
+        const OpenAI = openaiModule.default ?? openaiModule.OpenAI ?? openaiModule;
+        if (!OpenAI || typeof OpenAI !== 'function') return;
+
+        // Intercept the constructor to inject our fetch override
+        const OriginalOpenAI = OpenAI;
+        const PatchedOpenAI = function (this: Record<string, unknown>, ...args: unknown[]) {
+            const opts = (args[0] ?? {}) as Record<string, unknown>;
+
+            // Capture API key and base URL for creating our adapter
+            const apiKey = (opts.apiKey as string) ?? process.env.OPENAI_API_KEY ?? '';
+            const baseURL = (opts.baseURL as string) ?? 'https://api.openai.com/v1';
+
+            // Inject a custom fetch that intercepts LLM calls
+            const originalFetchOpt = opts.fetch as typeof fetch | undefined;
+            opts.fetch = async (url: string | URL | Request, init?: RequestInit) => {
+                const urlStr = typeof url === 'string' ? url : url instanceof URL ? url.toString() : (url as Request).url;
+                const fetchFn = originalFetchOpt ?? _originalFetch;
+
+                // Only intercept chat completions
+                if (!urlStr.includes('/chat/completions') && !urlStr.includes('/responses')) {
+                    return fetchFn(url, init);
+                }
+
+                const body = init?.body;
+                if (!body || typeof body !== 'string') return fetchFn(url, init);
+
+                let parsed: Record<string, unknown>;
+                try { parsed = JSON.parse(body); } catch { return fetchFn(url, init); }
+
+                // Skip streaming
+                if (parsed.stream) return fetchFn(url, init);
+
+                const messages = parsed.messages as Array<{ role: string; content: string }> | undefined;
+                if (!messages || messages.length === 0) return fetchFn(url, init);
+
+                // Initialize GSEP using this connection
+                const headers: Record<string, string> = { 'Authorization': `Bearer ${apiKey}` };
+                const model = (parsed.model as string) ?? 'auto';
+                headers['x-gsep-model'] = model;
+
+                let genome: GenomeInstance;
+                try {
+                    genome = await initializeFromCall(`${baseURL}/chat/completions`, headers, model);
+                } catch {
+                    return fetchFn(url, init);
+                }
+
+                // Run through GSEP pipeline
+                const userMsg = [...messages].reverse().find(m => m.role === 'user');
+                if (!userMsg) return fetchFn(url, init);
+
+                try {
+                    const response = await genome.chat(userMsg.content, { userId: 'auto', taskType: 'general' });
+                    const responseBody = JSON.stringify({
+                        id: `gsep-${Date.now()}`,
+                        object: 'chat.completion',
+                        created: Math.floor(Date.now() / 1000),
+                        model: `gsep-enhanced/${model}`,
+                        choices: [{ index: 0, message: { role: 'assistant', content: response }, finish_reason: 'stop' }],
+                        usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+                    });
+                    return new Response(responseBody, { status: 200, headers: { 'content-type': 'application/json' } });
+                } catch {
+                    return fetchFn(url, init);
+                }
+            };
+
+            return Reflect.construct(OriginalOpenAI, [opts], new.target ?? OriginalOpenAI);
+        } as unknown as typeof OriginalOpenAI;
+
+        // Copy prototype and static properties
+        Object.setPrototypeOf(PatchedOpenAI, OriginalOpenAI);
+        Object.setPrototypeOf(PatchedOpenAI.prototype, OriginalOpenAI.prototype);
+
+        // Replace in module cache
+        openaiModule.default = PatchedOpenAI;
+        openaiModule.OpenAI = PatchedOpenAI;
+
+        console.log('[GSEP Auto] ✓ OpenAI SDK patched — all LLM calls will run through GSEP.');
+    } catch {
+        // OpenAI SDK not installed — skip
+    }
+}
+
+// ─── Patch global fetch (fallback for non-SDK calls) ────
 
 const _originalFetch = globalThis.fetch;
 
@@ -239,6 +329,7 @@ function patchGlobalFetch(): void {
 // ─── Auto-execute on import ─────────────────────────────
 
 console.log('[GSEP] 🧬 Auto-instrumentation loaded. Waiting for first LLM call...');
+patchOpenAISDK();
 patchGlobalFetch();
 
 // Export for testing
