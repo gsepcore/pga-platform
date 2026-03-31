@@ -80,7 +80,7 @@ function adaptLLMClient(client: LLMClient | LLMAdapter): LLMAdapter {
                 name: 'wrapped-llm',
                 model: 'auto',
                 chat: async (messages: Array<{ role: string; content: string }>) => {
-                    const result = await (client as { chat: Function }).chat(messages) as Record<string, unknown>;
+                    const result = await (client as { chat: (msgs: typeof messages) => Promise<unknown> }).chat(messages) as Record<string, unknown>;
 
                     // GSEP native format
                     if (typeof result?.content === 'string') {
