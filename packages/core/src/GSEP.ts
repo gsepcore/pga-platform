@@ -2468,6 +2468,50 @@ Ready to see what we can do together? 😊`,
     }
 
     /**
+     * Record an external interaction (from auto-instrumentation).
+     * Feeds the response into GSEP's fitness tracking and evolution engine
+     * without going through the full chat() pipeline.
+     */
+    async recordExternalInteraction(params: {
+        userMessage: string;
+        response: string;
+        userId: string;
+        taskType: string;
+        success: boolean;
+    }): Promise<void> {
+        try {
+            // Record metrics
+            this.metrics.recordRequest({
+                requestId: `ext-${Date.now()}`,
+                duration: 0,
+                success: params.success,
+                model: 'external',
+                inputTokens: Math.ceil(params.userMessage.length / 4),
+                outputTokens: Math.ceil(params.response.length / 4),
+            });
+
+            // Record interaction in storage
+            await this.storage.recordInteraction({
+                genomeId: this.genome.id,
+                userId: params.userId,
+                userMessage: params.userMessage,
+                assistantResponse: params.response,
+                toolCalls: [],
+                timestamp: new Date(),
+            });
+
+            // Increment interaction count and trigger evolution if needed
+            this.interactionCount++;
+            const continuousEvolution = this.genome.config.autonomous?.continuousEvolution;
+            const evolveEveryN = this.genome.config.autonomous?.evolveEveryN ?? 10;
+
+            if (continuousEvolution && this.interactionCount % evolveEveryN === 0 && !this.evolutionInProgress) {
+                this.runEvolutionCycle().catch(() => {});
+            }
+        } catch { /* best-effort */ }
+    }
+
+    /**
      * Add allele dynamically to genome
      *
      * Living OS v1.0: Dynamic gene injection
