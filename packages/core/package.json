@@ -50,6 +50,10 @@
       "import": "./dist/auto.js",
       "types": "./dist/auto.d.ts"
     },
+    "./engine": {
+      "import": "./dist/GSEP.js",
+      "types": "./dist/GSEP.d.ts"
+    },
     "./security": {
       "import": "./dist/security/index.js",
       "types": "./dist/security/index.d.ts"
