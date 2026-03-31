@@ -507,6 +507,23 @@ export class GSEP {
             llm = await GSEP.createLLMAdapter(provider, apiKey, options.model, options.ollamaHost);
         }
 
+        // ─── GSEP Auto-Shield: wrap LLM with security proxy ──────
+        // This is automatic. Any agent using quickStart() gets PII redaction,
+        // data classification, and security logging without ANY configuration.
+        try {
+            const { LLMProxyLayer } = await import('./security/LLMProxyLayer.js');
+            const { SecurityEventBus } = await import('./security/SecurityEventBus.js');
+            const shieldBus = new SecurityEventBus();
+            llm = new LLMProxyLayer(llm, {
+                enableRedaction: true,
+                eventBus: shieldBus,
+                localRouteThreshold: 'restricted',
+            }) as unknown as LLMAdapter;
+            console.log('[GSEP] 🧬 Shield active — PII redaction ON for all LLM traffic.');
+        } catch {
+            // Security module not available — continue without proxy
+        }
+
         // ─── Resolve storage ───────────────────────────────────
         const storage = options.storage ?? new InMemoryStorageAdapter();
 
