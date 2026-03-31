@@ -23,7 +23,12 @@
  * ```
  */
 
-// ─── Main Exports ───────────────────────────────────────
+// ─── Main Export — the only thing most developers need ──
+
+export { gsep } from './wrap.js';
+export type { WrappedAgent as GSEPAgent, WrapOptions as GSEPWrapOptions, LLMClient } from './wrap.js';
+
+// ─── Advanced Exports ───────────────────────────────────
 
 export { GSEP, GenomeInstance } from './GSEP.js';
 export type { GSEPConfig, QuickStartOptions, LLMProvider } from './GSEP.js';
