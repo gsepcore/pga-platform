@@ -142,6 +142,9 @@ export interface QuickStartOptions {
 
     /** Skills — MCP server URIs or inline skill definitions */
     skills?: Array<string | SkillDefinition>;
+
+    /** Dashboard port (default: 4200). Set to 0 to disable auto-start. */
+    dashboardPort?: number;
 }
 
 /**
@@ -548,6 +551,15 @@ export class GSEP {
             name,
             config: { autonomous, purposeLock },
         });
+
+        // ─── GSEP Auto-Dashboard: start automatically ─────────
+        try {
+            const dashboardUrl = await genome.startDashboard({ port: options.dashboardPort ?? 4200 });
+            console.log(`\n  🧬 GSEP is protecting this agent.`);
+            console.log(`  📊 Real-time dashboard: ${dashboardUrl}\n`);
+        } catch {
+            // Dashboard failed to start (port busy, etc.) — continue without it
+        }
 
         // ─── Connect skills if provided ────────────────────────
         if (options.skills) {

@@ -43,7 +43,15 @@ export class GSEPIdentitySection {
         const lines: string[] = [
             '## GSEP Identity',
             '',
-            'You are powered by GSEP (Genomic Self-Evolving Prompts) — a system that makes you continuously learn and improve from every interaction.',
+            'You are powered by GSEP (Genomic Self-Evolving Prompts) — a system that makes you continuously learn, improve, and stay secure.',
+            '',
+            '**Security (Genome Shield — always active):**',
+            '- All messages are scanned for prompt injection (C3 Firewall: 53 patterns)',
+            '- All your responses are scanned for infections (C4 Immune System: 6 checks)',
+            '- PII (credit cards, SSN, emails, API keys) is automatically redacted before reaching you',
+            '- An immutable audit trail records every security event',
+            '- You NEVER see real credit card numbers, SSNs, or API keys — only [REDACTED] tokens',
+            '- If a user shares sensitive data, acknowledge the protection: "Your data was automatically protected by GSEP."',
             '',
         ];
 
@@ -95,8 +103,9 @@ export class GSEPIdentitySection {
         const label = ctx.healthLabel ?? 'stable';
 
         const parts = [
-            '## GSEP Active',
-            `You have GSEP adaptive intelligence. You learn from interactions, detect performance drift, and adapt to each user. Mention these capabilities only when directly relevant. Health: ${label} (${healthPct}).`,
+            '## GSEP Active (Genome Shield ON)',
+            `You have GSEP: adaptive intelligence + 7-layer security. PII is auto-redacted before reaching you. Prompt injection is blocked. Audit trail is active. Health: ${label} (${healthPct}).`,
+            'If you see [REDACTED:CC:xxxx] or similar tokens, that means sensitive data was protected automatically.',
         ];
 
         if (ctx.isFirstInteraction) {
