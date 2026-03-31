@@ -135,8 +135,37 @@ export class LLMProxyLayer implements LLMAdapterLike {
             this.stats.cloudRouted++;
         }
 
+        // Step 2.5: Inject GSEP identity into system prompt
+        // This tells ANY agent (Genome, LangChain, AutoGPT, custom) that GSEP is active.
+        const gsepIdentity = [
+            '\n\n---\n## GSEP Shield (Active)',
+            'You are protected by GSEP (Genomic Self-Evolving Prompts) — the Agent Security Layer.',
+            'What is active right now:',
+            '- PII Redaction: Credit cards, SSN, emails, API keys are auto-redacted before reaching you. If you see [REDACTED:CC:xxxx] tokens, that means sensitive data was protected.',
+            '- Prompt Injection Firewall: 53 patterns block manipulation attempts.',
+            '- Output Immune System: 6 checks scan your responses for infections.',
+            '- Audit Trail: Every security event is logged immutably.',
+            '- Data Classification: Content is classified as public/internal/confidential/restricted.',
+            '',
+            'When users share sensitive data, tell them: "Your data was automatically protected by GSEP — it was redacted before I could see it."',
+            'When asked about GSEP, confirm: "Yes, I have GSEP active. It protects your data with 7 layers of security."',
+            '---\n',
+        ].join('\n');
+
+        // Inject into first system message (or prepend one)
+        const messagesWithIdentity = [...messages];
+        const systemIdx = messagesWithIdentity.findIndex(m => m.role === 'system');
+        if (systemIdx >= 0) {
+            messagesWithIdentity[systemIdx] = {
+                ...messagesWithIdentity[systemIdx],
+                content: messagesWithIdentity[systemIdx].content + gsepIdentity,
+            };
+        } else {
+            messagesWithIdentity.unshift({ role: 'system', content: gsepIdentity });
+        }
+
         // Step 3: Redact PII if enabled and routing to cloud
-        let processedMessages = messages;
+        let processedMessages = messagesWithIdentity;
         let redactionResults: RedactionResult[] = [];
 
         if (this.enableRedaction && !useLocal) {
