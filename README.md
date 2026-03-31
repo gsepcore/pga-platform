@@ -29,11 +29,13 @@ Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 
 | Metric | Value |
 |--------|-------|
-| Tests passing | **1931** |
-| Security modules | **22** |
+| Tests passing | **1998** |
+| Steps per chat() call | **32** |
+| Security modules | **28** |
 | Prompt injection patterns | **53** |
 | PII categories (with Luhn) | **9** |
 | Security profiles | **4** |
+| Lines of code to integrate | **1** |
 | New npm dependencies | **0** |
 
 ---
@@ -70,78 +72,76 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 
 ---
 
-## Get Started
-
-### Option 1: New Agent (One Line)
+## Install GSEP in Your Existing Agent
 
 ```bash
-npm install gsep
+npm install @gsep/core
 ```
+
+Three ways to integrate — choose the one that fits your codebase:
+
+### Way 1: Zero Code (Auto-Instrumentation)
+
+Add ONE line at the top of your app. Don't change anything else.
 
 ```typescript
-import { GSEP } from 'gsep';
+import '@gsep/core/auto'
 
-const agent = await GSEP.quickStart();
-const response = await agent.chat('Hello!', { userId: 'user-1' });
-// 27 intelligence systems active. Auto-detects your LLM from env vars.
+// Your existing code stays exactly the same.
+// Every OpenAI/Anthropic call now runs through GSEP's 32-step pipeline.
+// Evolution, security, PII redaction, dashboard — all active automatically.
 ```
 
-### Option 2: Upgrade Existing Chatbot
+GSEP detects your LLM SDK (OpenAI, Anthropic, or raw fetch) and patches it at import time. Same technique as New Relic, Datadog, and Sentry.
+
+**What happens on startup:**
+```
+[GSEP] 🧬 Auto-instrumentation loading...
+[GSEP Auto] ✓ OpenAI SDK patched — chat.completions.create() now runs through GSEP.
+[GSEP Auto] ✓ Global fetch patched — LLM API calls now run through GSEP.
+[GSEP] 🧬 Auto-instrumentation active.
+[GSEP] All LLM calls now run through the full 32-step GSEP pipeline.
+[GSEP] Evolution: ON | Security: ON | PII Redaction: ON | Dashboard: ON
+
+🧬 GSEP Dashboard: http://localhost:4200/gsep/dashboard?token=...
+```
+
+### Way 2: One Line (Explicit Wrap)
+
+Wrap your existing LLM client. Full control, full pipeline.
 
 ```typescript
-import { GSEP } from 'gsep';
+import { gsep } from '@gsep/core'
 
-// Your existing function
-const myBot = async (msg: string) => callOpenAI(msg);
+// Wrap your LLM client — one line
+const agent = await gsep.wrap(myOpenAIClient)
 
-// One line — now it's an autonomous agent
-const agent = await GSEP.upgrade(myBot, {
-  purpose: 'Customer support for Acme Corp',
-});
+// Use exactly as before
+const response = await agent.chat('Hello!', { userId: 'user-1' })
+
+// All 32 steps running: evolution, security, fitness, drift, learning
+// Dashboard live at http://localhost:4200
 ```
 
-### Option 3: Middleware for Complex Agents (OpenClaw, LangChain, etc.)
+Works with any LLM client: OpenAI SDK, Anthropic SDK, or any object with a `chat()` method.
+
+### Way 3: Full Control (Two Hooks)
+
+For agents with complex pipelines — LangChain, CrewAI, custom architectures.
 
 ```typescript
-import { GSEP } from 'gsep';
+import { GSEPMiddleware } from '@gsep/core'
 
-const gsep = await GSEP.middleware();
+const gsep = await GSEPMiddleware.create()
 
-// In your agent's flow — two hooks, that's it:
-const { prompt } = await gsep.before(originalPrompt, { message: userMsg, userId });
-const response = await myAgent.callLLM(prompt);
-await gsep.after(response, { userId, quality: 0.85 });
-```
+// BEFORE your LLM call — GSEP enhances the prompt with evolved genes
+const { prompt } = await gsep.before(originalPrompt, { message: userMsg, userId })
 
-### Option 4: No-Code Platforms (n8n, Retell AI, Voiceflow, etc.)
+// YOUR existing LLM call — unchanged
+const response = await myAgent.callLLM(prompt)
 
-```bash
-npx gsep serve --port 3000
-# Or with Docker:
-docker run -p 3000:3000 -e ANTHROPIC_API_KEY=sk-ant-... gsepcore/gsep
-```
-
-In your platform, change the API URL:
-```
-Before: https://api.openai.com
-After:  http://localhost:3000
-```
-
-That's it. Your agent now evolves autonomously.
-
-### Option 5: Serverless (Lambda, Vercel)
-
-```typescript
-import { serverlessChat } from 'gsep';
-
-export const handler = async (event) => {
-  const response = await serverlessChat({
-    llm: myLLMAdapter,
-    storage: myPostgresAdapter,  // Required — InMemory loses state
-  }, event.body.message, { userId: event.body.userId });
-
-  return { statusCode: 200, body: JSON.stringify({ response }) };
-};
+// AFTER your LLM call — GSEP learns, tracks fitness, evolves
+await gsep.after(response, { userId, feedback: 'good' })
 ```
 
 ---
@@ -221,11 +221,17 @@ ANTHROPIC_API_KEY=sk-... npx tsx examples/hero-demo.ts anthropic
 | Before GSEP | After GSEP |
 |------------|-----------|
 | Same prompt for every user | Adapts per user automatically |
-| Performance degrades over time | Self-heals when drift detected |
-| Manual prompt tuning | Evolves every 10 interactions |
-| No memory between sessions | Remembers user patterns |
-| Blind to its own weaknesses | Self-aware (SelfModel) |
-| Isolated knowledge | Shares learnings across agents (THK) |
+| Performance degrades over time | Self-heals when drift detected (5 drift types) |
+| Manual prompt tuning | Evolves every 10 interactions (LLM-powered mutations) |
+| No memory between sessions | Remembers user patterns (6 memory systems) |
+| Blind to its own weaknesses | Self-aware (SelfModel + capability tracking) |
+| Isolated knowledge | Shares learnings across agents (Gene Bank + THK) |
+| No security | 7-layer Genome Shield (C3/C4/PII/audit) |
+| PII exposed to LLM providers | PII auto-redacted before leaving your machine |
+| No audit trail | Tamper-proof hash-chain log of every action |
+| Agent doesn't know it's protected | Agent aware of GSEP (identity injected per call) |
+
+**Every `chat()` call runs 32 steps** — security, prompt assembly with evolved genes, LLM call, output scanning, fitness tracking, drift analysis, evolution check, and dashboard events. All automatic.
 
 ---
 
@@ -388,19 +394,15 @@ const agent = await GSEP.quickStart({
 
 ## Integration with Genome
 
-GSEP is the security and evolution SDK. [Genome](https://github.com/gsepcore/genome) is a reference client agent built on top of it.
+[Genome](https://github.com/LuisvelMarketer/genome) is a 42-channel AI agent that uses GSEP as its evolution and security engine. It's the reference implementation proving GSEP works in a real, production agent.
 
 ```typescript
-npm install @gsep/core
-```
+// In Genome's dispatch pipeline — GSEP activates automatically:
+import '@gsep/core/auto'
 
-```typescript
-import { GenomeSecurityBridge } from '@gsep/core/security';
-
-// Bridge connects all 7 security layers to your genome instance
-const bridge = new GenomeSecurityBridge(genome, {
-  profile: 'secure',
-});
+// Every message through Telegram, Discord, WhatsApp, CLI, etc.
+// now runs through GSEP's 32-step pipeline.
+// No config. No hooks. No code changes.
 ```
 
 If you are building your own agent, you only need `@gsep/core`. Genome is optional.
