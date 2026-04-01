@@ -2,12 +2,12 @@ import { z } from 'zod';
 import {
     CognitiveGene,
     GeneAdoptionResult,
-} from './CognitiveGene';
-import { GeneBank } from './GeneBank';
-import { GeneMatcher, MatchContext, GeneMatchResult } from './GeneMatcher';
-import { SandboxTester, SandboxTestCase, SandboxTestResult } from './SandboxTester';
-import type { LLMAdapter } from '../interfaces/LLMAdapter';
-import type { MetricsCollector } from '../monitoring/MetricsCollector';
+} from './CognitiveGene.js';
+import { GeneBank } from './GeneBank.js';
+import { GeneMatcher, MatchContext, GeneMatchResult } from './GeneMatcher.js';
+import { SandboxTester, SandboxTestCase, SandboxTestResult } from './SandboxTester.js';
+import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
+import type { MetricsCollector } from '../monitoring/MetricsCollector.js';
 
 /**
  * GeneAdopter.ts

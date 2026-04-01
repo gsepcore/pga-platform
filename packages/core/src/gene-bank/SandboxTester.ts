@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { CognitiveGene } from './CognitiveGene';
-import type { LLMAdapter } from '../interfaces/LLMAdapter';
-import type { MetricsCollector } from '../monitoring/MetricsCollector';
+import { CognitiveGene } from './CognitiveGene.js';
+import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
+import type { MetricsCollector } from '../monitoring/MetricsCollector.js';
 
 /**
  * SandboxTester.ts

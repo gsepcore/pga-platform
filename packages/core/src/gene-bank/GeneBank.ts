@@ -4,9 +4,9 @@ import {
     CognitiveGeneSchema,
     GeneType,
     SharingScope,
-} from './CognitiveGene';
-import type { MetricsCollector } from '../monitoring/MetricsCollector';
-import type { MarketplaceClient } from './MarketplaceClient';
+} from './CognitiveGene.js';
+import type { MetricsCollector } from '../monitoring/MetricsCollector.js';
+import type { MarketplaceClient } from './MarketplaceClient.js';
 
 /**
  * GeneBank.ts

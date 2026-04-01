@@ -11,14 +11,14 @@ import type {
     CognitiveGene,
     MutationContext,
     TenantInfo,
-} from './CognitiveGene';
-import { GeneBank } from './GeneBank';
-import { GeneExtractor } from './GeneExtractor';
-import { GeneAdopter } from './GeneAdopter';
-import type { GeneStorageAdapter } from './GeneBank';
-import type { LLMAdapter } from '../interfaces/LLMAdapter';
-import type { MetricsCollector } from '../monitoring/MetricsCollector';
-import type { SandboxTestCase } from './SandboxTester';
+} from './CognitiveGene.js';
+import { GeneBank } from './GeneBank.js';
+import { GeneExtractor } from './GeneExtractor.js';
+import { GeneAdopter } from './GeneAdopter.js';
+import type { GeneStorageAdapter } from './GeneBank.js';
+import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
+import type { MetricsCollector } from '../monitoring/MetricsCollector.js';
+import type { SandboxTestCase } from './SandboxTester.js';
 
 // ─── Bridge Types ─────────────────────────────────────────
 // Minimal shape required from GSEP core genome/mutation objects.

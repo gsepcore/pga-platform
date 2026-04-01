@@ -11,9 +11,9 @@
  * @version 0.4.0
  */
 
-import type { CognitiveGene } from '../CognitiveGene';
-import type { GeneStorageAdapter, GeneSearchFilters } from '../GeneBank';
-import type { SharingScope } from '../CognitiveGene';
+import type { CognitiveGene } from '../CognitiveGene.js';
+import type { GeneStorageAdapter, GeneSearchFilters } from '../GeneBank.js';
+import type { SharingScope } from '../CognitiveGene.js';
 
 /**
  * In-memory storage adapter for Cognitive Genes

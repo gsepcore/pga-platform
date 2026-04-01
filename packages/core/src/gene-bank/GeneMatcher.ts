@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
     CognitiveGene,
     GeneType,
-} from './CognitiveGene';
+} from './CognitiveGene.js';
 
 /**
  * GeneMatcher.ts

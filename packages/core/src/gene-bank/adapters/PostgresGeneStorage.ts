@@ -6,8 +6,8 @@
  * @version 0.4.0
  */
 
-import type { CognitiveGene } from '../CognitiveGene';
-import type { GeneStorageAdapter, GeneSearchFilters } from '../GeneBank';
+import type { CognitiveGene } from '../CognitiveGene.js';
+import type { GeneStorageAdapter, GeneSearchFilters } from '../GeneBank.js';
 
 /**
  * PostgreSQL connection interface

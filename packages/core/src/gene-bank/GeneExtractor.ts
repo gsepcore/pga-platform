@@ -7,9 +7,9 @@ import {
     TenantInfo,
     GeneExtractionResult,
     createGeneId,
-} from './CognitiveGene';
-import type { LLMAdapter } from '../interfaces/LLMAdapter';
-import type { MetricsCollector } from '../monitoring/MetricsCollector';
+} from './CognitiveGene.js';
+import type { LLMAdapter } from '../interfaces/LLMAdapter.js';
+import type { MetricsCollector } from '../monitoring/MetricsCollector.js';
 
 /**
  * GeneExtractor.ts

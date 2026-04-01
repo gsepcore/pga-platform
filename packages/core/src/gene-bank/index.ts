@@ -43,7 +43,7 @@ export {
     meetsMinimumFitness,
     calculateFitnessDelta,
     isMarketplaceReady,
-} from './CognitiveGene';
+} from './CognitiveGene.js';
 
 // Gene Bank (storage and management)
 export {
@@ -54,7 +54,7 @@ export {
     GeneStorageAdapter,
     GeneSearchFilters,
     GeneSearchFiltersSchema,
-} from './GeneBank';
+} from './GeneBank.js';
 
 // Gene Extractor (extract from mutations)
 export {
@@ -62,7 +62,7 @@ export {
     GeneExtractionConfig,
     GeneExtractionConfigSchema,
     MutationContext,
-} from './GeneExtractor';
+} from './GeneExtractor.js';
 
 // Gene Matcher (find and rank genes)
 export {
@@ -71,7 +71,7 @@ export {
     GeneMatchConfigSchema,
     MatchContext,
     GeneMatchResult,
-} from './GeneMatcher';
+} from './GeneMatcher.js';
 
 // Sandbox Tester (test genes safely)
 export {
@@ -82,7 +82,7 @@ export {
     TestCaseResult,
     SandboxTestResult,
     BaselinePerformance,
-} from './SandboxTester';
+} from './SandboxTester.js';
 
 // Gene Adopter (orchestrate adoption)
 export {
@@ -91,10 +91,10 @@ export {
     GeneAdoptionConfigSchema,
     AdoptionRequest,
     AdoptedGeneStatus,
-} from './GeneAdopter';
+} from './GeneAdopter.js';
 // Marketplace Client (global sharing)
-export { MarketplaceClient } from './MarketplaceClient';
-export type { MarketplaceClientOptions } from './MarketplaceClient';
+export { MarketplaceClient } from './MarketplaceClient.js';
+export type { MarketplaceClientOptions } from './MarketplaceClient.js';
 
 // Marketplace Types (API response shapes)
 export type {
@@ -111,11 +111,11 @@ export type {
     SellerEarnings,
     MarketplaceAdoptionResponse,
     DiscoverOptions,
-} from './MarketplaceTypes';
+} from './MarketplaceTypes.js';
 
 // Marketplace Mappers (public utilities)
 export {
     mapListingToCognitiveGene,
     mapCognitiveGeneToPublishBody,
     mapFiltersToApiParams,
-} from './MarketplaceMapper';
+} from './MarketplaceMapper.js';
