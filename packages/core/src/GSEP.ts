@@ -46,7 +46,7 @@ import { CalibratedAutonomy, type AutonomyDecision } from './advanced-ai/Calibra
 import { PersonalNarrative, type NarrativeSummary, type SignificantMoment } from './memory/PersonalNarrative.js';
 import { AnalyticMemoryEngine, type MemoryQueryResult } from './memory/AnalyticMemoryEngine.js';
 import { MetaEvolutionEngine } from './evolution/boost/MetaEvolutionEngine.js';
-import type { GeneBank } from './gene-bank/GeneBank.js';
+import { GeneBank } from './gene-bank/GeneBank.js';
 import { MarketplaceClient } from './gene-bank/MarketplaceClient.js';
 import type { DriftSignal } from './evolution/DriftAnalyzer.js';
 import { CanaryDeploymentManager } from './evolution/CanaryDeployment.js';
@@ -544,8 +544,20 @@ export class GSEP {
             forbiddenTopics: options.forbiddenTopics,
         } : undefined;
 
+        // ─── Gene Bank with SQLite (included by default) ────────
+        let geneBank: GeneBank | undefined;
+        try {
+            const { SQLiteGeneStorage } = await import('./gene-bank/adapters/SQLiteGeneStorage.js');
+            const geneStorage = new SQLiteGeneStorage({ agentName: name });
+            await geneStorage.initialize();
+            geneBank = new GeneBank(geneStorage, {
+                tenantId: name,
+                agentId: name,
+            });
+        } catch { /* Gene Bank not available — continue without it */ }
+
         // ─── Create, initialize, and return genome ─────────────
-        const gsep = new GSEP({ llm, storage });
+        const gsep = new GSEP({ llm, storage, geneBank });
         await gsep.initialize();
 
         // ─── Try to restore existing genome or create new one ──

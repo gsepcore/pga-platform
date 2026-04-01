@@ -245,6 +245,8 @@ export {
 
 // Storage Adapters (included)
 export { InMemoryGeneStorage } from './gene-bank/adapters/InMemoryGeneStorage.js';
+export { SQLiteGeneStorage } from './gene-bank/adapters/SQLiteGeneStorage.js';
+export type { SQLiteGeneStorageOptions } from './gene-bank/adapters/SQLiteGeneStorage.js';
 
 export type {
     // Core types
