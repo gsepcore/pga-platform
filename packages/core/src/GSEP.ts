@@ -1519,11 +1519,18 @@ export class GenomeInstance {
             userId,
         }, { genomeId: this.genome.id, userId });
 
-        // Fitness calculation
+        // Fitness calculation (real quality, not hardcoded)
         this.interactionCount++;
+        let quality = this.estimateQuality(userMessage, response);
+        if (this.thinkingEngine) {
+            try {
+                const reflection = await this.thinkingEngine.selfReflect(userMessage, response);
+                quality = quality * 0.7 + reflection.qualityScore * 0.3;
+            } catch { /* best-effort */ }
+        }
         const interactionData: InteractionData = {
             success: true,
-            quality: 0.75,
+            quality,
             inputTokens,
             outputTokens,
             latency: Date.now() - startTime,
@@ -1564,7 +1571,19 @@ export class GenomeInstance {
         const continuousEvolution = this.genome.config.autonomous?.continuousEvolution;
         const evolveEveryN = this.genome.config.autonomous?.evolveEveryN ?? 10;
         if (continuousEvolution && this.interactionCount % evolveEveryN === 0 && !this.evolutionInProgress) {
-            this.runEvolutionCycle().catch(() => {});
+            this.evolutionInProgress = true;
+            this.runEvolutionCycle()
+                .then(() => {
+                    // eslint-disable-next-line no-console
+                    console.log(`[GSEP] 🧬 Evolution cycle complete — interaction #${this.interactionCount}`);
+                })
+                .catch((err) => {
+                    // eslint-disable-next-line no-console
+                    console.log(`[GSEP] ❌ Evolution cycle failed:`, err instanceof Error ? err.message : String(err));
+                })
+                .finally(() => {
+                    this.evolutionInProgress = false;
+                });
         }
 
         // Emit chat:completed
