@@ -1207,6 +1207,386 @@ export class GenomeInstance {
         return this.genome.name;
     }
 
+    // ─── Middleware Hooks (before/after LLM) ────────────────
+
+    /**
+     * BEFORE hook — run the full pre-LLM pipeline.
+     *
+     * Runs: C0 integrity, blackboard populate, autonomous loop,
+     * curiosity, strategic refusal, metacognition, emotional analysis,
+     * prompt assembly with evolved genes, RAG, context memory,
+     * proactive suggestions, pattern predictions, anomaly detection,
+     * Purpose Lock, C3 firewall scan, PII redaction.
+     *
+     * Returns the enhanced prompt and security status.
+     */
+    async beforeLLM(userMessage: string, context: { userId?: string; taskType?: string }): Promise<{
+        prompt: string;
+        sanitizedMessage: string;
+        blocked: boolean;
+        blockReason?: string;
+    }> {
+        const userId = context.userId ?? 'anonymous';
+        const taskType = context.taskType ?? 'general';
+        const selectionContext = { userId, taskType };
+
+        // C0 integrity
+        if (this.genomeKernel) {
+            try { this.genomeKernel.verifyIntegrity(); } catch { /* log only */ }
+        }
+
+        // Emit chat:started
+        this.events.emitSync('chat:started', {
+            userId, taskType,
+            messagePreview: userMessage.slice(0, 100),
+        }, { genomeId: this.genome.id, userId });
+
+        // Blackboard populate
+        if (this.stateVector) {
+            if (this.emotionalModel) {
+                const emotion = this.emotionalModel.inferEmotion(userMessage);
+                const tone = this.emotionalModel.getToneGuidance(emotion);
+                this.stateVector.updateEmotional({
+                    userEmotion: emotion.primary,
+                    intensity: emotion.intensity,
+                    agentTone: tone.suggestedTone,
+                });
+            }
+            if (this.metacognition) {
+                const pre = this.metacognition.analyzePreResponse(userMessage);
+                this.stateVector.updateCognitive({
+                    confidence: pre.confidence.overall,
+                    knowledgeGaps: pre.knowledgeGaps ?? [],
+                    suggestedAction: pre.suggestedAction,
+                    domain: taskType,
+                });
+            }
+            if (this.patternMemory) {
+                const preds = this.patternMemory.getPredictions();
+                this.stateVector.updateMemory({ predictions: preds.map(p => p.prediction) });
+            }
+            if (this.personalNarrative) {
+                const stage = this.personalNarrative.getRelationshipStage();
+                this.stateVector.updateMemory({ relationshipStage: stage });
+            }
+            const driftReport = this.driftAnalyzer.analyzeDrift();
+            const fitnessVec = this.driftAnalyzer.getLatestFitness();
+            const hScore = fitnessVec?.composite ?? 0.5;
+            this.stateVector.updateHealth({
+                operatingMode: this.purposeSurvival?.getMode() ?? 'stable',
+                healthScore: hScore,
+                healthLabel: hScore >= 0.8 ? 'excellent' : hScore >= 0.6 ? 'stable' : hScore >= 0.4 ? 'degraded' : 'critical',
+                isDrifting: driftReport.isDrifting,
+                driftSeverity: driftReport.overallSeverity ?? 'none',
+            });
+        }
+
+        // Autonomous loop
+        if (this.autonomousLoop && this.stateVector) {
+            const observation = this.autonomousLoop.observe(userMessage, this.stateVector.getState());
+            const thinking = this.autonomousLoop.think(observation);
+            this.autonomousLoop.plan(thinking);
+        }
+
+        // Curiosity engine
+        if (this.curiosityEngine) {
+            const domain = this.stateVector?.getState().cognitive.domain ?? taskType;
+            const confidence = this.stateVector?.getState().cognitive.confidence ?? 0.7;
+            this.curiosityEngine.detectGaps(userMessage, domain, confidence);
+        }
+
+        // Strategic refusal
+        if (this.strategicAutonomy && taskType) {
+            const refusal = this.strategicAutonomy.shouldRefuse(taskType, userMessage);
+            if (refusal.refuse) {
+                return {
+                    prompt: '',
+                    sanitizedMessage: userMessage,
+                    blocked: true,
+                    blockReason: `I can't proceed with this request. ${refusal.reason}`,
+                };
+            }
+        }
+
+        // Emotional escalation
+        if (this.emotionalModel) {
+            const emotion = this.emotionalModel.inferEmotion(userMessage);
+            if ((emotion.primary === 'frustrated' || emotion.primary === 'impatient') && emotion.intensity > 0.8) {
+                this.events.emitSync('emotion:escalation', {
+                    genomeId: this.genome.id,
+                    emotion: emotion.primary,
+                    intensity: emotion.intensity,
+                }, { genomeId: this.genome.id, userId });
+            }
+        }
+
+        // Assemble prompt with evolved genes
+        let prompt = await this.assemblePrompt(selectionContext, userMessage);
+
+        // RAG
+        if (this.ragEngine) {
+            const ragContext = await this.ragEngine.augment(userMessage, prompt);
+            prompt = ragContext.augmentedPrompt;
+        }
+
+        // Context memory
+        if (userId) {
+            try {
+                const memoryPrompt = await this.contextMemory.getMemoryPrompt(userId, this.genome.id);
+                if (memoryPrompt && memoryPrompt.length > 0) {
+                    prompt += `\n\n---\n\n${memoryPrompt}`;
+                }
+            } catch { /* best-effort */ }
+        }
+
+        // Proactive suggestions
+        if (userId) {
+            try {
+                const suggestions = await this.proactiveSuggestions.generateSuggestions(userId, this.genome.id, userMessage);
+                if (suggestions.length > 0) {
+                    prompt += `\n\n---\n\n${this.proactiveSuggestions.formatSuggestionsPrompt(suggestions)}`;
+                }
+            } catch { /* best-effort */ }
+        }
+
+        // Pattern predictions
+        if (this.patternMemory) {
+            const predictions = this.patternMemory.getPredictions();
+            if (predictions.length > 0) {
+                const lines = predictions.slice(0, 3).map(
+                    p => `- ${p.prediction} (${Math.round(p.confidence * 100)}% confidence)`
+                );
+                prompt += `\n\n---\n\n## Behavioral Predictions\n${lines.join('\n')}`;
+            }
+        }
+
+        // Anomaly detection
+        const anomalies = this.anomalyDetector.analyze(userMessage, userId);
+        if (anomalies.some(a => a.suggestedAction === 'block')) {
+            return {
+                prompt: '',
+                sanitizedMessage: userMessage,
+                blocked: true,
+                blockReason: 'Your message could not be processed at this time. Please try again later.',
+            };
+        }
+
+        // Purpose Lock
+        if (this.purposeLock) {
+            const rejection = await this.purposeLock.guard(userMessage);
+            if (rejection) {
+                this.events.emitSync('purpose:rejected', {
+                    genomeId: this.genome.id,
+                    userMessage: userMessage.substring(0, 100),
+                }, { genomeId: this.genome.id, userId });
+                return { prompt: '', sanitizedMessage: userMessage, blocked: true, blockReason: rejection };
+            }
+            this.events.emitSync('purpose:accepted', { genomeId: this.genome.id }, { genomeId: this.genome.id, userId });
+        }
+
+        // C3 Firewall scan
+        let sanitizedMessage = userMessage;
+        if (this.contentFirewall) {
+            const inputScan = this.contentFirewall.scan(userMessage, 'user-input');
+            if (inputScan.detections.length > 0) {
+                this.events.emitSync('firewall:threat', {
+                    genomeId: this.genome.id,
+                    pattern: inputScan.detections.map(d => d.patternId).join(', '),
+                    severity: inputScan.allowed ? 'low' as const : 'high' as const,
+                    allowed: inputScan.allowed,
+                    input: userMessage.slice(0, 100),
+                }, { genomeId: this.genome.id, userId });
+            }
+            sanitizedMessage = inputScan.sanitizedContent;
+        }
+
+        // PII redaction via Genome Shield
+        if (this.shieldBridge) {
+            const shieldResult = await this.shieldBridge.processInbound(sanitizedMessage, taskType, userId);
+            if (!shieldResult.allowed) {
+                return { prompt: '', sanitizedMessage, blocked: true, blockReason: shieldResult.blockReason ?? 'Blocked by security policy.' };
+            }
+            sanitizedMessage = shieldResult.sanitized;
+        }
+
+        return { prompt, sanitizedMessage, blocked: false };
+    }
+
+    /**
+     * AFTER hook — run the full post-LLM pipeline.
+     *
+     * Runs: C4 immune scan, fitness calculation, drift detection,
+     * evolution trigger, metacognition, pattern memory, emotional model,
+     * growth journal, curiosity engine, DNA profile update, persist stats.
+     *
+     * Returns security status and fitness score.
+     */
+    async afterLLM(userMessage: string, response: string, context: { userId?: string; taskType?: string }): Promise<{
+        safe: boolean;
+        threats: Array<{ type: string; severity: string; description: string }>;
+        fitness: number;
+        response: string;
+    }> {
+        const userId = context.userId ?? 'anonymous';
+        const taskType = context.taskType ?? 'general';
+        const startTime = Date.now();
+        let processedResponse = response;
+        const threats: Array<{ type: string; severity: string; description: string }> = [];
+
+        // C4 Immune system scan
+        if (this.immuneSystem) {
+            const verdict = this.immuneSystem.scanOutput(response, userMessage, '');
+            if (!verdict.clean) {
+                for (const t of verdict.threats) {
+                    threats.push({ type: t.type, severity: t.severity, description: t.description });
+                }
+                this.events.emitSync('immune:threat', {
+                    genomeId: this.genome.id,
+                    threats: verdict.threats.map(t => ({ type: t.type, severity: t.severity, description: t.description })),
+                    action: verdict.action,
+                }, { genomeId: this.genome.id, userId });
+
+                if (verdict.action === 'quarantine') {
+                    this.immuneSystem.quarantineAndRecover();
+                    processedResponse = 'I need to rephrase my response for safety reasons. Could you please rephrase your question?';
+                }
+            }
+        }
+
+        // Record metrics
+        const inputTokens = Math.ceil(userMessage.length / 4);
+        const outputTokens = Math.ceil(response.length / 4);
+        this.metrics.recordRequest({
+            requestId: `mw-${Date.now()}`,
+            duration: Date.now() - startTime,
+            success: true,
+            model: 'external',
+            inputTokens,
+            outputTokens,
+        });
+
+        // Record interaction in storage
+        await this.storage.recordInteraction({
+            genomeId: this.genome.id,
+            userId,
+            userMessage,
+            assistantResponse: response,
+            toolCalls: [],
+            timestamp: new Date(),
+        });
+
+        // Metacognition post-analysis
+        if (this.metacognition) {
+            try { this.metacognition.analyzePostResponse(userMessage, response, true); } catch { /* best-effort */ }
+        }
+
+        // Pattern memory
+        if (this.patternMemory) {
+            try { this.patternMemory.recordInteraction({ taskType, success: true, timestamp: new Date() }); } catch { /* best-effort */ }
+        }
+
+        // Emotional model (infer emotion for tracking)
+        if (this.emotionalModel) {
+            try { this.emotionalModel.inferEmotion(userMessage); } catch { /* best-effort */ }
+        }
+
+        // Growth journal
+        if (this.growthJournal) {
+            try { this.growthJournal.recordSuccess(taskType, userMessage, 0.75); } catch { /* best-effort */ }
+        }
+
+        // Curiosity engine
+        if (this.curiosityEngine && taskType) {
+            try { this.curiosityEngine.recordExploration(taskType, true); } catch { /* best-effort */ }
+        }
+
+        // DNA profile update
+        try {
+            await this.recordInteraction({
+                userId,
+                userMessage,
+                assistantResponse: response,
+                toolCalls: [],
+                taskType,
+                timestamp: new Date(),
+            });
+        } catch { /* best-effort */ }
+
+        // Emit chat:message
+        this.events.emitSync('chat:message', {
+            role: 'assistant',
+            content: response.slice(0, 200),
+            userId,
+        }, { genomeId: this.genome.id, userId });
+
+        // Fitness calculation
+        this.interactionCount++;
+        const interactionData: InteractionData = {
+            success: true,
+            quality: 0.75,
+            inputTokens,
+            outputTokens,
+            latency: Date.now() - startTime,
+            model: 'external',
+            interventionNeeded: false,
+            timestamp: new Date(),
+        };
+        const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
+        this.driftAnalyzer.recordFitness(fitnessVector);
+
+        // Emit fitness:computed
+        this.events.emitSync('fitness:computed', {
+            genomeId: this.genome.id,
+            composite: fitnessVector.composite,
+            vector: {
+                taskSuccess: fitnessVector.successRate,
+                efficiency: fitnessVector.tokenEfficiency,
+                adaptability: fitnessVector.quality,
+                consistency: 1 - fitnessVector.interventionRate,
+                userSatisfaction: fitnessVector.successRate,
+                safety: 1 - fitnessVector.interventionRate,
+            },
+        }, { genomeId: this.genome.id, userId });
+
+        // Drift detection
+        const driftCheck = this.driftAnalyzer.analyzeDrift();
+        if (driftCheck.isDrifting) {
+            this.events.emitSync('drift:detected', {
+                genomeId: this.genome.id,
+                signals: driftCheck.signals.map(s => ({
+                    type: s.type, severity: s.severity, metric: s.metric, value: s.currentValue,
+                })),
+                severity: driftCheck.overallSeverity,
+            }, { genomeId: this.genome.id, userId });
+        }
+
+        // Evolution trigger
+        const continuousEvolution = this.genome.config.autonomous?.continuousEvolution;
+        const evolveEveryN = this.genome.config.autonomous?.evolveEveryN ?? 10;
+        if (continuousEvolution && this.interactionCount % evolveEveryN === 0 && !this.evolutionInProgress) {
+            this.runEvolutionCycle().catch(() => {});
+        }
+
+        // Emit chat:completed
+        this.events.emitSync('chat:completed', {
+            userId, taskType,
+            duration: Date.now() - startTime,
+            success: true,
+            inputTokens, outputTokens,
+            interactionCount: this.interactionCount,
+        }, { genomeId: this.genome.id, userId });
+
+        // Persist security stats
+        this.persistSecurityStats();
+
+        return {
+            safe: threats.length === 0,
+            threats,
+            fitness: fitnessVector.composite,
+            response: processedResponse,
+        };
+    }
+
     /**
      * Rehydrate volatile state from persisted storage.
      * Called after restoring a genome from disk to resume evolution

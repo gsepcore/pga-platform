@@ -21,39 +21,53 @@ describe('GSEPMiddleware', () => {
         expect(mw.getGenome()).toBeDefined();
     });
 
-    it('before() should return enhanced prompt', async () => {
+    it('before() should return enhanced prompt and sanitized message', async () => {
         const mw = await GSEPMiddleware.create({
             llm: mockLLM as never,
         });
 
-        const result = await mw.before('You are helpful', {
-            message: 'Hello',
+        const result = await mw.before('Hello, how are you?', {
             userId: 'user-1',
+            taskType: 'general',
         });
 
-        expect(result.prompt).toContain('You are helpful');
-        expect(result.rejected).toBe(false);
-        expect(typeof result.anomalyDetected).toBe('boolean');
+        expect(result.prompt).toBeDefined();
+        expect(result.prompt.length).toBeGreaterThan(0);
+        expect(result.sanitizedMessage).toBeDefined();
+        expect(result.blocked).toBe(false);
     });
 
-    it('after() should not throw on valid feedback', async () => {
+    it('after() should return fitness and safety status', async () => {
         const mw = await GSEPMiddleware.create({
             llm: mockLLM as never,
         });
 
-        await expect(
-            mw.after('response text', { userId: 'user-1', feedback: 'good' }),
-        ).resolves.not.toThrow();
+        const result = await mw.after(
+            'Hello',
+            'Hi there! How can I help?',
+            { userId: 'user-1', taskType: 'general' },
+        );
+
+        expect(result.safe).toBe(true);
+        expect(result.threats).toEqual([]);
+        expect(typeof result.fitness).toBe('number');
+        expect(result.fitness).toBeGreaterThan(0);
+        expect(result.response).toBe('Hi there! How can I help?');
     });
 
-    it('after() should handle numeric feedback', async () => {
+    it('after() should track multiple interactions for evolution', async () => {
         const mw = await GSEPMiddleware.create({
             llm: mockLLM as never,
         });
 
-        await expect(
-            mw.after('response text', { userId: 'user-1', feedback: 0.9 }),
-        ).resolves.not.toThrow();
+        // Record multiple interactions
+        for (let i = 0; i < 5; i++) {
+            await mw.after(`Question ${i}`, `Answer ${i}`, { userId: 'user-1' });
+        }
+
+        // Should not throw, fitness should still compute
+        const result = await mw.after('Final question', 'Final answer', { userId: 'user-1' });
+        expect(result.fitness).toBeGreaterThan(0);
     });
 
     it('should generate reports', async () => {
@@ -65,16 +79,6 @@ describe('GSEPMiddleware', () => {
         expect(report).toBeDefined();
         expect(report.conversations).toBeDefined();
         expect(report.quality).toBeDefined();
-    });
-
-    it('should expose anomaly analytics', async () => {
-        const mw = await GSEPMiddleware.create({
-            llm: mockLLM as never,
-        });
-
-        const analytics = mw.getAnomalyAnalytics();
-        expect(analytics).toBeDefined();
-        expect(analytics.totalAnalyzed).toBe(0);
     });
 
     it('should expose the genome', async () => {
