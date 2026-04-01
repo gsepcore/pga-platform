@@ -256,6 +256,15 @@ export class ContentFirewall {
         };
     }
 
+    /**
+     * Restore analytics from persisted state (called during rehydration)
+     */
+    restoreAnalytics(stats: { totalScanned: number; totalBlocked: number; totalSanitized: number }): void {
+        this.totalScanned = stats.totalScanned;
+        this.totalBlocked = stats.totalBlocked;
+        this.totalSanitized = stats.totalSanitized;
+    }
+
     // ─── Pattern Detection Engine ───────────────────────────
 
     /**

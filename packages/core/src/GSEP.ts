@@ -10,7 +10,7 @@
 import type { LLMAdapter } from './interfaces/LLMAdapter.js';
 import type { StorageAdapter } from './interfaces/StorageAdapter.js';
 import type { Genome, GenomeConfig, SelectionContext, Interaction, EvolutionGuardrails, AutonomousConfig } from './types/index.js';
-import { InMemoryStorageAdapter } from './wrap/InMemoryStorageAdapter.js';
+import { SQLiteStorageAdapter } from './wrap/SQLiteStorageAdapter.js';
 import { getPreset } from './presets/ConfigPresets.js';
 import type { PresetName } from './presets/ConfigPresets.js';
 import { WrappedAgent } from './wrap/WrappedAgent.js';
@@ -527,8 +527,9 @@ export class GSEP {
             // Security module not available — continue without proxy
         }
 
-        // ─── Resolve storage ───────────────────────────────────
-        const storage = options.storage ?? new InMemoryStorageAdapter();
+        // ─── Resolve storage (SQLite persistent by default) ──────
+        const storage = options.storage ?? new SQLiteStorageAdapter({ agentName: name });
+        await storage.initialize();
 
         // ─── Build autonomous config from preset + overrides ───
         const autonomous: AutonomousConfig = overrides
@@ -547,10 +548,22 @@ export class GSEP {
         const gsep = new GSEP({ llm, storage });
         await gsep.initialize();
 
-        const genome = await gsep.createGenome({
-            name,
-            config: { autonomous, purposeLock },
-        });
+        // ─── Try to restore existing genome or create new one ──
+        let genome: GenomeInstance;
+        const existingGenomes = await storage.listGenomes();
+        const existingGenome = existingGenomes.find(g => g.name === name);
+        const restored = existingGenome ? await gsep.loadGenome(existingGenome.id) : null;
+        if (restored) {
+            genome = restored;
+            await genome.rehydrate();
+            // eslint-disable-next-line no-console
+            console.log(`[GSEP] Restored genome "${name}" (${existingGenome!.id.slice(0, 12)}...)`);
+        } else {
+            genome = await gsep.createGenome({
+                name,
+                config: { autonomous, purposeLock },
+            });
+        }
 
         // ─── GSEP Auto-Dashboard: start automatically ─────────
         try {
@@ -1183,6 +1196,76 @@ export class GenomeInstance {
     }
 
     /**
+     * Rehydrate volatile state from persisted storage.
+     * Called after restoring a genome from disk to resume evolution
+     * exactly where it left off — no lost interactions, no reset counters.
+     */
+    async rehydrate(): Promise<void> {
+        // Restore interaction count from persisted interactions
+        const analytics = await this.storage.getAnalytics(this.genome.id);
+        this.interactionCount = analytics.totalInteractions;
+
+        // Restore fitness history into drift analyzer from mutation log
+        const mutations = await this.storage.getMutationHistory(this.genome.id, 100);
+        for (const mutation of mutations) {
+            if (mutation.fitnessDelta !== undefined) {
+                this.driftAnalyzer.recordFitness({
+                    quality: 0.7,
+                    successRate: 0.7,
+                    tokenEfficiency: 0.5,
+                    latency: 500,
+                    costPerSuccess: 0.01,
+                    interventionRate: 0.1,
+                    composite: 0.7,
+                    sampleSize: 1,
+                    lastUpdated: mutation.timestamp ?? new Date(),
+                    confidence: 0.5,
+                });
+            }
+        }
+
+        // Restore C3/C4 stats from SQLite
+        try {
+            const sqliteStorage = this.storage as import('./wrap/SQLiteStorageAdapter.js').SQLiteStorageAdapter;
+            if (typeof sqliteStorage.loadSecurityStats === 'function') {
+                const stats = sqliteStorage.loadSecurityStats();
+                if (stats) {
+                    if (stats.c3 && this.contentFirewall) {
+                        this.contentFirewall.restoreAnalytics(stats.c3 as { totalScanned: number; totalBlocked: number; totalSanitized: number });
+                    }
+                    if (stats.c4 && this.immuneSystem) {
+                        this.immuneSystem.restoreStats(stats.c4 as { totalScans: number; threatsDetected: number; quarantinesTriggered: number; sanitizations: number });
+                    }
+                }
+            }
+        } catch { /* storage doesn't support security stats */ }
+
+        // eslint-disable-next-line no-console
+        console.log(`[GSEP] Rehydrated: ${this.interactionCount} interactions, ${mutations.length} mutations restored`);
+    }
+
+    /**
+     * Persist C3/C4 security stats to SQLite (called after each interaction)
+     */
+    private persistSecurityStats(): void {
+        try {
+            const sqliteStorage = this.storage as import('./wrap/SQLiteStorageAdapter.js').SQLiteStorageAdapter;
+            if (typeof sqliteStorage.saveSecurityStats === 'function') {
+                const stats = {
+                    c3: this.contentFirewall ? {
+                        totalScanned: this.contentFirewall.getAnalytics().totalScanned,
+                        totalBlocked: this.contentFirewall.getAnalytics().totalBlocked,
+                        totalSanitized: this.contentFirewall.getAnalytics().totalSanitized,
+                    } : undefined,
+                    c4: this.immuneSystem ? this.immuneSystem.getImmuneStatus() : undefined,
+                    lastUpdated: new Date().toISOString(),
+                };
+                sqliteStorage.saveSecurityStats(stats);
+            }
+        } catch { /* best-effort */ }
+    }
+
+    /**
      * Get event emitter for real-time dashboard subscriptions
      */
     getEventEmitter(): GSEPEventEmitter {
@@ -1212,6 +1295,27 @@ export class GenomeInstance {
             events: this.events,
             port,
             host: '127.0.0.1',
+            getSnapshot: async () => {
+                const perf = this.metrics.getPerformanceMetrics();
+                const analytics = await this.storage.getAnalytics(this.genome.id);
+                const mutations = await this.storage.getMutationHistory(this.genome.id, 1000);
+                const c3Analytics = this.contentFirewall?.getAnalytics();
+                return {
+                    genomeId: this.genome.id,
+                    name: this.genome.name,
+                    version: this.genome.version || 1,
+                    status: 'active',
+                    interactionCount: this.interactionCount || analytics.totalInteractions,
+                    totalRequests: perf.totalRequests || analytics.totalInteractions,
+                    successRate: perf.successRate,
+                    totalTokens: perf.totalTokens,
+                    avgResponseTime: perf.avgResponseTime,
+                    totalMutations: analytics.totalMutations,
+                    promotedCount: mutations.filter(m => m.deployed).length,
+                    rejectedCount: mutations.filter(m => !m.deployed).length,
+                    threatCount: (c3Analytics?.totalBlocked ?? 0),
+                };
+            },
             getMarketplaceClient: () => this.geneBank?.getMarketplaceClient(),
             getGenes: () => {
                 const c3Analytics = this.contentFirewall?.getAnalytics();
@@ -1253,6 +1357,14 @@ export class GenomeInstance {
         // eslint-disable-next-line no-console
         console.log(`\n🧬 GSEP Dashboard: ${url}\n`);
         console.log(`  Running on a VPS? Use: ssh -L ${port}:localhost:${port} your-server\n`);
+
+        // Auto-open dashboard in browser (best-effort, non-blocking)
+        try {
+            const { exec } = await import('node:child_process');
+            const platform = process.platform;
+            const cmd = platform === 'darwin' ? 'open' : platform === 'win32' ? 'start' : 'xdg-open';
+            exec(`${cmd} "${url}"`);
+        } catch { /* best-effort — don't fail if browser can't open */ }
         return url;
     }
 
@@ -2055,6 +2167,9 @@ Ready to see what we can do together? 😊`,
                 tokens: inputTokens + outputTokens,
             }, { genomeId: this.genome.id, userId: context.userId });
 
+            // Persist security stats
+            this.persistSecurityStats();
+
             return response.content;
         } catch (err) {
             error = err instanceof Error ? err.message : String(err);
@@ -2479,15 +2594,27 @@ Ready to see what we can do together? 😊`,
         taskType: string;
         success: boolean;
     }): Promise<void> {
+        const requestId = `ext-${Date.now()}`;
+        const startTime = Date.now();
+
         try {
+            // Emit chat:started
+            this.events.emitSync('chat:started', {
+                userId: params.userId,
+                taskType: params.taskType,
+                messagePreview: params.userMessage.slice(0, 100),
+            }, { genomeId: this.genome.id, userId: params.userId });
+
             // Record metrics
+            const inputTokens = Math.ceil(params.userMessage.length / 4);
+            const outputTokens = Math.ceil(params.response.length / 4);
             this.metrics.recordRequest({
-                requestId: `ext-${Date.now()}`,
+                requestId,
                 duration: 0,
                 success: params.success,
                 model: 'external',
-                inputTokens: Math.ceil(params.userMessage.length / 4),
-                outputTokens: Math.ceil(params.response.length / 4),
+                inputTokens,
+                outputTokens,
             });
 
             // Record interaction in storage
@@ -2500,10 +2627,74 @@ Ready to see what we can do together? 😊`,
                 timestamp: new Date(),
             });
 
+            // Emit chat:message
+            this.events.emitSync('chat:message', {
+                role: 'assistant',
+                content: params.response.slice(0, 200),
+                userId: params.userId,
+            }, { genomeId: this.genome.id, userId: params.userId });
+
             // Increment interaction count and trigger evolution if needed
             this.interactionCount++;
             const continuousEvolution = this.genome.config.autonomous?.continuousEvolution;
             const evolveEveryN = this.genome.config.autonomous?.evolveEveryN ?? 10;
+
+            // Compute fitness and feed drift analyzer
+            const interactionData: InteractionData = {
+                success: params.success,
+                quality: params.success ? 0.75 : 0.3,
+                inputTokens,
+                outputTokens,
+                latency: 0,
+                model: 'external',
+                interventionNeeded: false,
+                timestamp: new Date(),
+            };
+            const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
+            this.driftAnalyzer.recordFitness(fitnessVector);
+
+            // Emit fitness:computed for dashboard
+            this.events.emitSync('fitness:computed', {
+                genomeId: this.genome.id,
+                composite: fitnessVector.composite,
+                vector: {
+                    taskSuccess: fitnessVector.successRate,
+                    efficiency: fitnessVector.tokenEfficiency,
+                    adaptability: fitnessVector.quality,
+                    consistency: 1 - fitnessVector.interventionRate,
+                    userSatisfaction: fitnessVector.successRate,
+                    safety: 1 - fitnessVector.interventionRate,
+                },
+            }, { genomeId: this.genome.id, userId: params.userId });
+
+            // Emit drift:detected if drifting
+            const driftCheck = this.driftAnalyzer.analyzeDrift();
+            if (driftCheck.isDrifting) {
+                this.events.emitSync('drift:detected', {
+                    genomeId: this.genome.id,
+                    signals: driftCheck.signals.map(s => ({
+                        type: s.type,
+                        severity: s.severity,
+                        metric: s.metric,
+                        value: s.currentValue,
+                    })),
+                    severity: driftCheck.overallSeverity,
+                }, { genomeId: this.genome.id, userId: params.userId });
+            }
+
+            // Emit chat:completed
+            this.events.emitSync('chat:completed', {
+                userId: params.userId,
+                taskType: params.taskType,
+                duration: Date.now() - startTime,
+                success: params.success,
+                inputTokens,
+                outputTokens,
+                interactionCount: this.interactionCount,
+            }, { genomeId: this.genome.id, userId: params.userId });
+
+            // Persist security stats after every interaction
+            this.persistSecurityStats();
 
             if (continuousEvolution && this.interactionCount % evolveEveryN === 0 && !this.evolutionInProgress) {
                 this.runEvolutionCycle().catch(() => {});

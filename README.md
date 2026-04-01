@@ -36,7 +36,7 @@ Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 | PII categories (with Luhn) | **9** |
 | Security profiles | **4** |
 | Lines of code to integrate | **1** |
-| New npm dependencies | **0** |
+| Persistent storage | **SQLite (better-sqlite3)** |
 
 ---
 
@@ -535,7 +535,7 @@ const response = await llm.chat(userMessage);
 npm uninstall @gsep/core @gsep/adapters-llm-anthropic @gsep/adapters-llm-openai @gsep/adapters-storage-postgres
 ```
 
-No side effects, no leftover config. In-memory storage is gone when the process stops. PostgreSQL tables can be dropped with `DROP TABLE IF EXISTS pga_genomes, pga_interactions CASCADE;`.
+No side effects, no leftover config. SQLite database is a single file at `~/.gsep/<agent>/gsep.sqlite` — delete it and it's gone. PostgreSQL tables can be dropped with `DROP TABLE IF EXISTS pga_genomes, pga_interactions CASCADE;`.
 
 ---
 
@@ -556,7 +556,21 @@ const genome = await gsep.createGenome({
 });
 ```
 
-### With persistent storage (production)
+### Persistent storage (default — SQLite)
+
+`quickStart()` uses SQLite automatically — zero config. All genome data, interactions, mutations, fitness history, and security stats persist in `~/.gsep/<agent-name>/gsep.sqlite`.
+
+```typescript
+// SQLite is the default — nothing to configure
+const genome = await GSEP.quickStart({ name: 'my-agent', llm, preset: 'full' });
+// Data persists at ~/.gsep/my-agent/gsep.sqlite
+
+// Or bring your own storage:
+import { SQLiteStorageAdapter } from '@gsep/core';
+const storage = new SQLiteStorageAdapter({ path: '/custom/path/gsep.sqlite' });
+```
+
+### With PostgreSQL (enterprise / multi-agent)
 
 ```typescript
 import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
@@ -569,12 +583,23 @@ const gsep = new GSEP({
 });
 ```
 
+### Real-time dashboard
+
+GSEP includes a built-in live dashboard that opens automatically in your browser when the agent starts. It shows fitness scores, drift detection, chromosome layers (C0-C4), mutations, and security events — all updating in real-time via SSE.
+
+```
+🧬 GSEP Dashboard: http://localhost:4200/gsep/dashboard?token=...
+```
+
+The dashboard is agent-agnostic — it works with any agent that uses GSEP, reading the agent name automatically from the host platform.
+
 ### Environment variables
 
 ```bash
 # .env
 ANTHROPIC_API_KEY=sk-ant-...        # or OPENAI_API_KEY
-DATABASE_URL=postgresql://...        # optional, for persistence
+DATABASE_URL=postgresql://...        # optional, for PostgreSQL
+GSEP_AGENT_NAME=MyAgent             # optional, auto-detected from host
 ```
 
 <details>

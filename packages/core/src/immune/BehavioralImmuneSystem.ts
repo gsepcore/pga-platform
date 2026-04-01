@@ -402,6 +402,16 @@ export class BehavioralImmuneSystem {
         };
     }
 
+    /**
+     * Restore stats from persisted state (called during rehydration)
+     */
+    restoreStats(stats: { totalScans: number; threatsDetected: number; quarantinesTriggered: number; sanitizations: number }): void {
+        this.totalScans = stats.totalScans;
+        this.threatsDetected = stats.threatsDetected;
+        this.quarantinesTriggered = stats.quarantinesTriggered;
+        this.sanitizations = stats.sanitizations;
+    }
+
     // ─── Internal Helpers ────────────────────────────────────
 
     private classifyAction(threats: OutputThreat[]): 'sanitize' | 'quarantine' {

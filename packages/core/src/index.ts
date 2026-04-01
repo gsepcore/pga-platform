@@ -67,6 +67,10 @@ export type {
 export { WrappedAgent } from './wrap/WrappedAgent.js';
 export { GenomeBuilder } from './wrap/GenomeBuilder.js';
 export { InMemoryStorageAdapter } from './wrap/InMemoryStorageAdapter.js';
+export { FileStorageAdapter } from './wrap/FileStorageAdapter.js';
+export type { FileStorageOptions } from './wrap/FileStorageAdapter.js';
+export { SQLiteStorageAdapter } from './wrap/SQLiteStorageAdapter.js';
+export type { SQLiteStorageOptions } from './wrap/SQLiteStorageAdapter.js';
 export { FunctionLLMAdapter } from './wrap/FunctionLLMAdapter.js';
 export type { WrapOptions, FunctionWrapOptions, WrappableFunction } from './wrap/WrapOptions.js';
 

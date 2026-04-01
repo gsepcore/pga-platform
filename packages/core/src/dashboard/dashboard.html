@@ -1308,6 +1308,8 @@ body {
         </span>
     </div>
     <div style="font-size: 12px; color: var(--text-muted);">
+        <span id="agent-name" style="font-weight: 600; color: var(--purple); font-size: 14px;"></span>
+        <span style="margin: 0 6px; opacity: 0.3;">|</span>
         Genome: <span id="genome-id" style="font-family: var(--mono); color: var(--cyan);">—</span>
     </div>
 </div>
@@ -1748,8 +1750,32 @@ function connectSSE() {
     fetch(baseUrl + '/gsep/snapshot?token=' + encodeURIComponent(token))
         .then(r => r.json())
         .then(snap => {
+            if (snap.name) {
+                document.getElementById('agent-name').textContent = snap.name;
+            }
             if (snap.genomeId) {
                 document.getElementById('genome-id').textContent = snap.genomeId.slice(0, 12) + '...';
+            }
+            // Hydrate all counters from persisted state
+            if (snap.interactionCount) {
+                state.chats = snap.interactionCount;
+                updateStat('stat-chats', state.chats);
+            }
+            if (snap.totalMutations) {
+                state.mutations = snap.totalMutations;
+                updateStat('stat-mutations', state.mutations);
+            }
+            if (snap.promotedCount) {
+                state.promoted = snap.promotedCount;
+                updateStat('stat-promoted', state.promoted);
+            }
+            if (snap.rejectedCount) {
+                state.rejected = snap.rejectedCount;
+                updateStat('stat-rejected', state.rejected);
+            }
+            if (snap.threatCount) {
+                state.threats = snap.threatCount;
+                updateStat('stat-threats', state.threats, state.threats > 0 ? 'red' : undefined);
             }
             // Replay recent events
             if (snap.recentEvents) {
@@ -1795,16 +1821,19 @@ function routeEvent(event) {
         case 'chat:started':
             state.chats++;
             updateStat('stat-chats', state.chats);
-            addLog('💬', 'Chat started — <span class="cyan">' + escapeHtml((data.message || '').slice(0, 60)) + '</span>');
+            addLog('💬', 'Chat started — <span class="cyan">' + escapeHtml((data.message || data.messagePreview || '').slice(0, 60)) + '</span>');
             break;
 
         case 'chat:message':
-            addLog('🤖', 'Response generated in <span class="green">' + (data.duration || 0) + 'ms</span>');
+            addLog('🤖', 'Response: <span class="green">' + escapeHtml((data.content || '').slice(0, 80)) + '</span>');
             break;
 
-        case 'chat:completed':
-            addLog('✅', 'Chat completed — quality: <span class="green">' + (data.quality || 0).toFixed(2) + '</span>, tokens: ' + (data.tokens || 0));
+        case 'chat:completed': {
+            const totalTokens = (data.inputTokens || 0) + (data.outputTokens || 0) || data.tokens || 0;
+            const duration = data.duration || 0;
+            addLog('✅', 'Chat completed — <span class="green">' + duration + 'ms</span>, tokens: ' + totalTokens + ', interactions: ' + (data.interactionCount || '?'));
             break;
+        }
 
         case 'fitness:computed':
             state.fitness = {

@@ -10,8 +10,12 @@
 
 import { createServer, type Server, type IncomingMessage, type ServerResponse } from 'node:http';
 import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { join, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { DashboardTokenHelper, type DashboardTokenPayload } from './DashboardToken.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 import type { GSEPEventEmitter, GSEPEvent } from '../realtime/EventEmitter.js';
 import type { MarketplaceClient } from '../gene-bank/MarketplaceClient.js';
 
@@ -29,7 +33,7 @@ export interface DashboardServerConfig {
     /** Max SSE connections per user (default 3) */
     maxConnectionsPerUser?: number;
     /** Optional genome snapshot provider for initial hydration */
-    getSnapshot?: (genomeId: string) => unknown;
+    getSnapshot?: (genomeId: string) => unknown | Promise<unknown>;
     /** Optional MarketplaceClient provider for marketplace proxy routes */
     getMarketplaceClient?: () => MarketplaceClient | undefined;
     /** Optional gene data provider for the gene sidebar */
@@ -288,7 +292,7 @@ export class DashboardServer {
 
     // ─── Snapshot Endpoint ───────────────────────────────
 
-    private handleSnapshot(url: URL, res: ServerResponse): void {
+    private async handleSnapshot(url: URL, res: ServerResponse): Promise<void> {
         const token = url.searchParams.get('token');
         if (!token) {
             res.writeHead(401, { 'Content-Type': 'application/json' });
@@ -304,7 +308,7 @@ export class DashboardServer {
         }
 
         const snapshot = this.config.getSnapshot
-            ? this.config.getSnapshot(payload.genomeId)
+            ? await this.config.getSnapshot(payload.genomeId)
             : { genomeId: payload.genomeId, userId: payload.userId, status: 'active' };
 
         // Include recent event history
@@ -511,7 +515,6 @@ export class DashboardServer {
 
     private broadcastEvent(event: GSEPEvent): void {
         const genomeId = event.metadata?.genomeId;
-        const userId = event.metadata?.userId;
 
         const eventData = JSON.stringify({
             type: event.type,
@@ -522,14 +525,12 @@ export class DashboardServer {
         const message = `data: ${eventData}\n\n`;
 
         // Broadcast to all connections that match the genomeId
-        for (const [connUserId, conns] of this.connections.entries()) {
+        // Note: dashboard is owner-scoped via token auth, so we don't filter by userId.
+        // The owner sees all events for their genome.
+        for (const [, conns] of this.connections.entries()) {
             for (const conn of conns) {
                 // Filter: connection must be for the same genome
                 if (genomeId && conn.payload.genomeId !== genomeId) continue;
-
-                // Filter: if event has userId, only send to matching user
-                // (for privacy — users only see their own events)
-                if (userId && connUserId !== userId) continue;
 
                 try {
                     conn.res.write(message);
