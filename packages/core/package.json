@@ -57,6 +57,10 @@
     "./security": {
       "import": "./dist/security/index.js",
       "types": "./dist/security/index.d.ts"
+    },
+    "./vercel-ai": {
+      "import": "./dist/adapters/vercel-ai.js",
+      "types": "./dist/adapters/vercel-ai.d.ts"
     }
   },
   "files": [

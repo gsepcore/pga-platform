@@ -74,6 +74,11 @@ export type { SQLiteStorageOptions } from './wrap/SQLiteStorageAdapter.js';
 export { FunctionLLMAdapter } from './wrap/FunctionLLMAdapter.js';
 export type { WrapOptions, FunctionWrapOptions, WrappableFunction } from './wrap/WrapOptions.js';
 
+// ─── Framework Adapters ────────────────────────────────
+
+export { gsepMiddleware } from './adapters/vercel-ai.js';
+export type { GSEPVercelOptions, GSEPVercelInstance, GSEPVercelMiddleware } from './adapters/vercel-ai.js';
+
 // ─── Evaluation ─────────────────────────────────────────
 
 export { Evaluator, STANDARD_TASKS } from './evaluation/Evaluator.js';
