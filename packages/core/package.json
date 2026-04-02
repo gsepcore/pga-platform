@@ -61,6 +61,10 @@
     "./vercel-ai": {
       "import": "./dist/adapters/vercel-ai.js",
       "types": "./dist/adapters/vercel-ai.d.ts"
+    },
+    "./openclaw-plugin": {
+      "import": "./dist/adapters/openclaw-plugin.js",
+      "types": "./dist/adapters/openclaw-plugin.d.ts"
     }
   },
   "files": [

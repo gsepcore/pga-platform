@@ -78,6 +78,8 @@ export type { WrapOptions, FunctionWrapOptions, WrappableFunction } from './wrap
 
 export { gsepMiddleware } from './adapters/vercel-ai.js';
 export type { GSEPVercelOptions, GSEPVercelInstance, GSEPVercelMiddleware } from './adapters/vercel-ai.js';
+export { gsepPlugin } from './adapters/openclaw-plugin.js';
+export type { GSEPPluginOptions } from './adapters/openclaw-plugin.js';
 
 // ─── Evaluation ─────────────────────────────────────────
 
