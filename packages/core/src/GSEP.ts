@@ -4295,13 +4295,19 @@ Ready to see what we can do together? 😊`,
 
         // 1. Auto-mutate on drift (with strategic prioritization if available)
         if (autoConfig?.autoMutateOnDrift !== false && drift.isDrifting) {
+            // Emit: drift-triggered evolution attempt
+            this.events.emitSync('mutation:generated', {
+                genomeId: this.genome.id,
+                gene: 'drift-response',
+                layer: 1,
+                candidateCount: drift.signals.length,
+            }, { genomeId: this.genome.id });
+
             if (this.strategicAutonomy && this.enhancedSelfModel) {
-                // Strategic: prioritize evolution targets
                 const health = this.enhancedSelfModel.assessFull();
                 const priorities = this.strategicAutonomy.prioritizeEvolution(drift.signals, health);
 
                 for (const priority of priorities.filter(p => p.urgency === 'immediate')) {
-                    // Purpose fidelity check before mutation
                     if (this.purposeSurvival) {
                         const currentAllele = this.genome.layers[`layer${priority.layer}` as 'layer0' | 'layer1' | 'layer2']
                             ?.find((a: { gene: string; status: string }) => a.gene === priority.gene && a.status === 'active');
@@ -4325,7 +4331,6 @@ Ready to see what we can do together? 😊`,
                     });
                 }
             } else {
-                // Fallback: original drift-based mutation
                 for (const signal of drift.signals) {
                     if (signal.severity === 'minor') continue;
                     const target = this.driftToMutationTarget(signal);
@@ -4335,6 +4340,50 @@ Ready to see what we can do together? 😊`,
                         taskType: `auto-evolve:${signal.type}`,
                     });
                 }
+            }
+        } else {
+            // 1b. Exploratory evolution — improve even when stable
+            // Pick the lowest-fitness active C1 gene and try to improve it
+            const activeC1 = this.genome.layers.layer1
+                .filter((a: { status: string }) => a.status === 'active')
+                .sort((a: { fitness: number }, b: { fitness: number }) => a.fitness - b.fitness);
+
+            if (activeC1.length > 0) {
+                const weakest = activeC1[0] as { gene: string; fitness: number };
+                // Emit: exploratory mutation attempt (visible in dashboard)
+                this.events.emitSync('mutation:generated', {
+                    genomeId: this.genome.id,
+                    gene: weakest.gene,
+                    layer: 1,
+                    candidateCount: 1,
+                }, { genomeId: this.genome.id });
+
+                // eslint-disable-next-line no-console
+                console.log(`[GSEP] 🔬 Exploratory mutation: trying to improve "${weakest.gene}" (fitness: ${weakest.fitness.toFixed(2)})`);
+
+                try {
+                    await this.mutate({
+                        layer: 1,
+                        gene: weakest.gene,
+                        taskType: 'exploratory-evolution',
+                    });
+                } catch (err) {
+                    // Emit: mutation attempt failed (still visible in dashboard)
+                    this.events.emitSync('mutation:rejected', {
+                        genomeId: this.genome.id,
+                        gene: weakest.gene,
+                        reason: err instanceof Error ? err.message : 'Exploration failed',
+                    }, { genomeId: this.genome.id });
+                    // eslint-disable-next-line no-console
+                    console.log(`[GSEP] 🔬 Exploratory mutation for "${weakest.gene}" — no improvement found (this is normal)`);
+                }
+            } else {
+                // No C1 genes to evolve — emit info event
+                this.events.emitSync('mutation:rejected', {
+                    genomeId: this.genome.id,
+                    gene: 'none',
+                    reason: 'No active C1 genes to evolve',
+                }, { genomeId: this.genome.id });
             }
         }
 
