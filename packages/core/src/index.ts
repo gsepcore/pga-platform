@@ -80,6 +80,8 @@ export { gsepMiddleware } from './adapters/vercel-ai.js';
 export type { GSEPVercelOptions, GSEPVercelInstance, GSEPVercelMiddleware } from './adapters/vercel-ai.js';
 export { gsepPlugin } from './adapters/openclaw-plugin.js';
 export type { GSEPPluginOptions } from './adapters/openclaw-plugin.js';
+export { gsepLangChainMiddleware } from './adapters/langchain.js';
+export type { GSEPLangChainOptions, GSEPLangChainInstance } from './adapters/langchain.js';
 
 // ─── Evaluation ─────────────────────────────────────────
 

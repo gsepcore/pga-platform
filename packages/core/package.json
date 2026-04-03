@@ -65,6 +65,10 @@
     "./openclaw-plugin": {
       "import": "./dist/adapters/openclaw-plugin.js",
       "types": "./dist/adapters/openclaw-plugin.d.ts"
+    },
+    "./langchain": {
+      "import": "./dist/adapters/langchain.js",
+      "types": "./dist/adapters/langchain.d.ts"
     }
   },
   "files": [
