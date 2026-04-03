@@ -48,12 +48,13 @@ interface MessageSendingEvent { to: string; content: string }
 
 // ─── Name Detection ─────────────────────────────────────
 
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
 function detectAgentName(): string {
     try {
-        const fs = require('node:fs');
-        const path = require('node:path');
-        const stateDir = process.env.GENOMA_STATE_DIR || path.join(process.env.HOME || '', '.genoma');
-        const identity = fs.readFileSync(path.join(stateDir, 'workspace', 'IDENTITY.md'), 'utf-8');
+        const stateDir = process.env.GENOMA_STATE_DIR || join(process.env.HOME || '', '.genoma');
+        const identity = readFileSync(join(stateDir, 'workspace', 'IDENTITY.md'), 'utf-8');
         const match = identity.match(/\*\*Name:\*\*\s*(.+)/);
         if (match && match[1].trim()) return match[1].trim();
     } catch { /* not available */ }
