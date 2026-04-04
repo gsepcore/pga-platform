@@ -872,6 +872,7 @@ export class GenomeInstance {
     private weeklyReportGenerator: WeeklyReportGenerator;
     private events: GSEPEventEmitter = new GSEPEventEmitter();
     private interactionCount: number = 0;
+    private pendingNotifications: string[] = []; // Notable events to mention in next response
     private evolutionInProgress: boolean = false;
     private marketplaceClient?: MarketplaceClient;
     private shieldBridge?: GenomeSecurityBridge;
@@ -1407,6 +1408,80 @@ export class GenomeInstance {
                 return { prompt: '', sanitizedMessage, blocked: true, blockReason: shieldResult.blockReason ?? 'Blocked by security policy.' };
             }
             sanitizedMessage = shieldResult.sanitized;
+        }
+
+        // ── GSEP Awareness Context: make intelligence visible ──
+        // Builds a context block from all running systems so the agent
+        // can naturally reference what GSEP detected in conversation.
+        const awarenessLines: string[] = [];
+
+        // Emotional awareness (GUAO #16)
+        if (this.emotionalModel) {
+            const emotion = this.emotionalModel.inferEmotion(userMessage);
+            if (emotion.intensity > 0.5) {
+                awarenessLines.push(`[Emotion detected] User seems ${emotion.primary} (intensity: ${(emotion.intensity * 100).toFixed(0)}%). Adapt your tone accordingly.`);
+            }
+            if (emotion.intensity > 0.8 && (emotion.primary === 'frustrated' || emotion.primary === 'impatient')) {
+                awarenessLines.push(`[Escalation alert] User frustration is very high. Consider offering to connect them with a human or simplify your response.`);
+            }
+        }
+
+        // Pattern predictions (GUAO #18)
+        if (this.patternMemory) {
+            const predictions = this.patternMemory.getPredictions();
+            if (predictions.length > 0) {
+                const topPred = predictions[0];
+                if (topPred.confidence > 0.5) {
+                    awarenessLines.push(`[Pattern detected] Based on previous interactions, the user may need: "${topPred.prediction}" (${(topPred.confidence * 100).toFixed(0)}% confidence). Proactively address this if relevant.`);
+                }
+            }
+        }
+
+        // User preference awareness (GUAO #7)
+        if (this.personalNarrative) {
+            const stage = this.personalNarrative.getRelationshipStage();
+            if (stage !== 'new') {
+                awarenessLines.push(`[Relationship] You have a "${stage}" relationship with this user. Adapt formality and detail level to match.`);
+            }
+        }
+
+        // Evolution awareness (GUAO #1, #2)
+        if (this.interactionCount > 0 && this.interactionCount % 10 === 0) {
+            const activeGenes = this.genome.layers.layer1.filter(a => a.status === 'active');
+            const avgFitness = activeGenes.length > 0
+                ? activeGenes.reduce((sum, a) => sum + a.fitness, 0) / activeGenes.length
+                : 0;
+            awarenessLines.push(`[Evolution] Your genes have been evolving. Current average fitness: ${(avgFitness * 100).toFixed(0)}%. ${avgFitness > 0.7 ? 'Performing well.' : 'Room for improvement — try being more specific and structured.'}`);
+        }
+
+        // Drift/health awareness (GUAO #6)
+        const currentDrift = this.driftAnalyzer.analyzeDrift();
+        if (currentDrift.isDrifting) {
+            awarenessLines.push(`[Health warning] Performance drift detected (${currentDrift.overallSeverity}). GSEP is auto-correcting. You may notice improvements in the next few interactions.`);
+        }
+
+        // Metacognition awareness (GUAO #1)
+        if (this.metacognition) {
+            const pre = this.metacognition.analyzePreResponse(userMessage);
+            if (pre.confidence.overall < 0.5) {
+                awarenessLines.push(`[Low confidence] You are not very confident about this topic. Be honest about what you don't know rather than guessing.`);
+            }
+            if (pre.knowledgeGaps && pre.knowledgeGaps.length > 0) {
+                awarenessLines.push(`[Knowledge gaps] You may lack information about: ${pre.knowledgeGaps.slice(0, 2).join(', ')}. Consider asking the user for clarification.`);
+            }
+        }
+
+        // Include pending notifications from previous interactions (GUAO #2)
+        if (this.pendingNotifications.length > 0) {
+            for (const note of this.pendingNotifications) {
+                awarenessLines.push(note);
+            }
+            this.pendingNotifications = [];
+        }
+
+        // Inject awareness context into prompt
+        if (awarenessLines.length > 0) {
+            prompt += '\n\n---\n\n## GSEP Intelligence (use naturally, don\'t list these)\n' + awarenessLines.join('\n');
         }
 
         return { prompt, sanitizedMessage, blocked: false };
@@ -3346,14 +3421,20 @@ Ready to see what we can do together? 😊`,
                 });
 
                 // Emit mutation:promoted for dashboard
+                const improvement = mutationCandidate.fitness - currentAllele.fitness;
                 this.events.emitSync('mutation:promoted', {
                     genomeId: this.genome.id,
                     gene: opts.gene,
                     variant: mutationCandidate.variant,
                     layer: opts.layer,
                     fitness: mutationCandidate.fitness,
-                    improvement: mutationCandidate.fitness - currentAllele.fitness,
+                    improvement,
                 }, { genomeId: this.genome.id });
+
+                // Queue notification for next interaction (GUAO #2 — visible evolution)
+                this.pendingNotifications.push(
+                    `[Evolution complete] Your "${opts.gene}" gene just improved by ${(improvement * 100).toFixed(0)}% (fitness: ${(mutationCandidate.fitness * 100).toFixed(0)}%). You should be noticeably better at this now. Briefly mention this improvement to the user if relevant.`
+                );
 
                 // Emit gene:updated so the dashboard sidebar refreshes
                 this.events.emitSync('gene:updated', {
