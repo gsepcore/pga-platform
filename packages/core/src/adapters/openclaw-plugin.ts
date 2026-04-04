@@ -149,7 +149,7 @@ export function gsepPlugin(options: GSEPPluginOptions = {}) {
                         api.logger.info(`[GSEP] ⛔ Blocked: ${before.blockReason}`);
                         return { systemPrompt: before.blockReason };
                     }
-                    return { prependContext: before.prompt };
+                    return { systemPrompt: before.prompt };
                 } catch (err) {
                     api.logger.warn(`[GSEP] BEFORE error: ${err instanceof Error ? err.message : String(err)}`);
                     return undefined;
