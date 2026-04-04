@@ -1,6 +1,6 @@
 {
   "name": "@gsep/core",
-  "version": "0.8.0",
+  "version": "1.0.0",
   "description": "GSEP Core - Genomic Self-Evolving Prompts with Gene Bank, THK, Layered Memory, RAG, and Advanced Reasoning",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",
