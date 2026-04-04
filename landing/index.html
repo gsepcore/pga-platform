@@ -158,7 +158,7 @@
 
             <div class="inline-flex items-center gap-2 bg-dna-900/40 border border-dna-700/30 rounded-full px-4 py-1.5 text-sm text-dna-400 mb-8">
                 <span class="w-2 h-2 bg-green-400 rounded-full pulse-slow"></span>
-                Patentado &middot; Genomic Self-Evolving Prompts &middot; v0.8.0
+                Patentado &middot; Genomic Self-Evolving Prompts &middot; v1.0.0
             </div>
 
             <h1 class="text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6">
@@ -202,11 +202,12 @@
                 </div>
                 <pre class="p-5 text-sm font-mono leading-relaxed overflow-x-auto"><code><span class="text-gray-500">$</span> <span class="text-dna-500">npm install</span> @gsep/core
 
-<span class="text-gray-500">// Before — static prompt, never improves</span>
-<span class="text-blue-400">const</span> response = <span class="text-blue-400">await</span> llm.<span class="text-yellow-300">chat</span>(userMessage);
+<span class="text-gray-500">// Vercel AI SDK — one line to evolve</span>
+<span class="text-blue-400">import</span> { gsepMiddleware } <span class="text-blue-400">from</span> <span class="text-green-400">'@gsep/core/vercel-ai'</span>;
+<span class="text-blue-400">const</span> gsep = <span class="text-blue-400">await</span> <span class="text-yellow-300">gsepMiddleware</span>({ name: <span class="text-green-400">'my-agent'</span> });
+<span class="text-blue-400">const</span> model = <span class="text-yellow-300">wrapLanguageModel</span>({ model, middleware: gsep.middleware });
 
-<span class="text-gray-500">// After — agent evolves every 10 interactions</span>
-<span class="text-blue-400">const</span> response = <span class="text-blue-400">await</span> genome.<span class="text-green-400">chat</span>(userMessage, { userId });</code></pre>
+<span class="text-gray-500">// Every call: C3 firewall → evolved genes → C4 immune → fitness → evolution</span></code></pre>
             </div>
         </div>
     </section>
@@ -400,36 +401,46 @@
                 <span class="text-xs font-semibold tracking-widest text-dna-400 uppercase">GSEP Core</span>
                 <span class="text-[10px] bg-dna-900/50 text-dna-300 px-2 py-0.5 rounded-full font-medium">OPEN SOURCE</span>
             </div>
-            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Three Steps. Agent Evolves.</h2>
+            <h2 class="text-3xl md:text-4xl font-bold text-center mb-4">Pick Your Framework. Agent Evolves.</h2>
             <p class="text-gray-400 text-center max-w-2xl mx-auto mb-16">
-                Wrap your existing LLM call. GSEP handles the rest&mdash;measuring, mutating, and selecting better prompts automatically.
+                Native adapters for the biggest frameworks. Same 32-step pipeline everywhere.
             </p>
 
-            <div class="grid md:grid-cols-3 gap-8 mb-16">
-                <div class="text-center">
-                    <div class="w-14 h-14 bg-dna-900/50 border border-dna-700/20 rounded-2xl flex items-center justify-center text-dna-400 font-bold text-xl mx-auto mb-5">1</div>
-                    <h3 class="font-semibold mb-3">Install</h3>
-                    <div class="code-block rounded-lg p-3 text-sm font-mono text-green-400">
-                        npm install @gsep/core
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="card-hover bg-gray-900/60 border border-dna-700/20 rounded-xl p-5">
+                    <div class="text-2xl mb-3">▲</div>
+                    <h3 class="font-semibold mb-1">Vercel AI SDK</h3>
+                    <p class="text-xs text-gray-500 mb-3">10M+ weekly downloads</p>
+                    <div class="code-block rounded-lg p-3 text-[11px] font-mono text-gray-300 text-left">
+                        <span class="text-blue-400">import</span> { gsepMiddleware }<br>
+                        &nbsp;&nbsp;<span class="text-blue-400">from</span> <span class="text-green-400">'@gsep/core/vercel-ai'</span>
                     </div>
                 </div>
-                <div class="text-center">
-                    <div class="w-14 h-14 bg-dna-900/50 border border-dna-700/20 rounded-2xl flex items-center justify-center text-dna-400 font-bold text-xl mx-auto mb-5">2</div>
-                    <h3 class="font-semibold mb-3">Initialize</h3>
-                    <div class="code-block rounded-lg p-3 text-xs font-mono text-gray-300 text-left">
-                        <span class="text-blue-400">const</span> genome = gsep.<span class="text-yellow-300">createGenome</span>({<br>
-                        &nbsp;&nbsp;name: <span class="text-green-400">'my-agent'</span>,<br>
-                        &nbsp;&nbsp;evolveEveryN: <span class="text-orange-400">10</span>,<br>
-                        });
+                <div class="card-hover bg-gray-900/60 border border-dna-700/20 rounded-xl p-5">
+                    <div class="text-2xl mb-3">🦜</div>
+                    <h3 class="font-semibold mb-1">LangChain</h3>
+                    <p class="text-xs text-gray-500 mb-3">132K+ stars</p>
+                    <div class="code-block rounded-lg p-3 text-[11px] font-mono text-gray-300 text-left">
+                        <span class="text-blue-400">import</span> { gsepLangChainMiddleware }<br>
+                        &nbsp;&nbsp;<span class="text-blue-400">from</span> <span class="text-green-400">'@gsep/core/langchain'</span>
                     </div>
                 </div>
-                <div class="text-center">
-                    <div class="w-14 h-14 bg-dna-900/50 border border-dna-700/20 rounded-2xl flex items-center justify-center text-dna-400 font-bold text-xl mx-auto mb-5">3</div>
-                    <h3 class="font-semibold mb-3">Swap One Call</h3>
-                    <div class="code-block rounded-lg p-3 text-xs font-mono text-gray-300 text-left">
-                        <span class="text-gray-500">// That's it.</span><br>
-                        <span class="text-blue-400">const</span> res = <span class="text-blue-400">await</span><br>
-                        &nbsp;&nbsp;genome.<span class="text-green-400">chat</span>(msg, { userId });
+                <div class="card-hover bg-gray-900/60 border border-dna-700/20 rounded-xl p-5">
+                    <div class="text-2xl mb-3">🦞</div>
+                    <h3 class="font-semibold mb-1">OpenClaw</h3>
+                    <p class="text-xs text-gray-500 mb-3">335K+ stars</p>
+                    <div class="code-block rounded-lg p-3 text-[11px] font-mono text-gray-300 text-left">
+                        <span class="text-blue-400">import</span> { gsepPlugin }<br>
+                        &nbsp;&nbsp;<span class="text-blue-400">from</span> <span class="text-green-400">'@gsep/core/openclaw-plugin'</span>
+                    </div>
+                </div>
+                <div class="card-hover bg-gray-900/60 border border-dna-700/20 rounded-xl p-5">
+                    <div class="text-2xl mb-3">🔧</div>
+                    <h3 class="font-semibold mb-1">Any Framework</h3>
+                    <p class="text-xs text-gray-500 mb-3">Generic middleware</p>
+                    <div class="code-block rounded-lg p-3 text-[11px] font-mono text-gray-300 text-left">
+                        <span class="text-blue-400">import</span> { GSEP }<br>
+                        &nbsp;&nbsp;<span class="text-blue-400">from</span> <span class="text-green-400">'@gsep/core'</span>
                     </div>
                 </div>
             </div>
@@ -952,14 +963,14 @@
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-5 mb-16">
                 <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
-                    <div class="text-3xl font-extrabold gradient-text mb-1">1,352</div>
+                    <div class="text-3xl font-extrabold gradient-text mb-1">2,005</div>
                     <div class="text-sm text-gray-400">Tests passing</div>
                     <div class="text-xs text-dna-500 mt-1">100% pass rate</div>
                 </div>
                 <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
-                    <div class="text-3xl font-extrabold gradient-text mb-1">85.7%</div>
-                    <div class="text-sm text-gray-400">Code coverage</div>
-                    <div class="text-xs text-dna-500 mt-1">80% threshold enforced</div>
+                    <div class="text-3xl font-extrabold gradient-text mb-1">4</div>
+                    <div class="text-sm text-gray-400">Framework adapters</div>
+                    <div class="text-xs text-dna-500 mt-1">Vercel, LangChain, OpenClaw, Generic</div>
                 </div>
                 <div class="bg-gray-900/50 border border-gray-800/80 rounded-xl p-6 text-center">
                     <div class="text-3xl font-extrabold gradient-text mb-1">0</div>
