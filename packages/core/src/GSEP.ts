@@ -1454,10 +1454,15 @@ export class GenomeInstance {
             awarenessLines.push(`[Evolution] Your genes have been evolving. Current average fitness: ${(avgFitness * 100).toFixed(0)}%. ${avgFitness > 0.7 ? 'Performing well.' : 'Room for improvement — try being more specific and structured.'}`);
         }
 
-        // Drift/health awareness (GUAO #6)
+        // Health & drift awareness (GUAO #6) — always visible
+        const healthSummary = this.driftAnalyzer.getHealthSummary();
+        if (healthSummary.samples >= 3) {
+            const statusEmoji = healthSummary.status === 'excellent' ? '🟢' : healthSummary.status === 'good' ? '🟡' : healthSummary.status === 'degraded' ? '🟠' : '🔴';
+            awarenessLines.push(`[Health ${statusEmoji}] Status: ${healthSummary.status}, fitness: ${(healthSummary.fitness * 100).toFixed(0)}%, trend: ${healthSummary.trend}, samples: ${healthSummary.samples}. ${healthSummary.status === 'degraded' || healthSummary.status === 'critical' ? 'IMPORTANT: Quality is dropping. Be extra careful with your responses — focus on accuracy and helpfulness.' : ''}`);
+        }
         const currentDrift = this.driftAnalyzer.analyzeDrift();
         if (currentDrift.isDrifting) {
-            awarenessLines.push(`[Health warning] Performance drift detected (${currentDrift.overallSeverity}). GSEP is auto-correcting. You may notice improvements in the next few interactions.`);
+            awarenessLines.push(`[Drift alert ⚠️] Performance drift detected (${currentDrift.overallSeverity}). GSEP is auto-correcting. Mention to the user that you detected a quality shift and are working to improve.`);
         }
 
         // Metacognition awareness (GUAO #1)

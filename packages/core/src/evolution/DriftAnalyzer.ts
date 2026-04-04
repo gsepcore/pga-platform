@@ -91,15 +91,15 @@ export class DriftAnalyzer {
 
     constructor(config: Partial<DriftAnalyzerConfig> = {}) {
         this.config = {
-            successRateThreshold: config.successRateThreshold ?? 0.1,
-            tokenEfficiencyThreshold: config.tokenEfficiencyThreshold ?? 0.15,
-            latencyThreshold: config.latencyThreshold ?? 0.2,
-            costThreshold: config.costThreshold ?? 0.25,
-            interventionThreshold: config.interventionThreshold ?? 0.1,
-            comparisonWindow: config.comparisonWindow ?? 100,
-            baselineWindow: config.baselineWindow ?? 500,
-            minSampleSize: config.minSampleSize ?? 20,
-            confidenceThreshold: config.confidenceThreshold ?? 0.8,
+            successRateThreshold: config.successRateThreshold ?? 0.08,
+            tokenEfficiencyThreshold: config.tokenEfficiencyThreshold ?? 0.10,
+            latencyThreshold: config.latencyThreshold ?? 0.15,
+            costThreshold: config.costThreshold ?? 0.20,
+            interventionThreshold: config.interventionThreshold ?? 0.08,
+            comparisonWindow: config.comparisonWindow ?? 10,
+            baselineWindow: config.baselineWindow ?? 50,
+            minSampleSize: config.minSampleSize ?? 5,
+            confidenceThreshold: config.confidenceThreshold ?? 0.6,
         };
     }
 
@@ -197,6 +197,35 @@ export class DriftAnalyzer {
             confidence,
             timestamp: new Date(),
         };
+    }
+
+    /**
+     * Get a human-readable health summary (always available, not just during drift)
+     */
+    public getHealthSummary(): { status: 'excellent' | 'good' | 'degraded' | 'critical'; fitness: number; trend: string; samples: number } {
+        if (this.history.length < 3) {
+            return { status: 'good', fitness: 0, trend: 'collecting data', samples: this.history.length };
+        }
+
+        const latest = this.history[this.history.length - 1].fitness;
+        const recentSlice = this.history.slice(-Math.min(10, this.history.length));
+        const avgRecent = recentSlice.reduce((s, h) => s + h.fitness.composite, 0) / recentSlice.length;
+
+        // Trend: compare last 5 to previous 5
+        let trend = 'stable';
+        if (this.history.length >= 10) {
+            const last5 = this.history.slice(-5).reduce((s, h) => s + h.fitness.composite, 0) / 5;
+            const prev5 = this.history.slice(-10, -5).reduce((s, h) => s + h.fitness.composite, 0) / 5;
+            if (last5 > prev5 + 0.03) trend = 'improving';
+            else if (last5 < prev5 - 0.03) trend = 'declining';
+        }
+
+        const status = avgRecent >= 0.85 ? 'excellent' as const
+            : avgRecent >= 0.7 ? 'good' as const
+            : avgRecent >= 0.5 ? 'degraded' as const
+            : 'critical' as const;
+
+        return { status, fitness: latest.composite, trend, samples: this.history.length };
     }
 
     // ─── Drift Detection per Metric ──────────────────────────────

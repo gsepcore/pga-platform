@@ -483,8 +483,8 @@ describe('DriftAnalyzer', () => {
         it('should use default config values when none are provided', () => {
             const analyzer = new DriftAnalyzer();
 
-            // Verify defaults by behavior: record < 20 samples should still show insufficient data
-            for (let i = 0; i < 19; i++) {
+            // Verify defaults by behavior: record < 5 samples should still show insufficient data
+            for (let i = 0; i < 4; i++) {
                 analyzer.recordFitness(createFitness());
             }
 
