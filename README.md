@@ -29,13 +29,13 @@ Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 
 | Metric | Value |
 |--------|-------|
-| Tests passing | **1998** |
+| Tests passing | **1997** |
 | Steps per chat() call | **32** |
+| Framework adapters | **4** (Vercel AI, LangChain, OpenClaw, Generic) |
 | Security modules | **28** |
 | Prompt injection patterns | **53** |
 | PII categories (with Luhn) | **9** |
 | Security profiles | **4** |
-| Lines of code to integrate | **1** |
 | Persistent storage | **SQLite (better-sqlite3)** |
 
 ---
@@ -78,70 +78,78 @@ YOUR AGENT (before)                YOUR AGENT (after GSEP)
 npm install @gsep/core
 ```
 
-Three ways to integrate — choose the one that fits your codebase:
+Pick your framework — one integration, full pipeline:
 
-### Way 1: Zero Code (Auto-Instrumentation)
-
-Add ONE line at the top of your app. Don't change anything else.
+### Vercel AI SDK (10M+ weekly downloads)
 
 ```typescript
-import '@gsep/core/auto'
+import { generateText, wrapLanguageModel } from 'ai';
+import { openai } from '@ai-sdk/openai';
+import { gsepMiddleware } from '@gsep/core/vercel-ai';
 
-// Your existing code stays exactly the same.
-// Every OpenAI/Anthropic call now runs through GSEP's 32-step pipeline.
-// Evolution, security, PII redaction, dashboard — all active automatically.
+const gsep = await gsepMiddleware({ name: 'my-agent' });
+
+const model = wrapLanguageModel({
+  model: openai('gpt-4o'),
+  middleware: gsep.middleware,
+});
+
+const result = await generateText({ model, prompt: 'Hello' });
+// Full pipeline: C3 firewall, evolved genes, C4 immune scan, fitness, evolution
 ```
 
-GSEP detects your LLM SDK (OpenAI, Anthropic, or raw fetch) and patches it at import time. Same technique as New Relic, Datadog, and Sentry.
-
-**What happens on startup:**
-```
-[GSEP] 🧬 Auto-instrumentation loading...
-[GSEP Auto] ✓ OpenAI SDK patched — chat.completions.create() now runs through GSEP.
-[GSEP Auto] ✓ Global fetch patched — LLM API calls now run through GSEP.
-[GSEP] 🧬 Auto-instrumentation active.
-[GSEP] All LLM calls now run through the full 32-step GSEP pipeline.
-[GSEP] Evolution: ON | Security: ON | PII Redaction: ON | Dashboard: ON
-
-🧬 GSEP Dashboard: http://localhost:4200/gsep/dashboard?token=...
-```
-
-### Way 2: One Line (Explicit Wrap)
-
-Wrap your existing LLM client. Full control, full pipeline.
+### LangChain (132K+ stars)
 
 ```typescript
-import { gsep } from '@gsep/core'
+import { createAgent } from 'langchain';
+import { gsepLangChainMiddleware } from '@gsep/core/langchain';
 
-// Wrap your LLM client — one line
-const agent = await gsep.wrap(myOpenAIClient)
+const gsep = await gsepLangChainMiddleware({ name: 'my-agent' });
 
-// Use exactly as before
-const response = await agent.chat('Hello!', { userId: 'user-1' })
-
-// All 32 steps running: evolution, security, fitness, drift, learning
-// Dashboard live at http://localhost:4200
+const agent = createAgent({
+  model: 'openai:gpt-4o',
+  tools: [...],
+  middleware: [gsep.middleware],
+});
+// wrapModelCall: GSEP modifies prompt before LLM, scans response after
 ```
 
-Works with any LLM client: OpenAI SDK, Anthropic SDK, or any object with a `chat()` method.
-
-### Way 3: Full Control (Two Hooks)
-
-For agents with complex pipelines — LangChain, CrewAI, custom architectures.
+### OpenClaw / Genome (335K+ stars)
 
 ```typescript
-import { GSEPMiddleware } from '@gsep/core'
+// ~/.genoma/plugins/gsep/index.ts
+import { gsepPlugin } from '@gsep/core/openclaw-plugin';
 
-const gsep = await GSEPMiddleware.create()
+export default gsepPlugin({ preset: 'full' });
+// Native lifecycle hooks: before_prompt_build, llm_output, message_sending
+```
 
-// BEFORE your LLM call — GSEP enhances the prompt with evolved genes
-const { prompt } = await gsep.before(originalPrompt, { message: userMsg, userId })
+### Any Framework (Generic Middleware)
 
-// YOUR existing LLM call — unchanged
-const response = await myAgent.callLLM(prompt)
+```typescript
+import { GSEP } from '@gsep/core';
 
-// AFTER your LLM call — GSEP learns, tracks fitness, evolves
-await gsep.after(response, { userId, feedback: 'good' })
+const gsep = await GSEP.middleware({ name: 'my-agent', llm: myLLMAdapter });
+
+// BEFORE — C3 scan, gene injection, PII redaction, Purpose Lock
+const before = await gsep.before(userMessage, { userId });
+if (before.blocked) return before.blockReason;
+
+// YOUR LLM call — use the enhanced prompt
+const response = await myAgent.callLLM(before.prompt, before.sanitizedMessage);
+
+// AFTER — C4 immune scan, fitness, drift detection, evolution
+const after = await gsep.after(userMessage, response, { userId });
+// after.fitness = 0.92, after.safe = true, after.threats = []
+```
+
+### What happens on every call
+
+```
+[GSEP] ✅ BEFORE complete — prompt enhanced, C3 scanned, PII redacted
+[GSEP] ✅ AFTER complete — fitness: 0.92, safe: true, threats: 0
+[GSEP] 🔬 Exploratory mutation: trying to improve "tool-usage" (fitness: 0.60)
+[GSEP] 🧬 Evolution cycle complete — interaction #50
 ```
 
 ---
