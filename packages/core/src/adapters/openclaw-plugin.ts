@@ -39,6 +39,11 @@ interface PluginApi {
     logger: { info: (msg: string) => void; warn: (msg: string) => void; error: (msg: string) => void };
     on(hookName: string, handler: (...args: never[]) => unknown, opts?: { priority?: number }): void;
     registerCommand(cmd: { name: string; description: string; acceptsArgs?: boolean; handler: (ctx: Record<string, unknown>) => unknown }): void;
+    registerService(service: { id: string; start: (ctx: { stateDir?: string }) => void | Promise<void>; stop?: () => void | Promise<void> }): void;
+    runtime: {
+        system: { enqueueSystemEvent: (event: Record<string, unknown>) => void };
+        channel: { reply: { dispatchReplyWithBufferedBlockDispatcher: (...args: unknown[]) => unknown } };
+    };
 }
 
 interface BeforePromptEvent { prompt: string; messages: unknown[] }
@@ -199,7 +204,85 @@ export function gsepPlugin(options: GSEPPluginOptions = {}) {
                 },
             });
 
-            api.logger.info('[GSEP] 🧬 Plugin registered — hooks: before_prompt_build, llm_output, message_sending');
+            // ─── Proactive Service: greetings & reminders (GUAO #4) ──
+            api.registerService({
+                id: 'gsep-proactive',
+                start: () => {
+                    const checkInterval = 60 * 60 * 1000; // Check every hour
+                    const timer = setInterval(async () => {
+                        const g = await ensureInit(api.logger);
+                        if (!g) return;
+
+                        const now = new Date();
+                        const hour = now.getHours();
+
+                        // Morning greeting (8-9 AM)
+                        if (hour === 8) {
+                            try {
+                                const report = g.generateWeeklyReport();
+                                const greeting = [
+                                    `Buenos días! 🧬`,
+                                    ``,
+                                    report.conversations.total > 0
+                                        ? `Ayer tuvimos ${report.conversations.avgPerDay.toFixed(0)} conversaciones. Calidad: ${(report.quality.endScore * 100).toFixed(0)}%.`
+                                        : `Listo para empezar el día.`,
+                                    report.quality.trend === 'improving'
+                                        ? `📈 Tu calidad va en subida — sigue así.`
+                                        : report.quality.trend === 'declining'
+                                            ? `⚠️ La calidad bajó un poco. Trabajemos en mejorar hoy.`
+                                            : '',
+                                    report.suggestions.length > 0
+                                        ? `💡 Sugerencia: ${report.suggestions[0]}`
+                                        : '',
+                                ].filter(Boolean).join('\n');
+
+                                api.runtime.system.enqueueSystemEvent({
+                                    type: 'gsep:proactive-message',
+                                    message: greeting,
+                                    channel: 'telegram',
+                                });
+                                api.logger.info('[GSEP] 🌅 Morning greeting sent');
+                            } catch {
+                                // Best-effort
+                            }
+                        }
+
+                        // Evolution summary (6 PM)
+                        if (hour === 18) {
+                            try {
+                                const exported = await g.export();
+                                const activeGenes = exported.layers?.layer1?.filter(
+                                    (a: { status: string }) => a.status === 'active'
+                                ) ?? [];
+                                const avgFitness = activeGenes.length > 0
+                                    ? activeGenes.reduce((sum: number, a: { fitness: number }) => sum + a.fitness, 0) / activeGenes.length
+                                    : 0;
+
+                                if (avgFitness > 0) {
+                                    api.runtime.system.enqueueSystemEvent({
+                                        type: 'gsep:proactive-message',
+                                        message: `🧬 Resumen del día: fitness promedio ${(avgFitness * 100).toFixed(0)}%. ${activeGenes.length} genes activos evolucionando.`,
+                                        channel: 'telegram',
+                                    });
+                                    api.logger.info('[GSEP] 🌆 Evening summary sent');
+                                }
+                            } catch {
+                                // Best-effort
+                            }
+                        }
+                    }, checkInterval);
+
+                    // Cleanup on stop
+                    (api as unknown as Record<string, unknown>).__gsepTimer = timer;
+                    api.logger.info('[GSEP] ⏰ Proactive service started — morning greetings + evening summaries');
+                },
+                stop: () => {
+                    const timer = (api as unknown as Record<string, unknown>).__gsepTimer as NodeJS.Timeout;
+                    if (timer) clearInterval(timer);
+                },
+            });
+
+            api.logger.info('[GSEP] 🧬 Plugin registered — hooks: before_prompt_build, llm_output, message_sending, proactive service');
         },
     };
 }

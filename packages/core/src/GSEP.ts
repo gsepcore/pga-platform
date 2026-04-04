@@ -1471,6 +1471,16 @@ export class GenomeInstance {
             }
         }
 
+        // Weekly report summary (GUAO #11, #20)
+        try {
+            const report = this.generateWeeklyReport();
+            if (report.conversations.total > 0) {
+                awarenessLines.push(
+                    `[Weekly stats] This period: ${report.conversations.total} conversations, quality: ${(report.quality.endScore * 100).toFixed(0)}%${report.quality.trend !== 'stable' ? ` (trending ${report.quality.trend})` : ''}${report.quality.delta > 0 ? `, improved ${(report.quality.delta * 100).toFixed(0)}%` : ''}. ${report.suggestions.length > 0 ? 'Suggestion: ' + report.suggestions[0] : ''}`
+                );
+            }
+        } catch { /* best-effort */ }
+
         // Include pending notifications from previous interactions (GUAO #2)
         if (this.pendingNotifications.length > 0) {
             for (const note of this.pendingNotifications) {

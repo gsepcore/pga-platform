@@ -37,6 +37,8 @@ describe('OpenClaw Plugin Adapter', () => {
             },
             on: (hookName: string) => { registeredHooks.push(hookName); },
             registerCommand: (cmd: { name: string }) => { registeredCommands.push(cmd.name); },
+            registerService: () => {},
+            runtime: { system: { enqueueSystemEvent: () => {} }, channel: { reply: { dispatchReplyWithBufferedBlockDispatcher: () => {} } } },
         };
 
         // register() should NOT return a promise
