@@ -1221,7 +1221,7 @@ export class GenomeInstance {
      *
      * Returns the enhanced prompt and security status.
      */
-    async beforeLLM(userMessage: string, context: { userId?: string; taskType?: string }): Promise<{
+    async beforeLLM(userMessage: string, context: { userId?: string; taskType?: string; batchSize?: number }): Promise<{
         prompt: string;
         sanitizedMessage: string;
         blocked: boolean;
@@ -1362,7 +1362,7 @@ export class GenomeInstance {
         }
 
         // Anomaly detection
-        const anomalies = this.anomalyDetector.analyze(userMessage, userId);
+        const anomalies = this.anomalyDetector.analyze(userMessage, userId, context.batchSize);
         if (anomalies.some(a => a.suggestedAction === 'block')) {
             return {
                 prompt: '',

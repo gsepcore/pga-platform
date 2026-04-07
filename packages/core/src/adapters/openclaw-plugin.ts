@@ -46,7 +46,7 @@ interface PluginApi {
     };
 }
 
-interface BeforePromptEvent { prompt: string; messages: unknown[] }
+interface BeforePromptEvent { prompt: string; messages: unknown[]; systemPrompt?: string; batchSize?: number }
 interface AgentContext { agentId?: string; sessionKey?: string }
 interface LLMOutputEvent { runId: string; assistantTexts: string[]; usage?: { input?: number; output?: number } }
 interface MessageSendingEvent { to: string; content: string }
@@ -144,12 +144,15 @@ export function gsepPlugin(options: GSEPPluginOptions = {}) {
                 lastUserMessage = event.prompt;
 
                 try {
-                    const before = await g.beforeLLM(event.prompt, { userId: 'owner', taskType: 'general' });
+                    const before = await g.beforeLLM(event.prompt, { userId: 'owner', taskType: 'general', batchSize: event.batchSize });
                     if (before.blocked) {
                         api.logger.info(`[GSEP] ⛔ Blocked: ${before.blockReason}`);
                         return { systemPrompt: before.blockReason };
                     }
-                    return { systemPrompt: before.prompt };
+                    // APPEND to existing system prompt — never override the agent's identity
+                    const existing = event.systemPrompt ?? '';
+                    const separator = existing ? '\n\n---\n\n' : '';
+                    return { systemPrompt: existing + separator + before.prompt };
                 } catch (err) {
                     api.logger.warn(`[GSEP] BEFORE error: ${err instanceof Error ? err.message : String(err)}`);
                     return undefined;

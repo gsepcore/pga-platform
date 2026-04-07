@@ -157,6 +157,11 @@ async function gsepFetch(
         : input instanceof URL ? input.toString()
         : (input as Request).url;
 
+    // Defer to native plugin when active (avoid duplicate processing)
+    if ((globalThis as Record<string, unknown>).__GSEP_PLUGIN_ACTIVE__) {
+        return _originalFetch(input, init);
+    }
+
     // Only intercept LLM API calls
     if (!isLLMCall(url)) {
         return _originalFetch(input, init);

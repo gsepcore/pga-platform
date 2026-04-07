@@ -96,9 +96,14 @@ export class AnomalyDetector {
     /**
      * Record a message and check for anomalies.
      * Returns detected anomalies (empty array if none).
+     *
+     * @param batchSize — when the upstream framework batches multiple
+     *   identical messages into one call, pass the real count so
+     *   flood/velocity detection still works correctly.
      */
-    analyze(message: string, userId?: string): Anomaly[] {
-        this.analytics.totalAnalyzed++;
+    analyze(message: string, userId?: string, batchSize: number = 1): Anomaly[] {
+        const count = Math.max(1, Math.round(batchSize));
+        this.analytics.totalAnalyzed += count;
 
         const now = new Date();
         const record: MessageRecord = {
@@ -108,7 +113,10 @@ export class AnomalyDetector {
             timestamp: now,
         };
 
-        this.messages.push(record);
+        // Insert one record per batched message so window counts are accurate
+        for (let i = 0; i < count; i++) {
+            this.messages.push(record);
+        }
         this.pruneOldMessages(now);
 
         const anomalies: Anomaly[] = [];

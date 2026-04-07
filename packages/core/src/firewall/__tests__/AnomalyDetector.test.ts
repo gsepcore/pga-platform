@@ -82,4 +82,34 @@ describe('AnomalyDetector', () => {
         const anomalies = detector.analyze('', 'user-1');
         expect(Array.isArray(anomalies)).toBe(true);
     });
+
+    it('should detect duplicate flood via batchSize', () => {
+        const detector = new AnomalyDetector({ duplicateThreshold: 5 });
+
+        // Single call with batchSize=6 should trigger flood detection
+        const anomalies = detector.analyze('I want a refund', 'user-1', 6);
+
+        expect(anomalies.length).toBeGreaterThan(0);
+        expect(anomalies[0].type).toBe('duplicate-flood');
+        expect(anomalies[0].messageCount).toBeGreaterThanOrEqual(5);
+    });
+
+    it('should count batchSize in analytics', () => {
+        const detector = new AnomalyDetector();
+
+        detector.analyze('hello', 'user-1', 5);
+
+        const analytics = detector.getAnalytics();
+        expect(analytics.totalAnalyzed).toBe(5);
+    });
+
+    it('should detect velocity spike via batchSize', () => {
+        const detector = new AnomalyDetector({ velocityThreshold: 5 });
+
+        // Single call with batchSize=10 should trigger velocity spike
+        const anomalies = detector.analyze('help me', 'user-1', 10);
+
+        const velocityAnomaly = anomalies.find(a => a.type === 'velocity-spike');
+        expect(velocityAnomaly).toBeDefined();
+    });
 });
