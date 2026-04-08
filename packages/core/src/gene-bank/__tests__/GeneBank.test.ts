@@ -434,6 +434,182 @@ describe('GeneBank', () => {
     });
 
     // ========================================================================
+    // THK (Tenant Sharing)
+    // ========================================================================
+
+    describe('THK', () => {
+        it('should get tenant genes when THK is enabled', async () => {
+            await bank.storeGene(createTestGene({ id: 'thk-gene-1', tenant: { tenantId: TEST_TENANT_ID, createdBy: TEST_AGENT_ID, scope: 'tenant', verified: false } }));
+
+            const genes = await bank.getTenantGenes();
+            expect(genes.length).toBeGreaterThanOrEqual(1);
+        });
+
+        it('should throw when THK is disabled', async () => {
+            const noThkBank = new GeneBank(storage, {
+                tenantId: TEST_TENANT_ID,
+                agentId: TEST_AGENT_ID,
+                enableTHK: false,
+            });
+
+            await expect(noThkBank.getTenantGenes()).rejects.toThrow('THK is disabled');
+        });
+    });
+
+    // ========================================================================
+    // Marketplace
+    // ========================================================================
+
+    describe('marketplace', () => {
+        it('should throw when marketplace is disabled', async () => {
+            await expect(bank.getMarketplaceGenes()).rejects.toThrow('Marketplace is disabled');
+        });
+
+        it('should search genes when marketplace is enabled', async () => {
+            const mpBank = new GeneBank(storage, {
+                tenantId: TEST_TENANT_ID,
+                agentId: TEST_AGENT_ID,
+                enableMarketplace: true,
+            });
+
+            const genes = await mpBank.getMarketplaceGenes();
+            expect(Array.isArray(genes)).toBe(true);
+        });
+    });
+
+    // ========================================================================
+    // Lineage & Descendants
+    // ========================================================================
+
+    describe('lineage', () => {
+        it('should get gene lineage', async () => {
+            const lineage = await bank.getLineage('gene-1');
+            expect(Array.isArray(lineage)).toBe(true);
+        });
+
+        it('should get descendants of a gene', async () => {
+            const parent = createTestGene({ id: 'parent-gene' });
+            const child = createTestGene({
+                id: 'child-gene',
+                lineage: { parentGeneId: 'parent-gene', generation: 1, ancestors: ['parent-gene'], mutationHistory: [] },
+            });
+
+            await bank.storeGene(parent);
+            await bank.storeGene(child);
+
+            const descendants = await bank.getDescendants('parent-gene');
+            expect(descendants.length).toBe(1);
+            expect(descendants[0].id).toBe('child-gene');
+        });
+
+        it('should return empty array when no descendants', async () => {
+            const gene = createTestGene({ id: 'lonely-gene' });
+            await bank.storeGene(gene);
+
+            const descendants = await bank.getDescendants('lonely-gene');
+            expect(descendants).toHaveLength(0);
+        });
+    });
+
+    // ========================================================================
+    // Configuration
+    // ========================================================================
+
+    describe('config', () => {
+        it('should get current config', () => {
+            const config = bank.getConfig();
+            expect(config.tenantId).toBe(TEST_TENANT_ID);
+            expect(config.agentId).toBe(TEST_AGENT_ID);
+            expect(config.minFitnessThreshold).toBe(0.6);
+        });
+
+        it('should update config', () => {
+            bank.updateConfig({ minFitnessThreshold: 0.9 });
+            const config = bank.getConfig();
+            expect(config.minFitnessThreshold).toBe(0.9);
+        });
+
+        it('should return a copy of config', () => {
+            const config1 = bank.getConfig();
+            config1.minFitnessThreshold = 0.99;
+            const config2 = bank.getConfig();
+            expect(config2.minFitnessThreshold).toBe(0.6); // unchanged
+        });
+    });
+
+    // ========================================================================
+    // Marketplace Client
+    // ========================================================================
+
+    describe('marketplace client', () => {
+        it('should be undefined initially', () => {
+            expect(bank.getMarketplaceClient()).toBeUndefined();
+        });
+
+        it('should set and get marketplace client', () => {
+            const mockClient = { search: () => {} } as never;
+            bank.setMarketplaceClient(mockClient);
+            expect(bank.getMarketplaceClient()).toBe(mockClient);
+        });
+    });
+
+    // ========================================================================
+    // Auto-Adoption
+    // ========================================================================
+
+    describe('auto-adoption', () => {
+        it('canAutoAdopt should return false when disabled', () => {
+            expect(bank.canAutoAdopt()).toBe(false);
+        });
+
+        it('canAutoAdopt should return true when enabled and under limit', () => {
+            const autoBank = new GeneBank(storage, {
+                tenantId: TEST_TENANT_ID,
+                agentId: TEST_AGENT_ID,
+                autoAdoptFromTenant: true,
+                maxAutoAdoptionsPerDay: 5,
+            });
+            expect(autoBank.canAutoAdopt()).toBe(true);
+        });
+    });
+
+    // ========================================================================
+    // Delete from different tenant
+    // ========================================================================
+
+    describe('tenant isolation on delete', () => {
+        it('should reject delete from different tenant', async () => {
+            const gene = createTestGene({ id: 'gene-isolate' });
+            await bank.storeGene(gene);
+
+            const otherBank = new GeneBank(storage, {
+                tenantId: 'other-tenant',
+                agentId: 'other-agent',
+            });
+
+            await expect(otherBank.deleteGene('gene-isolate')).rejects.toThrow('different tenant');
+        });
+    });
+
+    // ========================================================================
+    // Update from different tenant
+    // ========================================================================
+
+    describe('tenant isolation on update', () => {
+        it('should reject update from different tenant', async () => {
+            const gene = createTestGene({ id: 'gene-isolate-upd' });
+            await bank.storeGene(gene);
+
+            const otherBank = new GeneBank(storage, {
+                tenantId: 'other-tenant',
+                agentId: 'other-agent',
+            });
+
+            await expect(otherBank.updateGene(gene)).rejects.toThrow('different tenant');
+        });
+    });
+
+    // ========================================================================
     // Capacity Eviction
     // ========================================================================
 
