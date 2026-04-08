@@ -505,9 +505,39 @@ export class GSEP {
         if (options.llm) {
             llm = options.llm;
         } else {
-            const provider = effectiveProvider ?? GSEP.detectProvider(options.apiKey);
-            const apiKey = options.apiKey ?? GSEP.resolveApiKey(provider);
-            llm = await GSEP.createLLMAdapter(provider, apiKey, options.model, options.ollamaHost);
+            try {
+                const provider = effectiveProvider ?? GSEP.detectProvider(options.apiKey);
+                const apiKey = options.apiKey ?? GSEP.resolveApiKey(provider);
+                llm = await GSEP.createLLMAdapter(provider, apiKey, options.model, options.ollamaHost);
+            } catch {
+                // No API key found — fall back to mock LLM so examples and demos still work
+                console.log('[GSEP] ⚠️  No API key detected — running with mock LLM.');
+                console.log('[GSEP]    Set ANTHROPIC_API_KEY or OPENAI_API_KEY for real AI.\n');
+                llm = {
+                    name: 'mock',
+                    model: 'mock-demo',
+                    async chat(messages: Array<{ role: string; content: string }>) {
+                        const last = messages.filter(m => m.role === 'user').pop();
+                        const input = last?.content ?? '';
+                        const responses: Record<string, string> = {
+                            'hello': 'Hello! I am your GSEP-powered agent. How can I help you today?',
+                            'haiku': 'Code flows like water,\nBugs scatter in the moonlight,\nTests turn green at dawn.',
+                            'recursion': 'Recursion is when a function calls itself to solve smaller pieces of the same problem until it reaches a base case.',
+                            'crash': 'I understand your app is crashing. Let me help you troubleshoot. Could you share the error message from the console? Also, please check if this happens on all browsers or just one specific browser.',
+                            'cache': 'Since clearing the cache did not resolve the issue, let us try a different approach. Please open the browser developer tools (F12), go to the Console tab, and share any error messages you see when clicking the submit button.',
+                            'thank': 'You are welcome! Glad I could help. If the issue comes back, do not hesitate to reach out. Have a great day!',
+                            'help': 'I can assist you with questions, troubleshooting, code reviews, and general tasks. Just describe what you need and I will do my best to help.',
+                            'what': 'I am an AI assistant powered by GSEP, which means my responses evolve and improve over time based on our interactions. How can I assist you?',
+                            'default': `I understand your question. Let me help you with that. Based on what you have described, I would recommend breaking this down into smaller steps. Could you provide more details so I can give you a more specific answer?`,
+                        };
+                        const key = Object.keys(responses).find(k => k !== 'default' && input.toLowerCase().includes(k)) ?? 'default';
+                        return {
+                            content: responses[key],
+                            usage: { inputTokens: input.length, outputTokens: 40 },
+                        };
+                    },
+                };
+            }
         }
 
         // ─── GSEP Auto-Shield: wrap LLM with security proxy ──────

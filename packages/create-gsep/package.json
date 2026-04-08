@@ -1,6 +1,6 @@
 {
   "name": "create-gsep",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "Create GSEP agents with one command - Interactive installer for GSEP Platform",
   "author": "Luis Alfredo Velasquez Duran <contact@gsepcore.com>",
   "license": "MIT",

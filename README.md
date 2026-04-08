@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/@gsep/core?style=for-the-badge)](https://www.npmjs.com/package/@gsep/core)
 [![CI](https://img.shields.io/github/actions/workflow/status/gsepcore/gsep/ci.yml?style=for-the-badge&label=CI&logo=githubactions)](https://github.com/gsepcore/gsep/actions/workflows/ci.yml)
-[![Tests](https://img.shields.io/badge/Tests-1931_passing-brightgreen?style=for-the-badge)]()
+[![Tests](https://img.shields.io/badge/Tests-2185_passing-brightgreen?style=for-the-badge)]()
 [![Patented](https://img.shields.io/badge/Status-Patented-gold?style=for-the-badge)](PATENTS.md)
 [![Watch Demo](https://img.shields.io/badge/Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://www.youtube.com/watch?v=cTPJqrL2IyE)
 [![Survival Demo](https://img.shields.io/badge/Survival_Demo-Interactive-blueviolet?style=for-the-badge)](https://gsepcore.com/survival)
@@ -29,7 +29,7 @@ Created by **Luis Alfredo Velasquez Duran** | Germany, 2025-2026
 
 | Metric | Value |
 |--------|-------|
-| Tests passing | **1997** |
+| Tests passing | **2185** |
 | Steps per chat() call | **32** |
 | Framework adapters | **4** (Vercel AI, LangChain, OpenClaw, Generic) |
 | Security modules | **28** |
@@ -375,7 +375,7 @@ GSEP ships with a 7-layer security architecture. **Zero new npm dependencies** â
 | `developer` | OFF | OFF | OFF | OFF | OFF | Local development, rapid prototyping |
 
 ```typescript
-import { GSEP } from 'gsep';
+import { GSEP } from '@gsep/core';
 
 const agent = await GSEP.quickStart({
   securityProfile: 'paranoid', // or 'secure' (default), 'standard', 'developer'
@@ -689,11 +689,13 @@ Only `chat()` is required. `stream()` and `estimateCost()` are optional.
 ### Express/Fastify API agent
 
 ```typescript
-import { genome } from './gsep-setup.js';
+import { GSEP } from '@gsep/core';
+
+const agent = await GSEP.quickStart({ name: 'api-agent' });
 
 app.post('/chat', async (req, res) => {
   const { message, userId } = req.body;
-  const response = await genome.chat(message, { userId, taskType: 'support' });
+  const response = await agent.chat(message, { userId, taskType: 'support' });
   res.json({ reply: response });
 });
 ```
@@ -701,11 +703,13 @@ app.post('/chat', async (req, res) => {
 ### Any agent with a chat loop
 
 ```typescript
-import { genome } from './gsep-setup.js';
+import { GSEP } from '@gsep/core';
+
+const agent = await GSEP.quickStart({ name: 'chat-agent' });
 
 while (true) {
   const input = await getUserInput();
-  const response = await genome.chat(input, { userId: currentUser.id, taskType: 'general' });
+  const response = await agent.chat(input, { userId: currentUser.id, taskType: 'general' });
   displayResponse(response);
 }
 ```
@@ -716,10 +720,12 @@ while (true) {
 ### Discord/Slack bot
 
 ```typescript
-import { genome } from './gsep-setup.js';
+import { GSEP } from '@gsep/core';
+
+const agent = await GSEP.quickStart({ name: 'discord-bot' });
 
 bot.on('message', async (msg) => {
-  const response = await genome.chat(msg.content, {
+  const response = await agent.chat(msg.content, {
     userId: msg.author.id,
     taskType: 'general',
   });
@@ -730,9 +736,14 @@ bot.on('message', async (msg) => {
 ### LangChain agent
 
 ```typescript
-import { genome } from './gsep-setup.js';
+import { GSEP } from '@gsep/core';
 
-const response = await genome.chat(question, { userId, taskType: 'reasoning' });
+const gsep = await GSEP.middleware({ name: 'langchain-agent' });
+
+// Wrap your existing LLM calls
+const before = await gsep.before(question, { userId });
+const response = await yourLLM.call(before.prompt);
+const after = await gsep.after(question, response, { userId });
 ```
 
 </details>

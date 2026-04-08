@@ -209,7 +209,7 @@ function generateIndexFile(config: ProjectConfig): string {
     // Middleware mode — for existing agents (OpenClaw, LangChain, etc.)
     if (mode === 'middleware' || mode === 'middleware-observer') {
         return `import 'dotenv/config';
-import { GSEP } from 'gsep';
+import { GSEP } from '@gsep/core';
 
 async function main() {
   console.log('🧬 Starting GSEP Middleware for ${config.detectedFramework ?? 'your agent'}...\\n');
@@ -247,7 +247,7 @@ main().catch(console.error);
 
     // QuickStart mode — for new projects and basic chatbots
     return `import 'dotenv/config';
-import { GSEP } from 'gsep';
+import { GSEP } from '@gsep/core';
 
 async function main() {
   console.log('🧬 Starting GSEP Agent...\\n');

@@ -1,190 +1,93 @@
 /**
- * GSEP Basic Usage Example
+ * GSEP Basic Usage — Complete walkthrough
  *
- * This example demonstrates how to:
- * 1. Initialize GSEP with an LLM adapter
- * 2. Create a genome (your agent's evolving brain)
- * 3. Chat through the genome (drop-in LLM replacement)
- * 4. Record feedback for evolution
+ * Demonstrates:
+ * 1. Initialize with GSEP.quickStart() (auto-detects provider)
+ * 2. Chat through the evolving genome
+ * 3. See learning announcements and fitness tracking
+ * 4. Export genome status
  *
- * Requirements:
- *   ANTHROPIC_API_KEY=sk-ant-... npx tsx examples/basic-usage.ts
- *
- * Or without an API key (dry run — shows initialization only):
+ * Without API key (free mock mode):
  *   npx tsx examples/basic-usage.ts
+ *
+ * With a real LLM:
+ *   ANTHROPIC_API_KEY=sk-ant-... npx tsx examples/basic-usage.ts
+ *   OPENAI_API_KEY=sk-...       npx tsx examples/basic-usage.ts
  */
 
-import { GSEP, InMemoryStorageAdapter } from '../packages/core/src/index.js';
-
-// ═══════════════════════════════════════════════════════════
-// Storage Options:
-//
-// Option A: InMemory (default — for demos and development)
-//   import { InMemoryStorageAdapter } from '@gsep/core';
-//   const storage = new InMemoryStorageAdapter();
-//
-// Option B: PostgreSQL (production — data persists across restarts)
-//   import { PostgresAdapter } from '@gsep/adapters-storage-postgres';
-//   const storage = new PostgresAdapter({
-//       connectionString: process.env.DATABASE_URL || 'postgresql://localhost:5432/gsep',
-//   });
-//   await storage.initialize(); // Auto-creates 9 tables on first run
-// ═══════════════════════════════════════════════════════════
+// In your project: import { GSEP } from '@gsep/core';
+import { GSEP } from '../packages/core/src/index.js';
 
 async function main() {
-    // ═══════════════════════════════════════════════════════
-    // Step 1: Initialize GSEP
-    // ═══════════════════════════════════════════════════════
+    console.log('═══════════════════════════════════════════');
+    console.log('  GSEP Basic Usage — Self-Evolving Agent');
+    console.log('═══════════════════════════════════════════\n');
 
-    const gsep = new GSEP({
-        storage: new InMemoryStorageAdapter(),
+    // ── Step 1: Initialize ──────────────────────────────
+    // quickStart() auto-detects your LLM provider from env vars.
+    // No API key? It runs with a mock LLM so you can see the pipeline.
+
+    const agent = await GSEP.quickStart({
+        name: 'basic-demo',
+        dashboardPort: 0,
     });
 
-    await gsep.initialize();
-    console.log('✓ GSEP initialized');
+    console.log('\n── Step 2: Chat through the genome ──\n');
 
-    // ═══════════════════════════════════════════════════════
-    // Step 2: Create a genome for your agent
-    // ═══════════════════════════════════════════════════════
+    const ctx = { userId: 'user-123', taskType: 'support' };
 
-    const genome = await gsep.createGenome({
-        name: 'customer-support-agent',
-        config: {
-            autonomous: {
-                continuousEvolution: true,
-                evolveEveryN: 10,
-                autoMutateOnDrift: true,
-            },
-        },
-    });
+    // First interaction
+    console.log('📩 User: My app keeps crashing when I click submit');
+    const reply1 = await agent.chat('My app keeps crashing when I click the submit button', ctx);
+    console.log('🤖 Agent:', reply1, '\n');
 
-    console.log(`✓ Genome created: ${genome.id}`);
-    console.log(`  Name: ${genome.name}`);
+    // Second interaction — GSEP adapts to the user
+    console.log('📩 User: I already tried clearing the cache');
+    const reply2 = await agent.chat('I already tried clearing the cache, that did not work', ctx);
+    console.log('🤖 Agent:', reply2, '\n');
 
-    // ═══════════════════════════════════════════════════════
-    // Step 3: Add prompts to chromosome layers
-    // ═══════════════════════════════════════════════════════
+    // Third interaction
+    console.log('📩 User: It works now, thanks!');
+    const reply3 = await agent.chat('It works now, thanks for the help!', ctx);
+    console.log('🤖 Agent:', reply3, '\n');
 
-    // Layer 0 — Immutable DNA (core identity, never mutates)
-    await genome.addAllele(
-        0,
-        'core-identity',
-        'default',
-        `You are a helpful customer support agent.
-Your goal is to resolve customer issues quickly and professionally.
-Always be polite, empathetic, and solution-oriented.`,
-    );
-    console.log('✓ Layer 0 (Immutable DNA) initialized');
+    // ── Step 3: See what GSEP learned ───────────────────
 
-    // Layer 1 — Operative Genes (slow mutation, sandbox-tested)
-    await genome.addAllele(
-        1,
-        'troubleshooting-approach',
-        'default',
-        `When troubleshooting:
-1. Ask clarifying questions
-2. Reproduce the issue
-3. Identify root cause
-4. Provide clear solution steps`,
-    );
-    console.log('✓ Layer 1 (Operative Genes) initialized');
+    console.log('── Step 3: Genome status ──\n');
 
-    // Layer 2 — Epigenomes (fast mutation, per-user adaptation)
-    await genome.addAllele(
-        2,
-        'communication-style',
-        'default',
-        'Use a friendly, professional tone with balanced detail.',
-    );
-    console.log('✓ Layer 2 (Epigenomes) initialized');
+    const exported = await agent.export();
+    const activeGenes = exported.layers?.layer1?.filter(
+        (g: { status: string }) => g.status === 'active',
+    ) ?? [];
 
-    // ═══════════════════════════════════════════════════════
-    // Step 4: Chat through the genome
-    // ═══════════════════════════════════════════════════════
+    console.log(`Agent: ${exported.name}`);
+    console.log(`Genome: ${exported.id?.slice(0, 20)}...`);
+    console.log(`C0 (immutable): ${exported.layers?.layer0?.length ?? 0} genes`);
+    console.log(`C1 (operative): ${activeGenes.length} active genes`);
+    console.log(`C2 (epigenomes): ${exported.layers?.layer2?.length ?? 0} genes`);
 
-    // Check if we have an LLM configured
-    if (!process.env.ANTHROPIC_API_KEY) {
-        console.log('\n⚠ No ANTHROPIC_API_KEY set — skipping chat demo.');
-        console.log('  To run the full demo:');
-        console.log('  ANTHROPIC_API_KEY=sk-ant-... npx tsx examples/basic-usage.ts');
-        console.log('\n✅ Initialization completed successfully!');
-        return;
+    if (activeGenes.length > 0) {
+        console.log('\nActive C1 genes:');
+        for (const gene of activeGenes) {
+            const g = gene as { gene: string; fitness: number };
+            console.log(`  • ${g.gene}: fitness ${g.fitness.toFixed(2)}`);
+        }
     }
 
-    // Dynamic import to avoid requiring the adapter when no key is set
-    const { ClaudeAdapter } = await import('../packages/adapters-llm/anthropic/src/index.js');
+    // ── Step 4: Weekly report ───────────────────────────
 
-    const gsepWithLLM = new GSEP({
-        llm: new ClaudeAdapter({
-            apiKey: process.env.ANTHROPIC_API_KEY,
-            model: 'claude-sonnet-4-5-20250929',
-        }),
-        storage: new InMemoryStorageAdapter(),
-    });
+    console.log('\n── Step 4: Weekly report ──\n');
 
-    await gsepWithLLM.initialize();
+    const report = agent.generateWeeklyReport();
+    console.log(`Quality: ${(report.quality.endScore * 100).toFixed(0)}%`);
+    console.log(`Trend: ${report.quality.trend}`);
+    console.log(`Suggestions: ${report.suggestions.length > 0 ? report.suggestions[0] : 'None yet'}`);
 
-    const liveGenome = await gsepWithLLM.createGenome({
-        name: 'support-agent-live',
-        config: {
-            autonomous: {
-                continuousEvolution: true,
-                evolveEveryN: 10,
-            },
-        },
-    });
-
-    // Add the same prompts
-    await liveGenome.addAllele(0, 'core-identity', 'default',
-        'You are a helpful customer support agent. Be polite, empathetic, and solution-oriented.');
-    await liveGenome.addAllele(1, 'troubleshooting', 'default',
-        'When troubleshooting: ask clarifying questions, then provide step-by-step solutions.');
-
-    const userId = 'user-123';
-    const userMessage = 'My app keeps crashing when I click the submit button';
-
-    console.log('\n📩 User:', userMessage);
-
-    const response = await liveGenome.chat(userMessage, {
-        userId,
-        taskType: 'support',
-    });
-
-    console.log('🤖 Assistant:', response);
-
-    // ═══════════════════════════════════════════════════════
-    // Step 5: Record feedback (drives evolution)
-    // ═══════════════════════════════════════════════════════
-
-    await liveGenome.recordFeedback(userId, 'troubleshooting', 'positive');
-    console.log('✓ Positive feedback recorded');
-
-    // ═══════════════════════════════════════════════════════
-    // Step 6: View analytics
-    // ═══════════════════════════════════════════════════════
-
-    const analytics = await liveGenome.getAnalytics();
-    console.log('\n📊 Genome Analytics:', analytics);
-
-    // ═══════════════════════════════════════════════════════
-    // Step 7: Get user DNA profile
-    // ═══════════════════════════════════════════════════════
-
-    const userDNA = await liveGenome.getDNA(userId);
-    console.log('\n🧬 User DNA Profile:', userDNA);
-
-    // ═══════════════════════════════════════════════════════
-    // Step 8: Reload genome (persistence demo)
-    // ═══════════════════════════════════════════════════════
-
-    const reloadedGenome = await gsepWithLLM.loadGenome(liveGenome.id);
-
-    if (reloadedGenome) {
-        console.log(`\n✓ Genome reloaded: ${reloadedGenome.name}`);
-    }
-
-    console.log('\n✅ Example completed successfully!');
+    console.log('\n═══════════════════════════════════════════');
+    console.log('  GSEP ran 32 steps per call: security,');
+    console.log('  gene injection, PII scan, fitness,');
+    console.log('  drift detection, and evolution check.');
+    console.log('═══════════════════════════════════════════\n');
 }
 
-// Run the example
-main().catch(console.error);
+main().then(() => process.exit(0)).catch(err => { console.error(err); process.exit(1); });
