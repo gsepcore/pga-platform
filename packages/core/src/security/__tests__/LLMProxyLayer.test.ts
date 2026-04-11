@@ -49,10 +49,24 @@ describe('LLMProxyLayer', () => {
     });
 
     // ── GSEP identity injection ─────────────────────────
-    // Note: identity is injected into messagesWithIdentity but when
-    // redaction is enabled (default), processedMessages is rebuilt from
-    // the original messages array, losing the identity. Identity is only
-    // visible when redaction is disabled or routing locally.
+
+    it('should preserve GSEP Shield identity when PII redaction is enabled', async () => {
+        const proxy = new LLMProxyLayer(cloudAdapter, { enableRedaction: true });
+        const messages = [
+            { role: 'system', content: 'You are a helpful assistant.' },
+            { role: 'user', content: 'My email is test@example.com' },
+        ];
+
+        await proxy.chat(messages);
+
+        const sentMessages = (cloudAdapter.chat as ReturnType<typeof vi.fn>).mock.calls[0][0];
+        const systemMsg = sentMessages.find((m: { role: string }) => m.role === 'system');
+        expect(systemMsg.content).toContain('GSEP Shield (Active)');
+        expect(systemMsg.content).toContain('You are a helpful assistant.');
+        // User PII should still be redacted
+        const userMsg = sentMessages.find((m: { role: string }) => m.role === 'user');
+        expect(userMsg.content).not.toContain('test@example.com');
+    });
 
     it('should append GSEP Shield identity when redaction is disabled', async () => {
         const proxy = new LLMProxyLayer(cloudAdapter, { enableRedaction: false });

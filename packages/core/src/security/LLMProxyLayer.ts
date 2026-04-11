@@ -169,8 +169,8 @@ export class LLMProxyLayer implements LLMAdapterLike {
         let redactionResults: RedactionResult[] = [];
 
         if (this.enableRedaction && !useLocal) {
-            const redacted = messages.map(m => {
-                if (m.role === 'system') return { msg: m, result: null }; // Don't redact system prompts
+            const redacted = messagesWithIdentity.map(m => {
+                if (m.role === 'system') return { msg: m, result: null }; // Don't redact system prompts (preserves GSEP identity)
                 const result = this.piiEngine.redact(m.content);
                 return { msg: { ...m, content: result.redacted }, result };
             });
