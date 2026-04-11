@@ -67,6 +67,7 @@ export class DashboardServer {
     private eventSubscriptionId: string | null = null;
     private readonly config: Required<Omit<DashboardServerConfig, 'getSnapshot' | 'getGenes' | 'getMarketplaceClient'>> & Pick<DashboardServerConfig, 'getSnapshot' | 'getGenes' | 'getMarketplaceClient'>;
     private dashboardHtml: string | null = null;
+    private actualPort: number;
 
     constructor(config: DashboardServerConfig) {
         this.config = {
@@ -75,18 +76,42 @@ export class DashboardServer {
             maxConnectionsPerUser: 3,
             ...config,
         };
+        this.actualPort = this.config.port;
     }
 
     /**
-     * Start the dashboard server
+     * Start the dashboard server with automatic port fallback.
+     * Tries the configured port first, then up to 10 consecutive ports.
      */
-    start(): Promise<void> {
+    async start(): Promise<void> {
+        const maxRetries = 10;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            const port = this.config.port + attempt;
+            try {
+                await this.tryListen(port);
+                this.actualPort = port;
+                if (attempt > 0) {
+                    // eslint-disable-next-line no-console
+                    console.log(`[GSEP] Dashboard: port ${this.config.port} busy, using ${port} instead`);
+                }
+                return;
+            } catch (err) {
+                const code = (err as NodeJS.ErrnoException).code;
+                if (code === 'EADDRINUSE' && attempt < maxRetries) {
+                    continue;
+                }
+                throw err;
+            }
+        }
+    }
+
+    private tryListen(port: number): Promise<void> {
         return new Promise((resolve, reject) => {
             this.server = createServer((req, res) => this.handleRequest(req, res));
 
             this.server.on('error', reject);
 
-            this.server.listen(this.config.port, this.config.host, () => {
+            this.server.listen(port, this.config.host, () => {
                 // Subscribe to all events from the emitter
                 this.eventSubscriptionId = this.config.events.onAny((event: GSEPEvent) => {
                     this.broadcastEvent(event);
@@ -136,10 +161,10 @@ export class DashboardServer {
     }
 
     /**
-     * Get the server port
+     * Get the actual port the server is listening on
      */
     getPort(): number {
-        return this.config.port;
+        return this.actualPort;
     }
 
     // ─── Request Handler ─────────────────────────────────

@@ -89,7 +89,7 @@ export class OpenAIAdapter implements LLMAdapter {
 
         try {
             const response = await this.client.chat.completions.create({
-                model: this.model,
+                model: options?.model ?? this.model,
                 messages: openaiMessages,
                 temperature: options?.temperature ?? this.config.defaultTemperature ?? 1.0,
                 top_p: this.config.defaultTopP ?? 1.0,

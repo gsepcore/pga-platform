@@ -441,6 +441,9 @@ export type {
 export { GenomeKernel, IntegrityViolationError, QuarantinedGenomeError } from './core/GenomeKernel.js';
 export type { GenomeKernelOptions } from './core/GenomeKernel.js';
 
+export { ResponseCache } from './core/ResponseCache.js';
+export type { ResponseCacheConfig, CacheEntry } from './core/ResponseCache.js';
+
 export { CoherenceValidator } from './core/CoherenceValidator.js';
 export type { CoherenceViolation, CoherenceResult } from './core/CoherenceValidator.js';
 

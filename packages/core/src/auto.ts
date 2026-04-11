@@ -27,10 +27,35 @@ const _originalFetch = globalThis.fetch;
 
 // LLM endpoints to intercept
 const LLM_PATTERNS = [
+    // OpenAI
     'api.openai.com/v1/chat/completions',
     'api.openai.com/v1/responses',
+    // Anthropic
     'api.anthropic.com/v1/messages',
+    // Google
     'generativelanguage.googleapis.com',
+    // Azure OpenAI
+    '.openai.azure.com/openai/deployments/',
+    // AWS Bedrock
+    'bedrock-runtime.',
+    // Perplexity
+    'api.perplexity.ai/chat/completions',
+    // Ollama (local)
+    'localhost:11434/api/chat',
+    '127.0.0.1:11434/api/chat',
+    // Cohere
+    'api.cohere.com/v2/chat',
+    'api.cohere.com/v1/chat',
+    // Mistral
+    'api.mistral.ai/v1/chat/completions',
+    // Together AI
+    'api.together.xyz/v1/chat/completions',
+    // Groq
+    'api.groq.com/openai/v1/chat/completions',
+    // DeepSeek
+    'api.deepseek.com/chat/completions',
+    // Fireworks AI
+    'api.fireworks.ai/inference/v1/chat/completions',
 ];
 
 function isLLMCall(url: string): boolean {
@@ -55,7 +80,7 @@ function createAdapterFromConnection(
             });
             const data = await res.json() as Record<string, unknown>;
 
-            // OpenAI format
+            // OpenAI-compatible format (OpenAI, Azure, Perplexity, Mistral, Together, Groq, DeepSeek, Fireworks)
             if (Array.isArray(data.choices)) {
                 const choice = (data.choices as Array<{ message?: { content?: string } }>)[0];
                 const usage = data.usage as { prompt_tokens?: number; completion_tokens?: number } | undefined;
@@ -68,6 +93,21 @@ function createAdapterFromConnection(
             if (Array.isArray(data.content)) {
                 const block = (data.content as Array<{ type: string; text?: string }>).find(b => b.type === 'text');
                 return { content: block?.text ?? '' };
+            }
+            // Ollama format
+            if (typeof data.message === 'object' && data.message !== null) {
+                const msg = data.message as { content?: string };
+                return { content: msg.content ?? '' };
+            }
+            // Cohere format
+            if (typeof data.text === 'string') {
+                return { content: data.text };
+            }
+            // AWS Bedrock format
+            if (typeof data.output === 'object' && data.output !== null) {
+                const output = data.output as { message?: { content?: Array<{ text?: string }> } };
+                const text = output.message?.content?.[0]?.text;
+                if (text) return { content: text };
             }
             return { content: String(data.content ?? '') };
         },
@@ -237,7 +277,6 @@ async function gsepFetch(
                     response: content,
                     userId: 'auto',
                     taskType: 'general',
-                    success: true,
                 });
             } catch { /* best-effort — don't break the agent */ }
         }).catch(() => {});

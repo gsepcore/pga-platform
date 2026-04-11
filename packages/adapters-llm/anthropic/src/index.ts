@@ -92,7 +92,7 @@ export class ClaudeAdapter implements LLMAdapter {
 
         try {
             const response = await this.client.messages.create({
-                model: this.model,
+                model: options?.model ?? this.model,
                 messages: anthropicMessages,
                 system: systemPrompt || undefined,
                 max_tokens: options?.maxTokens || 4096,

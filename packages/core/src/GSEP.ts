@@ -71,6 +71,7 @@ import { GSEPMiddleware, type MiddlewareOptions } from './middleware/GSEPMiddlew
 import { detectRuntime as detectRuntimeLevel } from './middleware/RuntimeDetector.js';
 import { WeeklyReportGenerator, type WeeklyReport } from './monitoring/WeeklyReportGenerator.js';
 import { GenomeKernel } from './core/GenomeKernel.js';
+import { ResponseCache } from './core/ResponseCache.js';
 import { BehavioralImmuneSystem } from './immune/BehavioralImmuneSystem.js';
 import { GSEPEventEmitter } from './realtime/EventEmitter.js';
 import { DashboardServer } from './dashboard/DashboardServer.js';
@@ -871,6 +872,7 @@ export class GenomeInstance {
     private fitnessCalculator: FitnessCalculator;
     private mutationEngine: MutationEngine;
     private driftAnalyzer: DriftAnalyzer;
+    private responseCache: ResponseCache;
     private selfModel?: SelfModel;
     private patternMemory?: PatternMemory;
     private metacognition?: Metacognition;
@@ -963,6 +965,10 @@ export class GenomeInstance {
         this.mutationEngine.registerOperator(new CrossoverMutationOperator(llm));
         this.mutationEngine.registerOperator(new BreakthroughOperator(llm));
         this.driftAnalyzer = new DriftAnalyzer();
+        this.responseCache = new ResponseCache({
+            maxSize: 500,
+            ttlMs: 30 * 60 * 1000,
+        });
 
         // Autonomous Agent: SelfModel (metacognition)
         if (genome.config.autonomous?.enableSelfModel) {
@@ -1573,13 +1579,15 @@ export class GenomeInstance {
             }
         }
 
-        // Record metrics
+        // Record metrics with real quality signal
         const inputTokens = Math.ceil(userMessage.length / 4);
         const outputTokens = Math.ceil(response.length / 4);
+        const mwQuality = this.estimateQuality(userMessage, response);
+        const mwSuccess = mwQuality >= 0.4 && threats.length === 0;
         this.metrics.recordRequest({
             requestId: `mw-${Date.now()}`,
             duration: Date.now() - startTime,
-            success: true,
+            success: mwSuccess,
             model: 'external',
             inputTokens,
             outputTokens,
@@ -1597,12 +1605,12 @@ export class GenomeInstance {
 
         // Metacognition post-analysis
         if (this.metacognition) {
-            try { this.metacognition.analyzePostResponse(userMessage, response, true); } catch { /* best-effort */ }
+            try { this.metacognition.analyzePostResponse(userMessage, response, mwSuccess); } catch { /* best-effort */ }
         }
 
         // Pattern memory
         if (this.patternMemory) {
-            try { this.patternMemory.recordInteraction({ taskType, success: true, timestamp: new Date() }); } catch { /* best-effort */ }
+            try { this.patternMemory.recordInteraction({ taskType, success: mwSuccess, timestamp: new Date() }); } catch { /* best-effort */ }
         }
 
         // Emotional model (infer emotion for tracking)
@@ -1612,12 +1620,18 @@ export class GenomeInstance {
 
         // Growth journal
         if (this.growthJournal) {
-            try { this.growthJournal.recordSuccess(taskType, userMessage, 0.75); } catch { /* best-effort */ }
+            try {
+                if (mwSuccess) {
+                    this.growthJournal.recordSuccess(taskType, userMessage, mwQuality);
+                } else {
+                    this.growthJournal.recordFailure(taskType, userMessage, 'Low quality or security threat');
+                }
+            } catch { /* best-effort */ }
         }
 
         // Curiosity engine
         if (this.curiosityEngine && taskType) {
-            try { this.curiosityEngine.recordExploration(taskType, true); } catch { /* best-effort */ }
+            try { this.curiosityEngine.recordExploration(taskType, mwSuccess); } catch { /* best-effort */ }
         }
 
         // DNA profile update
@@ -1639,23 +1653,24 @@ export class GenomeInstance {
             userId,
         }, { genomeId: this.genome.id, userId });
 
-        // Fitness calculation (real quality, not hardcoded)
+        // Fitness calculation with real quality + success signals
         this.interactionCount++;
-        let quality = this.estimateQuality(userMessage, response);
+        let afterQuality = this.estimateQuality(userMessage, response);
         if (this.thinkingEngine) {
             try {
                 const reflection = await this.thinkingEngine.selfReflect(userMessage, response);
-                quality = quality * 0.7 + reflection.qualityScore * 0.3;
+                afterQuality = afterQuality * 0.7 + reflection.qualityScore * 0.3;
             } catch { /* best-effort */ }
         }
+        const afterSuccess = afterQuality >= 0.4 && threats.length === 0;
         const interactionData: InteractionData = {
-            success: true,
-            quality,
+            success: afterSuccess,
+            quality: afterQuality,
             inputTokens,
             outputTokens,
             latency: Date.now() - startTime,
             model: 'external',
-            interventionNeeded: false,
+            interventionNeeded: threats.length > 0,
             timestamp: new Date(),
         };
         const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
@@ -1710,7 +1725,7 @@ export class GenomeInstance {
         this.events.emitSync('chat:completed', {
             userId, taskType,
             duration: Date.now() - startTime,
-            success: true,
+            success: afterSuccess,
             inputTokens, outputTokens,
             interactionCount: this.interactionCount,
         }, { genomeId: this.genome.id, userId });
@@ -2192,13 +2207,15 @@ Ready to see what we can do together? 😊`,
             }
 
             // ── PRE-LLM: Model Router intelligence ──
-            // Use routing decision to inform model selection (logged, future: actual routing)
+            // Route to optimal model based on task complexity and cost constraints
+            let routedModel: string | undefined;
             if (this.genome.config.autonomous?.enableModelRouting) {
                 const routingDecision = await this.modelRouter.routeTask({
                     userMessage,
                     context: context.taskType,
                     genomeId: this.genome.id,
                 });
+                routedModel = routingDecision.selectedModel;
                 this.metrics.logAudit({
                     level: 'info',
                     component: 'model-router',
@@ -2209,6 +2226,7 @@ Ready to see what we can do together? 😊`,
                         selectedModel: routingDecision.selectedModel,
                         estimatedCost: routingDecision.estimatedCost,
                         confidence: routingDecision.confidence,
+                        originalModel: this.llm.model,
                     },
                 });
             }
@@ -2383,9 +2401,24 @@ Ready to see what we can do together? 😊`,
                 sanitizedUserMessage = shieldResult.sanitized;
             }
 
-            // Use Reasoning if enabled
+            // ── Response Cache: check for cached response ──
+            const chatOptions = routedModel ? { model: routedModel } : undefined;
+            const cacheModel = routedModel ?? this.llm.model ?? 'unknown';
+            const cached = this.responseCache.get(prompt, sanitizedUserMessage, cacheModel);
             let response: { content: string; usage?: { inputTokens: number; outputTokens: number; totalCost?: number } };
-            if (this.reasoningEngine) {
+            let fromCache = false;
+
+            if (cached) {
+                response = { content: cached.response, usage: cached.usage };
+                fromCache = true;
+                this.metrics.logAudit({
+                    level: 'info',
+                    component: 'response-cache',
+                    operation: 'hit',
+                    message: `Cache hit — saved LLM call (${cached.usage?.inputTokens ?? 0}+${cached.usage?.outputTokens ?? 0} tokens)`,
+                    genomeId: this.genome.id,
+                });
+            } else if (this.reasoningEngine) {
                 const reasoningResult = await this.reasoningEngine.reason(
                     sanitizedUserMessage,
                     prompt,
@@ -2397,16 +2430,18 @@ Ready to see what we can do together? 😊`,
                 const skillResult = await this.skillRouter.run(prompt, sanitizedUserMessage);
                 response = { content: skillResult.response };
             } else {
-                // Standard LLM chat (no skills)
+                // Standard LLM chat — pass routed model if available
                 response = await this.llm.chat(
                     [
                         { role: 'system', content: prompt },
                         { role: 'user', content: sanitizedUserMessage },
                     ],
+                    chatOptions,
                 );
             }
 
             // ── C4: Behavioral Immune System — scan output for IPI ──
+            let interventionNeeded = false;
             if (this.immuneSystem) {
                 const verdict = this.immuneSystem.scanOutput(
                     response.content,
@@ -2415,6 +2450,7 @@ Ready to see what we can do together? 😊`,
                 );
 
                 if (!verdict.clean) {
+                    interventionNeeded = true;
                     this.metrics.logAudit({
                         level: verdict.action === 'quarantine' ? 'error' : 'warning',
                         component: 'c4-immune-system',
@@ -2474,6 +2510,15 @@ Ready to see what we can do together? 😊`,
             const outputTokens = response.usage?.outputTokens
                 ?? Math.ceil(response.content.length / 4);
 
+            // Store in response cache (skip if cached, or if response was security-modified)
+            if (!fromCache && !interventionNeeded) {
+                this.responseCache.set(
+                    prompt, sanitizedUserMessage, cacheModel,
+                    response.content,
+                    { inputTokens, outputTokens },
+                );
+            }
+
             // Emit chat:message with LLM response info
             this.events.emitSync('chat:message', {
                 genomeId: this.genome.id,
@@ -2482,32 +2527,7 @@ Ready to see what we can do together? 😊`,
                 duration: Date.now() - startTime,
             }, { genomeId: this.genome.id, userId: context.userId });
 
-            // Record metrics
-            this.metrics.recordRequest({
-                requestId,
-                duration: Date.now() - startTime,
-                success: true,
-                model: 'gsep-genome', // Could be enhanced with actual model info
-                inputTokens,
-                outputTokens,
-            });
-
-            // Log audit
-            this.metrics.logAudit({
-                level: 'info',
-                component: 'genome',
-                operation: 'chat',
-                message: 'Chat completed successfully',
-                userId: context.userId,
-                genomeId: this.genome.id,
-                duration: Date.now() - startTime,
-                metadata: {
-                    inputTokens,
-                    outputTokens,
-                },
-            });
-
-            // Estimate response quality for fitness tracking
+            // Estimate response quality for fitness tracking (needed early for metrics)
             let quality = this.estimateQuality(userMessage, response.content);
 
             // ── POST-LLM: ThinkingEngine self-reflection ──
@@ -2531,10 +2551,42 @@ Ready to see what we can do together? 😊`,
                 }
             }
 
+            // Derive success from quality signal (threshold: 0.4)
+            const success = quality >= 0.4;
+            const actualModel = routedModel ?? this.llm.model ?? 'unknown';
+
+            // Record metrics with real success signal and actual routed model
+            this.metrics.recordRequest({
+                requestId,
+                duration: Date.now() - startTime,
+                success,
+                model: actualModel,
+                inputTokens,
+                outputTokens,
+            });
+
+            // Log audit
+            this.metrics.logAudit({
+                level: success ? 'info' : 'warning',
+                component: 'genome',
+                operation: 'chat',
+                message: success ? 'Chat completed successfully' : `Chat completed with low quality (${quality.toFixed(2)})`,
+                userId: context.userId,
+                genomeId: this.genome.id,
+                duration: Date.now() - startTime,
+                metadata: {
+                    inputTokens,
+                    outputTokens,
+                    quality,
+                    success,
+                    model: actualModel,
+                },
+            });
+
             // ── POST-LLM: Model Router performance feedback ──
             if (this.genome.config.autonomous?.enableModelRouting) {
-                this.modelRouter.recordPerformance(this.llm.model ?? 'unknown', {
-                    success: true,
+                this.modelRouter.recordPerformance(actualModel, {
+                    success,
                     cost: (inputTokens + outputTokens) / 1_000_000,
                     latency: Date.now() - startTime,
                 });
@@ -2542,24 +2594,28 @@ Ready to see what we can do together? 😊`,
 
             // ── POST-LLM: Autonomous Loop — learn phase ──
             if (this.autonomousLoop) {
-                this.autonomousLoop.learn(quality, true);
+                this.autonomousLoop.learn(quality, success);
             }
 
             // ── POST-LLM: Growth Journal — record success + lessons ──
             if (this.growthJournal) {
                 const domain = context.taskType ?? null;
-                this.growthJournal.recordSuccess(domain, userMessage, quality);
+                if (success) {
+                    this.growthJournal.recordSuccess(domain, userMessage, quality);
+                } else {
+                    this.growthJournal.recordFailure(domain, userMessage, 'Low quality response');
+                }
             }
 
             // ── POST-LLM: Curiosity Engine — record exploration outcome ──
             if (this.curiosityEngine && context.taskType) {
-                this.curiosityEngine.recordExploration(context.taskType, true);
+                this.curiosityEngine.recordExploration(context.taskType, success);
             }
 
             // Record canary metrics if active
             if (activeCanaryId) {
                 this.canaryManager.recordRequest(activeCanaryId, 'canary', {
-                    success: true,
+                    success,
                     latencyMs: Date.now() - startTime,
                     fitness: quality,
                 });
@@ -2568,7 +2624,7 @@ Ready to see what we can do together? 😊`,
                 for (const canary of activeCanaries) {
                     if (canary.genomeId === this.genome.id) {
                         this.canaryManager.recordRequest(canary.id, 'stable', {
-                            success: true,
+                            success,
                             latencyMs: Date.now() - startTime,
                             fitness: quality,
                         });
@@ -2578,13 +2634,13 @@ Ready to see what we can do together? 😊`,
 
             // Record fitness for drift detection using FitnessCalculator
             const interactionData: InteractionData = {
-                success: true,
+                success,
                 quality,
                 inputTokens,
                 outputTokens,
                 latency: Date.now() - startTime,
-                model: this.llm.model ?? 'unknown',
-                interventionNeeded: false,
+                model: actualModel,
+                interventionNeeded,
                 timestamp: new Date(),
             };
             const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
@@ -3123,7 +3179,7 @@ Ready to see what we can do together? 😊`,
         response: string;
         userId: string;
         taskType: string;
-        success: boolean;
+        success?: boolean;
     }): Promise<void> {
         const requestId = `ext-${Date.now()}`;
         const startTime = Date.now();
@@ -3136,13 +3192,16 @@ Ready to see what we can do together? 😊`,
                 messagePreview: params.userMessage.slice(0, 100),
             }, { genomeId: this.genome.id, userId: params.userId });
 
-            // Record metrics
+            // Derive success from quality when not explicitly provided
             const inputTokens = Math.ceil(params.userMessage.length / 4);
             const outputTokens = Math.ceil(params.response.length / 4);
+            const extQuality = this.estimateQuality(params.userMessage, params.response);
+            const extSuccess = params.success ?? (extQuality >= 0.4);
+
             this.metrics.recordRequest({
                 requestId,
                 duration: 0,
-                success: params.success,
+                success: extSuccess,
                 model: 'external',
                 inputTokens,
                 outputTokens,
@@ -3170,15 +3229,15 @@ Ready to see what we can do together? 😊`,
             const continuousEvolution = this.genome.config.autonomous?.continuousEvolution;
             const evolveEveryN = this.genome.config.autonomous?.evolveEveryN ?? 10;
 
-            // Compute fitness and feed drift analyzer
+            // Compute fitness with real quality signal
             const interactionData: InteractionData = {
-                success: params.success,
-                quality: params.success ? 0.75 : 0.3,
+                success: extSuccess,
+                quality: extQuality,
                 inputTokens,
                 outputTokens,
                 latency: 0,
                 model: 'external',
-                interventionNeeded: false,
+                interventionNeeded: !extSuccess,
                 timestamp: new Date(),
             };
             const fitnessVector = this.fitnessCalculator.computeFitness([interactionData]);
@@ -3218,7 +3277,7 @@ Ready to see what we can do together? 😊`,
                 userId: params.userId,
                 taskType: params.taskType,
                 duration: Date.now() - startTime,
-                success: params.success,
+                success: extSuccess,
                 inputTokens,
                 outputTokens,
                 interactionCount: this.interactionCount,
@@ -3993,6 +4052,13 @@ Ready to see what we can do together? 😊`,
      */
     getRoutingAnalytics() {
         return this.modelRouter.getRoutingAnalytics();
+    }
+
+    /**
+     * Get response cache statistics (hit rate, tokens saved, etc.)
+     */
+    getCacheStats() {
+        return this.responseCache.getStats();
     }
 
     /**

@@ -17,6 +17,8 @@ export interface ChatOptions {
     temperature?: number;
     system?: string;
     tools?: unknown[];
+    /** Override model for this request (used by ModelRouter for cost optimization) */
+    model?: string;
 }
 
 export interface ChatResponse {
